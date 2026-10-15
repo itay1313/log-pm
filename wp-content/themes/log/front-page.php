@@ -98,7 +98,7 @@ $process = log_rows( 'process', [
 <section class="section section--news" data-section="news">
 	<div class="container">
 		<h2 class="section__title"><?php echo esc_html( log_text( 'news_title', 'מה חדש' ) ); ?></h2>
-		<p class="placeholder">שמונה משבצות: מרכז ידע, אינסטגרם ולינקדאין, לפי תאריך.</p>
+		<?php get_template_part( 'template-parts/news-grid' ); ?>
 	</div>
 </section>
 

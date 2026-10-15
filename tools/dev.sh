@@ -10,4 +10,6 @@ npx --yes @wp-playground/cli@latest server \
   --blueprint=tools/playground.json \
   --mount=./wp-content/themes/log:/wordpress/wp-content/themes/log \
   --mount=./wp-content/plugins/log-core:/wordpress/wp-content/plugins/log-core \
+  --mount=./tools/dev-mu/log-dev-tests.php:/wordpress/wp-content/mu-plugins/log-dev-tests.php \
+  --mount=./tools/fixtures/instagram-sample.json:/wordpress/wp-content/mu-plugins/instagram-sample.json \
   "$@"

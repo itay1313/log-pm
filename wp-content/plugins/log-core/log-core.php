@@ -23,6 +23,7 @@ require LOG_CORE_DIR . 'inc/schema.php';
 require LOG_CORE_DIR . 'inc/setup.php';
 require LOG_CORE_DIR . 'inc/import.php';
 require LOG_CORE_DIR . 'inc/forms.php';
+require LOG_CORE_DIR . 'inc/social.php';
 
 register_activation_hook( __FILE__, function () {
 	log_register_post_types();
@@ -30,4 +31,7 @@ register_activation_hook( __FILE__, function () {
 	flush_rewrite_rules();
 } );
 
-register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+register_deactivation_hook( __FILE__, function () {
+	wp_clear_scheduled_hook( 'log_instagram_sync' );
+	flush_rewrite_rules();
+} );

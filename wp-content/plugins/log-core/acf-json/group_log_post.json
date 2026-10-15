@@ -1,0 +1,13 @@
+{
+  "key": "group_log_post",
+  "title": "פרטי פוסט",
+  "fields": [
+    { "key": "field_lpo_source", "label": "מקור", "name": "source", "type": "select", "choices": { "instagram": "Instagram", "linkedin": "LinkedIn" }, "default_value": "linkedin", "return_format": "value", "wrapper": { "width": "33" } },
+    { "key": "field_lpo_posted", "label": "תאריך הפוסט", "name": "posted_at", "type": "date_time_picker", "display_format": "d/m/Y H:i", "return_format": "Y-m-d H:i:s", "first_day": 0, "wrapper": { "width": "33" } },
+    { "key": "field_lpo_url", "label": "קישור לפוסט", "name": "url", "type": "url", "required": 1, "wrapper": { "width": "34" } },
+    { "key": "field_lpo_text", "label": "טקסט", "name": "text", "type": "textarea", "rows": 4, "instructions": "באתר מוצגות ~24 מילים ראשונות. התמונה היא \"תמונת הפוסט\" בצד." },
+    { "key": "field_lpo_external", "label": "מזהה חיצוני", "name": "external_id", "type": "text", "instructions": "נקבע אוטומטית בסנכרון מאינסטגרם. לפוסט ידני אפשר להשאיר ריק.", "readonly": 1 }
+  ],
+  "location": [[{ "param": "post_type", "operator": "==", "value": "log_post" }]],
+  "active": true
+}
