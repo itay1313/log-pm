@@ -77,13 +77,13 @@ if (document.querySelector('form[data-endpoint]')) {
   import('./forms.js').then((m) => m.initForms());
 }
 
-// Hero map: design phase, not started. Mounts only once LOG's Mapbox token exists.
-const hero = document.getElementById('hero-map');
-if (hero && window.LOG?.mapbox?.token && !reduced) {
-  const io = new IntersectionObserver((entries) => {
-    if (!entries.some((e) => e.isIntersecting)) return;
-    io.disconnect();
-    import('./map.js').then((m) => m.mount(hero)).catch(console.error);
-  }, { rootMargin: '200px' });
-  io.observe(hero);
+// Project page: mini-map, lightbox, video in view
+if (document.querySelector('.project')) {
+  import('./project.js').then((m) => m.initProject());
+}
+
+// Home hero: the full-screen project map. Reduced-motion users get the static copy and the list link.
+const hero = document.getElementById('hero');
+if (hero && !reduced) {
+  import('./hero.js').then((m) => m.initHero(hero)).catch(console.error);
 }

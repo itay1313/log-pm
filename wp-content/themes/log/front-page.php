@@ -13,7 +13,10 @@ $process = log_rows( 'process', [
 ] );
 ?>
 <section class="hero" id="hero" data-section="map">
-	<div class="hero__map" id="hero-map" aria-hidden="true"></div>
+	<div class="hero__map" id="hero-map" role="region" aria-label="מפת הפרויקטים של לוג. לחיצה על המפה מאפשרת להתקרב בגלילה; Esc סוגר פרויקט פתוח." tabindex="0"></div>
+	<div class="hero-edges" aria-hidden="true"></div>
+	<div class="hero-tip" role="tooltip" hidden></div>
+
 	<div class="hero__copy">
 		<h1 class="hero__title"><?php echo esc_html( log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' ) ); ?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
@@ -22,8 +25,20 @@ $process = log_rows( 'process', [
 			<div><dt>פרויקטים פעילים</dt><dd data-count="<?php echo (int) $stats['projects']; ?>"><?php echo log_number( $stats['projects'] ); ?></dd></div>
 			<div><dt>רשויות</dt><dd data-count="<?php echo (int) $stats['authorities']; ?>"><?php echo log_number( $stats['authorities'] ); ?></dd></div>
 		</dl>
-		<a class="btn btn--primary" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>"><?php echo esc_html( log_text( 'hero_cta', 'כל הפרויקטים' ) ); ?></a>
+		<div class="hero-chips" role="group" aria-label="סינון לפי תחום"></div>
+		<p class="hero-summary" aria-live="polite"></p>
+		<div class="hero__actions">
+			<a class="btn btn--primary" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>"><?php echo esc_html( log_text( 'hero_cta', 'כל הפרויקטים' ) ); ?></a>
+			<a class="btn btn--ghost-dark" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) . '#view=grid' ); ?>">תצוגת רשימה</a>
+		</div>
+		<p class="hero__hint">לחצו על המפה כדי להתקרב בגלילה</p>
 	</div>
+
+	<aside class="hero-panel" hidden aria-label="פרטי הפרויקט"></aside>
+
+	<nav class="hero-list-wrap" aria-label="הפרויקטים על המפה">
+		<ul class="hero-list"></ul>
+	</nav>
 </section>
 
 <section class="section section--who" data-section="who">

@@ -37,7 +37,7 @@ while ( have_posts() ) : the_post();
 	<article class="project">
 		<header class="project__hero">
 			<?php if ( $video = log_field( 'video', $id ) ) : ?>
-				<video class="project__media" src="<?php echo esc_url( $video['url'] ); ?>" muted loop playsinline preload="none" poster="<?php echo esc_url( get_the_post_thumbnail_url( $id, 'log-wide' ) ); ?>"></video>
+				<video class="project__media" src="<?php echo esc_url( $video['url'] ); ?>" muted loop playsinline preload="metadata" poster="<?php echo esc_url( get_the_post_thumbnail_url( $id, 'log-wide' ) ); ?>" aria-hidden="true"></video>
 			<?php elseif ( has_post_thumbnail() ) : ?>
 				<?php the_post_thumbnail( 'log-wide', [ 'class' => 'project__media', 'fetchpriority' => 'high' ] ); ?>
 			<?php endif; ?>
@@ -81,7 +81,7 @@ while ( have_posts() ) : the_post();
 						<h2>תמונות ותרשימים</h2>
 						<div class="gallery__grid">
 							<?php foreach ( $gallery as $img ) : ?>
-								<figure><img src="<?php echo esc_url( $img['sizes']['log-card'] ?? $img['url'] ); ?>" alt="<?php echo esc_attr( $img['alt'] ); ?>" loading="lazy"><?php if ( $img['caption'] ) : ?><figcaption><?php echo esc_html( $img['caption'] ); ?></figcaption><?php endif; ?></figure>
+								<figure><img src="<?php echo esc_url( $img['sizes']['log-card'] ?? $img['url'] ); ?>" data-full="<?php echo esc_url( $img['sizes']['log-wide'] ?? $img['url'] ); ?>" alt="<?php echo esc_attr( $img['alt'] ); ?>" loading="lazy"><?php if ( $img['caption'] ) : ?><figcaption><?php echo esc_html( $img['caption'] ); ?></figcaption><?php endif; ?></figure>
 							<?php endforeach; ?>
 						</div>
 					</section>
@@ -104,9 +104,12 @@ while ( have_posts() ) : the_post();
 					<ul class="partners"><?php foreach ( $partners as $p ) : ?><li><?php echo esc_html( $p['name'] ); ?><?php if ( $p['role'] ) : ?> <span>· <?php echo esc_html( $p['role'] ); ?></span><?php endif; ?></li><?php endforeach; ?></ul>
 				<?php endif; ?>
 				<?php if ( log_field( 'lat', $id ) && ! log_field( 'is_national', $id ) ) : ?>
-					<div class="minimap" data-lat="<?php echo esc_attr( log_field( 'lat', $id ) ); ?>" data-lng="<?php echo esc_attr( log_field( 'lng', $id ) ); ?>"></div>
-					<a class="btn" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) . '#view=map&p=' . $id ); ?>">לראות במפה הגדולה</a>
+					<a class="minimap" data-project="<?php echo $id; ?>" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) . '#view=map&p=' . $id ); ?>" aria-label="מיקום הפרויקט על המפה. לחיצה פותחת את המפה הגדולה."><span class="minimap__cta">לראות במפה הגדולה</span></a>
 				<?php endif; ?>
+				<?php if ( log_field( 'is_control', $id ) ) : ?>
+					<a class="badge badge--control" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">פרויקט בליווי חברת הבקרה</a>
+				<?php endif; ?>
+				<button type="button" class="btn btn--ghost" data-copy-link>העתקת קישור לפרויקט</button>
 			</aside>
 		</div>
 
