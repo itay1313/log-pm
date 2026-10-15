@@ -402,7 +402,7 @@ function log_import_client( string $name, string $body_type, bool $dry, array &$
 		$notes[] = 'יצירת הלקוח נכשלה: ' . $id->get_error_message();
 		return 0;
 	}
-	update_field( 'body_type', $body_type, $id );
+	log_set_field( 'body_type', $body_type, $id );
 	return (int) $id;
 }
 
@@ -536,7 +536,7 @@ function log_import_feature( array $feature, bool $dry ): array {
 			$notes[]       = 'יצירת הפוסט נכשלה: ' . $post_id->get_error_message();
 			return $row;
 		}
-		update_field( 'approved', 0, $post_id );
+		log_set_field( 'approved', 0, $post_id );
 		$row['post_id'] = (int) $post_id;
 		if ( $domain && term_exists( $domain, 'log_domain' ) ) {
 			wp_set_object_terms( $post_id, $domain, 'log_domain', false );
@@ -547,10 +547,10 @@ function log_import_feature( array $feature, bool $dry ): array {
 		$fields['arcgis_id'] = $objectid;
 	}
 	foreach ( $fields as $name => $value ) {
-		update_field( $name, $value, $post_id );
+		log_set_field( $name, $value, $post_id );
 	}
 	if ( $client_id ) {
-		update_field( 'client', $client_id, $post_id );
+		log_set_field( 'client', $client_id, $post_id );
 	}
 	if ( $city !== '' ) {
 		wp_set_object_terms( $post_id, $city, 'log_city', false );
@@ -615,8 +615,6 @@ function log_import_page(): void {
 		$data = log_import_read_upload();
 		if ( is_wp_error( $data ) ) {
 			$error = $data->get_error_message();
-		} elseif ( ! function_exists( 'update_field' ) ) {
-			$error = 'ACF לא פעיל, אי אפשר לכתוב שדות.';
 		} else {
 			if ( function_exists( 'set_time_limit' ) ) {
 				@set_time_limit( 300 );

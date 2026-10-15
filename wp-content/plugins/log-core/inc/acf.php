@@ -87,9 +87,54 @@ function log_option( string $name, $default = null ) {
 function log_set_field( string $name, $value, $post_id ): void {
 	if ( function_exists( 'update_field' ) ) {
 		update_field( $name, $value, $post_id );
-	} elseif ( $post_id === 'option' || $post_id === 'options' ) {
+		return;
+	}
+	// Without ACF, write exactly what ACF would: the value plus the "_name" → field key reference,
+	// so the data is ACF-native the moment ACF Pro is activated.
+	$key = log_acf_field_key( $name, $post_id );
+	if ( $post_id === 'option' || $post_id === 'options' ) {
 		update_option( "options_$name", $value, false );
+		if ( $key ) {
+			update_option( "_options_$name", $key, false );
+		}
 	} else {
 		update_post_meta( (int) $post_id, $name, $value );
+		if ( $key ) {
+			update_post_meta( (int) $post_id, "_$name", $key );
+		}
 	}
+}
+
+/**
+ * Field name → ACF field key, from the versioned acf-json groups (top-level fields), per post type
+ * or options page, since names repeat across groups (e.g. "url" on clients and on social posts).
+ */
+function log_acf_field_key( string $name, $post_id = null ): ?string {
+	static $map = null;
+	if ( $map === null ) {
+		$map = [];
+		foreach ( glob( LOG_CORE_DIR . 'acf-json/*.json' ) ?: [] as $file ) {
+			$group = json_decode( (string) file_get_contents( $file ), true );
+			$scopes = [];
+			foreach ( $group['location'] ?? [] as $or ) {
+				foreach ( $or as $rule ) {
+					if ( ( $rule['param'] ?? '' ) === 'post_type' ) {
+						$scopes[] = $rule['value'];
+					} elseif ( ( $rule['param'] ?? '' ) === 'options_page' ) {
+						$scopes[] = 'option';
+					}
+				}
+			}
+			foreach ( $group['fields'] ?? [] as $f ) {
+				if ( empty( $f['name'] ) ) {
+					continue;
+				}
+				foreach ( $scopes ?: [ '*' ] as $s ) {
+					$map[ $s ][ $f['name'] ] ??= $f['key'];
+				}
+			}
+		}
+	}
+	$scope = ( $post_id === 'option' || $post_id === 'options' ) ? 'option' : ( $post_id ? get_post_type( (int) $post_id ) : '*' );
+	return $map[ $scope ][ $name ] ?? null;
 }
