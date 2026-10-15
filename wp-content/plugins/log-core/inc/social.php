@@ -199,7 +199,7 @@ function log_instagram_maybe_refresh( string $token ): void {
 	}
 	$res = wp_remote_get( add_query_arg( [ 'grant_type' => 'ig_refresh_token', 'access_token' => $token ], LOG_IG_API . '/refresh_access_token' ), [ 'timeout' => 20 ] );
 	$body = is_wp_error( $res ) ? null : json_decode( wp_remote_retrieve_body( $res ), true );
-	if ( ! empty( $body['access_token'] ) && function_exists( 'update_field' ) ) {
+	if ( ! empty( $body['access_token'] ) ) {
 		update_field( 'instagram_token', $body['access_token'], 'option' );
 	}
 	update_option( 'log_instagram_token_time', time(), false );

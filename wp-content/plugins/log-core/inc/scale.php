@@ -64,17 +64,17 @@ function log_stage_from_milestone( ?string $milestone ): ?int {
  * and therefore never fires acf/save_post.
  */
 function log_project_recompute_derived( int $post_id ): void {
-	$stage = log_stage_from_milestone( get_field( 'milestone', $post_id ) ?: null );
+	$stage = log_stage_from_milestone( log_field( 'milestone', $post_id ) ?: null );
 	if ( $stage ) {
-		update_field( 'stage', (string) $stage, $post_id );
+		log_set_field( 'stage', (string) $stage, $post_id );
 	}
 
 	$num = static fn( $v ) => ( $v === '' || $v === null ) ? null : (float) $v;
 	$tier = log_compute_scale(
-		$num( get_field( 'units', $post_id ) ),
-		$num( get_field( 'sqm_employment', $post_id ) ),
-		$num( get_field( 'dunam', $post_id ) ),
-		(bool) get_field( 'is_national', $post_id )
+		$num( log_field( 'units', $post_id ) ),
+		$num( log_field( 'sqm_employment', $post_id ) ),
+		$num( log_field( 'dunam', $post_id ) ),
+		(bool) log_field( 'is_national', $post_id )
 	);
 	wp_set_object_terms( $post_id, $tier, 'log_scale', false );
 }

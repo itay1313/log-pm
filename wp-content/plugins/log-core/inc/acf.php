@@ -76,3 +76,17 @@ function log_field( string $name, $post_id = false, $default = null ) {
 function log_option( string $name, $default = null ) {
 	return log_field( $name, 'option', $default );
 }
+
+/**
+ * Safe field setter: ACF's update_field when ACF is loaded, plain meta otherwise.
+ * Keeps importers and cron jobs working before ACF Pro is installed; ACF reads the same meta later.
+ */
+function log_set_field( string $name, $value, $post_id ): void {
+	if ( function_exists( 'update_field' ) ) {
+		update_field( $name, $value, $post_id );
+	} elseif ( $post_id === 'option' || $post_id === 'options' ) {
+		update_option( "options_$name", $value, false );
+	} else {
+		update_post_meta( (int) $post_id, $name, $value );
+	}
+}
