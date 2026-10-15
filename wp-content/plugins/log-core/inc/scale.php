@@ -45,12 +45,31 @@ function log_compute_scale( ?float $units, ?float $sqm, ?float $dunam, bool $nat
 }
 
 /**
- * Recompute on every save, after ACF has written its fields (ACF saves at priority 10).
+ * Statutory milestone (ArcGIS אבן_דרך, 01–09) → the four-stage ring. See docs/arcgis-mapping.md.
+ * Returns null for "other"/empty so a manual stage is left alone.
+ */
+function log_stage_from_milestone( ?string $milestone ): ?int {
+	return match ( $milestone ) {
+		'01'                     => 1,
+		'02', '03', '04', '05'   => 2,
+		'06', '07', '08'         => 3,
+		'09'                     => 4,
+		default                  => null,
+	};
+}
+
+/**
+ * Recompute derived fields on every save, after ACF has written its own (ACF saves at priority 10).
  */
 add_action( 'acf/save_post', function ( $post_id ) {
 	if ( get_post_type( $post_id ) !== 'log_project' ) {
 		return;
 	}
+	$stage = log_stage_from_milestone( get_field( 'milestone', $post_id ) ?: null );
+	if ( $stage ) {
+		update_field( 'stage', (string) $stage, $post_id );
+	}
+
 	$num = static fn( $v ) => ( $v === '' || $v === null ) ? null : (float) $v;
 	$tier = log_compute_scale(
 		$num( get_field( 'units', $post_id ) ),

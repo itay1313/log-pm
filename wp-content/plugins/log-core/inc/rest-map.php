@@ -51,6 +51,10 @@ function log_build_map_geojson(): array {
 
 	foreach ( $q->posts as $p ) {
 		$id  = $p->ID;
+		// Stopped (03) and cancelled (99) plans never reach the map, even if approved by mistake.
+		if ( in_array( log_field( 'status', $id, '01' ), [ '03', '99' ], true ) ) {
+			continue;
+		}
 		$lat = log_field( 'lat', $id );
 		$lng = log_field( 'lng', $id );
 		$national = (bool) log_field( 'is_national', $id );
@@ -61,6 +65,10 @@ function log_build_map_geojson(): array {
 			'url'      => get_permalink( $p ),
 			'city'     => log_field( 'city', $id, '' ),
 			'stage'    => (int) log_field( 'stage', $id, 1 ),
+			'milestone' => log_field( 'milestone', $id ),
+			'status'   => log_field( 'status', $id, '01' ),
+			'district' => log_field( 'district', $id ),
+			'planType' => log_field( 'plan_type', $id ),
 			'year'     => log_field( 'year', $id ),
 			'units'    => log_field( 'units', $id ),
 			'sqm'      => log_field( 'sqm_employment', $id ),

@@ -24,7 +24,7 @@ function log_twin_state(): string {
  */
 function log_stage_ring( int $stage, bool $with_label = true ): string {
 	$stage = max( 1, min( 4, $stage ) );
-	$labels = [ 1 => 'המתודולוגיה', 2 => 'תכנון סטטוטורי', 3 => 'ליווי ואישור', 4 => 'בקרה ומעקב' ];
+	$labels = [ 1 => 'איתור והיתכנות', 2 => 'תכנון וקידום סטטוטורי', 3 => 'ליווי ואישור', 4 => 'בקרה ומעקב' ];
 	$html = sprintf(
 		'<span class="stage stage--%1$d" role="img" aria-label="שלב %1$d מתוך 4: %2$s"><i></i><i></i><i></i><i></i></span>',
 		$stage,
