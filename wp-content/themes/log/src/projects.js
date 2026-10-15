@@ -32,8 +32,8 @@ export function initProjects() {
       card.hidden = !ok;
       if (ok) shown++;
     }
-    if (mapApi) shown = mapApi.setFeatures((p) => matches(a, p.domain, p.scale) && !p.national) + (national ? national.querySelectorAll('li:not([hidden])').length : 0);
     if (national) for (const li of national.querySelectorAll('li')) li.hidden = !matches(a, li.dataset.domain, li.dataset.scale);
+    if (mapApi) shown = mapApi.setFeatures((p) => matches(a, p.domain, p.scale) && !p.national) + (national ? national.querySelectorAll('li:not([hidden])').length : 0);
     const filtered = a.domain.length || a.scale.length;
     if (count) count.textContent = filtered ? `${shown} פרויקטים` : '';
     if (empty) empty.hidden = shown > 0;
