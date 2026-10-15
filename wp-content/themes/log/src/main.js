@@ -73,6 +73,11 @@ if (grid) {
   boxes.forEach((b) => b.addEventListener('change', apply));
 }
 
+// Forms: contact and apply
+if (document.querySelector('form[data-endpoint]')) {
+  import('./forms.js').then((m) => m.initForms());
+}
+
 // Map: only where a mount point exists, and only once it's near the viewport.
 const mapMount = document.getElementById('hero-map') || document.getElementById('projects-map');
 if (mapMount && window.LOG?.mapbox?.token && !reduced) {

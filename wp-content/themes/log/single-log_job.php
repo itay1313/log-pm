@@ -54,11 +54,18 @@ while ( have_posts() ) : the_post();
 					<?php foreach ( $side as $k => $v ) : ?><div><dt><?php echo esc_html( $k ); ?></dt><dd><?php echo esc_html( $v ); ?></dd></div><?php endforeach; ?>
 				</dl>
 				<?php if ( $open ) : ?>
-					<a class="btn btn--primary" href="<?php echo esc_url( add_query_arg( [ 'topic' => 'jobs', 'job' => $id ], home_url( '/contact/' ) ) ); ?>">הגשת מועמדות</a>
+					<a class="btn btn--primary" href="#apply">הגשת מועמדות</a>
 				<?php endif; ?>
 				<button type="button" class="btn btn--ghost" data-copy-link>העתקת קישור למשרה</button>
 			</aside>
 		</div>
+
+		<?php if ( $open ) : ?>
+			<section class="section section--apply container" id="apply">
+				<h2 class="section__title">הגשת מועמדות: <?php the_title(); ?></h2>
+				<?php get_template_part( 'template-parts/form-apply', null, [ 'job' => $id ] ); ?>
+			</section>
+		<?php endif; ?>
 	</article>
 	<?php
 endwhile;

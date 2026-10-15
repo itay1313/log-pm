@@ -201,6 +201,33 @@ li { list-style: none; }
 .search-group li { padding: .6rem 0; border-bottom: 1px solid var(--line); }
 .search-group .meta { display: block; font-size: .8125rem; color: var(--grey); }
 
+/* Forms */
+.contact { display: grid; grid-template-columns: minmax(0, 3fr) minmax(240px, 2fr); gap: clamp(2rem, 6vw, 6rem); padding-block: 1rem 5rem; }
+@media (max-width: 800px) { .contact { grid-template-columns: 1fr; } }
+.contact__side { display: grid; gap: 1.5rem; align-content: start; }
+.contact__switch { margin-top: 1.5rem; font-size: .9375rem; }
+.form { max-width: 640px; }
+.form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 1rem; margin-bottom: 1.25rem; }
+@media (max-width: 560px) { .form__grid { grid-template-columns: 1fr; } }
+.field { display: grid; gap: .35rem; }
+.field--wide { grid-column: 1 / -1; }
+.field > span { font-family: var(--font-display); font-size: .875rem; font-weight: 500; }
+.field small { color: var(--grey); font-weight: 400; }
+.field input, .field select, .field textarea { font: inherit; padding: .65em .85em; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; color: var(--ink); width: 100%; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--orange); outline-offset: 1px; border-color: var(--orange); }
+.field input[type=file] { padding: .5em; }
+.field .is-invalid { border-color: #c0392b; }
+.field__hint { font-size: .8125rem; color: #c0392b; }
+.check { display: flex; gap: .6rem; align-items: flex-start; font-size: .9375rem; margin-bottom: .75rem; }
+.check input { margin-top: .3em; accent-color: var(--orange); }
+.check .field__hint { display: block; width: 100%; }
+.hp { position: absolute; inset-inline-start: -9999px; width: 1px; height: 1px; opacity: 0; }
+.form__error { color: #c0392b; margin: .75rem 0; }
+.form__success { font-family: var(--font-display); font-size: 1.25rem; padding: 1.5rem; border-inline-start: 3px solid var(--orange); background: #fff; }
+.form__context { color: var(--grey); margin-bottom: 1rem; }
+.form button[type=submit] { margin-top: .5rem; }
+.contact__email a { font-family: var(--font-display); font-size: 1.125rem; text-decoration: none; }
+
 /* Footer */
 .site-footer { border-top: 1px solid var(--line); padding-block: clamp(40px, 6vw, 80px) 2rem; background: #fff; }
 .site-footer__inner { width: min(100% - 2 * var(--gutter), var(--container)); margin-inline: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2.5rem; }
