@@ -12,9 +12,11 @@ if [ -f wp-content/themes/log/package.json ]; then
   (cd wp-content/themes/log && npm run build --silent)
 fi
 
-lftp -u "$USER,$PASS" "ftps://$HOST" <<LFTP
+# Explicit FTPS (AUTH TLS on port 21); the server also requires TLS session reuse on data connections.
+lftp -u "$USER,$PASS" "ftp://$HOST" <<LFTP
 set ftp:ssl-force true
 set ftp:ssl-protect-data true
+set ftp:ssl-auth TLS
 set ssl:verify-certificate no
 set net:timeout 30
 set net:max-retries 2
