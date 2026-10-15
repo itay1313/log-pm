@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+wp-content/themes/log/assets/dist/
+.playground/
+*.log
+.env
