@@ -408,7 +408,12 @@ function log_import_find_project( string $arcgis_id, string $plan_number ): ?int
 		] );
 		return $ids ? (int) $ids[0] : null;
 	};
-	return $find( 'arcgis_id', $arcgis_id ) ?? $find( 'plan_number', $plan_number );
+	// The plan number is only a fallback for features without an OBJECTID: LOG's layer has two
+	// different plans sharing one number (602-1306075), and matching on it would merge them.
+	if ( $arcgis_id !== '' ) {
+		return $find( 'arcgis_id', $arcgis_id );
+	}
+	return $find( 'plan_number', $plan_number );
 }
 
 /** Find-or-create a log_client by name. Returns the post ID, or 0 in a dry run when it would be created. */
