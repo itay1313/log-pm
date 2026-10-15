@@ -1,0 +1,41 @@
+{
+  "key": "group_log_page_control",
+  "title": "חברת הבקרה · תוכן",
+  "fields": [
+    { "key": "field_lc_tab_hero", "label": "פתיחה", "name": "", "type": "tab" },
+    { "key": "field_lcp_eyebrow", "label": "שורה עליונה", "name": "hero_eyebrow", "type": "text", "placeholder": "חברת הבקרה של הרשות הממשלתית להתחדשות עירונית" },
+    { "key": "field_lcp_title", "label": "כותרת", "name": "hero_title", "type": "text", "placeholder": "הזרוע שמנהלת את הידע הלאומי בהתחדשות עירונית." },
+    { "key": "field_lcp_note", "label": "", "name": "", "type": "message", "message": "פסקת \"מה זה אומר\" נכתבת בעורך הרגיל של העמוד. התמונה הראשית היא התמונה הכהה של העיר.", "esc_html": 0 },
+
+    { "key": "field_lc_tab_roles", "label": "שלושה תפקידים", "name": "", "type": "tab" },
+    { "key": "field_lcp_roles_title", "label": "כותרת", "name": "roles_title", "type": "text", "placeholder": "שלושה תפקידים" },
+    { "key": "field_lcp_roles", "label": "התפקידים", "name": "roles", "type": "repeater", "min": 0, "max": 3, "layout": "table", "button_label": "הוספת תפקיד", "sub_fields": [
+      { "key": "field_lcp_role_name", "label": "שם", "name": "name", "type": "text", "wrapper": { "width": "35" } },
+      { "key": "field_lcp_role_text", "label": "פסקה קצרה", "name": "text", "type": "textarea", "rows": 2, "wrapper": { "width": "65" } }
+    ] },
+
+    { "key": "field_lc_tab_method", "label": "איך זה עובד", "name": "", "type": "tab" },
+    { "key": "field_lcp_method_title", "label": "כותרת", "name": "method_title", "type": "text", "placeholder": "איך זה עובד" },
+    { "key": "field_lcp_method", "label": "השלבים", "name": "method", "type": "repeater", "min": 0, "max": 4, "layout": "table", "button_label": "הוספת שלב", "sub_fields": [
+      { "key": "field_lcp_method_name", "label": "שם", "name": "name", "type": "text", "wrapper": { "width": "35" } },
+      { "key": "field_lcp_method_text", "label": "משפט", "name": "text", "type": "text", "wrapper": { "width": "65" } }
+    ] },
+
+    { "key": "field_lc_tab_numbers", "label": "מספרים", "name": "", "type": "tab" },
+    { "key": "field_lcp_numbers_note", "label": "", "name": "", "type": "message", "message": "מוצגים רק מספרים שמולאו, ורק מה שהרשות אישרה לפרסום.", "esc_html": 0 },
+    { "key": "field_lcp_numbers", "label": "מספרים", "name": "numbers", "type": "repeater", "max": 4, "layout": "table", "button_label": "הוספת מספר", "sub_fields": [
+      { "key": "field_lcp_number_value", "label": "מספר", "name": "value", "type": "number", "wrapper": { "width": "40" } },
+      { "key": "field_lcp_number_label", "label": "תווית", "name": "label", "type": "text", "wrapper": { "width": "60" } }
+    ] },
+
+    { "key": "field_lc_tab_partners", "label": "עם מי עובדים", "name": "", "type": "tab" },
+    { "key": "field_lcp_partners_title", "label": "כותרת", "name": "partners_title", "type": "text", "placeholder": "עם מי עובדים" },
+    { "key": "field_lcp_partners", "label": "רשימה", "name": "partners", "type": "textarea", "rows": 4, "instructions": "שורה לכל גוף.", "placeholder": "הרשות הממשלתית להתחדשות עירונית\nמינהלות עירוניות\nמוסדות תכנון\nמשרדי ממשלה" },
+    { "key": "field_lcp_cta", "label": "כפתור פנייה", "name": "cta", "type": "text", "placeholder": "פנייה בנושא הבקרה", "wrapper": { "width": "50" } },
+    { "key": "field_lcp_cta_back", "label": "כפתור חזרה", "name": "cta_back", "type": "text", "placeholder": "לניהול פרויקטים", "wrapper": { "width": "50" } }
+  ],
+  "location": [[{ "param": "page_template", "operator": "==", "value": "page-control.php" }]],
+  "position": "normal",
+  "hide_on_screen": ["discussion", "comments", "author"],
+  "active": true
+}

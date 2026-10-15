@@ -14,8 +14,8 @@ $offices = [
 ];
 ?>
 <?php get_template_part( 'template-parts/page-header', null, [
-	'title' => $topic === 'jobs' ? 'מצאתם את התפקיד שלכם?' : 'נשמח לדבר איתכם.',
-	'lede'  => $topic === 'jobs' ? 'שלחו קורות חיים ונחזור אליכם אם יש התאמה.' : 'שני משרדים, טלפון אחד, ומייל שמישהו באמת קורא.',
+	'title' => $topic === 'jobs' ? log_text( 'jobs_title', 'מצאתם את התפקיד שלכם?' ) : log_text( 'hero_title', 'נשמח לדבר איתכם.' ),
+	'lede'  => $topic === 'jobs' ? log_text( 'jobs_lede', 'שלחו קורות חיים ונחזור אליכם אם יש התאמה.' ) : log_text( 'hero_lede', 'שני משרדים, טלפון אחד, ומייל שמישהו באמת קורא.' ),
 ] ); ?>
 
 <div class="container contact">

@@ -37,10 +37,10 @@ function log_setup_page(): void {
  */
 function log_system_pages(): array {
 	return [
-		'home'          => [ 'בית', 'front-page' ],
-		'control'       => [ 'חברת הבקרה', '' ],
-		'about'         => [ 'אודות והצוות', '' ],
-		'contact'       => [ 'צור קשר', '' ],
+		'home'          => [ 'בית', '' ],
+		'control'       => [ 'חברת הבקרה', 'page-control.php' ],
+		'about'         => [ 'אודות והצוות', 'page-about.php' ],
+		'contact'       => [ 'צור קשר', 'page-contact.php' ],
 		'accessibility' => [ 'הצהרת נגישות', '' ],
 		'privacy'       => [ 'מדיניות פרטיות', '' ],
 	];
@@ -54,7 +54,7 @@ function log_run_setup(): array {
 	$log[] = 'מונחי טקסונומיה: תחומים, מדרגות, סוגי פריטים';
 
 	$ids = [];
-	foreach ( log_system_pages() as $slug => [ $title ] ) {
+	foreach ( log_system_pages() as $slug => [ $title, $template ] ) {
 		$page = get_page_by_path( $slug );
 		if ( ! $page ) {
 			$ids[ $slug ] = wp_insert_post( [
@@ -66,6 +66,10 @@ function log_run_setup(): array {
 			$log[] = "נוצר עמוד: $title (/$slug)";
 		} else {
 			$ids[ $slug ] = $page->ID;
+		}
+		// The template meta is what ACF's "page template" location rule looks at.
+		if ( $template && get_page_template_slug( $ids[ $slug ] ) !== $template ) {
+			update_post_meta( $ids[ $slug ], '_wp_page_template', $template );
 		}
 	}
 

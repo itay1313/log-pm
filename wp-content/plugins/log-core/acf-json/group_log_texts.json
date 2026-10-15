@@ -1,0 +1,41 @@
+{
+  "key": "group_log_texts",
+  "title": "טקסטים · ארכיונים ועמודי מערכת",
+  "fields": [
+    { "key": "field_lt_tab_projects", "label": "פרויקטים", "name": "", "type": "tab" },
+    { "key": "field_lt_projects_title", "label": "כותרת", "name": "projects_title", "type": "text", "placeholder": "מתכננים את המחר" },
+    { "key": "field_lt_projects_lede", "label": "פסקת פתיחה", "name": "projects_lede", "type": "textarea", "rows": 2, "placeholder": "הפרויקטים שלנו: תחומים, קני מידה ופריסה ארצית." },
+
+    { "key": "field_lt_tab_careers", "label": "קריירה", "name": "", "type": "tab" },
+    { "key": "field_lt_careers_title", "label": "כותרת", "name": "careers_title", "type": "text", "placeholder": "בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה." },
+    { "key": "field_lt_careers_lede", "label": "פסקה", "name": "careers_lede", "type": "textarea", "rows": 3 },
+    { "key": "field_lt_careers_culture_title", "label": "איך זה נראה · כותרת", "name": "careers_culture_title", "type": "text", "placeholder": "איך זה נראה אצלנו", "wrapper": { "width": "50" } },
+    { "key": "field_lt_careers_dogs", "label": "בלוק Dog-Friendly", "name": "careers_dogs", "type": "text", "placeholder": "הכלבים מסתובבים חופשי במשרד.", "wrapper": { "width": "50" } },
+    { "key": "field_lt_careers_gallery", "label": "גלריית \"יום רגיל\"", "name": "careers_gallery", "type": "gallery", "return_format": "array", "preview_size": "medium" },
+    { "key": "field_lt_careers_path_title", "label": "מסלול הגיוס · כותרת", "name": "careers_path_title", "type": "text", "placeholder": "מסלול הגיוס" },
+    { "key": "field_lt_careers_path", "label": "מסלול הגיוס · שלבים", "name": "careers_path", "type": "repeater", "max": 4, "layout": "table", "button_label": "הוספת שלב", "sub_fields": [
+      { "key": "field_lt_path_name", "label": "שם", "name": "name", "type": "text", "wrapper": { "width": "35" } },
+      { "key": "field_lt_path_text", "label": "משפט", "name": "text", "type": "text", "wrapper": { "width": "65" } }
+    ] },
+    { "key": "field_lt_careers_jobs_title", "label": "משרות · כותרת", "name": "careers_jobs_title", "type": "text", "placeholder": "הצטרפו אלינו", "wrapper": { "width": "50" } },
+    { "key": "field_lt_careers_empty", "label": "אין משרות · טקסט", "name": "careers_empty", "type": "text", "placeholder": "אין כרגע משרות פתוחות. מוזמנים לשלוח קורות חיים כלליים.", "wrapper": { "width": "50" } },
+    { "key": "field_lt_careers_general", "label": "מועמדות כללית · כפתור", "name": "careers_general", "type": "text", "placeholder": "לא מצאתם את התפקיד שלכם? הגשת מועמדות כללית" },
+
+    { "key": "field_lt_tab_knowledge", "label": "מרכז ידע", "name": "", "type": "tab" },
+    { "key": "field_lt_knowledge_title", "label": "כותרת", "name": "knowledge_title", "type": "text", "placeholder": "מרכז ידע", "wrapper": { "width": "50" } },
+    { "key": "field_lt_knowledge_lede", "label": "משפט", "name": "knowledge_lede", "type": "text", "placeholder": "ניירות עמדה, הודעות לעיתונות, מאחורי הקלעים.", "wrapper": { "width": "50" } },
+
+    { "key": "field_lt_tab_system", "label": "404 וחיפוש", "name": "", "type": "tab" },
+    { "key": "field_lt_404_title", "label": "404 · כותרת", "name": "notfound_title", "type": "text", "placeholder": "הכתובת הזו לא נמצאת במפה.", "wrapper": { "width": "50" } },
+    { "key": "field_lt_404_text", "label": "404 · משפט", "name": "notfound_text", "type": "text", "placeholder": "אולי העמוד זז, אולי הקישור השתבש. הנה שלוש דרכים להמשיך:", "wrapper": { "width": "50" } },
+    { "key": "field_lt_search_empty", "label": "חיפוש · אין תוצאות", "name": "search_empty", "type": "text", "placeholder": "לא נמצא כלום. אפשר לנסות ניסוח אחר, או לפנות אלינו." },
+
+    { "key": "field_lt_tab_header", "label": "כותרת ותחתית", "name": "", "type": "tab" },
+    { "key": "field_lt_header_cta", "label": "כפתור בכותרת", "name": "header_cta", "type": "text", "placeholder": "בואו נדבר", "wrapper": { "width": "50" } },
+    { "key": "field_lt_footer_line", "label": "משפט בתחתית", "name": "footer_line", "type": "text", "placeholder": "מתכננים. מחברים. מובילים.", "wrapper": { "width": "50" } },
+    { "key": "field_lt_twin_projects", "label": "כפתור צמוד · ניהול פרויקטים", "name": "twin_projects", "type": "text", "placeholder": "ניהול פרויקטים", "wrapper": { "width": "50" } },
+    { "key": "field_lt_twin_control", "label": "כפתור צמוד · חברת הבקרה", "name": "twin_control", "type": "text", "placeholder": "חברת הבקרה", "wrapper": { "width": "50" } }
+  ],
+  "location": [[{ "param": "options_page", "operator": "==", "value": "log-texts" }]],
+  "active": true
+}

@@ -26,7 +26,31 @@ add_action( 'acf/init', function () {
 		'icon_url'   => 'dashicons-admin-site-alt3',
 		'redirect'   => false,
 	] );
+	acf_add_options_sub_page( [
+		'page_title'  => 'טקסטים: ארכיונים ועמודי מערכת',
+		'menu_title'  => 'טקסטים',
+		'menu_slug'   => 'log-texts',
+		'parent_slug' => 'log-settings',
+		'capability'  => 'edit_pages',
+	] );
 } );
+
+/**
+ * Text helper for templates: an ACF value if the editor filled it, otherwise the fallback copy.
+ * $post_id false = current post; 'option' = the settings/texts pages.
+ */
+function log_text( string $name, string $fallback, $post_id = false ): string {
+	$v = log_field( $name, $post_id );
+	return is_string( $v ) && trim( $v ) !== '' ? $v : $fallback;
+}
+
+/**
+ * Repeater helper: the editor's rows if any, otherwise the fallback rows.
+ */
+function log_rows( string $name, array $fallback, $post_id = false ): array {
+	$v = log_field( $name, $post_id );
+	return is_array( $v ) && $v ? $v : $fallback;
+}
 
 /**
  * Loud notice when ACF Pro is missing: the whole content model depends on it.

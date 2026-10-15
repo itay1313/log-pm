@@ -4,8 +4,16 @@
  */
 get_header();
 get_template_part( 'template-parts/page-header', null, [
-	'title' => 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.',
+	'title' => log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ),
+	'lede'  => log_text( 'careers_lede', '', 'option' ),
 ] );
+$path = log_rows( 'careers_path', [
+	[ 'name' => 'קורות חיים', 'text' => '' ],
+	[ 'name' => 'שיחת היכרות', 'text' => '' ],
+	[ 'name' => 'משימת בית וראיון מקצועי', 'text' => '' ],
+	[ 'name' => 'ברוכים הבאים', 'text' => '' ],
+], 'option' );
+$gallery = log_field( 'careers_gallery', 'option' );
 
 $jobs = new WP_Query( [
 	'post_type'      => 'log_job',
@@ -18,22 +26,28 @@ $jobs = new WP_Query( [
 ?>
 <div class="container">
 	<section class="section" data-section="culture">
-		<h2 class="section__title">איך זה נראה אצלנו</h2>
-		<p class="placeholder">גלריית "יום רגיל": הצוותים, המשרדים, האירועים והכלבים.</p>
+		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_culture_title', 'איך זה נראה אצלנו', 'option' ) ); ?></h2>
+		<?php if ( is_array( $gallery ) && $gallery ) : ?>
+			<div class="gallery__grid">
+				<?php foreach ( $gallery as $img ) : ?><figure><img src="<?php echo esc_url( $img['sizes']['log-card'] ?? $img['url'] ); ?>" alt="<?php echo esc_attr( $img['alt'] ); ?>" loading="lazy"></figure><?php endforeach; ?>
+			</div>
+		<?php else : ?>
+			<p class="placeholder">גלריית "יום רגיל": הצוותים, המשרדים, האירועים והכלבים.</p>
+		<?php endif; ?>
+		<p class="dogs"><?php echo esc_html( log_text( 'careers_dogs', 'הכלבים מסתובבים חופשי במשרד.', 'option' ) ); ?></p>
 	</section>
 
 	<section class="section" data-section="path">
-		<h2 class="section__title">מסלול הגיוס</h2>
+		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_path_title', 'מסלול הגיוס', 'option' ) ); ?></h2>
 		<ol class="process">
-			<li><?php echo log_stage_ring( 1, false ); ?><h3>קורות חיים</h3></li>
-			<li><?php echo log_stage_ring( 2, false ); ?><h3>שיחת היכרות</h3></li>
-			<li><?php echo log_stage_ring( 3, false ); ?><h3>משימת בית וראיון מקצועי</h3></li>
-			<li><?php echo log_stage_ring( 4, false ); ?><h3>ברוכים הבאים</h3></li>
+			<?php foreach ( array_slice( $path, 0, 4 ) as $i => $step ) : ?>
+				<li><?php echo log_stage_ring( $i + 1, false ); ?><h3><?php echo esc_html( $step['name'] ?? '' ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
+			<?php endforeach; ?>
 		</ol>
 	</section>
 
 	<section class="section" data-section="jobs" id="jobs">
-		<h2 class="section__title">הצטרפו אלינו</h2>
+		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_jobs_title', 'הצטרפו אלינו', 'option' ) ); ?></h2>
 		<?php if ( $jobs->have_posts() ) : ?>
 			<ul class="jobs">
 				<?php while ( $jobs->have_posts() ) : $jobs->the_post();
@@ -48,9 +62,9 @@ $jobs = new WP_Query( [
 				<?php endwhile; wp_reset_postdata(); ?>
 			</ul>
 		<?php else : ?>
-			<p>אין כרגע משרות פתוחות. מוזמנים לשלוח קורות חיים כלליים.</p>
+			<p><?php echo esc_html( log_text( 'careers_empty', 'אין כרגע משרות פתוחות. מוזמנים לשלוח קורות חיים כלליים.', 'option' ) ); ?></p>
 		<?php endif; ?>
-		<a class="btn" href="<?php echo esc_url( home_url( '/contact/?topic=jobs' ) ); ?>">לא מצאתם את התפקיד שלכם? הגשת מועמדות כללית</a>
+		<a class="btn" href="<?php echo esc_url( home_url( '/contact/?topic=jobs' ) ); ?>"><?php echo esc_html( log_text( 'careers_general', 'לא מצאתם את התפקיד שלכם? הגשת מועמדות כללית', 'option' ) ); ?></a>
 	</section>
 </div>
 <?php get_footer();

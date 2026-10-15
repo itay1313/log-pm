@@ -3,7 +3,10 @@
  * /knowledge (spec §12): one lead item, then a list filtered by type.
  */
 get_header();
-get_template_part( 'template-parts/page-header', null, [ 'title' => 'מרכז ידע', 'lede' => 'ניירות עמדה, הודעות לעיתונות, מאחורי הקלעים.' ] );
+get_template_part( 'template-parts/page-header', null, [
+	'title' => log_text( 'knowledge_title', 'מרכז ידע', 'option' ),
+	'lede'  => log_text( 'knowledge_lede', 'ניירות עמדה, הודעות לעיתונות, מאחורי הקלעים.', 'option' ),
+] );
 ?>
 <div class="container">
 	<?php $types = get_terms( [ 'taxonomy' => 'log_knowledge_type', 'hide_empty' => true ] );

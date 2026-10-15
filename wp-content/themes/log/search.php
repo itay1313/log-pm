@@ -14,7 +14,7 @@ while ( have_posts() ) { the_post(); $by_type[ get_post_type() ][] = get_post();
 <div class="container">
 	<?php get_search_form(); ?>
 	<?php if ( ! $by_type ) : ?>
-		<p>לא נמצא כלום. אפשר לנסות ניסוח אחר, או <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">לפנות אלינו</a>.</p>
+		<p><?php echo esc_html( log_text( 'search_empty', 'לא נמצא כלום. אפשר לנסות ניסוח אחר, או לפנות אלינו.', 'option' ) ); ?> <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">צור קשר</a></p>
 	<?php endif; ?>
 	<?php foreach ( $groups as $type => $label ) : if ( empty( $by_type[ $type ] ) ) { continue; } ?>
 		<section class="search-group">

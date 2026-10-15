@@ -5,8 +5,8 @@
  */
 get_header();
 get_template_part( 'template-parts/page-header', null, [
-	'title' => 'מתכננים את המחר',
-	'lede'  => 'הפרויקטים שלנו: תחומים, קני מידה ופריסה ארצית.',
+	'title' => log_text( 'projects_title', 'מתכננים את המחר', 'option' ),
+	'lede'  => log_text( 'projects_lede', 'הפרויקטים שלנו: תחומים, קני מידה ופריסה ארצית.', 'option' ),
 ] );
 ?>
 <div class="container">

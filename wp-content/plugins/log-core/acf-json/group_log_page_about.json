@@ -1,0 +1,38 @@
+{
+  "key": "group_log_page_about",
+  "title": "אודות והצוות · תוכן",
+  "fields": [
+    { "key": "field_la_tab_hero", "label": "פתיחה", "name": "", "type": "tab" },
+    { "key": "field_la_hero_title", "label": "כותרת", "name": "hero_title", "type": "text", "placeholder": "התמונה המלאה מורכבת מהאנשים שלנו." },
+    { "key": "field_la_note", "label": "", "name": "", "type": "message", "message": "פסקת הפתיחה נכתבת בעורך הרגיל של העמוד. התמונה הראשית של העמוד היא תמונת הצוות הגדולה.", "esc_html": 0 },
+
+    { "key": "field_la_tab_groups", "label": "כותרות קבוצות", "name": "", "type": "tab" },
+    { "key": "field_la_owners_label", "label": "בעלים", "name": "owners_label", "type": "text", "placeholder": "הבעלים", "wrapper": { "width": "33" } },
+    { "key": "field_la_management_label", "label": "הנהלה", "name": "management_label", "type": "text", "placeholder": "הנהלה", "wrapper": { "width": "33" } },
+    { "key": "field_la_team_title", "label": "כל הצוות", "name": "team_title", "type": "text", "placeholder": "כל הצוות", "wrapper": { "width": "34" } },
+
+    { "key": "field_la_tab_values", "label": "ערכים", "name": "", "type": "tab" },
+    { "key": "field_la_values_title", "label": "כותרת", "name": "values_title", "type": "text", "placeholder": "מתכננים. מחברים. מובילים." },
+    { "key": "field_la_values", "label": "ארבעת הערכים", "name": "values", "type": "repeater", "min": 0, "max": 4, "layout": "block", "button_label": "הוספת ערך", "sub_fields": [
+      { "key": "field_la_value_name", "label": "שם הערך", "name": "name", "type": "text", "wrapper": { "width": "30" } },
+      { "key": "field_la_value_line", "label": "משפט", "name": "line", "type": "text", "wrapper": { "width": "70" } },
+      { "key": "field_la_value_p1", "label": "פרקטיקה 1", "name": "practice_1", "type": "text", "wrapper": { "width": "50" } },
+      { "key": "field_la_value_p2", "label": "פרקטיקה 2", "name": "practice_2", "type": "text", "wrapper": { "width": "50" } }
+    ] },
+
+    { "key": "field_la_tab_offices", "label": "המשרדים", "name": "", "type": "tab" },
+    { "key": "field_la_offices_title", "label": "כותרת", "name": "offices_title", "type": "text", "placeholder": "המשרדים", "wrapper": { "width": "50" } },
+    { "key": "field_la_offices_line", "label": "שורה מתחת", "name": "offices_line", "type": "text", "placeholder": "כולל הכלבים.", "wrapper": { "width": "50" } },
+    { "key": "field_la_gallery_jlm", "label": "גלריה · ירושלים", "name": "gallery_jlm", "type": "gallery", "return_format": "array", "preview_size": "medium", "wrapper": { "width": "50" } },
+    { "key": "field_la_gallery_tlv", "label": "גלריה · תל אביב", "name": "gallery_tlv", "type": "gallery", "return_format": "array", "preview_size": "medium", "wrapper": { "width": "50" } },
+
+    { "key": "field_la_tab_cta", "label": "סיום", "name": "", "type": "tab" },
+    { "key": "field_la_clients_title", "label": "לקוחות · כותרת", "name": "clients_title", "type": "text", "placeholder": "לקוחות ושותפים" },
+    { "key": "field_la_cta_careers", "label": "כפתור קריירה", "name": "cta_careers", "type": "text", "placeholder": "קריירה בלוג", "wrapper": { "width": "50" } },
+    { "key": "field_la_cta_contact", "label": "כפתור צור קשר", "name": "cta_contact", "type": "text", "placeholder": "צור קשר", "wrapper": { "width": "50" } }
+  ],
+  "location": [[{ "param": "page_template", "operator": "==", "value": "page-about.php" }]],
+  "position": "normal",
+  "hide_on_screen": ["discussion", "comments", "author"],
+  "active": true
+}
