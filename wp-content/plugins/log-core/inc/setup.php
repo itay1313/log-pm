@@ -133,6 +133,21 @@ function log_run_setup(): array {
 		}
 	}
 
+	// Yoast titles for the CPT archives (its default is "X Archive").
+	$yoast = get_option( 'wpseo_titles' );
+	if ( is_array( $yoast ) ) {
+		$yoast['title-ptarchive-log_project']   = 'הפרויקטים שלנו %%sep%% %%sitename%%';
+		$yoast['metadesc-ptarchive-log_project'] = 'כל הפרויקטים של לוג ניהול פרויקטים: תחומים, קני מידה ופריסה ארצית, על המפה ובגלריה.';
+		$yoast['title-ptarchive-log_job']       = 'קריירה ומשרות פתוחות %%sep%% %%sitename%%';
+		$yoast['metadesc-ptarchive-log_job']    = 'בואו לעבוד בלוג: המשרות הפתוחות, מסלול הגיוס והערכים שלנו.';
+		$yoast['title-ptarchive-log_knowledge'] = 'מרכז ידע %%sep%% %%sitename%%';
+		$yoast['metadesc-ptarchive-log_knowledge'] = 'ניירות עמדה, הודעות לעיתונות ומאחורי הקלעים של התכנון העירוני בישראל.';
+		$yoast['title-search-wpseo']            = 'תוצאות חיפוש עבור %%searchphrase%% %%sep%% %%sitename%%';
+		$yoast['title-404-wpseo']               = 'העמוד לא נמצא %%sep%% %%sitename%%';
+		update_option( 'wpseo_titles', $yoast );
+		$log[] = 'כותרות Yoast לארכיונים, חיפוש ו-404';
+	}
+
 	flush_rewrite_rules();
 	$log[] = 'Rewrite rules רועננו';
 	return $log;

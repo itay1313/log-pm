@@ -111,6 +111,14 @@ function log_register_post_types(): void {
 add_action( 'init', 'log_register_post_types' );
 
 /**
+ * Classic editor for the structured types: the ACF fields are the content, the body is a footnote.
+ * Knowledge items keep the block editor since they're long-form.
+ */
+add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $type ): bool {
+	return in_array( $type, [ 'log_project', 'log_job', 'log_person', 'log_client' ], true ) ? false : $use;
+}, 10, 2 );
+
+/**
  * Projects and knowledge items show up in site search; people and clients never do.
  * Posts (the blog) are not part of this site, so they're excluded too.
  */
