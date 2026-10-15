@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const LOG_MAP_TRANSIENT = 'log_map_geojson_v1';
+const LOG_MAP_TRANSIENT = 'log_map_geojson_v2';
 
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'log/v1', '/map', [
@@ -79,7 +79,8 @@ function log_build_map_geojson(): array {
 			'featured' => (bool) log_field( 'featured', $id ),
 			'control'  => (bool) log_field( 'is_control', $id ),
 			'national' => $national,
-			'image'    => get_the_post_thumbnail_url( $id, 'medium' ) ?: null,
+			'image'    => get_the_post_thumbnail_url( $id, 'log-card' ) ?: null,
+			'excerpt'  => log_short_text( $p ),
 		];
 
 		// National plans have no single location: they ride along with null geometry
@@ -110,6 +111,14 @@ function log_build_map_geojson(): array {
 		'generated' => gmdate( 'c' ),
 		'features'  => $features,
 	];
+}
+
+/**
+ * Short text for the hero card: the excerpt if written, else the challenge, else the solution. ~22 words.
+ */
+function log_short_text( WP_Post $p ): string {
+	$text = has_excerpt( $p ) ? $p->post_excerpt : ( log_field( 'challenge', $p->ID ) ?: log_field( 'solution', $p->ID, '' ) );
+	return wp_trim_words( wp_strip_all_tags( (string) $text ), 22, '…' );
 }
 
 function log_first_term_slug( int $post_id, string $tax ): ?string {

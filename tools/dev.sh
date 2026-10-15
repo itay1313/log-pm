@@ -5,6 +5,12 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# LOG's ArcGIS export (client data, git-ignored) is mounted only when present.
+PRIVATE=()
+if [ -f tools/fixtures/private/blue_lines_main.geojson ]; then
+  PRIVATE=(--mount=./tools/fixtures/private/blue_lines_main.geojson:/wordpress/wp-content/mu-plugins/blue_lines_main.geojson)
+fi
+
 npx --yes @wp-playground/cli@latest server \
   --port=8881 \
   --blueprint=tools/playground.json \
@@ -12,4 +18,5 @@ npx --yes @wp-playground/cli@latest server \
   --mount=./wp-content/plugins/log-core:/wordpress/wp-content/plugins/log-core \
   --mount=./tools/dev-mu/log-dev-tests.php:/wordpress/wp-content/mu-plugins/log-dev-tests.php \
   --mount=./tools/fixtures/instagram-sample.json:/wordpress/wp-content/mu-plugins/instagram-sample.json \
+  ${PRIVATE[@]+"${PRIVATE[@]}"} \
   "$@"

@@ -1,138 +1,283 @@
 /**
- * Home hero (spec §7): the full-screen project map with its chrome.
- *  - domain chips filter the map and the counts
- *  - hover: ring grows + a name tooltip follows the cursor
- *  - select: camera tilts and flies in, a side panel opens (bottom sheet on phones), Esc / "חזרה למפה" returns
- *  - edge dots: projects outside the view sit on the screen edge in their direction, click to fly there
- *  - keyboard: every project is a real <button> in a list; Tab reaches them, Enter selects
+ * Home hero (spec §7): the 3D map and its interface.
+ *
+ *  - pins from the CMS (/log/v1/map), clustered with counts while far away
+ *  - hover/focus a pin: a card (image, place, title, short text, button) — statskog-style
+ *  - click a pin: the camera dives in and the city rises; click the card's button: ring + wipe into the project
+ *  - edge counters: how many projects lie beyond each edge of the screen, click to go there
+ *  - bottom bar: compass (reset), scale, "all projects" drawer with domain chips
+ *  - city names at the national level; the hero copy steps aside once you start exploring
+ *  - wheel zooms the map only after a click on it, so the page keeps scrolling
  */
-import { mount } from './map.js';
+import { createScene } from './hero/scene.js';
+import { leave } from './hero/transition.js';
+import { toLocal } from './hero/geo.js';
 
 const DOMAIN_LABEL = {
   'urban-renewal': 'התחדשות עירונית', 'master-plans': 'תכניות מתאר', 'detailed-plans': 'תכניות מפורטות',
   'national-plans': 'תכניות לאומיות', 'open-spaces': 'שטחים פתוחים', 'rural-arab': 'המגזר הכפרי והחברה הערבית',
 };
 const STAGE_LABEL = { 1: 'איתור והיתכנות', 2: 'תכנון וקידום סטטוטורי', 3: 'ליווי ואישור', 4: 'בקרה ומעקב' };
-const SCALE_LABEL = { s: 'S', m: 'M', l: 'L', xl: 'XL' };
 const fmt = new Intl.NumberFormat('he-IL');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const CLUSTER_PX = 46;
+const clusterPx = (r) => (r > 150000 ? 64 : r > 30000 ? 54 : CLUSTER_PX);
 
 export async function initHero(hero) {
-  const mapEl = hero.querySelector('#hero-map');
-  const panel = hero.querySelector('.hero-panel');
-  const tooltip = hero.querySelector('.hero-tip');
-  const chips = hero.querySelector('.hero-chips');
-  const edges = hero.querySelector('.hero-edges');
-  const list = hero.querySelector('.hero-list');
-  const summary = hero.querySelector('.hero-summary');
+  const stage = hero.querySelector('.hero-stage');
+  const pinsEl = hero.querySelector('.hero-pins');
+  const labelsEl = hero.querySelector('.hero-labels');
+  const edgesEl = hero.querySelector('.hero-edges');
+  const card = hero.querySelector('.hero-card');
+  const drawer = hero.querySelector('.hero-drawer');
+  const compass = hero.querySelector('.hero-compass');
+  const scaleEl = hero.querySelector('.hero-scale');
+  const allBtn = hero.querySelector('.hero-all');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!webgl()) { hero.classList.add('no-webgl'); return; }
+
+  const [scene, data] = await Promise.all([
+    createScene(stage, { reduced }),
+    fetch(`${window.LOG.rest}map`).then((r) => r.json()),
+  ]);
+
+  // Projects with a place on the map
+  const all = data.features
+    .filter((f) => f.geometry && !f.properties.national)
+    .map((f) => { const [x, z] = toLocal(...f.geometry.coordinates); return { id: f.id, p: f.properties, x, z }; });
   let active = '';
-  let order = [];
-  let selected = null;
+  const shown = () => all.filter((it) => !active || it.p.domain === active);
+  scene.setPlans(data.features.filter((f) => !active || f.properties.domain === active));
+  if (allBtn) allBtn.querySelector('span').textContent = fmt.format(all.length);
 
-  const api = await mount(mapEl, {
-    theme: 'dark', hero: true,
-    onHover: (p, point) => {
-      if (!p) { tooltip.hidden = true; return; }
-      tooltip.textContent = p.city && !p.title.includes(p.city) ? `${p.title} · ${p.city}` : p.title;
-      tooltip.style.transform = `translate(${point.x}px, ${point.y}px)`;
-      tooltip.hidden = false;
-    },
-    onSelect: (p) => openPanel(p),
-    onMove: () => drawEdges(),
-  });
   hero.classList.add('is-ready');
+  window.LOGhero = scene;
 
-  const visible = () => api.all.features.filter((f) => f.geometry && (!active || f.properties.domain === active));
+  // Arm wheel-zoom on click; disarm when the pointer leaves.
+  stage.addEventListener('pointerdown', () => { scene.controls.enableZoom = true; hero.classList.add('is-armed'); scene.stopDrift(); });
+  hero.addEventListener('pointerleave', () => { scene.controls.enableZoom = false; hero.classList.remove('is-armed'); });
+  scene.controls.addEventListener('start', () => { scene.stopDrift(); closeCard(); });
 
-  function applyFilter() {
-    api.setFeatures((p) => (!active || p.domain === active) && !p.national);
-    order = visible().map((f) => f.id);
-    const units = visible().reduce((s, f) => s + (Number(f.properties.units) || 0), 0);
-    if (summary) summary.innerHTML = `<strong>${fmt.format(order.length)}</strong> פרויקטים · <strong>${fmt.format(units)}</strong> יח"ד`;
-    buildList();
-    closePanel({ keepCamera: true });
+  // Pins: a pool of DOM nodes re-laid out every frame.
+  const pool = [];
+  function pinNode(i) {
+    if (!pool[i]) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'hero-pin';
+      b.innerHTML = '<span class="hero-pin__shape" aria-hidden="true"></span><span class="hero-pin__count" aria-hidden="true"></span>';
+      pinsEl.appendChild(b);
+      b.addEventListener('mouseenter', () => b._item && openCard(b._item, b));
+      b.addEventListener('focus', () => b._item && openCard(b._item, b));
+      b.addEventListener('mouseleave', () => scheduleClose());
+      b.addEventListener('click', () => {
+        if (b._cluster) return scene.fit(b._cluster.map((it) => [it.x, it.z]));
+        if (b._item) { scene.flyTo(b._item.x, b._item.z); openCard(b._item, b); }
+      });
+      pool[i] = b;
+    }
+    return pool[i];
   }
 
-  // Chips
-  if (chips) {
-    const domains = [...new Set(api.all.features.map((f) => f.properties.domain).filter(Boolean))];
-    chips.innerHTML = `<button type="button" class="chip is-active" data-domain="" aria-pressed="true">הכל</button>` +
-      domains.map((d) => `<button type="button" class="chip" data-domain="${esc(d)}" aria-pressed="false">${esc(DOMAIN_LABEL[d] || d)}</button>`).join('');
-    chips.addEventListener('click', (e) => {
-      const b = e.target.closest('.chip');
-      if (!b) return;
-      active = b.dataset.domain;
-      chips.querySelectorAll('.chip').forEach((c) => { const on = c === b; c.classList.toggle('is-active', on); c.setAttribute('aria-pressed', String(on)); });
-      applyFilter();
+  let cardItem = null, cardPin = null, closeTimer = 0;
+  function openCard(item, pin) {
+    clearTimeout(closeTimer);
+    if (cardItem?.id === item.id) return;
+    cardItem = item; cardPin = pin;
+    const p = item.p;
+    const st = Math.min(4, Math.max(1, Number(p.stage) || 1));
+    const figure = p.units ? `${fmt.format(p.units)} יח"ד` : p.dunam ? `${fmt.format(p.dunam)} דונם` : '';
+    card.innerHTML = `
+      <div class="hero-card__media">${p.image ? `<img src="${esc(p.image)}" alt="">` : `<span class="hero-card__ring stage stage--${st}"><i></i><i></i><i></i><i></i></span>`}</div>
+      <div class="hero-card__body">
+        <p class="hero-card__meta">${esc([p.city, DOMAIN_LABEL[p.domain]].filter(Boolean).join(' · '))}</p>
+        <h3 class="hero-card__title">${esc(p.title)}</h3>
+        ${p.excerpt ? `<p class="hero-card__text">${esc(p.excerpt)}</p>` : ''}
+        <p class="hero-card__figures">${[figure, `שלב ${st} מתוך 4 · ${STAGE_LABEL[st]}`].filter(Boolean).map(esc).join(' <span>·</span> ')}</p>
+        <a class="hero-card__go" href="${esc(p.url)}"><span>לסיפור הפרויקט</span><i aria-hidden="true">←</i></a>
+      </div>`;
+    card.hidden = false;
+    card.classList.remove('is-in');
+    requestAnimationFrame(() => card.classList.add('is-in'));
+    placeCard();
+  }
+  function scheduleClose() { clearTimeout(closeTimer); closeTimer = setTimeout(closeCard, 320); }
+  function closeCard() { clearTimeout(closeTimer); card.hidden = true; card.classList.remove('is-in'); cardItem = null; cardPin = null; }
+  card.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  card.addEventListener('mouseleave', scheduleClose);
+  card.addEventListener('click', (e) => {
+    const go = e.target.closest('.hero-card__go');
+    if (!go || !cardItem) return;
+    e.preventDefault();
+    const s = scene.toScreen(cardItem.x, cardItem.z);
+    const rect = stage.getBoundingClientRect();
+    scene.flyTo(cardItem.x, cardItem.z, { radius: 650, phi: 1.08, duration: 1.8 });
+    leave(go.href, { x: rect.left + (s?.x ?? rect.width / 2), y: rect.top + (s?.y ?? rect.height / 2), title: cardItem.p.title });
+  });
+  function placeCard() {
+    if (!cardItem || card.hidden) return;
+    const s = scene.toScreen(cardItem.x, cardItem.z);
+    if (!s) return closeCard();
+    const W = stage.clientWidth, H = stage.clientHeight, cw = card.offsetWidth, ch = card.offsetHeight;
+    const left = s.x > W / 2 ? s.x - cw - 34 : s.x + 34;
+    const top = Math.min(H - ch - 16, Math.max(16, s.y - ch / 2));
+    card.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+  }
+
+  // City names at the national level: only cities where LOG works, from the CMS, sized by count.
+  const cities = (() => {
+    const m = new Map();
+    for (const it of all) {
+      const c = it.p.city;
+      if (!c) continue;
+      const e = m.get(c) || { name: c, x: 0, z: 0, n: 0 };
+      e.x += it.x; e.z += it.z; e.n++;
+      m.set(c, e);
+    }
+    return [...m.values()].map((e) => ({ ...e, x: e.x / e.n, z: e.z / e.n })).sort((a, b) => b.n - a.n).slice(0, 12);
+  })();
+  labelsEl.innerHTML = cities.map((c) => `<span class="hero-label" data-n="${c.n}">${esc(c.name)}</span>`).join('');
+  const labelNodes = [...labelsEl.children];
+  function layoutLabels(r) {
+    const op = r > 120000 ? Math.min(1, (r - 120000) / 90000) : 0;
+    labelsEl.style.opacity = op;
+    if (!op) return;
+    cities.forEach((c, i) => {
+      const s = scene.toScreen(c.x, c.z);
+      labelNodes[i].style.display = s ? '' : 'none';
+      if (s) labelNodes[i].style.transform = `translate(${Math.round(s.x)}px, ${Math.round(s.y + 30)}px)`;
     });
   }
 
-  // Keyboard list
-  function buildList() {
-    if (!list) return;
-    list.innerHTML = visible().map((f) => `<li><button type="button" data-id="${f.id}">${esc(f.properties.title)}${f.properties.city ? ` · ${esc(f.properties.city)}` : ''}</button></li>`).join('');
-  }
-  list?.addEventListener('click', (e) => { const b = e.target.closest('button[data-id]'); if (b) api.focus(Number(b.dataset.id)); });
-
-  // Panel
-  function openPanel(p) {
-    selected = p.id;
-    const stage = Math.min(4, Math.max(1, Number(p.stage) || 1));
-    const meta = [p.domain && DOMAIN_LABEL[p.domain], p.city, SCALE_LABEL[p.scale]].filter(Boolean).join(' · ');
-    const figure = p.units ? `<strong>${fmt.format(p.units)}</strong> יח"ד` : p.dunam ? `<strong>${fmt.format(p.dunam)}</strong> דונם` : '';
-    const idx = order.indexOf(p.id);
-    const next = order.length > 1 ? order[(idx + 1) % order.length] : null;
-    panel.innerHTML = `
-      <button type="button" class="hero-panel__close" aria-label="סגירה">×</button>
-      ${p.image ? `<img class="hero-panel__img" src="${esc(p.image)}" alt="">` : '<div class="hero-panel__img hero-panel__img--empty"></div>'}
-      <div class="hero-panel__body">
-        <span class="stage stage--${stage}" role="img" aria-label="שלב ${stage} מתוך 4: ${STAGE_LABEL[stage]}"><i></i><i></i><i></i><i></i></span>
-        <span class="hero-panel__stage">שלב ${stage} מתוך 4 · ${STAGE_LABEL[stage]}</span>
-        <p class="hero-panel__meta">${esc(meta)}</p>
-        <h3 class="hero-panel__title">${esc(p.title)}</h3>
-        <p class="hero-panel__figure">${figure}${p.year ? ` <span>${esc(p.year)}</span>` : ''}</p>
-        <div class="hero-panel__actions">
-          <a class="btn btn--primary" href="${esc(p.url)}">לעמוד המלא</a>
-          ${next ? `<button type="button" class="btn btn--dark" data-next="${next}">הפרויקט הבא</button>` : ''}
-          <button type="button" class="btn btn--ghost-dark" data-back>חזרה למפה</button>
-        </div>
-      </div>`;
-    panel.hidden = false;
-    hero.classList.add('has-panel');
-    panel.querySelector('.btn--primary').focus({ preventScroll: true });
-  }
-  function closePanel({ keepCamera = false } = {}) {
-    if (panel.hidden) return;
-    panel.hidden = true;
-    hero.classList.remove('has-panel');
-    selected = null;
-    if (keepCamera) api.deselect(); else api.reset();
-  }
-  panel.addEventListener('click', (e) => {
-    if (e.target.closest('.hero-panel__close') || e.target.closest('[data-back]')) closePanel();
-    const n = e.target.closest('[data-next]');
-    if (n) api.focus(Number(n.dataset.next));
-  });
-  hero.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
-
-  // Edge dots for off-screen projects
-  function drawEdges() {
-    if (!edges) return;
-    const b = api.bounds();
-    const w = mapEl.clientWidth, h = mapEl.clientHeight, cx = w / 2, cy = h / 2, pad = 18;
-    const out = visible().filter((f) => !b.contains(f.geometry.coordinates));
-    if (api.map.getZoom() < 7.2) out.length = 0; // whole country in view: nothing is "outside"
-    edges.innerHTML = out.slice(0, 12).map((f) => {
-      const pt = api.project(f.geometry.coordinates);
-      const dx = pt.x - cx, dy = pt.y - cy;
-      const k = Math.min((cx - pad) / Math.abs(dx || 1), (cy - pad) / Math.abs(dy || 1));
-      const x = cx + dx * k, y = cy + dy * k;
-      return `<button type="button" class="hero-edge" style="transform:translate(${x.toFixed(0)}px,${y.toFixed(0)}px)" data-id="${f.id}" aria-label="${esc(f.properties.title)}" title="${esc(f.properties.title)}"></button>`;
+  // Edge counters for what's off-screen
+  function layoutEdges(offscreen) {
+    const W = stage.clientWidth, H = stage.clientHeight, cx = W / 2, cy = H / 2, pad = 30;
+    const buckets = new Map();
+    for (const { it, s } of offscreen) {
+      const dx = (s ? s.x : it._sx) - cx, dy = (s ? s.y : it._sy) - cy;
+      const k = Math.min((cx - pad) / Math.abs(dx || 1e-6), (cy - pad) / Math.abs(dy || 1e-6));
+      const ex = cx + dx * k, ey = cy + dy * k;
+      const key = `${Math.round(ex / 160)}:${Math.round(ey / 160)}`;
+      const b = buckets.get(key) || { x: 0, y: 0, items: [] };
+      b.x += ex; b.y += ey; b.items.push(it);
+      buckets.set(key, b);
+    }
+    const list = [...buckets.values()];
+    edgesEl.innerHTML = list.map((b, i) => {
+      const x = b.x / b.items.length, y = b.y / b.items.length;
+      const ang = Math.atan2(y - cy, x - cx) * 180 / Math.PI + 90;
+      return `<button type="button" class="hero-edge" data-i="${i}" style="transform:translate(${x.toFixed(0)}px,${y.toFixed(0)}px)" aria-label="${b.items.length} פרויקטים בכיוון הזה"><i style="transform:rotate(${ang.toFixed(0)}deg)"></i><span>${b.items.length}</span></button>`;
     }).join('');
+    edgesEl._buckets = list;
   }
-  edges?.addEventListener('click', (e) => { const b = e.target.closest('.hero-edge'); if (b) api.focus(Number(b.dataset.id)); });
+  edgesEl.addEventListener('click', (e) => {
+    const b = e.target.closest('.hero-edge');
+    if (b) scene.fit(edgesEl._buckets[Number(b.dataset.i)].items.map((it) => [it.x, it.z]));
+  });
 
-  applyFilter();
-  mapEl.addEventListener('log:map-ready', drawEdges, { once: true });
-  window.LOGhero = api;
+  // Per-frame layout
+  let edgeTick = 0;
+  scene.onFrame((r) => {
+    const W = stage.clientWidth, H = stage.clientHeight;
+    const vis = [], off = [];
+    for (const it of shown()) {
+      const s = scene.toScreen(it.x, it.z);
+      if (s && s.x > -10 && s.x < W + 10 && s.y > -10 && s.y < H + 10) vis.push({ it, s });
+      else off.push({ it, s });
+    }
+    // Greedy screen-space clustering
+    const clusters = [];
+    for (const v of vis) {
+      const px = clusterPx(r);
+      const c = clusters.find((c) => Math.abs(c.x - v.s.x) < px && Math.abs(c.y - v.s.y) < px);
+      if (c) { c.items.push(v.it); c.x = (c.x * (c.items.length - 1) + v.s.x) / c.items.length; c.y = (c.y * (c.items.length - 1) + v.s.y) / c.items.length; }
+      else clusters.push({ x: v.s.x, y: v.s.y, items: [v.it] });
+    }
+    clusters.forEach((c, i) => {
+      const b = pinNode(i);
+      const single = c.items.length === 1;
+      b._item = single ? c.items[0] : null;
+      b._cluster = single ? null : c.items;
+      b.classList.toggle('is-cluster', !single);
+      b.classList.toggle('is-active', single && cardItem?.id === c.items[0].id);
+      b.querySelector('.hero-pin__count').textContent = single ? '' : c.items.length;
+      b.setAttribute('aria-label', single ? `${c.items[0].p.title}${c.items[0].p.city ? `, ${c.items[0].p.city}` : ''}` : `${c.items.length} פרויקטים`);
+      b.style.transform = `translate(${Math.round(c.x)}px, ${Math.round(c.y)}px)`;
+      b.hidden = false;
+      if (single && cardItem?.id === c.items[0].id) cardPin = b;
+    });
+    for (let i = clusters.length; i < pool.length; i++) pool[i].hidden = true;
+
+    if (++edgeTick % 6 === 0) layoutEdges(off);
+    placeCard();
+    layoutLabels(r);
+    hero.classList.toggle('is-exploring', r < scene.national.radius * 0.55);
+
+    if (compass) compass.style.setProperty('--rot', `${(-scene.theta() * 180) / Math.PI}deg`);
+    if (scaleEl) {
+      const m = scene.metresPerPixel() * 80;
+      const nice = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000].find((n) => n >= m) || 100000;
+      scaleEl.style.setProperty('--w', `${(80 * nice) / m}px`);
+      scaleEl.querySelector('span').textContent = nice >= 1000 ? `${nice / 1000} ק"מ` : `${nice} מ'`;
+    }
+  });
+
+  // Bottom bar
+  compass?.addEventListener('click', () => { closeCard(); scene.home(); });
+  allBtn?.addEventListener('click', () => {
+    const open = drawer.hidden;
+    drawer.hidden = !open;
+    allBtn.setAttribute('aria-expanded', String(open));
+    if (open) renderDrawer();
+  });
+  function renderDrawer() {
+    const domains = [...new Set(all.map((it) => it.p.domain).filter(Boolean))];
+    const byCity = new Map();
+    for (const it of shown()) { const c = it.p.city || 'ללא עיר'; byCity.set(c, [...(byCity.get(c) || []), it]); }
+    drawer.innerHTML = `
+      <div class="hero-drawer__chips" role="group" aria-label="סינון לפי תחום">
+        <button type="button" class="chip${active ? '' : ' is-active'}" data-domain="" aria-pressed="${!active}">הכל</button>
+        ${domains.map((d) => `<button type="button" class="chip${active === d ? ' is-active' : ''}" data-domain="${esc(d)}" aria-pressed="${active === d}">${esc(DOMAIN_LABEL[d] || d)}</button>`).join('')}
+      </div>
+      <div class="hero-drawer__list">
+        ${[...byCity.entries()].sort((a, b) => b[1].length - a[1].length).map(([city, items]) => `
+          <section><h4>${esc(city)} <span>${items.length}</span></h4>
+          <ul>${items.map((it) => `<li><button type="button" data-id="${it.id}">${esc(it.p.title)}</button></li>`).join('')}</ul></section>`).join('')}
+      </div>`;
+  }
+  drawer?.addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (chip) {
+      active = chip.dataset.domain;
+      scene.setPlans(data.features.filter((f) => !active || f.properties.domain === active));
+      renderDrawer();
+      return;
+    }
+    const b = e.target.closest('button[data-id]');
+    if (b) {
+      const it = all.find((x) => x.id === Number(b.dataset.id));
+      drawer.hidden = true;
+      allBtn.setAttribute('aria-expanded', 'false');
+      scene.flyTo(it.x, it.z).then(() => { const pin = pool.find((p) => p._item?.id === it.id); if (pin) openCard(it, pin); });
+    }
+  });
+  hero.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!drawer.hidden) { drawer.hidden = true; allBtn.setAttribute('aria-expanded', 'false'); allBtn.focus(); }
+    else if (!card.hidden) closeCard();
+  });
+
+  // Pause when off-screen or hidden
+  new IntersectionObserver(([e]) => (e.isIntersecting ? scene.resume() : scene.pause())).observe(hero);
+  document.addEventListener('visibilitychange', () => (document.hidden ? scene.pause() : scene.resume()));
+
+  hero.classList.add('is-intro');
+  await scene.intro();
+  hero.classList.remove('is-intro');
+  window.LOGhero = scene;
+}
+
+function webgl() {
+  try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
 }

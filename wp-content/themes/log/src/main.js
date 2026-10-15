@@ -77,13 +77,21 @@ if (document.querySelector('form[data-endpoint]')) {
   import('./forms.js').then((m) => m.initForms());
 }
 
+// Arriving through the hero's ring transition
+if (document.documentElement.classList.contains('is-wiping')) {
+  import('./hero/transition.js').then((m) => m.enter()).catch(() => document.documentElement.classList.remove('is-wiping'));
+}
+
 // Project page: mini-map, lightbox, video in view
 if (document.querySelector('.project')) {
   import('./project.js').then((m) => m.initProject());
 }
 
-// Home hero: the full-screen project map. Reduced-motion users get the static copy and the list link.
+// Home hero: the 3D map. Reduced-motion users get the static copy and the list link.
 const hero = document.getElementById('hero');
-if (hero && !reduced) {
-  import('./hero.js').then((m) => m.initHero(hero)).catch(console.error);
+if (hero) {
+  // Header and twin buttons sit on the map (light) until the hero scrolls away.
+  document.body.classList.add('over-hero');
+  new IntersectionObserver(([e]) => document.body.classList.toggle('over-hero', e.intersectionRatio > 0.12), { threshold: [0, 0.12, 0.5] }).observe(hero);
+  if (!reduced) import('./hero.js').then((m) => m.initHero(hero)).catch((err) => { console.error(err); hero.classList.add('no-webgl'); });
 }

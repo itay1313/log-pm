@@ -10,6 +10,9 @@ export default defineConfig({
       input: 'src/main.js',
     },
   },
+  worker: {
+    format: 'es',
+  },
   server: {
     port: 5173,
     strictPort: true,

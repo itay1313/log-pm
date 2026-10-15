@@ -4,17 +4,17 @@
  */
 get_header();
 while ( have_posts() ) : the_post();
-	$id   = get_the_ID();
-	$open = (bool) log_field( 'is_open', $id );
-	$loc  = [ 'tel-aviv' => 'תל אביב', 'jerusalem' => 'ירושלים (גבעת שאול)', 'hybrid' => 'היברידי' ][ log_field( 'location', $id, 'tel-aviv' ) ] ?? '';
-	$scope = [ 'full' => 'משרה מלאה', 'part' => 'משרה חלקית', 'student' => 'סטודנט/ית' ][ log_field( 'scope', $id, 'full' ) ] ?? '';
+	$jid   = get_the_ID();
+	$open = (bool) log_field( 'is_open', $jid );
+	$loc  = [ 'tel-aviv' => 'תל אביב', 'jerusalem' => 'ירושלים (גבעת שאול)', 'hybrid' => 'היברידי' ][ log_field( 'location', $jid, 'tel-aviv' ) ] ?? '';
+	$scope = [ 'full' => 'משרה מלאה', 'part' => 'משרה חלקית', 'student' => 'סטודנט/ית' ][ log_field( 'scope', $jid, 'full' ) ] ?? '';
 	$side = array_filter( [
 		'מיקום'         => $loc,
 		'היקף'          => $scope,
-		'צוות'          => log_field( 'team', $id ),
-		'גודל הצוות'    => log_field( 'team_size', $id ),
-		'כפיפות'        => log_field( 'reports_to', $id ),
-		'תחילת עבודה'   => log_field( 'start_date', $id ),
+		'צוות'          => log_field( 'team', $jid ),
+		'גודל הצוות'    => log_field( 'team_size', $jid ),
+		'כפיפות'        => log_field( 'reports_to', $jid ),
+		'תחילת עבודה'   => log_field( 'start_date', $jid ),
 	] );
 	$blocks = [
 		'על התפקיד'   => [ 'about', false ],
@@ -28,7 +28,7 @@ while ( have_posts() ) : the_post();
 	?>
 	<article class="job">
 		<?php get_template_part( 'template-parts/page-header', null, [
-			'eyebrow' => esc_html( implode( ' · ', array_filter( [ log_field( 'team', $id ), $loc, $scope ] ) ) ),
+			'eyebrow' => esc_html( implode( ' · ', array_filter( [ log_field( 'team', $jid ), $loc, $scope ] ) ) ),
 			'title'   => get_the_title(),
 		] ); ?>
 
@@ -39,7 +39,7 @@ while ( have_posts() ) : the_post();
 		<div class="container job__layout">
 			<div class="job__body">
 				<?php foreach ( $blocks as $heading => [ $field, $list ] ) :
-					$text = log_field( $field, $id );
+					$text = log_field( $field, $jid );
 					if ( ! $text ) { continue; } ?>
 					<section class="story-block">
 						<h2><?php echo esc_html( $heading ); ?></h2>
@@ -63,7 +63,7 @@ while ( have_posts() ) : the_post();
 		<?php if ( $open ) : ?>
 			<section class="section section--apply container" id="apply">
 				<h2 class="section__title">הגשת מועמדות: <?php the_title(); ?></h2>
-				<?php get_template_part( 'template-parts/form-apply', null, [ 'job' => $id ] ); ?>
+				<?php get_template_part( 'template-parts/form-apply', null, [ 'job' => $jid ] ); ?>
 			</section>
 		<?php endif; ?>
 	</article>

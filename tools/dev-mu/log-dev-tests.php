@@ -7,6 +7,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Local only: show PHP errors instead of WordPress's generic "critical error" page.
+if ( ! defined( 'WP_DISABLE_FATAL_ERROR_HANDLER' ) ) { define( 'WP_DISABLE_FATAL_ERROR_HANDLER', true ); }
+@ini_set( 'display_errors', '1' );
+error_reporting( E_ALL & ~E_DEPRECATED );
+
 add_action( 'admin_menu', function () {
 	add_management_page( 'LOG Dev tests', 'LOG Dev tests', 'manage_options', 'log-dev-tests', function () {
 		echo '<div class="wrap"><h1>LOG Dev tests</h1>';
@@ -26,9 +31,29 @@ add_action( 'admin_menu', function () {
 			}
 			echo '</pre>';
 		}
+		if ( isset( $_POST['arcgis'] ) && check_admin_referer( 'log_dev' ) ) {
+			$file = WP_CONTENT_DIR . '/mu-plugins/blue_lines_main.geojson';
+			if ( ! file_exists( $file ) ) {
+				echo '<pre id="arcgis-result">no private fixture mounted (tools/fixtures/private/blue_lines_main.geojson)</pre>';
+			} else {
+				$res = log_import_run( json_decode( file_get_contents( $file ), true ), false );
+				// Local only: publish and approve everything that has a location, so the hero has data.
+				$ids = get_posts( [ 'post_type' => 'log_project', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids' ] );
+				$approved = 0;
+				foreach ( $ids as $id ) {
+					if ( ! log_field( 'lat', $id ) ) { continue; }
+					wp_update_post( [ 'ID' => $id, 'post_status' => 'publish' ] );
+					log_set_field( 'approved', 1, $id );
+					$approved++;
+				}
+				log_flush_map_cache();
+				echo '<pre id="arcgis-result">' . esc_html( wp_json_encode( [ 'summary' => array_diff_key( $res, [ 'rows' => 1 ] ), 'approved' => $approved ], JSON_UNESCAPED_UNICODE ) ) . '</pre>';
+			}
+		}
 		echo '<form method="post">';
 		wp_nonce_field( 'log_dev' );
 		submit_button( 'Run Instagram import on fixture (twice)', 'primary', 'run' );
+		submit_button( 'Import private ArcGIS GeoJSON + approve all (local only)', 'secondary', 'arcgis' );
 		echo '</form></div>';
 	} );
 } );

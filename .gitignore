@@ -4,3 +4,4 @@ wp-content/themes/log/assets/dist/
 .playground/
 *.log
 .env
+tools/fixtures/private/

@@ -13,9 +13,11 @@ $process = log_rows( 'process', [
 ] );
 ?>
 <section class="hero" id="hero" data-section="map">
-	<div class="hero__map" id="hero-map" role="region" aria-label="מפת הפרויקטים של לוג. לחיצה על המפה מאפשרת להתקרב בגלילה; Esc סוגר פרויקט פתוח." tabindex="0"></div>
-	<div class="hero-edges" aria-hidden="true"></div>
-	<div class="hero-tip" role="tooltip" hidden></div>
+	<div class="hero-stage" role="region" aria-label="מפת הפרויקטים של לוג בתלת-ממד. לחיצה על המפה מאפשרת להתקרב בגלילה ולשוטט; Esc סוגר כרטיס פתוח."></div>
+	<div class="hero-labels" aria-hidden="true"></div>
+	<div class="hero-pins"></div>
+	<div class="hero-edges"></div>
+	<div class="hero-card" role="dialog" aria-live="polite" hidden></div>
 
 	<div class="hero__copy">
 		<h1 class="hero__title"><?php echo esc_html( log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' ) ); ?></h1>
@@ -25,20 +27,16 @@ $process = log_rows( 'process', [
 			<div><dt>פרויקטים פעילים</dt><dd data-count="<?php echo (int) $stats['projects']; ?>"><?php echo log_number( $stats['projects'] ); ?></dd></div>
 			<div><dt>רשויות</dt><dd data-count="<?php echo (int) $stats['authorities']; ?>"><?php echo log_number( $stats['authorities'] ); ?></dd></div>
 		</dl>
-		<div class="hero-chips" role="group" aria-label="סינון לפי תחום"></div>
-		<p class="hero-summary" aria-live="polite"></p>
-		<div class="hero__actions">
-			<a class="btn btn--primary" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>"><?php echo esc_html( log_text( 'hero_cta', 'כל הפרויקטים' ) ); ?></a>
-			<a class="btn btn--ghost-dark" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) . '#view=grid' ); ?>">תצוגת רשימה</a>
-		</div>
-		<p class="hero__hint">לחצו על המפה כדי להתקרב בגלילה</p>
+		<a class="hero__fallback btn btn--primary" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>"><?php echo esc_html( log_text( 'hero_cta', 'כל הפרויקטים' ) ); ?></a>
 	</div>
 
-	<aside class="hero-panel" hidden aria-label="פרטי הפרויקט"></aside>
-
-	<nav class="hero-list-wrap" aria-label="הפרויקטים על המפה">
-		<ul class="hero-list"></ul>
-	</nav>
+	<div class="hero-bar">
+		<button type="button" class="hero-compass" aria-label="חזרה למבט על כל הארץ"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 5 L19.5 16 L16 14.5 L12.5 16 Z"/><path d="M16 27 L12.5 16 L16 17.5 L19.5 16 Z" class="s"/></svg></button>
+		<span class="hero-scale" aria-hidden="true"><i></i><span></span></span>
+		<button type="button" class="hero-all" aria-expanded="false" aria-controls="hero-drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg> כל הפרויקטים <span></span></button>
+	</div>
+	<div class="hero-drawer" id="hero-drawer" hidden></div>
+	<p class="hero__hint">לחצו על המפה כדי לשוטט ולהתקרב</p>
 </section>
 
 <section class="section section--who" data-section="who">
