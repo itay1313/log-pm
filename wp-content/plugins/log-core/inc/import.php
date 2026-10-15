@@ -47,19 +47,54 @@ function log_import_status_codes(): array {
 }
 
 /**
- * מזמין_העבודה: code → [client name, body_type].
- * Only the clients named in docs/arcgis-mapping.md are spelled out; the rest of the 19 codes
- * are known by category only (8–11/16 authorities, 4–7/12/15/17 developers) and are reported
- * as unknown until the labels are added here. Filter: log_arcgis_client_labels.
+ * מזמין_העבודה: code → [client name, body_type]. The full domain from the layer definition
+ * (scanned 15/10/2026, docs/arcgis-mapping.md), with display names cleaned up for the site.
+ * Code 00 ("אחר") deliberately has no client. Filter: log_arcgis_client_labels.
  */
 function log_import_client_codes(): array {
 	return apply_filters( 'log_arcgis_client_labels', [
 		'99' => [ 'הרשות הממשלתית להתחדשות עירונית', 'government' ],
 		'14' => [ 'רשות מקרקעי ישראל', 'government' ],
 		'2'  => [ 'משרד הבינוי והשיכון', 'government' ],
-		'3'  => [ 'מינהל התכנון', 'government' ],
+		'3'  => [ 'מנהל התכנון', 'government' ],
 		'18' => [ 'דירה להשכיר', 'government' ],
+		'8'  => [ 'עיריית בת ים', 'authority' ],
+		'9'  => [ 'עיריית חדרה', 'authority' ],
+		'10' => [ 'עיריית חולון', 'authority' ],
+		'11' => [ 'עיריית נתיבות', 'authority' ],
+		'16' => [ 'המועצה האזורית רמת נגב', 'authority' ],
+		'4'  => [ 'אאורה', 'developer' ],
+		'5'  => [ 'תדהר', 'developer' ],
+		'6'  => [ 'לוינסקי-עופר', 'developer' ],
+		'7'  => [ 'חנן מור', 'developer' ],
+		'12' => [ 'צרפתי', 'developer' ],
+		'15' => [ 'תצפית', 'developer' ],
+		'17' => [ 'אביב שני', 'developer' ],
 	] );
+}
+
+/**
+ * Some features carry the label instead of the code (and one carries a label that isn't in the
+ * domain at all). Map labels back to the same client the code would give, so one body = one client.
+ */
+function log_import_client_from_label( string $label ): ?array {
+	$label = trim( $label );
+	foreach ( log_import_client_codes() as [ $name, $type ] ) {
+		if ( $name === $label ) {
+			return [ $name, $type ];
+		}
+	}
+	$aliases = [ 'מינהל התכנון' => '3', 'רמ"י' => '14' ];
+	if ( isset( $aliases[ $label ] ) ) {
+		return log_import_client_codes()[ $aliases[ $label ] ];
+	}
+	if ( str_starts_with( $label, 'יזם - ' ) ) {
+		return [ trim( mb_substr( $label, 6 ) ), 'developer' ];
+	}
+	if ( str_starts_with( $label, 'רשות מקומית - ' ) ) {
+		return [ 'עיריית ' . trim( mb_substr( $label, 14 ) ), 'authority' ];
+	}
+	return null;
 }
 
 function log_import_client_body_type( string $code, string $kind ): string {
@@ -479,8 +514,11 @@ function log_import_feature( array $feature, bool $dry ): array {
 		if ( isset( $table[ $code ] ) ) {
 			[ $client_name, $body_type ] = $table[ $code ];
 		} elseif ( ! ctype_digit( $client_raw ) ) {
-			$client_name = $client_raw; // label export
-			$body_type   = log_import_client_body_type( '', log_import_code( $get( 'סוג_מזמין' ) ) );
+			// Label export: normalise to the same client the code would give.
+			[ $client_name, $body_type ] = log_import_client_from_label( $client_raw )
+				?? [ $client_raw, log_import_client_body_type( '', log_import_code( $get( 'סוג_מזמין' ) ) ) ];
+		} elseif ( $code === '0' ) {
+			$notes[] = 'מזמין "אחר", הלקוח לא שויך';
 		} else {
 			$notes[] = "מזמין לא מזוהה (קוד $code), הלקוח לא שויך";
 		}

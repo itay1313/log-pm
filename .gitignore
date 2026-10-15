@@ -5,3 +5,4 @@ wp-content/themes/log/assets/dist/
 *.log
 .env
 tools/fixtures/private/
+.deploy/
