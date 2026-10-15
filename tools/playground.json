@@ -1,0 +1,21 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/wp-admin/tools.php?page=log-setup",
+  "preferredVersions": { "php": "8.3", "wp": "latest" },
+  "login": true,
+  "features": { "networking": true },
+  "steps": [
+    { "step": "setSiteLanguage", "language": "he_IL" },
+    { "step": "setSiteOptions", "options": {
+      "blogname": "לוג ניהול פרויקטים",
+      "blogdescription": "תכנון עירוני וניהול פרויקטים בכל קנה מידה",
+      "timezone_string": "Asia/Jerusalem",
+      "permalink_structure": "/%postname%/",
+      "blog_public": "0"
+    } },
+    { "step": "installPlugin", "pluginData": { "resource": "wordpress.org/plugins", "slug": "advanced-custom-fields" } },
+    { "step": "installPlugin", "pluginData": { "resource": "wordpress.org/plugins", "slug": "wordpress-seo" } },
+    { "step": "activatePlugin", "pluginPath": "log-core/log-core.php" },
+    { "step": "activateTheme", "themeFolderName": "log" }
+  ]
+}

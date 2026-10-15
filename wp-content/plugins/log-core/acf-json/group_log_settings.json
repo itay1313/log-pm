@@ -1,0 +1,34 @@
+{
+  "key": "group_log_settings",
+  "title": "הגדרות האתר",
+  "fields": [
+    { "key": "field_ls_tab_offices", "label": "משרדים", "name": "", "type": "tab" },
+    { "key": "field_ls_tlv_address", "label": "תל אביב · כתובת", "name": "tlv_address", "type": "text", "default_value": "רח' הארבעה 18 א', תל אביב-יפו", "wrapper": { "width": "50" } },
+    { "key": "field_ls_tlv_phone", "label": "תל אביב · טלפון", "name": "tlv_phone", "type": "text", "default_value": "03-5121551", "wrapper": { "width": "25" } },
+    { "key": "field_ls_tlv_waze", "label": "תל אביב · ניווט", "name": "tlv_nav_url", "type": "url", "wrapper": { "width": "25" } },
+    { "key": "field_ls_jlm_address", "label": "ירושלים · כתובת", "name": "jlm_address", "type": "text", "placeholder": "גבעת שאול", "wrapper": { "width": "50" } },
+    { "key": "field_ls_jlm_phone", "label": "ירושלים · טלפון", "name": "jlm_phone", "type": "text", "wrapper": { "width": "25" } },
+    { "key": "field_ls_jlm_waze", "label": "ירושלים · ניווט", "name": "jlm_nav_url", "type": "url", "wrapper": { "width": "25" } },
+    { "key": "field_ls_email", "label": "מייל כללי", "name": "email", "type": "email", "default_value": "info@log-pm.co.il", "wrapper": { "width": "33" } },
+    { "key": "field_ls_email_jobs", "label": "מייל למועמדויות", "name": "email_jobs", "type": "email", "instructions": "לשם נשלחים טפסי הגשת מועמדות.", "wrapper": { "width": "33" } },
+    { "key": "field_ls_email_control", "label": "מייל חברת הבקרה", "name": "email_control", "type": "email", "wrapper": { "width": "34" } },
+
+    { "key": "field_ls_tab_social", "label": "רשתות", "name": "", "type": "tab" },
+    { "key": "field_ls_instagram", "label": "Instagram", "name": "instagram", "type": "url", "default_value": "https://www.instagram.com/log_projectmanagement/", "wrapper": { "width": "33" } },
+    { "key": "field_ls_linkedin", "label": "LinkedIn", "name": "linkedin", "type": "url", "default_value": "https://www.linkedin.com/company/88468550/", "wrapper": { "width": "33" } },
+    { "key": "field_ls_facebook", "label": "Facebook", "name": "facebook", "type": "url", "default_value": "https://www.facebook.com/profile.php?id=61576766031612", "wrapper": { "width": "34" } },
+
+    { "key": "field_ls_tab_numbers", "label": "מספרי האתר", "name": "", "type": "tab" },
+    { "key": "field_ls_numbers_note", "label": "", "name": "", "type": "message", "message": "המספרים מחושבים מהפרויקטים המאושרים. אפשר לדרוס ידנית כשיש מספר רשמי אחר (למשל יח\"ד כולל פרויקטים שלא פורסמו).", "esc_html": 0 },
+    { "key": "field_ls_units_override", "label": "יח\"ד (דריסה)", "name": "units_override", "type": "number", "wrapper": { "width": "25" } },
+    { "key": "field_ls_projects_override", "label": "פרויקטים פעילים (דריסה)", "name": "projects_override", "type": "number", "wrapper": { "width": "25" } },
+    { "key": "field_ls_authorities", "label": "רשויות", "name": "authorities_count", "type": "number", "wrapper": { "width": "25" } },
+    { "key": "field_ls_team_count", "label": "אנשי צוות (דריסה)", "name": "team_override", "type": "number", "wrapper": { "width": "25" } },
+
+    { "key": "field_ls_tab_map", "label": "מפה", "name": "", "type": "tab" },
+    { "key": "field_ls_mapbox_token", "label": "Mapbox public token", "name": "mapbox_token", "type": "text", "instructions": "pk.… מחשבון Mapbox של לוג. מוגבל לדומיין log-pm.co.il." },
+    { "key": "field_ls_mapbox_style", "label": "Mapbox style URL", "name": "mapbox_style", "type": "text", "placeholder": "mapbox://styles/log-pm/…" }
+  ],
+  "location": [[{ "param": "options_page", "operator": "==", "value": "log-settings" }]],
+  "active": true
+}

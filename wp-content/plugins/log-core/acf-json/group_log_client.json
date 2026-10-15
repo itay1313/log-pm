@@ -1,0 +1,12 @@
+{
+  "key": "group_log_client",
+  "title": "פרטי לקוח",
+  "fields": [
+    { "key": "field_lc_type", "label": "סוג גוף", "name": "body_type", "type": "select", "choices": { "authority": "רשות מקומית", "government": "גוף ממשלתי", "developer": "יזם", "other": "אחר" }, "default_value": "authority", "wrapper": { "width": "50" } },
+    { "key": "field_lc_approved", "label": "אישור שימוש בלוגו", "name": "logo_approved", "type": "true_false", "instructions": "הלוגו מוצג באתר רק אחרי אישור בכתב.", "ui": 1, "wrapper": { "width": "50" } },
+    { "key": "field_lc_logo_svg", "label": "לוגו וקטורי (SVG)", "name": "logo_svg", "type": "file", "mime_types": "svg", "return_format": "array", "instructions": "מוצג בגוון אחד (אפור) בכל האתר." },
+    { "key": "field_lc_url", "label": "אתר", "name": "url", "type": "url" }
+  ],
+  "location": [[{ "param": "post_type", "operator": "==", "value": "log_client" }]],
+  "active": true
+}

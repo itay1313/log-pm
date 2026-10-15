@@ -1,0 +1,23 @@
+{
+  "key": "group_log_job",
+  "title": "פרטי משרה",
+  "fields": [
+    { "key": "field_lj_team", "label": "צוות", "name": "team", "type": "text", "wrapper": { "width": "25" } },
+    { "key": "field_lj_location", "label": "מיקום", "name": "location", "type": "select", "choices": { "tel-aviv": "תל אביב", "jerusalem": "ירושלים (גבעת שאול)", "hybrid": "היברידי" }, "default_value": "tel-aviv", "wrapper": { "width": "25" } },
+    { "key": "field_lj_scope", "label": "היקף", "name": "scope", "type": "select", "choices": { "full": "משרה מלאה", "part": "משרה חלקית", "student": "סטודנט/ית" }, "default_value": "full", "wrapper": { "width": "25" } },
+    { "key": "field_lj_open", "label": "משרה פתוחה", "name": "is_open", "type": "true_false", "instructions": "משרה סגורה נשארת באתר ומציגה את הפתוחות.", "ui": 1, "default_value": 1, "wrapper": { "width": "25" } },
+    { "key": "field_lj_team_size", "label": "גודל הצוות", "name": "team_size", "type": "text", "wrapper": { "width": "33" } },
+    { "key": "field_lj_reports_to", "label": "כפיפות", "name": "reports_to", "type": "text", "wrapper": { "width": "33" } },
+    { "key": "field_lj_start", "label": "תחילת עבודה", "name": "start_date", "type": "text", "placeholder": "מיידי", "wrapper": { "width": "34" } },
+    { "key": "field_lj_about", "label": "על התפקיד", "name": "about", "type": "textarea", "rows": 4 },
+    { "key": "field_lj_do", "label": "מה תעשו", "name": "what_you_do", "type": "textarea", "rows": 5, "instructions": "שורה לכל פריט." },
+    { "key": "field_lj_with", "label": "עם מי תעבדו", "name": "work_with", "type": "textarea", "rows": 3 },
+    { "key": "field_lj_requirements", "label": "דרישות", "name": "requirements", "type": "textarea", "rows": 5, "instructions": "שורה לכל פריט." },
+    { "key": "field_lj_advantage", "label": "יתרון", "name": "advantage", "type": "textarea", "rows": 3, "instructions": "שורה לכל פריט." },
+    { "key": "field_lj_waiting", "label": "מה מחכה לכם", "name": "whats_waiting", "type": "textarea", "rows": 3 },
+    { "key": "field_lj_how", "label": "איך מתקבלים", "name": "how_to_apply", "type": "textarea", "rows": 3 },
+    { "key": "field_lj_salary_note", "label": "", "name": "", "type": "message", "message": "למשרה פתוחה האתר מייצר JobPosting ל-Google Jobs אוטומטית. תאריך הפרסום הוא תאריך המשרה.", "esc_html": 0 }
+  ],
+  "location": [[{ "param": "post_type", "operator": "==", "value": "log_job" }]],
+  "active": true
+}

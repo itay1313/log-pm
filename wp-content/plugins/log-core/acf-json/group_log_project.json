@@ -1,0 +1,57 @@
+{
+  "key": "group_log_project",
+  "title": "פרטי פרויקט",
+  "fields": [
+    { "key": "field_lp_tab_main", "label": "נתונים", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lp_city", "label": "עיר / יישוב", "name": "city", "type": "text", "instructions": "כפי שיופיע במפה ובכרטיס. הטקסונומיה \"ערים\" משמשת לסינון.", "wrapper": { "width": "33" } },
+    { "key": "field_lp_authority", "label": "רשות", "name": "authority", "type": "text", "wrapper": { "width": "33" } },
+    { "key": "field_lp_client", "label": "לקוח", "name": "client", "type": "post_object", "post_type": ["log_client"], "allow_null": 1, "return_format": "id", "wrapper": { "width": "34" } },
+    { "key": "field_lp_stage", "label": "שלב", "name": "stage", "type": "select", "instructions": "רבע טבעת לכל שלב. 4 = הושלם.", "choices": { "1": "1 · המתודולוגיה", "2": "2 · תכנון סטטוטורי", "3": "3 · ליווי ואישור", "4": "4 · בקרה ומעקב (הושלם)" }, "default_value": "1", "return_format": "value", "wrapper": { "width": "25" } },
+    { "key": "field_lp_year", "label": "שנת תכנון", "name": "year", "type": "number", "min": 2000, "max": 2100, "step": 1, "wrapper": { "width": "25" } },
+    { "key": "field_lp_plan_number", "label": "מספר תכנית (מבא\"ת)", "name": "plan_number", "type": "text", "instructions": "מופיע עם קישור למבא\"ת אם יש.", "wrapper": { "width": "25" } },
+    { "key": "field_lp_plan_url", "label": "קישור למבא\"ת", "name": "plan_url", "type": "url", "wrapper": { "width": "25" } },
+    { "key": "field_lp_units", "label": "יח\"ד", "name": "units", "type": "number", "min": 0, "step": 1, "wrapper": { "width": "25" } },
+    { "key": "field_lp_sqm", "label": "מ\"ר תעסוקה ומסחר", "name": "sqm_employment", "type": "number", "min": 0, "step": 1, "wrapper": { "width": "25" } },
+    { "key": "field_lp_dunam", "label": "דונם", "name": "dunam", "type": "number", "min": 0, "step": 1, "wrapper": { "width": "25" } },
+    { "key": "field_lp_national", "label": "תכנית ארצית", "name": "is_national", "type": "true_false", "instructions": "ללא מיקום אחד. תמיד XL, מוצגת ברשימה ולא כנקודה.", "ui": 1, "wrapper": { "width": "25" } },
+    { "key": "field_lp_scale_note", "label": "", "name": "", "type": "message", "message": "מדרגת ההיקף (S / M / L / XL) מחושבת אוטומטית בשמירה מהגבוה מבין יח\"ד, מ\"ר ודונם. אין להגדיר אותה ידנית.", "esc_html": 0 },
+
+    { "key": "field_lp_tab_story", "label": "הסיפור", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lp_challenge", "label": "האתגר", "name": "challenge", "type": "textarea", "rows": 4 },
+    { "key": "field_lp_process", "label": "התהליך", "name": "process", "type": "textarea", "rows": 4 },
+    { "key": "field_lp_solution", "label": "הפתרון", "name": "solution", "type": "textarea", "rows": 4 },
+    { "key": "field_lp_next", "label": "הצעד הבא", "name": "next_step", "type": "textarea", "rows": 3, "instructions": "רק לפרויקט שלא הושלם." },
+    { "key": "field_lp_quote", "label": "ציטוט", "name": "quote", "type": "textarea", "rows": 2, "wrapper": { "width": "70" } },
+    { "key": "field_lp_quote_by", "label": "מאת", "name": "quote_by", "type": "text", "wrapper": { "width": "30" } },
+
+    { "key": "field_lp_tab_media", "label": "מדיה", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lp_video", "label": "וידאו ראשי", "name": "video", "type": "file", "instructions": "MP4 קצר ללולאה, במקום התמונה הראשית. נטען רק כשהוא על המסך.", "mime_types": "mp4,webm", "return_format": "array" },
+    { "key": "field_lp_gallery", "label": "גלריה", "name": "gallery", "type": "gallery", "return_format": "array", "preview_size": "medium" },
+    { "key": "field_lp_milestones", "label": "אבני דרך", "name": "milestones", "type": "repeater", "layout": "table", "button_label": "הוספת אבן דרך", "sub_fields": [
+      { "key": "field_lp_ms_year", "label": "שנה", "name": "year", "type": "number", "min": 1990, "max": 2100, "wrapper": { "width": "20" } },
+      { "key": "field_lp_ms_event", "label": "אירוע", "name": "event", "type": "text", "wrapper": { "width": "60" } },
+      { "key": "field_lp_ms_pending", "label": "טרם קרה", "name": "pending", "type": "true_false", "ui": 1, "wrapper": { "width": "20" } }
+    ] },
+    { "key": "field_lp_partners", "label": "שותפים", "name": "partners", "type": "repeater", "layout": "table", "button_label": "הוספת שותף", "sub_fields": [
+      { "key": "field_lp_pt_name", "label": "שם", "name": "name", "type": "text", "wrapper": { "width": "50" } },
+      { "key": "field_lp_pt_role", "label": "תפקיד", "name": "role", "type": "text", "wrapper": { "width": "50" } }
+    ] },
+
+    { "key": "field_lp_tab_map", "label": "מפה", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lp_lat", "label": "קו רוחב (lat)", "name": "lat", "type": "number", "step": "0.000001", "wrapper": { "width": "33" } },
+    { "key": "field_lp_lng", "label": "קו אורך (lng)", "name": "lng", "type": "number", "step": "0.000001", "wrapper": { "width": "33" } },
+    { "key": "field_lp_arcgis_id", "label": "מזהה ב-ArcGIS", "name": "arcgis_id", "type": "text", "instructions": "לסנכרון עתידי. לא מוצג באתר.", "wrapper": { "width": "34" } },
+    { "key": "field_lp_boundary", "label": "גבול התכנית (GeoJSON)", "name": "boundary", "type": "textarea", "rows": 6, "instructions": "Polygon או MultiPolygon ב-WGS84. מוצג ככתם כתום במפה.", "placeholder": "{\"type\":\"Polygon\",\"coordinates\":[[[34.78,32.08],...]]}" },
+
+    { "key": "field_lp_tab_publish", "label": "פרסום", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lp_approved", "label": "מאושר לפרסום", "name": "approved", "type": "true_false", "instructions": "רק פרויקטים מאושרים מופיעים באתר ובמפה. דורש אישור ההנהלה.", "ui": 1, "wrapper": { "width": "33" } },
+    { "key": "field_lp_featured", "label": "פרויקט נבחר", "name": "featured", "type": "true_false", "instructions": "מופיע במוזאיקה בעמוד הבית (עד 6).", "ui": 1, "wrapper": { "width": "33" } },
+    { "key": "field_lp_control", "label": "פרויקט של חברת הבקרה", "name": "is_control", "type": "true_false", "instructions": "מפעיל את כפתור \"חברת הבקרה\" בעמוד הפרויקט.", "ui": 1, "wrapper": { "width": "34" } }
+  ],
+  "location": [[{ "param": "post_type", "operator": "==", "value": "log_project" }]],
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "active": true,
+  "show_in_rest": 0
+}

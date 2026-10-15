@@ -1,0 +1,11 @@
+/*
+Theme Name: LOG
+Theme URI: https://log-pm.co.il
+Author: com-mando
+Description: Custom theme for לוג ניהול פרויקטים. Presentation only — the content model lives in the LOG Core plugin.
+Version: 0.1.0
+Requires PHP: 8.1
+Text Domain: log
+*/
+
+/* Real styles are built by Vite into assets/dist. This file only identifies the theme. */

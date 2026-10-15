@@ -1,0 +1,16 @@
+{
+  "key": "group_log_person",
+  "title": "פרטי איש צוות",
+  "fields": [
+    { "key": "field_lpe_role", "label": "תפקיד", "name": "role", "type": "text", "wrapper": { "width": "50" } },
+    { "key": "field_lpe_group", "label": "קבוצה", "name": "group", "type": "select", "choices": { "owner": "בעלים", "management": "הנהלה", "team": "צוות" }, "default_value": "team", "wrapper": { "width": "25" } },
+    { "key": "field_lpe_office", "label": "משרד", "name": "office", "type": "select", "choices": { "tel-aviv": "תל אביב", "jerusalem": "ירושלים" }, "default_value": "tel-aviv", "wrapper": { "width": "25" } },
+    { "key": "field_lpe_sentence", "label": "משפט אישי", "name": "sentence", "type": "text", "instructions": "משפט אחד, בגוף ראשון." },
+    { "key": "field_lpe_bio", "label": "פסקה", "name": "bio", "type": "textarea", "rows": 4, "instructions": "לבעלים ולהנהלה בלבד." },
+    { "key": "field_lpe_video", "label": "סרטון קצר", "name": "video", "type": "file", "mime_types": "mp4,webm", "return_format": "array", "instructions": "להנהלה: סרטון קצר על לוג ועל התפקיד.", "wrapper": { "width": "50" } },
+    { "key": "field_lpe_photo_color", "label": "תמונה צבעונית", "name": "photo_color", "type": "image", "return_format": "array", "instructions": "התמונה הראשית היא השחור-לבן; זו נחשפת בטבעת הלוגו במעבר עכבר.", "wrapper": { "width": "50" } },
+    { "key": "field_lpe_linkedin", "label": "LinkedIn", "name": "linkedin", "type": "url" }
+  ],
+  "location": [[{ "param": "post_type", "operator": "==", "value": "log_person" }]],
+  "active": true
+}
