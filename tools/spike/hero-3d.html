@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>LOG hero spike</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;font-family:system-ui;background:#fbfaf8}
+  #map{position:absolute;inset:0}
+  .bar{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:8px;z-index:2;flex-wrap:wrap}
+  .bar button{font:inherit;padding:8px 14px;border:1px solid #24242b;background:#fbfaf8;border-radius:4px;cursor:pointer}
+  .bar button.on{background:#24242b;color:#fbfaf8}
+  #info{position:absolute;bottom:12px;left:12px;background:#fbfaf8;padding:8px 12px;border-radius:4px;font-size:14px;z-index:2;direction:ltr}
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<div id="info">loading…</div>
+<div id="map"></div>
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<script>
+const sites = {
+  'חדרה · לב העיר': [34.9217, 32.4354],
+  'חולון': [34.7874, 32.0158],
+  'נס ציונה': [34.7980, 31.9300],
+  'תל אביב': [34.7820, 32.0700],
+  'באר שבע': [34.7915, 31.2520],
+};
+const map = new maplibregl.Map({
+  container: 'map',
+  style: 'https://tiles.openfreemap.org/styles/liberty',
+  center: sites['חדרה · לב העיר'], zoom: 15.5, pitch: 60, bearing: -20,
+  attributionControl: true,
+});
+let stats = {};
+map.on('load', () => {
+  // Paper look: mute everything, then draw buildings as grey extrusions, like the spec's stage 4.
+  for (const l of map.getStyle().layers) {
+    if (l.type === 'symbol' && !/place|street|road/.test(l.id)) map.setLayoutProperty(l.id, 'visibility', 'none');
+  }
+  if (map.getLayer('building-3d')) map.removeLayer('building-3d');
+  map.addLayer({
+    id: 'log-buildings', type: 'fill-extrusion', source: 'openmaptiles', 'source-layer': 'building', minzoom: 13,
+    paint: {
+      'fill-extrusion-color': ['case', ['has', 'render_height'], '#cfcac2', '#e1ddd7'],
+      'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 8],
+      'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
+      'fill-extrusion-opacity': 0.9,
+    },
+  });
+  // Demo "plan area": a 500 m orange extrusion at the centre, so we can see the look together.
+  const [lng, lat] = map.getCenter().toArray(); const d = 0.0025;
+  map.addSource('plan', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[lng-d,lat-d],[lng+d,lat-d],[lng+d,lat+d],[lng-d,lat+d],[lng-d,lat-d]]] } } });
+  map.addLayer({ id: 'plan', type: 'fill-extrusion', source: 'plan', paint: { 'fill-extrusion-color': '#f7931d', 'fill-extrusion-height': 2, 'fill-extrusion-opacity': 0.45 } });
+  update();
+});
+function update() {
+  const f = map.queryRenderedFeatures({ layers: ['log-buildings'] });
+  const ids = new Set(), withH = new Set();
+  for (const x of f) { ids.add(x.id ?? JSON.stringify(x.geometry.coordinates[0][0])); if (x.properties.render_height) withH.add(x.id ?? JSON.stringify(x.geometry.coordinates[0][0])); }
+  stats = { buildings: ids.size, withHeight: withH.size, zoom: +map.getZoom().toFixed(1) };
+  document.getElementById('info').textContent = `buildings in view: ${stats.buildings} · with real height: ${stats.withHeight} · zoom ${stats.zoom}`;
+  window.__stats = stats;
+}
+map.on('idle', update);
+const bar = document.getElementById('bar');
+for (const [name, c] of Object.entries(sites)) {
+  const b = document.createElement('button'); b.textContent = name;
+  b.onclick = () => { [...bar.children].forEach(x => x.classList.remove('on')); b.classList.add('on'); map.flyTo({ center: c, zoom: 15.5, pitch: 60, bearing: -20, duration: 1500 }); map.getSource('plan')?.setData({ type:'Feature', geometry:{type:'Polygon',coordinates:[[[c[0]-0.0025,c[1]-0.0025],[c[0]+0.0025,c[1]-0.0025],[c[0]+0.0025,c[1]+0.0025],[c[0]-0.0025,c[1]+0.0025],[c[0]-0.0025,c[1]-0.0025]]]} }); };
+  bar.appendChild(b);
+}
+bar.firstChild.classList.add('on');
+</script>
+</body>
+</html>
