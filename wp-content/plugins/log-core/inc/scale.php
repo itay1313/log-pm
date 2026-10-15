@@ -59,12 +59,11 @@ function log_stage_from_milestone( ?string $milestone ): ?int {
 }
 
 /**
- * Recompute derived fields on every save, after ACF has written its own (ACF saves at priority 10).
+ * Recompute derived fields (stage from milestone, scale tier) for one project.
+ * Called from acf/save_post and from the ArcGIS importer, which writes fields with update_field()
+ * and therefore never fires acf/save_post.
  */
-add_action( 'acf/save_post', function ( $post_id ) {
-	if ( get_post_type( $post_id ) !== 'log_project' ) {
-		return;
-	}
+function log_project_recompute_derived( int $post_id ): void {
 	$stage = log_stage_from_milestone( get_field( 'milestone', $post_id ) ?: null );
 	if ( $stage ) {
 		update_field( 'stage', (string) $stage, $post_id );
@@ -78,4 +77,13 @@ add_action( 'acf/save_post', function ( $post_id ) {
 		(bool) get_field( 'is_national', $post_id )
 	);
 	wp_set_object_terms( $post_id, $tier, 'log_scale', false );
+}
+
+/**
+ * Recompute on every save, after ACF has written its own fields (ACF saves at priority 10).
+ */
+add_action( 'acf/save_post', function ( $post_id ) {
+	if ( get_post_type( $post_id ) === 'log_project' ) {
+		log_project_recompute_derived( (int) $post_id );
+	}
 }, 20 );

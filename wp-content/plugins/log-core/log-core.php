@@ -21,6 +21,7 @@ require LOG_CORE_DIR . 'inc/acf.php';
 require LOG_CORE_DIR . 'inc/rest-map.php';
 require LOG_CORE_DIR . 'inc/schema.php';
 require LOG_CORE_DIR . 'inc/setup.php';
+require LOG_CORE_DIR . 'inc/import.php';
 
 register_activation_hook( __FILE__, function () {
 	log_register_post_types();

@@ -4,7 +4,7 @@ WordPress מותאם, בלי בילדרים. שני חלקים:
 
 | נתיב | מה זה |
 |---|---|
-| `wp-content/plugins/log-core` | מודל התוכן: פרויקטים, משרות, מרכז ידע, צוות, לקוחות; מדרגת היקף אוטומטית; `GET /wp-json/log/v1/map` ו-`/stats`; סכמה (Organization, JobPosting); Setup בלחיצה אחת. |
+| `wp-content/plugins/log-core` | מודל התוכן: פרויקטים, משרות, מרכז ידע, צוות, לקוחות; מדרגת היקף אוטומטית; `GET /wp-json/log/v1/map` ו-`/stats`; סכמה (Organization, JobPosting); Setup בלחיצה אחת; ייבוא מ-ArcGIS (כלים → ייבוא מ-ArcGIS). |
 | `wp-content/themes/log` | תצוגה בלבד. תבניות לכל נתיב באפיון, שני הכפתורים הצמודים, גופנים עצמיים, Vite. |
 | `tools/deploy.sh` | בילד + העלאה ל-uPress (lftp, סיסמה מה-Keychain `log-pm-ftp`). |
 | `tools/dev.sh` | WordPress מקומי ב-Playground על :8881, עם התיקיות מחוברות חי. |
