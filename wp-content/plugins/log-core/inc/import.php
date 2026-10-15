@@ -340,6 +340,20 @@ function log_import_geometry( ?array $geometry ): ?array {
 	];
 }
 
+/**
+ * The only domain inference the data supports (docs/arcgis-mapping.md): client 99 → urban renewal,
+ * plan type מתארית → master plans. Applied on first import only; editors own the domain afterwards.
+ */
+function log_import_infer_domain( string $client_code, string $plan_type ): ?string {
+	if ( $client_code === '99' ) {
+		return 'urban-renewal';
+	}
+	if ( $plan_type === 'מתארית' ) {
+		return 'master-plans';
+	}
+	return null;
+}
+
 /* -------------------------------------------------------------------------
  * Upsert
  * ---------------------------------------------------------------------- */
@@ -458,6 +472,7 @@ function log_import_feature( array $feature, bool $dry ): array {
 	$client_raw  = $get( 'מזמין_העבודה' );
 	$client_name = '';
 	$body_type   = 'other';
+	$code        = '';
 	if ( $client_raw !== '' ) {
 		$code  = ctype_digit( $client_raw ) ? ( ltrim( $client_raw, '0' ) ?: '0' ) : $client_raw;
 		$table = log_import_client_codes();
@@ -489,6 +504,11 @@ function log_import_feature( array $feature, bool $dry ): array {
 
 	$post_id        = log_import_find_project( $objectid, $plan_number );
 	$row['action']  = $post_id ? 'updated' : 'created';
+	$domain         = $post_id ? null : log_import_infer_domain( $code, $fields['plan_type'] );
+	if ( $domain ) {
+		$term    = get_term_by( 'slug', $domain, 'log_domain' );
+		$notes[] = 'תחום: ' . ( $term ? $term->name : $domain );
+	}
 	$row['post_id'] = (int) $post_id;
 	if ( $post_id ) {
 		$notes[] = 'תכנית קיימת #' . $post_id;
@@ -518,6 +538,9 @@ function log_import_feature( array $feature, bool $dry ): array {
 		}
 		update_field( 'approved', 0, $post_id );
 		$row['post_id'] = (int) $post_id;
+		if ( $domain && term_exists( $domain, 'log_domain' ) ) {
+			wp_set_object_terms( $post_id, $domain, 'log_domain', false );
+		}
 	}
 
 	if ( $objectid !== '' ) {
@@ -653,3 +676,46 @@ function log_import_render_summary( array $result, bool $dry ): void {
 	}
 	echo '</tbody></table>';
 }
+
+/* -------------------------------------------------------------------------
+ * Projects list: an "ArcGIS" column so imported plans are told apart from hand-made ones.
+ * ---------------------------------------------------------------------- */
+
+add_filter( 'manage_log_project_posts_columns', function ( array $columns ): array {
+	$out = [];
+	foreach ( $columns as $key => $label ) {
+		$out[ $key ] = $label;
+		if ( $key === 'title' ) {
+			$out['log_arcgis'] = 'ArcGIS';
+		}
+	}
+	return $out;
+} );
+
+add_action( 'manage_log_project_posts_custom_column', function ( string $column, int $post_id ): void {
+	if ( $column !== 'log_arcgis' ) {
+		return;
+	}
+	$id = log_field( 'arcgis_id', $post_id );
+	if ( $id === null ) {
+		echo '<span aria-hidden="true">—</span>';
+		return;
+	}
+	$status = log_import_status_codes()[ log_field( 'status', $post_id, '01' ) ] ?? '';
+	echo '<span title="OBJECTID">#' . esc_html( $id ) . '</span>';
+	if ( $status ) {
+		echo '<br><span class="description">' . esc_html( $status ) . '</span>';
+	}
+}, 10, 2 );
+
+add_filter( 'manage_edit-log_project_sortable_columns', function ( array $columns ): array {
+	$columns['log_arcgis'] = 'log_arcgis';
+	return $columns;
+} );
+
+add_action( 'pre_get_posts', function ( WP_Query $q ): void {
+	if ( is_admin() && $q->is_main_query() && $q->get( 'orderby' ) === 'log_arcgis' ) {
+		$q->set( 'meta_key', 'arcgis_id' );
+		$q->set( 'orderby', 'meta_value_num' );
+	}
+} );
