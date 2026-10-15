@@ -66,10 +66,13 @@ add_action( 'admin_notices', function () {
  * Safe field getter that works before ACF loads (and in WP-CLI/REST contexts).
  */
 function log_field( string $name, $post_id = false, $default = null ) {
-	if ( ! function_exists( 'get_field' ) ) {
-		return $default;
+	if ( function_exists( 'get_field' ) ) {
+		$v = get_field( $name, $post_id );
+	} elseif ( $post_id === 'option' || $post_id === 'options' ) {
+		$v = get_option( "options_$name" );
+	} else {
+		$v = get_post_meta( $post_id ? (int) $post_id : get_the_ID(), $name, true );
 	}
-	$v = get_field( $name, $post_id );
 	return ( $v === null || $v === '' || $v === false ) ? $default : $v;
 }
 

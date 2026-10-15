@@ -17,6 +17,9 @@ add_action( 'admin_menu', function () {
 			echo '<pre id="result">first: ' . wp_json_encode( $first ) . "\nsecond: " . wp_json_encode( $second ) . "\n";
 			echo 'last media error: ' . esc_html( (string) get_option( 'log_instagram_last_media_error', '' ) ) . "\n";
 			$probe = wp_remote_get( 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Hadera_aerial_view.jpg/640px-Hadera_aerial_view.jpg', [ 'timeout' => 15 ] );
+			$probe2 = wp_remote_get( 'https://picsum.photos/seed/log/640/480.jpg', [ 'timeout' => 15 ] );
+			echo 'probe picsum: ' . ( is_wp_error( $probe2 ) ? $probe2->get_error_message() : wp_remote_retrieve_response_code( $probe2 ) . ' ' . wp_remote_retrieve_header( $probe2, 'content-type' ) ) . "\n";
+			echo 'wikimedia body: ' . esc_html( substr( strip_tags( (string) wp_remote_retrieve_body( $probe ) ), 0, 160 ) ) . "\n";
 			echo 'outbound probe: ' . ( is_wp_error( $probe ) ? $probe->get_error_message() : wp_remote_retrieve_response_code( $probe ) . ' ' . strlen( wp_remote_retrieve_body( $probe ) ) . ' bytes' ) . "\n";
 			foreach ( log_news_items( 8 ) as $it ) {
 				echo wp_date( 'Y-m-d', $it['date'] ) . ' | ' . $it['source'] . ' | ' . ( $it['title'] ?: $it['text'] ) . ' | img=' . ( $it['image'] ? 'yes' : 'no' ) . "\n";
