@@ -30,6 +30,7 @@
 @font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
 
@@ -160,6 +161,30 @@ li { list-style: none; }
 .filters__count { width: 100%; margin: 0; color: var(--grey); font-size: .9375rem; }
 .filters a { margin-inline-end: 1rem; text-decoration: none; }
 .filters a.is-active { text-decoration: underline; text-decoration-color: var(--orange); }
+
+/* Projects map */
+.filters__clear { font: inherit; font-size: .875rem; background: none; border: 0; color: var(--grey); text-decoration: underline; cursor: pointer; padding: 0; }
+.projects-map { height: clamp(480px, 70vh, 820px); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #f4f1ec; position: relative; }
+.projects-map.is-loading::after { content: 'טוענים את המפה…'; position: absolute; inset: 0; display: grid; place-items: center; color: var(--grey); font-family: var(--font-display); }
+.projects-map:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.maplibregl-ctrl-group { border-radius: var(--radius); box-shadow: none; border: 1px solid var(--line); }
+.maplibregl-ctrl-attrib { font-size: 11px; }
+.log-popup .maplibregl-popup-content { padding: 0; border-radius: var(--radius); box-shadow: 0 8px 24px rgba(36,36,43,.12); border: 1px solid var(--line); font-family: var(--font-text); direction: rtl; text-align: right; }
+.log-popup .maplibregl-popup-close-button { font-size: 20px; padding: 4px 10px; color: var(--grey); right: auto; left: 0; }
+.log-popup__card { padding: 1rem 1.1rem 1.1rem; width: 280px; }
+.log-popup__img { width: calc(100% + 2.2rem); margin: -1rem -1.1rem .75rem; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.log-popup__meta { font-size: .8125rem; color: var(--grey); margin: .4rem 0 .15rem; }
+.log-popup__title { font-family: var(--font-display); font-size: 1.125rem; margin: 0 0 .25rem; color: var(--ink); }
+.log-popup__figure { font-size: .9375rem; color: var(--grey); margin: 0 0 .75rem; }
+.log-popup__figure strong { color: var(--ink); font-family: var(--font-display); }
+.log-popup__figure span { margin-inline-start: .6rem; }
+.log-popup__link { font-size: .875rem; padding: .55em 1.1em; }
+.national { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.national__title { font-size: 1.25rem; margin-bottom: .25rem; }
+.national__lede { color: var(--grey); margin-bottom: 1rem; }
+.national__list li { padding: .6rem 0; border-bottom: 1px solid var(--line); }
+.national__list a { font-family: var(--font-display); font-weight: 500; text-decoration: none; }
+.national__list .meta { display: block; font-size: .8125rem; color: var(--grey); }
 
 /* Project page */
 .project__hero { position: relative; }

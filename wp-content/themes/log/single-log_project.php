@@ -105,7 +105,7 @@ while ( have_posts() ) : the_post();
 				<?php endif; ?>
 				<?php if ( log_field( 'lat', $id ) && ! log_field( 'is_national', $id ) ) : ?>
 					<div class="minimap" data-lat="<?php echo esc_attr( log_field( 'lat', $id ) ); ?>" data-lng="<?php echo esc_attr( log_field( 'lng', $id ) ); ?>"></div>
-					<a class="btn" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) . '#map=' . $id ); ?>">לראות במפה הגדולה</a>
+					<a class="btn" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) . '#view=map&p=' . $id ); ?>">לראות במפה הגדולה</a>
 				<?php endif; ?>
 			</aside>
 		</div>

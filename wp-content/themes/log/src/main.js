@@ -67,23 +67,9 @@ if (teamGrid) {
   );
 }
 
-// Project filters (client-side on data attributes; the map view hooks in later)
-const grid = document.getElementById('projects-grid');
-if (grid) {
-  const boxes = document.querySelectorAll('.filters input[type=checkbox]');
-  const count = document.querySelector('.filters__count');
-  const apply = () => {
-    const active = {};
-    for (const b of boxes) if (b.checked) (active[b.name] ||= []).push(b.value);
-    let shown = 0;
-    for (const card of grid.children) {
-      const ok = Object.entries(active).every(([tax, vals]) => vals.includes(card.dataset[tax === 'log_domain' ? 'domain' : 'scale']));
-      card.hidden = !ok;
-      if (ok) shown++;
-    }
-    if (count) count.textContent = Object.keys(active).length ? `${shown} פרויקטים` : '';
-  };
-  boxes.forEach((b) => b.addEventListener('change', apply));
+// Projects archive: filters, gallery ↔ map toggle, URL state. The map itself loads on first toggle.
+if (document.getElementById('projects-grid') || document.getElementById('projects-map')) {
+  import('./projects.js').then((m) => m.initProjects());
 }
 
 // Forms: contact and apply
@@ -91,13 +77,13 @@ if (document.querySelector('form[data-endpoint]')) {
   import('./forms.js').then((m) => m.initForms());
 }
 
-// Map: only where a mount point exists, and only once it's near the viewport.
-const mapMount = document.getElementById('hero-map') || document.getElementById('projects-map');
-if (mapMount && window.LOG?.mapbox?.token && !reduced) {
+// Hero map: design phase, not started. Mounts only once LOG's Mapbox token exists.
+const hero = document.getElementById('hero-map');
+if (hero && window.LOG?.mapbox?.token && !reduced) {
   const io = new IntersectionObserver((entries) => {
     if (!entries.some((e) => e.isIntersecting)) return;
     io.disconnect();
-    import('./map.js').then((m) => m.mount(mapMount)).catch(console.error);
+    import('./map.js').then((m) => m.mount(hero)).catch(console.error);
   }, { rootMargin: '200px' });
-  io.observe(mapMount);
+  io.observe(hero);
 }
