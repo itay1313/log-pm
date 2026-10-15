@@ -155,8 +155,8 @@ function log_instagram_import_items( array $items ): array {
 
 		if ( $existing ) {
 			$id = $existing[0];
-			update_field( 'text', $caption, $id );
-			update_field( 'posted_at', $posted, $id );
+			log_set_field( 'text', $caption, $id );
+			log_set_field( 'posted_at', $posted, $id );
 			$r['updated']++;
 			continue;
 		}
@@ -165,11 +165,11 @@ function log_instagram_import_items( array $items ): array {
 			$r['skipped']++;
 			continue;
 		}
-		update_field( 'source', 'instagram', $id );
-		update_field( 'url', esc_url_raw( $m['permalink'] ), $id );
-		update_field( 'text', $caption, $id );
-		update_field( 'posted_at', $posted, $id );
-		update_field( 'external_id', 'ig:' . $m['id'], $id );
+		log_set_field( 'source', 'instagram', $id );
+		log_set_field( 'url', esc_url_raw( $m['permalink'] ), $id );
+		log_set_field( 'text', $caption, $id );
+		log_set_field( 'posted_at', $posted, $id );
+		log_set_field( 'external_id', 'ig:' . $m['id'], $id );
 		log_sideload_thumbnail( $image, $id, $title );
 		$r['created']++;
 	}
@@ -200,7 +200,7 @@ function log_instagram_maybe_refresh( string $token ): void {
 	$res = wp_remote_get( add_query_arg( [ 'grant_type' => 'ig_refresh_token', 'access_token' => $token ], LOG_IG_API . '/refresh_access_token' ), [ 'timeout' => 20 ] );
 	$body = is_wp_error( $res ) ? null : json_decode( wp_remote_retrieve_body( $res ), true );
 	if ( ! empty( $body['access_token'] ) ) {
-		update_field( 'instagram_token', $body['access_token'], 'option' );
+		log_set_field( 'instagram_token', $body['access_token'], 'option' );
 	}
 	update_option( 'log_instagram_token_time', time(), false );
 }
