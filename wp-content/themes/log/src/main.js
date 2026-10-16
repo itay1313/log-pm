@@ -1,4 +1,5 @@
 import './styles/main.css';
+import { illustration } from './hero/illustration.js';
 
 /**
  * Entry. Everything heavy (the map) is a dynamic import, so pages that don't
@@ -76,6 +77,10 @@ if (document.getElementById('projects-grid') || document.getElementById('project
 if (document.querySelector('form[data-endpoint]')) {
   import('./forms.js').then((m) => m.initForms());
 }
+
+// Project page without a photo: draw its building before the arrival wipe opens.
+const art = document.querySelector('.project__art[data-id]');
+if (art) art.innerHTML = illustration({ id: art.dataset.id, domain: art.dataset.domain, stage: art.dataset.stage }, 'project__art-svg');
 
 // Arriving through the hero's ring transition
 if (document.documentElement.classList.contains('is-wiping')) {

@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const LOG_MAP_TRANSIENT = 'log_map_geojson_v2';
+const LOG_MAP_TRANSIENT = 'log_map_geojson_v3';
 
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'log/v1', '/map', [
@@ -61,7 +61,7 @@ function log_build_map_geojson(): array {
 
 		$props = [
 			'id'       => $id,
-			'title'    => get_the_title( $p ),
+			'title'    => html_entity_decode( get_the_title( $p ), ENT_QUOTES, 'UTF-8' ), // plain text: the JS escapes it, so &#8211; would show literally
 			'url'      => get_permalink( $p ),
 			'city'     => log_field( 'city', $id, '' ),
 			'stage'    => (int) log_field( 'stage', $id, 1 ),
@@ -118,7 +118,7 @@ function log_build_map_geojson(): array {
  */
 function log_short_text( WP_Post $p ): string {
 	$text = has_excerpt( $p ) ? $p->post_excerpt : ( log_field( 'challenge', $p->ID ) ?: log_field( 'solution', $p->ID, '' ) );
-	return wp_trim_words( wp_strip_all_tags( (string) $text ), 22, '…' );
+	return html_entity_decode( wp_trim_words( wp_strip_all_tags( (string) $text ), 22, '…' ), ENT_QUOTES, 'UTF-8' );
 }
 
 function log_first_term_slug( int $post_id, string $tax ): ?string {
