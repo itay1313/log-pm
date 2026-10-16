@@ -12,6 +12,7 @@
 import { createScene } from './hero/scene.js';
 import { leave } from './hero/transition.js';
 import { toLocal } from './hero/geo.js';
+import { illustration } from './hero/illustration.js';
 
 const DOMAIN_LABEL = {
   'urban-renewal': 'התחדשות עירונית', 'master-plans': 'תכניות מתאר', 'detailed-plans': 'תכניות מפורטות',
@@ -87,16 +88,28 @@ export async function initHero(hero) {
     cardItem = item; cardPin = pin;
     const p = item.p;
     const st = Math.min(4, Math.max(1, Number(p.stage) || 1));
-    const figure = p.units ? `${fmt.format(p.units)} יח"ד` : p.dunam ? `${fmt.format(p.dunam)} דונם` : '';
+    const facts = [
+      p.units ? [fmt.format(p.units), 'יח"ד'] : null,
+      p.dunam ? [fmt.format(p.dunam), 'דונם'] : null,
+      p.year ? [p.year, 'שנת תכנית'] : null,
+    ].filter(Boolean).slice(0, 2);
+    const domain = DOMAIN_LABEL[p.domain];
     card.innerHTML = `
-      <div class="hero-card__media">${p.image ? `<img src="${esc(p.image)}" alt="">` : `<span class="hero-card__ring stage stage--${st}"><i></i><i></i><i></i><i></i></span>`}</div>
+      <div class="hero-card__media${p.image ? '' : ' is-art'}">
+        ${p.image ? `<img src="${esc(p.image)}" alt="" loading="eager" decoding="async">` : illustration(p)}
+        ${domain ? `<span class="hero-card__tag">${esc(domain)}</span>` : ''}
+      </div>
       <div class="hero-card__body">
-        <p class="hero-card__meta">${esc([p.city, DOMAIN_LABEL[p.domain]].filter(Boolean).join(' · '))}</p>
+        ${p.city ? `<p class="hero-card__meta">${esc(p.city)}</p>` : ''}
         <h3 class="hero-card__title">${esc(p.title)}</h3>
         ${p.excerpt ? `<p class="hero-card__text">${esc(p.excerpt)}</p>` : ''}
-        <p class="hero-card__figures">${[figure, `שלב ${st} מתוך 4 · ${STAGE_LABEL[st]}`].filter(Boolean).map(esc).join(' <span>·</span> ')}</p>
-        <a class="hero-card__go" href="${esc(p.url)}"><span>לסיפור הפרויקט</span><i aria-hidden="true">←</i></a>
-      </div>`;
+        ${facts.length ? `<dl class="hero-card__facts">${facts.map(([v, k]) => `<div><dd>${esc(v)}</dd><dt>${esc(k)}</dt></div>`).join('')}</dl>` : ''}
+        <div class="hero-card__stage" style="--st:${st}">
+          <span class="hero-card__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>שלב ${st} מתוך 4 · ${esc(STAGE_LABEL[st])}</span>
+        </div>
+      </div>
+      <a class="hero-card__go" href="${esc(p.url)}"><span>לסיפור הפרויקט</span><i aria-hidden="true">←</i></a>`;
     card.hidden = false;
     card.classList.remove('is-in');
     requestAnimationFrame(() => card.classList.add('is-in'));
@@ -121,7 +134,7 @@ export async function initHero(hero) {
     if (!s) return closeCard();
     const W = stage.clientWidth, H = stage.clientHeight, cw = card.offsetWidth, ch = card.offsetHeight;
     const left = s.x > W / 2 ? s.x - cw - 34 : s.x + 34;
-    const top = Math.min(H - ch - 16, Math.max(16, s.y - ch / 2));
+    const top = Math.min(H - ch - 16, Math.max(84, s.y - ch / 2)); // 84: clear of the domain toggle
     card.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
   }
 

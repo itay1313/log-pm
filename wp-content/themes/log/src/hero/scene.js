@@ -17,7 +17,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { gsap } from 'gsap';
 import earcut from 'earcut';
-import { toLocal, toLngLat, lngLatToTile, tilesInBox, ISRAEL_BOX } from './geo.js';
+import { toLocal, toLngLat, lngLatToTile, tilesInBox, tileBoxLocal, ISRAEL_BOX } from './geo.js';
 
 const C = {
   fog: '#1d2a3a',
@@ -77,7 +77,11 @@ export async function createScene(container, { reduced = false } = {}) {
 
   // Materials --------------------------------------------------------------
   const fogUniforms = { uFogNear: { value: 1e5 }, uFogFar: { value: 1e6 } };
-  const revealUniforms = { uReveal: { value: reduced ? 1e9 : 0 }, uCenter: { value: new THREE.Vector2(NATIONAL.tx, NATIONAL.tz) } };
+  const revealUniforms = {
+    uReveal: { value: reduced ? 1e9 : 0 },
+    uCenter: { value: new THREE.Vector2(NATIONAL.tx, NATIONAL.tz) },
+    uBox: { value: new THREE.Vector4(...tileBoxLocal(...ISRAEL_BOX, 8)) },
+  };
   const mat = {
     national: lineMaterial(C.roadNational, 0.42, fogUniforms, revealUniforms),
     regional: lineMaterial(C.roadRegional, 0.0, fogUniforms),
@@ -420,22 +424,32 @@ function segments(pos, material) {
   return l;
 }
 
+/** 1 inside the loaded tile box, easing to 0 over `feather` metres at its edges (rounded corners, no visible square). */
+const BOX_FADE = /* glsl */ `
+  float boxFade(vec2 p, vec4 box, float feather) {
+    vec2 c = (box.xy + box.zw) * 0.5;
+    vec2 q = abs(p - c) - ((box.zw - box.xy) * 0.5 - feather);
+    float outside = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
+    return 1.0 - smoothstep(0.0, feather, outside);
+  }`;
+
 /** Sea: flat colour that fades out radially from Israel, so square tile edges never show. */
 function seaMaterial(color, opacity, reveal) {
   return new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
     side: THREE.DoubleSide,
-    uniforms: { uColor: { value: new THREE.Color(color) }, uOpacity: { value: opacity }, uCenter: reveal.uCenter, uReveal: reveal.uReveal },
+    uniforms: { uColor: { value: new THREE.Color(color) }, uOpacity: { value: opacity }, uCenter: reveal.uCenter, uReveal: reveal.uReveal, uBox: reveal.uBox },
     vertexShader: /* glsl */ `
       varying vec2 vXZ;
       void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vXZ = wp.xz; gl_Position = projectionMatrix * viewMatrix * wp; }`,
     fragmentShader: /* glsl */ `
-      uniform vec3 uColor; uniform float uOpacity; uniform vec2 uCenter; uniform float uReveal;
+      uniform vec3 uColor; uniform float uOpacity; uniform vec2 uCenter; uniform float uReveal; uniform vec4 uBox;
       varying vec2 vXZ;
+      ${BOX_FADE}
       void main() {
         float d = distance(vXZ, uCenter);
-        float edge = 1.0 - smoothstep(170000.0, 330000.0, d);
+        float edge = (1.0 - smoothstep(170000.0, 330000.0, d)) * boxFade(vXZ, uBox, 110000.0);
         float reveal = 1.0 - smoothstep(uReveal * 0.8, uReveal, d);
         gl_FragColor = vec4(uColor, uOpacity * edge * reveal);
       }`,
@@ -452,6 +466,7 @@ function lineMaterial(color, opacity, fog, reveal = null) {
       uOpacity: { value: opacity },
       uReveal: reveal ? reveal.uReveal : { value: 1e9 },
       uCenter: reveal ? reveal.uCenter : { value: new THREE.Vector2() },
+      uBox: reveal ? reveal.uBox : { value: new THREE.Vector4(-1e9, -1e9, 1e9, 1e9) },
       ...fog,
     },
     vertexShader: /* glsl */ `
@@ -465,12 +480,13 @@ function lineMaterial(color, opacity, fog, reveal = null) {
       }`,
     fragmentShader: /* glsl */ `
       uniform vec3 uColor; uniform float uOpacity; uniform float uReveal; uniform vec2 uCenter;
-      uniform float uFogNear; uniform float uFogFar;
+      uniform float uFogNear; uniform float uFogFar; uniform vec4 uBox;
       varying vec2 vXZ; varying float vDepth;
+      ${BOX_FADE}
       void main() {
         float reveal = 1.0 - smoothstep(uReveal * 0.82, uReveal, distance(vXZ, uCenter));
         float fog = 1.0 - smoothstep(uFogNear, uFogFar, vDepth);
-        gl_FragColor = vec4(uColor, uOpacity * reveal * fog);
+        gl_FragColor = vec4(uColor, uOpacity * reveal * fog * boxFade(vXZ, uBox, 60000.0));
       }`,
   });
 }
