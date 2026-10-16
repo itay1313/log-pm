@@ -29,3 +29,11 @@ add_action( 'after_setup_theme', function () {
  * Hebrew first. WPLANG is he_IL; make sure the html element says so even on fresh installs.
  */
 add_filter( 'language_attributes', fn( $out ) => str_contains( $out, 'dir=' ) ? $out : $out . ' dir="rtl"' );
+
+// Pages that open on a full-screen picture: the header sits on it (main.css "has-cover").
+add_filter( 'body_class', function ( array $classes ): array {
+	if ( is_front_page() || is_singular( 'log_project' ) ) {
+		$classes[] = 'has-cover';
+	}
+	return $classes;
+} );

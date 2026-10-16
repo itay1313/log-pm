@@ -80,7 +80,7 @@ if (document.querySelector('form[data-endpoint]')) {
 
 // Project page without a photo: draw its building before the arrival wipe opens.
 const art = document.querySelector('.project__art[data-id]');
-if (art) art.innerHTML = illustration({ id: art.dataset.id, domain: art.dataset.domain, stage: art.dataset.stage }, 'project__art-svg');
+if (art) art.innerHTML = illustration({ id: art.dataset.id, domain: art.dataset.domain, stage: art.dataset.stage }, 'project__art-svg', true);
 
 // Arriving through the hero's ring transition
 if (document.documentElement.classList.contains('is-wiping')) {
@@ -94,9 +94,12 @@ if (document.querySelector('.project')) {
 
 // Home hero: the 3D map. Reduced-motion users get the static copy and the list link.
 const hero = document.getElementById('hero');
-if (hero) {
-  // Header and twin buttons sit on the map (light) until the hero scrolls away.
+// Header and twin buttons sit on the cover picture (light) until it scrolls away.
+const cover = document.body.classList.contains('has-cover') && (hero || document.querySelector('.project__hero'));
+if (cover) {
   document.body.classList.add('over-hero');
-  new IntersectionObserver(([e]) => document.body.classList.toggle('over-hero', e.intersectionRatio > 0.12), { threshold: [0, 0.12, 0.5] }).observe(hero);
+  new IntersectionObserver(([e]) => document.body.classList.toggle('over-hero', e.intersectionRatio > 0.12), { threshold: [0, 0.12, 0.5] }).observe(cover);
+}
+if (hero) {
   if (!reduced) import('./hero.js').then((m) => m.initHero(hero)).catch((err) => { console.error(err); hero.classList.add('no-webgl'); });
 }

@@ -115,16 +115,20 @@ li { list-style: none; }
 .page-header__lede { font-size: 1.25rem; color: var(--grey); max-width: 60ch; }
 
 /* Hero: the 3D map (spec §7). Navy plate, orange city, white pins — Marseille 2021 as the reference. */
-body.home .site-header { position: fixed; inset-inline: 0; top: 0; background: transparent; border-bottom-color: transparent; backdrop-filter: none; transition: background .4s ease, border-color .4s ease; }
-body.home .twin-nav { position: fixed; top: var(--header-h); inset-inline: 0; background: transparent; border-bottom: 0; transition: background .4s ease; }
-body.home.over-hero .site-header .site-nav__list a, body.home.over-hero .site-header .search-toggle, body.home.over-hero .site-header .logo { color: #f4f1ec; }
-body.home.over-hero .site-header .menu-toggle span { background: #f4f1ec; box-shadow: 0 -7px 0 #f4f1ec, 0 7px 0 #f4f1ec; }
-body.home.over-hero .site-header .btn--primary { background: #f4f1ec; color: var(--ink); border-color: #f4f1ec; }
-body.home.over-hero .twin-nav__item { color: #b9c3cf; border-color: rgba(255,255,255,.18); background: rgba(16,22,30,.35); backdrop-filter: blur(6px); }
-body.home.over-hero .twin-nav__item.is-active { background: #f4f1ec; color: var(--ink); border-color: #f4f1ec; }
-body.home:not(.over-hero) .site-header { background: color-mix(in oklab, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom-color: var(--line); }
-body.home:not(.over-hero) .twin-nav { background: var(--paper); border-bottom: 1px solid var(--line); }
-@media (max-width: 900px) { body.home .twin-nav { top: auto; bottom: 0; } }
+/* Pages that open on a full-screen picture (home map, project): the header sits on it in light type. */
+body.has-cover .site-header { position: fixed; inset-inline: 0; top: 0; background: transparent; border-bottom-color: transparent; backdrop-filter: none; transition: background .4s ease, border-color .4s ease; }
+body.has-cover .twin-nav { position: fixed; top: var(--header-h); inset-inline: 0; background: transparent; border-bottom: 0; transition: background .4s ease; }
+body.has-cover.over-hero .site-header .site-nav__list a, body.has-cover.over-hero .site-header .search-toggle, body.has-cover.over-hero .site-header .logo { color: #f4f1ec; }
+body.has-cover.over-hero .site-header .menu-toggle span { background: #f4f1ec; box-shadow: 0 -7px 0 #f4f1ec, 0 7px 0 #f4f1ec; }
+body.has-cover.over-hero .site-header .btn--primary { background: #f4f1ec; color: var(--ink); border-color: #f4f1ec; }
+body.has-cover.over-hero .twin-nav__item { color: #b9c3cf; border-color: rgba(255,255,255,.18); background: rgba(16,22,30,.35); backdrop-filter: blur(6px); }
+body.has-cover.over-hero .twin-nav__item.is-active { background: #f4f1ec; color: var(--ink); border-color: #f4f1ec; }
+body.has-cover:not(.over-hero) .site-header { background: color-mix(in oklab, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom-color: var(--line); }
+body.has-cover:not(.over-hero) .twin-nav { background: var(--paper); border-bottom: 1px solid var(--line); }
+@media (max-width: 900px) { body.has-cover .twin-nav { top: auto; bottom: 0; } }
+body.admin-bar.has-cover .site-header { top: var(--wp-admin--admin-bar--height, 0px); }
+body.admin-bar.has-cover .twin-nav { top: calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)); }
+@media (max-width: 900px) { body.admin-bar.has-cover .twin-nav { top: auto; } }
 
 .hero { position: relative; height: 100vh; height: 100svh; min-height: 620px; overflow: hidden; color: #f4f1ec; isolation: isolate;
   background: radial-gradient(120% 90% at 18% 8%, #4a6178 0%, #2b3d50 32%, #1a2431 62%, #121922 100%); }
@@ -333,7 +337,7 @@ html.is-wiping body::before { content: ''; position: fixed; inset: 0; z-index: 9
 
 /* Project page */
 /* Hero: the project's image fills the first screen, the title sits on it. */
-.project__hero { position: relative; min-height: max(480px, calc(100svh - var(--header-h) - 48px - var(--wp-admin--admin-bar--height, 0px))); /* 48px: the company switch under the header */ display: flex; align-items: flex-end; overflow: hidden; background: #1d2a3a; color: #f4f1ec; isolation: isolate; }
+.project__hero { position: relative; min-height: max(560px, 100svh); display: flex; align-items: flex-end; overflow: hidden; background: #1d2a3a; color: #f4f1ec; isolation: isolate; }
 .project__media { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
 .project__art-svg { display: block; width: 100%; height: 100%; }
 .project__hero::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(to top, rgba(14,20,28,.88) 0%, rgba(14,20,28,.45) 32%, rgba(14,20,28,0) 62%), linear-gradient(to left, rgba(14,20,28,.35), transparent 50%); }

@@ -216,8 +216,13 @@ function layout(domain, stage, rand) {
   return items.sort((a, b) => depth(a) - depth(b));
 }
 
-/** @param {{id, domain, stage}} p  @param {string} cls class for the <svg> */
-export function illustration(p, cls = 'hero-card__art') {
+/**
+ * @param {{id, domain, stage}} p
+ * @param {string} cls class for the <svg>
+ * @param {boolean} wide extra sky and ground around the block, for full-screen covers (cropped with slice)
+ */
+export function illustration(p, cls = 'hero-card__art', wide = false) {
+  const vb = wide ? [-150, -40, 700, 300] : [0, 0, 400, 250];
   const rand = rng(p.id);
   const stage = Math.min(4, Math.max(1, Number(p.stage) || 1));
   const items = layout(p.domain, stage, rand);
@@ -232,12 +237,12 @@ export function illustration(p, cls = 'hero-card__art') {
     if (it.type === 'tree') return tree(it);
     return it.parts.map((q) => part({ ...q, ghost: it.ghost }, rand)).join('');
   };
-  return `<svg class="${cls}" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  return `<svg class="${cls}" viewBox="${vb.join(' ')}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
     <defs>
       <radialGradient id="${uid}s" cx=".28" cy=".05" r="1.1"><stop offset="0" stop-color="#4a6178"/><stop offset=".45" stop-color="#26364a"/><stop offset="1" stop-color="#121922"/></radialGradient>
       <radialGradient id="${uid}g" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#f7931d" stop-opacity=".22"/><stop offset="1" stop-color="#f7931d" stop-opacity="0"/></radialGradient>
     </defs>
-    <rect width="400" height="250" fill="url(#${uid}s)"/>
+    <rect x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" fill="url(#${uid}s)"/>
     ${poly(ground, 'fill="#203044" stroke="#33475d" stroke-width="1"')}
     <g stroke="#9db1c6" stroke-opacity=".28" stroke-width="1.4">${streets.join('')}</g>
     <ellipse cx="200" cy="165" rx="150" ry="80" fill="url(#${uid}g)"/>
