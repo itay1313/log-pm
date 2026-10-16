@@ -15,8 +15,8 @@ import { toLocal } from './geo.js';
 const MAJOR = new Set(['motorway', 'trunk', 'primary']);
 const MID = new Set(['secondary', 'tertiary']);
 const MINOR = new Set(['minor', 'service']);
-const HEIGHT_SCALE = 1.5; // a little drama: the reference's city reads chunky
-const DEFAULT_HEIGHT = 7; // most Israeli buildings have no height in OSM (docs/hero-spike.md)
+const HEIGHT_SCALE = 1.9; // a little drama: the reference's city reads chunky
+const DEFAULT_HEIGHT = 8; // most Israeli buildings have no height in OSM (docs/hero-spike.md)
 
 self.onmessage = async (e) => {
   const { id, url, z, x, y, mode } = e.data;
@@ -59,7 +59,12 @@ self.onmessage = async (e) => {
         for (const p of g) { cx += p.x; cy += p.y; }
         cx /= g.length; cy /= g.length;
         if (cx < 0 || cy < 0 || cx >= f.extent || cy >= f.extent) continue;
-        const top = Math.max(4, Number(f.properties.render_height) || DEFAULT_HEIGHT) * HEIGHT_SCALE;
+        // OpenMapTiles writes 5 m when OSM has no height: vary those (stable per building) so the
+        // city reads as a skyline, not a carpet. Real heights are kept as they are.
+        const rh = Number(f.properties.render_height) || 0;
+        const known = rh > 5;
+        const jitter = ((Math.sin(cx * 12.9898 + cy * 78.233 + x * 3.1 + y * 7.7) * 43758.5453) % 1 + 1) % 1;
+        const top = (known ? rh : DEFAULT_HEIGHT + jitter * 10) * HEIGHT_SCALE;
         const base = (Number(f.properties.render_min_height) || 0) * HEIGHT_SCALE;
         if (top <= base) continue;
         eachPolygon(f.toGeoJSON(x, y, z).geometry, (rings) => extrude(rings, base, top, bPos, bNor));

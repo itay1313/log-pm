@@ -24,6 +24,7 @@ require LOG_CORE_DIR . 'inc/setup.php';
 require LOG_CORE_DIR . 'inc/import.php';
 require LOG_CORE_DIR . 'inc/forms.php';
 require LOG_CORE_DIR . 'inc/social.php';
+require LOG_CORE_DIR . 'inc/admin-list.php';
 
 register_activation_hook( __FILE__, function () {
 	log_register_post_types();

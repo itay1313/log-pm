@@ -11,14 +11,18 @@
  */
 import * as THREE from 'three';
 import { MapControls } from 'three/examples/jsm/controls/MapControls.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { gsap } from 'gsap';
 import earcut from 'earcut';
 import { toLocal, toLngLat, lngLatToTile, tilesInBox, ISRAEL_BOX } from './geo.js';
 
 const C = {
-  fog: '#1a2431',
+  fog: '#1d2a3a',
   sea: '#2f4a63',
-  building: '#f29a5c',
+  building: '#ff8d3a',
   roadNational: '#9db1c6',
   roadRegional: '#b4c4d4',
   road: '#e3ebf2',
@@ -26,25 +30,36 @@ const C = {
   plan: '#f7931d',
 };
 const NATIONAL = { tx: 70000, tz: -20000, radius: 430000, phi: 0.62, theta: -0.18 };
+// Home: Gush Dan, tilted, the city standing. Target nudged east so the copy (right) has room.
+const [HX, HZ] = toLocal(34.795, 32.05);
+const HOME = { tx: HX + 1700, tz: HZ, radius: 9800, phi: 1.07, theta: -0.42 };
+const MID_AT = 9000; // below this the full-detail z14 city takes over from the z13 one
 const REGIONAL_AT = 170000;
 const DETAIL_AT = 42000;
 const MAX_DETAIL_TILES = 30;
+const MAX_MID_TILES = 12;
 const MAX_REGIONAL_TILES = 16;
 
 export async function createScene(container, { reduced = false } = {}) {
   const tpl = await tileTemplate();
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
-  renderer.setClearColor(0x000000, 0);
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
+  scene.background = skyTexture();
   scene.fog = new THREE.Fog(C.fog, 1e5, 1e6);
   const camera = new THREE.PerspectiveCamera(30, 1, 10, 1e7);
+  // Glow: the orange city blooms softly against the navy (the reference's "lit" look).
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.62, 0.55, 0.52);
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
 
   scene.add(new THREE.HemisphereLight(0xfff1e2, 0x1b2430, 1.35));
-  const sun = new THREE.DirectionalLight(0xfff4ea, 2.4);
+  const sun = new THREE.DirectionalLight(0xfff4ea, 2.6);
   sun.position.set(-0.55, 1, 0.35);
   scene.add(sun);
 
@@ -70,13 +85,13 @@ export async function createScene(container, { reduced = false } = {}) {
     roadMajor: lineMaterial(C.roadMajor, 0.0, fogUniforms),
     rail: lineMaterial(C.road, 0.0, fogUniforms),
     sea: seaMaterial(C.sea, reduced ? 1 : 0, revealUniforms),
-    building: new THREE.MeshLambertMaterial({ color: C.building, emissive: '#4a1e06', side: THREE.FrontSide }),
+    building: new THREE.MeshLambertMaterial({ color: C.building, emissive: '#6a2700', side: THREE.FrontSide }),
     planFill: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide }),
     planFillLarge: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide }),
-    planEdge: lineMaterial('#fff3e6', 0.9, fogUniforms),
+    planEdge: lineMaterial('#fff6ec', 1.0, fogUniforms),
   };
 
-  const groups = { national: new THREE.Group(), regional: new THREE.Group(), detail: new THREE.Group(), plans: new THREE.Group() };
+  const groups = { national: new THREE.Group(), regional: new THREE.Group(), mid: new THREE.Group(), detail: new THREE.Group(), plans: new THREE.Group() };
   Object.values(groups).forEach((g) => scene.add(g));
 
   // Tiles -------------------------------------------------------------------
@@ -87,10 +102,10 @@ export async function createScene(container, { reduced = false } = {}) {
   const fetchTile = (z, x, y, mode) => new Promise((resolve) => {
     const id = ++seq;
     waiting.set(id, resolve);
-    pool[rr++ % pool.length].postMessage({ id, url: tpl.replace('{z}', z).replace('{x}', x).replace('{y}', y), z, x, y, mode });
+    pool[rr++ % pool.length].postMessage({ id, url: tpl.replace('{z}', z).replace('{x}', x).replace('{y}', y), z, x, y, mode: mode === 'mid' ? 'detail' : mode });
   });
 
-  const loaded = { regional: new Map(), detail: new Map() };
+  const loaded = { regional: new Map(), mid: new Map(), detail: new Map() };
   const places = [];
 
   function addTile(data, mode, key) {
@@ -132,7 +147,7 @@ export async function createScene(container, { reduced = false } = {}) {
   }
 
   function ensureAround(lng, lat, mode) {
-    const z = mode === 'detail' ? 14 : 11;
+    const z = mode === 'detail' ? 14 : mode === 'mid' ? 13 : 11;
     const map = loaded[mode];
     const [cx, cy] = lngLatToTile(lng, lat, z);
     const ring = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]];
@@ -150,7 +165,7 @@ export async function createScene(container, { reduced = false } = {}) {
 
   function evict(mode) {
     const map = loaded[mode];
-    const max = mode === 'detail' ? MAX_DETAIL_TILES : MAX_REGIONAL_TILES;
+    const max = mode === 'detail' ? MAX_DETAIL_TILES : mode === 'mid' ? MAX_MID_TILES : MAX_REGIONAL_TILES;
     if (map.size <= max) return;
     const t = new THREE.Vector2(controls.target.x, controls.target.z);
     const far = [...map.entries()].filter(([, g]) => g).sort((a, b) => tileCentre(b[0]).distanceTo(t) - tileCentre(a[0]).distanceTo(t));
@@ -247,27 +262,31 @@ export async function createScene(container, { reduced = false } = {}) {
     mat.regional.uniforms.uOpacity.value = 0.34 * smooth(REGIONAL_AT, REGIONAL_AT * 0.55, r);
     mat.road.uniforms.uOpacity.value = 0.42 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
     mat.rail.uniforms.uOpacity.value = 0.25 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
-    mat.roadMajor.uniforms.uOpacity.value = 0.75 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
+    mat.roadMajor.uniforms.uOpacity.value = 0.55 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
     mat.national.uniforms.uOpacity.value = 0.42 * (1 - 0.6 * smooth(DETAIL_AT * 1.5, DETAIL_AT * 0.4, r));
-    mat.planFill.opacity = 0.75 - 0.4 * smooth(60000, 8000, r);
+    mat.planFill.opacity = 0.7 - 0.6 * smooth(60000, 14000, r); // city level: the edge marks the plan, not a flood of orange
     mat.planFillLarge.opacity = 0.14 * (1 - smooth(80000, 30000, r)); // regional plans: gone by city level
     groups.regional.visible = r < REGIONAL_AT;
-    groups.detail.visible = r < DETAIL_AT * 1.2;
+    groups.mid.visible = r < DETAIL_AT * 1.2 && r >= MID_AT;
+    groups.detail.visible = r < MID_AT;
 
     if (now - lastLod > 250) {
       lastLod = now;
       const [lng, lat] = toLngLat(controls.target.x, controls.target.z);
       if (r < REGIONAL_AT) ensureAround(lng, lat, 'regional');
-      if (r < DETAIL_AT) ensureAround(lng, lat, 'detail');
+      if (r < DETAIL_AT && r >= MID_AT * 0.8) ensureAround(lng, lat, 'mid');
+      if (r < MID_AT * 1.2) ensureAround(lng, lat, 'detail');
     }
 
-    renderer.render(scene, camera);
+    composer.render();
     frameCallbacks.forEach((cb) => { try { cb(r); } catch (err) { console.error(err); } });
   }
 
   function resize() {
     const w = container.clientWidth, h = container.clientHeight;
     renderer.setSize(w, h, false);
+    composer.setPixelRatio(renderer.getPixelRatio());
+    composer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
@@ -288,7 +307,7 @@ export async function createScene(container, { reduced = false } = {}) {
     resume: () => { running = true; },
     radius: () => camera.position.distanceTo(controls.target),
     theta: () => new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target)).theta,
-    national: NATIONAL,
+    national: HOME,
 
     /** Screen position (CSS px within the container) for a local x/z; null when behind the camera. */
     toScreen(x, z, y = 0) {
@@ -305,13 +324,18 @@ export async function createScene(container, { reduced = false } = {}) {
 
     /** Opening move: from straight above, far out, swing down into the national view while the map draws itself. */
     async intro() {
-      if (reduced) { Object.assign(view, NATIONAL); applyView(); await nationalReady; return; }
-      // Move at once; the country draws itself in (radial reveal) as its tiles land.
-      Object.assign(view, { ...NATIONAL, radius: 1500000, phi: 0.02, theta: NATIONAL.theta - 1.1 });
+      // Preload Gush Dan so the city is rising as the camera arrives.
+      const [hlng, hlat] = toLngLat(HOME.tx, HOME.tz);
+      ensureAround(hlng, hlat, 'regional');
+      ensureAround(hlng, hlat, 'mid');
+      if (reduced) { Object.assign(view, HOME); applyView(); return; }
+      // From high above the whole country, the map drawing itself in, down into Tel Aviv.
+      Object.assign(view, { ...NATIONAL, radius: 1300000, phi: 0.02, theta: NATIONAL.theta - 1.1 });
       applyView();
-      gsap.to(mat.sea.uniforms.uOpacity, { value: 1, duration: 2.6, ease: 'power2.out', delay: 0.4 });
-      gsap.to(revealUniforms.uReveal, { value: 750000, duration: 4.6, ease: 'power2.inOut', delay: 0.2 });
-      await moveTo(NATIONAL, { duration: 5, ease: 'power3.inOut' });
+      gsap.to(mat.sea.uniforms.uOpacity, { value: 1, duration: 2.6, ease: 'power2.out', delay: 0.3 });
+      gsap.to(revealUniforms.uReveal, { value: 750000, duration: 3.4, ease: 'power2.inOut', delay: 0.1 });
+      await moveTo({ ...NATIONAL, radius: 520000 }, { duration: 2.2, ease: 'power2.inOut' });
+      await moveTo(HOME, { duration: 4.2, ease: 'power3.inOut' });
       controls.autoRotate = true;
     },
 
@@ -335,7 +359,9 @@ export async function createScene(container, { reduced = false } = {}) {
       return moveTo({ tx: (minX + maxX) / 2, tz: (minZ + maxZ) / 2, radius: span * 2.2, phi: 0.8 }, { duration });
     },
 
-    home() { return moveTo(NATIONAL, { duration: 2.4 }); },
+    home() { return moveTo(HOME, { duration: 2.4 }); },
+
+    country() { return moveTo(NATIONAL, { duration: 2.6 }); },
 
     stopDrift() { controls.autoRotate = false; },
 
@@ -344,9 +370,27 @@ export async function createScene(container, { reduced = false } = {}) {
       ro.disconnect();
       pool.forEach((w) => w.terminate());
       controls.dispose();
+      composer.dispose();
       renderer.dispose();
     },
   };
+}
+
+/** The navy sky behind everything (was CSS; now in-scene so the glow pass has a background). */
+function skyTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 512;
+  const g = c.getContext('2d');
+  const grd = g.createRadialGradient(110, 50, 10, 200, 160, 620);
+  grd.addColorStop(0, '#4a6178');
+  grd.addColorStop(0.32, '#2b3d50');
+  grd.addColorStop(0.62, '#1d2a3a');
+  grd.addColorStop(1, '#121922');
+  g.fillStyle = grd;
+  g.fillRect(0, 0, 512, 512);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
 }
 
 async function tileTemplate() {
