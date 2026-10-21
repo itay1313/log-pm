@@ -24,6 +24,7 @@ require LOG_CORE_DIR . 'inc/rest-map.php';
 require LOG_CORE_DIR . 'inc/schema.php';
 require LOG_CORE_DIR . 'inc/setup.php';
 require LOG_CORE_DIR . 'inc/import.php';
+require LOG_CORE_DIR . 'inc/arcgis-sync.php';
 require LOG_CORE_DIR . 'inc/forms.php';
 require LOG_CORE_DIR . 'inc/search.php';
 require LOG_CORE_DIR . 'inc/social.php';
@@ -38,5 +39,6 @@ register_activation_hook( __FILE__, function () {
 
 register_deactivation_hook( __FILE__, function () {
 	wp_clear_scheduled_hook( 'log_instagram_sync' );
+	wp_clear_scheduled_hook( 'log_arcgis_sync' );
 	flush_rewrite_rules();
 } );

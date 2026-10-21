@@ -29,7 +29,16 @@
 
     { "key": "field_ls_tab_map", "label": "מפה", "name": "", "type": "tab" },
     { "key": "field_ls_mapbox_token", "label": "Mapbox public token", "name": "mapbox_token", "type": "text", "instructions": "pk.… מחשבון Mapbox של לוג. מוגבל לדומיין log-pm.co.il." },
-    { "key": "field_ls_mapbox_style", "label": "Mapbox style URL", "name": "mapbox_style", "type": "text", "placeholder": "mapbox://styles/log-pm/…" }
+    { "key": "field_ls_mapbox_style", "label": "Mapbox style URL", "name": "mapbox_style", "type": "text", "placeholder": "mapbox://styles/log-pm/…" },
+
+    { "key": "field_ls_tab_arcgis", "label": "ArcGIS", "name": "", "type": "tab" },
+    { "key": "field_ls_arcgis_note", "label": "", "name": "", "type": "message", "message": "סנכרון הפרויקטים מהשכבה blue_lines_main. רץ בשרת פעם בשבוע; \"סנכרון עכשיו\", הסטטוס וההיסטוריה בכלים → ייבוא מ-ArcGIS. הסיסמה ומפתח ה-API נשמרים בשרת בלבד ולא מוצגים כאן אחרי השמירה.", "esc_html": 0 },
+    { "key": "field_ls_arcgis_layer_url", "label": "כתובת השכבה", "name": "arcgis_layer_url", "type": "url", "placeholder": "https://services-eu1.arcgis.com/lDcqcwePoeu47saG/ArcGIS/rest/services/שכבת_תוכניות___ראשי_gdb/FeatureServer/0", "instructions": "השכבה blue_lines_main היא שכבה 0 בשירות שכבת_תוכניות___ראשי_gdb (…/FeatureServer/0). ריק: הסנכרון לא רץ, כדי שלא יישלחו התראות לפני שהחיבור מוכן." },
+    { "key": "field_ls_arcgis_api_key", "label": "מפתח API", "name": "arcgis_api_key", "type": "password", "instructions": "מפתח עם הרשאת קריאה לשכבה. אם יש מפתח, שם המשתמש והסיסמה לא בשימוש." },
+    { "key": "field_ls_arcgis_username", "label": "שם משתמש", "name": "arcgis_username", "type": "text", "wrapper": { "width": "50" } },
+    { "key": "field_ls_arcgis_password", "label": "סיסמה", "name": "arcgis_password", "type": "password", "wrapper": { "width": "50" } },
+    { "key": "field_ls_arcgis_portal", "label": "כתובת הפורטל", "name": "arcgis_portal", "type": "url", "placeholder": "https://www.arcgis.com", "instructions": "רק ל-ArcGIS Enterprise. ב-ArcGIS Online השאירו ריק." },
+    { "key": "field_ls_arcgis_alert_email", "label": "מייל להתראות", "name": "arcgis_alert_email", "type": "email", "instructions": "לכאן נשלחת התראה כשסנכרון נכשל. ריק: מייל מנהל האתר." }
   ],
   "location": [[{ "param": "options_page", "operator": "==", "value": "log-settings" }]],
   "active": true

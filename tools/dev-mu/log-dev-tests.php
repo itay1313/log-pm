@@ -123,8 +123,12 @@ add_action( 'admin_menu', function () {
 			];
 			echo '<pre id="samples-result">' . esc_html( wp_json_encode( $ids ) ) . '</pre>';
 		}
+		if ( isset( $_POST['arcgis_sync'] ) && check_admin_referer( 'log_dev' ) ) {
+			echo '<pre id="arcgis-sync-result">' . esc_html( wp_json_encode( log_dev_arcgis_sync_test(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) ) . '</pre>';
+		}
 		echo '<form method="post">';
 		wp_nonce_field( 'log_dev' );
+		submit_button( 'ArcGIS sync: mocked layer (cron, rename, removal, failure email)', 'secondary', 'arcgis_sync' );
 		submit_button( 'Spec v6: sample jobs, knowledge, people', 'secondary', 'samples' );
 		submit_button( 'Spec v6: give one project a full page', 'secondary', 'fullpage' );
 		submit_button( 'Spec v6 migration: rebuild pre-v6 data and migrate', 'secondary', 'migrate' );
@@ -133,3 +137,154 @@ add_action( 'admin_menu', function () {
 		echo '</form></div>';
 	} );
 } );
+
+/**
+ * Spec v6 §18: the ArcGIS sync against a mocked layer (pre_http_request), fed from the private export.
+ * The mock behaves like ArcGIS Online: POST only, maxRecordCount 40 (so paging runs), token required,
+ * errors inside a 200. Mail is captured with pre_wp_mail. Ends with a clean full sync and the settings cleared.
+ */
+function log_dev_arcgis_sync_test(): array {
+	$file = WP_CONTENT_DIR . '/mu-plugins/blue_lines_main.geojson';
+	if ( ! file_exists( $file ) ) {
+		return [ 'error' => 'no private fixture mounted (tools/fixtures/private/blue_lines_main.geojson)' ];
+	}
+	$all   = json_decode( file_get_contents( $file ), true );
+	$layer = 'https://arcgis.test/lDcqcwePoeu47saG/arcgis/rest/services/blue_lines_main/FeatureServer/0';
+	$mock  = [ 'features' => $all['features'], 'mode' => 'ok', 'calls' => [], 'tokens' => 0, 'expire_once' => false ];
+	$mail  = [];
+
+	$http = function ( $pre, $args, $url ) use ( &$mock ) {
+		if ( ! str_starts_with( $url, 'https://arcgis.test/' ) && ! str_contains( $url, '/sharing/rest/generateToken' ) ) {
+			return $pre;
+		}
+		$json = static fn( $body, int $code = 200 ) => [ 'headers' => [], 'body' => wp_json_encode( $body ), 'response' => [ 'code' => $code, 'message' => '' ], 'cookies' => [], 'filename' => null ];
+		$b    = (array) ( $args['body'] ?? [] );
+		$mock['calls'][] = [ 'method' => $args['method'] ?? 'GET', 'url' => $url, 'token' => $b['token'] ?? null, 'offset' => $b['resultOffset'] ?? null ];
+		if ( str_contains( $url, 'generateToken' ) ) {
+			$mock['tokens']++;
+			return $json( [ 'token' => 'tok' . $mock['tokens'], 'expires' => ( time() + 7200 ) * 1000, 'ssl' => true ] );
+		}
+		if ( $mock['mode'] === 'http500' ) {
+			return $json( [ 'oops' => 1 ], 500 );
+		}
+		if ( ( $args['method'] ?? '' ) !== 'POST' || empty( $b['token'] ) ) {
+			return $json( [ 'error' => [ 'code' => 499, 'message' => 'Token Required' ] ] );
+		}
+		if ( $mock['expire_once'] ) {
+			$mock['expire_once'] = false;
+			return $json( [ 'error' => [ 'code' => 498, 'message' => 'Invalid token.' ] ] );
+		}
+		$offset = (int) $b['resultOffset'];
+		$page   = array_slice( $mock['features'], $offset, min( 40, (int) $b['resultRecordCount'] ) );
+		$out    = [ 'type' => 'FeatureCollection', 'features' => $page ];
+		if ( $offset + count( $page ) < count( $mock['features'] ) ) {
+			$out['properties'] = [ 'exceededTransferLimit' => true ];
+		}
+		return $json( $out );
+	};
+	$mailer = function ( $null, $atts ) use ( &$mail ) {
+		$mail[] = [ 'to' => $atts['to'], 'subject' => $atts['subject'], 'body' => $atts['message'] ];
+		return true;
+	};
+	add_filter( 'pre_http_request', $http, 10, 3 );
+	add_filter( 'pre_wp_mail', $mailer, 10, 2 );
+
+	foreach ( [ 'arcgis_layer_url' => $layer, 'arcgis_username' => 'log_reader', 'arcgis_password' => 's3cret', 'arcgis_api_key' => '', 'arcgis_alert_email' => 'alerts@log-pm.test' ] as $k => $v ) {
+		log_set_field( $k, $v, 'option' );
+	}
+	delete_transient( 'log_arcgis_token' );
+	delete_transient( 'log_arcgis_syncing' );
+	$out = [ 'cron' => [ 'next' => wp_date( 'D j.n.Y H:i', (int) wp_next_scheduled( 'log_arcgis_sync' ) ), 'schedule' => wp_get_schedule( 'log_arcgis_sync' ) ] ];
+	$res = static fn( array $r ) => array_intersect_key( $r, array_flip( [ 'trigger', 'ok', 'skipped', 'message' ] ) );
+
+	// 1. Cron run, with paging (99 features / 40 per page) and a token.
+	do_action( 'log_arcgis_sync' );
+	$out['1_cron'] = $res( get_option( 'log_arcgis_sync' ) ) + [
+		'requests' => array_map( static fn( $c ) => $c['method'] . ' ' . basename( $c['url'] ) . ' offset=' . $c['offset'] . ' token=' . $c['token'], $mock['calls'] ),
+	];
+
+	// Pick an in-progress plan to remove and another to rename; give the renamed one editorial content.
+	$by_oid = array_flip( log_arcgis_known_projects() );
+	$remove = $rename = null;
+	foreach ( $mock['features'] as $i => $f ) {
+		$oid = (string) $f['properties']['OBJECTID'];
+		if ( ( $f['properties']['סטטוס'] ?? '' ) === '01' && isset( $by_oid[ $oid ] ) ) {
+			if ( $remove === null ) {
+				$remove = $i;
+			} elseif ( $rename === null ) {
+				$rename = $i;
+				break;
+			}
+		}
+	}
+	$removed_id = $by_oid[ (string) $mock['features'][ $remove ]['properties']['OBJECTID'] ];
+	$renamed_id = $by_oid[ (string) $mock['features'][ $rename ]['properties']['OBJECTID'] ];
+	wp_update_post( [ 'ID' => $renamed_id, 'post_status' => 'publish' ] );
+	log_set_field( 'challenge', 'סיפור שנכתב במערכת התוכן.', $renamed_id );
+	log_set_field( 'approved', 1, $renamed_id );
+	log_set_field( 'full_page', 1, $renamed_id );
+	log_set_field( 'city', 'עיר שתוקנה ידנית', $renamed_id );
+	$slug_before = get_post_field( 'post_name', $renamed_id );
+
+	// 2. Manual run: one plan renamed in the source, one removed, and the token expires mid-run.
+	$mock['features'][ $rename ]['properties']['שם_התוכנית'] .= ' (שם חדש)';
+	$mock['features'][ $rename ]['properties']['יחד_מוצע']    = '';
+	array_splice( $mock['features'], $remove, 1 );
+	$mock['expire_once'] = true;
+	$tokens_before       = $mock['tokens'];
+	$r = log_arcgis_sync( 'manual' );
+	$out['2_manual'] = $res( $r ) + [
+		'closed'         => $r['closed'] ?? null,
+		'token_renewed'  => $mock['tokens'] - $tokens_before,
+		'removed'        => [ 'id' => $removed_id, 'status' => log_field( 'status', $removed_id ), 'stage' => wp_get_post_terms( $removed_id, 'log_stage', [ 'fields' => 'slugs' ] ), 'post_status' => get_post_status( $removed_id ), 'removed_at' => (bool) get_post_meta( $removed_id, 'arcgis_removed_at', true ) ],
+		'renamed'        => [
+			'id'            => $renamed_id,
+			'title'         => get_the_title( $renamed_id ),
+			'slug_kept'     => get_post_field( 'post_name', $renamed_id ) === $slug_before,
+			'units'         => log_field( 'units', $renamed_id ),
+			'story_kept'    => log_field( 'challenge', $renamed_id ) === 'סיפור שנכתב במערכת התוכן.',
+			'approved'      => (bool) log_field( 'approved', $renamed_id ),
+			'full_page'     => (bool) log_field( 'full_page', $renamed_id ),
+			'city_kept'     => log_field( 'city', $renamed_id ) === 'עיר שתוקנה ידנית',
+			'synced_fields' => get_post_meta( $renamed_id, 'arcgis_fields', true ),
+		],
+	];
+
+	// 3. Failure: the layer answers HTTP 500. Nothing changes, the admin gets an email.
+	$mock['features'][0]['properties']['שם_התוכנית'] = 'לא אמור להיכתב';
+	$snap = [ 'last_success' => get_option( 'log_arcgis_last_success' ), 'title0' => get_the_title( $by_oid[ (string) $mock['features'][0]['properties']['OBJECTID'] ] ) ];
+	$mock['mode'] = 'http500';
+	do_action( 'log_arcgis_sync' );
+	$out['3_failure'] = $res( get_option( 'log_arcgis_sync' ) ) + [
+		'data_untouched'  => get_option( 'log_arcgis_last_success' ) === $snap['last_success'] && get_the_title( $by_oid[ (string) $mock['features'][0]['properties']['OBJECTID'] ] ) === $snap['title0'],
+		'mail'            => $mail,
+	];
+
+	// 4. A layer that suddenly returns 10 plans (a filtered view): refused, nothing closed.
+	$mock['mode']     = 'ok';
+	$mock['features'] = array_slice( $all['features'], 0, 10 );
+	$mail             = [];
+	$r = log_arcgis_sync( 'manual' );
+	$out['4_shrunk'] = $res( $r ) + [ 'mails' => count( $mail ), 'removed_now' => count( array_filter( array_keys( log_arcgis_known_projects() ), static fn( $id ) => get_post_meta( $id, 'arcgis_removed_at', true ) ) ) ];
+
+	// 5. Not configured: the weekly run waits quietly.
+	log_set_field( 'arcgis_layer_url', '', 'option' );
+	$mail = [];
+	$r = log_arcgis_sync( 'cron' );
+	$out['5_unconfigured'] = $res( $r ) + [ 'mails' => count( $mail ) ];
+
+	// Restore: a clean full sync brings the removed plan back with its source status, then clear the settings.
+	log_set_field( 'arcgis_layer_url', $layer, 'option' );
+	$mock['features'] = $all['features'];
+	$r = log_arcgis_sync( 'manual' );
+	$out['6_restore'] = $res( $r ) + [ 'removed_back' => [ 'status' => log_field( 'status', $removed_id ), 'removed_at' => (bool) get_post_meta( $removed_id, 'arcgis_removed_at', true ) ] ];
+	$out['edit_links'] = [ 'renamed' => get_edit_post_link( $renamed_id, 'raw' ), 'removed' => get_edit_post_link( $removed_id, 'raw' ) ];
+
+	remove_filter( 'pre_http_request', $http, 10 );
+	remove_filter( 'pre_wp_mail', $mailer, 10 );
+	foreach ( [ 'arcgis_layer_url', 'arcgis_username', 'arcgis_password', 'arcgis_alert_email' ] as $k ) {
+		log_set_field( $k, '', 'option' );
+	}
+	delete_transient( 'log_arcgis_token' );
+	return $out;
+}

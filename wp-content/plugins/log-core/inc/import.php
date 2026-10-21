@@ -475,7 +475,8 @@ function log_import_feature( array $feature, bool $dry ): array {
 	// Scalar fields.
 	$fields = [
 		'plan_number' => $plan_number,
-		'units'       => $get( 'יחד_מוצע' ) === '' ? null : (int) $get( 'יחד_מוצע' ),
+		// 0 in the layer means "not entered" (spec v6 §18: an empty source value is not shown, not even as 0).
+		'units'       => (int) $get( 'יחד_מוצע' ) > 0 ? (int) $get( 'יחד_מוצע' ) : null,
 	];
 
 	// רשות_מקומית is the authority (it includes regional councils). The city text starts as the same
@@ -568,7 +569,12 @@ function log_import_feature( array $feature, bool $dry ): array {
 	}
 
 	if ( $post_id ) {
-		wp_update_post( [ 'ID' => $post_id, 'post_title' => $title ] );
+		// Only on a real rename, so a weekly sync doesn't bump every project's modified date.
+		// The slug never follows the title (spec v6 §18).
+		if ( get_post_field( 'post_title', $post_id ) !== $title ) {
+			wp_update_post( [ 'ID' => $post_id, 'post_title' => $title ] );
+			$notes[] = 'שם עודכן';
+		}
 	} else {
 		$post_id = wp_insert_post( [
 			'post_type'   => 'log_project',
@@ -602,7 +608,17 @@ function log_import_feature( array $feature, bool $dry ): array {
 			log_set_field( 'city', $authority, $post_id );
 		}
 	}
+	// What this run wrote from the source: the edit screen shows exactly these as read-only (inc/arcgis-sync.php).
+	$synced = array_merge( [ 'title' ], array_keys( $fields ) );
+	if ( $client_id ) {
+		$synced[] = 'client';
+	}
+	if ( $authority !== '' ) {
+		$synced[] = 'log_authority';
+	}
+	update_post_meta( $post_id, 'arcgis_fields', $synced );
 	update_post_meta( $post_id, 'synced_at', time() );
+	delete_post_meta( $post_id, 'arcgis_removed_at' );
 	log_project_recompute_derived( (int) $post_id );
 
 	return $row;
@@ -657,6 +673,7 @@ function log_import_page(): void {
 	$result = null;
 	$error  = null;
 	$dry    = true;
+	$synced = log_arcgis_handle_post();
 
 	if ( isset( $_POST['log_import'] ) && check_admin_referer( 'log_arcgis_import' ) ) {
 		$dry  = ! empty( $_POST['log_dry_run'] );
@@ -679,6 +696,9 @@ function log_import_page(): void {
 		log_import_render_summary( $result, $dry );
 	}
 
+	log_arcgis_panel( $synced );
+
+	echo '<hr><h2>ייבוא ידני מקובץ</h2>';
 	echo '<p>קובץ GeoJSON שיוצא מהשכבה <code>blue_lines_main</code> (ArcGIS Online → Export → GeoJSON). ';
 	echo 'תכניות מזוהות לפי OBJECTID, ובלעדיו לפי מספר תכנית. תכניות חדשות נוצרות כטיוטה ולא מאושרות לפרסום; ';
 	echo 'ייבוא חוזר מעדכן רק את שדות ה-ArcGIS ולא נוגע בסיפור, במדיה או באישור הפרסום. ';
