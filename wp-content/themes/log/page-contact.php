@@ -14,6 +14,7 @@ $privacy = get_privacy_policy_url();
 ?>
 <header class="page-header">
 	<h1 class="page-header__title"><?php echo esc_html( log_text( 'hero_title', 'דברו איתנו' ) ); ?></h1>
+	<?php echo log_sheet_label(); ?>
 </header>
 
 <div class="container contact">

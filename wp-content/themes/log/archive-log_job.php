@@ -33,7 +33,7 @@ $jobs = new WP_Query( [
 	<figure class="careers-hero__media">
 		<?php if ( is_array( $image ) && ! empty( $image['url'] ) ) : ?>
 			<img src="<?php echo esc_url( $image['sizes']['log-wide'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>" fetchpriority="high">
-		<?php else : ?><span class="placeholder placeholder--media">תמונת צוות</span><?php endif; ?>
+		<?php elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת צוות (רק עורכים רואים את זה)</span><?php endif; ?>
 	</figure>
 	<div class="container careers-hero__copy">
 		<h1 class="page-header__title"><?php echo esc_html( log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ) ); ?></h1>
@@ -45,6 +45,7 @@ $jobs = new WP_Query( [
 	</div>
 </section>
 
+<?php if ( ( is_array( $gallery ) && $gallery ) || $videos || log_show_empty() ) : ?>
 <section class="section" data-section="culture">
 	<div class="container">
 		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_culture_title', 'איך זה נראה', 'option' ) ); ?></h2>
@@ -66,9 +67,10 @@ $jobs = new WP_Query( [
 				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>
-		<?php if ( ! $gallery && ! $videos ) : ?><p class="placeholder">תמונות וסרטונים של העובדים, המשרדים והאווירה.</p><?php endif; ?>
+		<?php if ( ! $gallery && ! $videos && log_show_empty() ) : ?><p class="placeholder">תמונות וסרטונים של העובדים, המשרדים והאווירה.</p><?php endif; ?>
 	</div>
 </section>
+<?php endif; ?>
 
 <section class="section" data-section="people">
 	<div class="container">

@@ -11,6 +11,7 @@ $total  = array_sum( array_map( static fn( $g ) => count( $g['items'] ), $groups
 <header class="page-header">
 	<h1 class="page-header__title"><?php echo $query !== '' ? esc_html( sprintf( 'חיפוש: %s', $query ) ) : 'חיפוש באתר'; ?></h1>
 	<?php if ( $query !== '' ) : ?><p class="page-header__lede" aria-live="polite"><?php echo $total === 1 ? 'תוצאה אחת' : esc_html( sprintf( '%s תוצאות', number_format_i18n( $total ) ) ); ?></p><?php endif; ?>
+	<?php echo log_sheet_label(); ?>
 </header>
 <div class="container" data-search-term="<?php echo esc_attr( $query ); ?>" data-search-results="<?php echo (int) $total; ?>">
 	<?php get_search_form(); ?>

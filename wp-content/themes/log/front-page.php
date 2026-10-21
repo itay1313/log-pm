@@ -15,26 +15,27 @@ $process = log_rows( 'process', [
 ] );
 $projects_url = get_post_type_archive_link( 'log_project' );
 ?>
-<section class="hero" id="hero" data-section="map" aria-label="מפת הפרויקטים">
+<section class="hero sheet--night" id="hero" data-section="map" aria-label="מפת הפרויקטים">
 	<div class="hero-stage" role="region" aria-label="מפת הפרויקטים של לוג בתלת-ממד. גרירה מזיזה, Ctrl וגלילה מקרבים. כל סיכה היא כפתור עם שם הפרויקט; Enter פותח חלונית ו-Esc סוגר."></div>
 	<div class="hero-labels" aria-hidden="true"></div>
+	<div class="hero-frame" aria-hidden="true">
+		<span class="hero-frame__coord">מרכז המבט · רשת ישראל<b data-coord>—</b></span>
+	</div>
 	<div class="hero-pins"></div>
 	<div class="hero-edges"></div>
 	<div class="hero-card" role="dialog" aria-live="polite" hidden></div>
 	<p class="hero__loading" role="status">טוענים את המפה…</p>
 
-	<div class="hero__copy">
+	<form class="hero-tools cartouche" role="search" aria-label="חיפוש וסינון במפה" action="<?php echo esc_url( $projects_url ); ?>">
+		<div class="cartouche__head"><b>גיליון 00 · מפת הפרויקטים</b><span class="map-key"><span class="map-key__pin">פרויקט</span><span class="map-key__plan">גבול תכנית</span></span><span data-scale-text>ישראל</span></div>
 		<h1 class="hero__title"><?php echo esc_html( log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' ) ); ?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
-	</div>
-
-	<form class="hero-tools" role="search" aria-label="חיפוש וסינון במפה" action="<?php echo esc_url( $projects_url ); ?>">
 		<div class="hero-search">
 			<label class="screen-reader-text" for="hero-q">חיפוש פרויקט, עיר או רשות</label>
-			<input type="search" id="hero-q" name="q" placeholder="שם פרויקט, עיר או רשות" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="hero-suggest" aria-autocomplete="list">
+			<input type="search" id="hero-q" name="q" placeholder="חיפוש פרויקט, עיר או רשות" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="hero-suggest" aria-autocomplete="list">
 			<ul class="hero-suggest" id="hero-suggest" role="listbox" hidden></ul>
 		</div>
-		<button type="button" class="hero-filter-toggle" aria-expanded="false" aria-controls="hero-filters">סינון</button>
+		<button type="button" class="hero-filter-toggle" aria-expanded="false" aria-controls="hero-filters">סינון לפי תחום, שלב ורשות</button>
 		<div class="hero-filters" id="hero-filters">
 			<?php get_template_part( 'template-parts/filter-selects' ); ?>
 			<button type="button" class="hero-filters__done">הצגת התוצאות</button>
@@ -49,14 +50,14 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 	</form>
 
 	<div class="hero-bar">
-		<div class="hero-zoom" role="group" aria-label="זום">
-			<button type="button" class="hero-zoom__in" aria-label="התקרבות">+</button>
-			<button type="button" class="hero-zoom__out" aria-label="התרחקות">−</button>
-		</div>
-		<button type="button" class="hero-compass" aria-label="כל הארץ: חזרה לתצוגת הפתיחה"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 5 L19.5 16 L16 14.5 L12.5 16 Z"/><path d="M16 27 L12.5 16 L16 17.5 L19.5 16 Z" class="s"/></svg></button>
-		<span class="hero-scale" aria-hidden="true"><i></i><span></span></span>
 		<button type="button" class="hero-list-btn" data-list="national" aria-expanded="false" aria-controls="hero-drawer">פריסה ארצית <span></span></button>
 		<button type="button" class="hero-list-btn" data-list="all" aria-expanded="false" aria-controls="hero-drawer">תצוגת רשימה <span></span></button>
+		<span class="hero-scale" aria-hidden="true"><i></i><span></span></span>
+		<button type="button" class="hero-compass" aria-label="כל הארץ: חזרה לתצוגת הפתיחה"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 5 L19.5 16 L16 14.5 L12.5 16 Z"/><path d="M16 27 L12.5 16 L16 17.5 L19.5 16 Z" class="s"/></svg></button>
+		<div class="hero-zoom" role="group" aria-label="זום">
+			<button type="button" class="hero-zoom__in" aria-label="התקרבות"><i class="icon icon--plus" aria-hidden="true"></i></button>
+			<button type="button" class="hero-zoom__out" aria-label="התרחקות"><i class="icon icon--minus" aria-hidden="true"></i></button>
+		</div>
 	</div>
 	<div class="hero-drawer" id="hero-drawer" hidden></div>
 	<p class="hero__hint" aria-hidden="true">כדי להתקרב: Ctrl וגלילה</p>
@@ -66,15 +67,21 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 
 <section class="section section--who" data-section="who">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
-		<div class="section__prose">
-			<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
+		<div class="who__text">
+			<h2 class="section__title"><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
+			<div class="section__prose">
+				<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
+			</div>
+			<ul class="link-row">
+				<li><a href="<?php echo esc_url( home_url( '/about/#expertise' ) ); ?>">המומחיות שלנו</a></li>
+				<li><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">אודות</a></li>
+				<li><a href="<?php echo esc_url( $projects_url ); ?>">הפרויקטים</a></li>
+			</ul>
 		</div>
-		<ul class="link-row">
-			<li><a href="<?php echo esc_url( home_url( '/about/#expertise' ) ); ?>">המומחיות שלנו</a></li>
-			<li><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">אודות</a></li>
-			<li><a href="<?php echo esc_url( $projects_url ); ?>">הפרויקטים</a></li>
-		</ul>
+		<figure class="sheet-index">
+			<a href="<?php echo esc_url( add_query_arg( 'view', 'map', $projects_url ) ); ?>" class="sheet-index__link"><?php echo log_sheet_index_svg(); ?></a>
+			<figcaption>מפתח גיליונות · כל פרויקט של לוג כנקודה על רשת ישראל</figcaption>
+		</figure>
 	</div>
 </section>
 
@@ -126,10 +133,12 @@ if ( $domains ) : ?>
 	</div>
 </section>
 
+<?php if ( log_has_clients() || log_show_empty() ) : ?>
 <section class="section section--clients" data-section="clients">
 	<div class="container">
 		<h2 class="section__title"><?php echo esc_html( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
 		<?php get_template_part( 'template-parts/clients' ); ?>
 	</div>
 </section>
+<?php endif; ?>
 <?php get_footer();

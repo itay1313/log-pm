@@ -41,7 +41,7 @@ $items = new WP_Query( [
 ?>
 <section class="control-hero">
 	<figure class="control-hero__media">
-		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); else : ?><span class="placeholder placeholder--media">תמונת פתיחה</span><?php endif; ?>
+		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת פתיחה (רק עורכים רואים את זה)</span><?php endif; ?>
 	</figure>
 	<div class="control-hero__strip">
 		<div class="container">

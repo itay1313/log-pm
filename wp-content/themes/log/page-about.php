@@ -29,7 +29,7 @@ $galleries = array_filter( [
 ?>
 <section class="about-hero">
 	<figure class="about-hero__media">
-		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); else : ?><span class="placeholder placeholder--media">תמונת צוות גדולה</span><?php endif; ?>
+		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת צוות גדולה (רק עורכים רואים את זה)</span><?php endif; ?>
 	</figure>
 	<div class="container about-hero__copy">
 		<h1 class="page-header__title"><?php echo esc_html( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ) ); ?></h1>
@@ -86,6 +86,7 @@ $galleries = array_filter( [
 	</div>
 </section>
 
+<?php if ( $team->have_posts() || log_show_empty() ) : ?>
 <section class="section section--team" id="team" data-section="team">
 	<div class="container">
 		<h2 class="section__title"><?php echo esc_html( log_text( 'team_title', 'הצוות' ) ); ?></h2>
@@ -100,12 +101,14 @@ $galleries = array_filter( [
 			<div class="people" id="team-grid">
 				<?php while ( $team->have_posts() ) : $team->the_post(); get_template_part( 'template-parts/card-person' ); endwhile; wp_reset_postdata(); ?>
 			</div>
-		<?php else : ?>
+		<?php elseif ( log_show_empty() ) : ?>
 			<p class="placeholder">כאן תופיע רשת הצוות: תמונה, שם ותפקיד, לפי יחידות. מתמלא מ"צוות" במערכת הניהול.</p>
 		<?php endif; ?>
 	</div>
 </section>
+<?php endif; ?>
 
+<?php if ( $galleries || log_show_empty() ) : ?>
 <section class="section section--offices" data-section="offices">
 	<div class="container">
 		<h2 class="section__title"><?php echo esc_html( log_text( 'offices_title', 'המשרדים והחיים בחברה' ) ); ?></h2>
@@ -121,18 +124,21 @@ $galleries = array_filter( [
 					</figure>
 				<?php endforeach; ?>
 			</div>
-		<?php else : ?>
+		<?php elseif ( log_show_empty() ) : ?>
 			<p class="placeholder">גלריה: המשרדים בירושלים ובתל אביב, אירועים ויום עבודה.</p>
 		<?php endif; ?>
 	</div>
 </section>
+<?php endif; ?>
 
+<?php if ( log_has_clients() || log_show_empty() ) : ?>
 <section class="section section--clients" data-section="clients">
 	<div class="container">
 		<h2 class="section__title"><?php echo esc_html( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
 		<?php get_template_part( 'template-parts/clients' ); ?>
 	</div>
 </section>
+<?php endif; ?>
 
 <section class="section section--invite" data-section="careers">
 	<div class="container">

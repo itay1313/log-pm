@@ -3,6 +3,7 @@ import { illustration } from './hero/illustration.js';
 import { initConsent, track } from './consent.js';
 
 initConsent();
+import('./motion.js').then((m) => m.initMotion()).catch(() => document.documentElement.classList.remove('js-motion'));
 
 // Measurement events that belong to a page load (spec v6 §21). Nothing personal is sent.
 {
@@ -137,6 +138,20 @@ if (document.getElementById('knowledge-grid')) {
 // Forms: contact and apply
 if (document.querySelector('form[data-endpoint]')) {
   import('./forms.js').then((m) => m.initForms());
+}
+
+// Project tiles without a photo: draw the project's building as it scrolls near (the same drawing as the map card).
+const tileArt = document.querySelectorAll('.card__placeholder[data-id]');
+if (tileArt.length) {
+  const draw = (el) => { el.innerHTML = illustration({ id: el.dataset.id, domain: el.dataset.domain, stage: el.dataset.stage }, 'card__art'); el.classList.add('is-drawn'); };
+  // The first 24 (one page of the list) draw at once, so no tile is ever seen blank; the rest as they come near.
+  const eager = [...tileArt].slice(0, 24);
+  eager.forEach(draw);
+  const rest = [...tileArt].slice(24);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { draw(e.target); io.unobserve(e.target); } }), { rootMargin: '800px' });
+    rest.forEach((el) => io.observe(el));
+  } else rest.forEach(draw);
 }
 
 // Project page without a photo: draw its building before the arrival wipe opens.

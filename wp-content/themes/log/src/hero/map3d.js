@@ -14,7 +14,9 @@
  */
 import { createScene } from './scene.js';
 import { leave } from './transition.js';
-import { toLocal } from './geo.js';
+import { toLocal, toLngLat } from './geo.js';
+import { itmLabel, toITM } from '../itm.js';
+import { Vector3, Raycaster, Plane } from 'three';
 import { illustration } from './illustration.js';
 
 const fmt = new Intl.NumberFormat('he-IL');
@@ -34,6 +36,41 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   const compass = hero.querySelector('.hero-compass');
   const scaleEl = hero.querySelector('.hero-scale');
   const hint = hero.querySelector('.hero__hint');
+  const frame = hero.querySelector('.hero-frame');
+  const coordEl = hero.querySelector('[data-coord]');
+  const scaleText = hero.querySelector('[data-scale-text]');
+  const scaleFmt = new Intl.NumberFormat('he-IL');
+  // Margin lettering: easting along the top neatline, northing along the side, at three ticks each.
+  const marks = [];
+  if (frame) {
+    for (const side of ['top', 'side']) for (const at of [0.25, 0.5, 0.75]) {
+      const el = document.createElement('span');
+      el.className = `hero-frame__tick hero-frame__tick--${side}`;
+      el.style.setProperty('--at', `${at * 100}%`);
+      frame.appendChild(el);
+      marks.push({ el, side, at });
+    }
+  }
+  const ray = new Raycaster(), ground = new Plane(new Vector3(0, 1, 0), 0), hitPt = new Vector3(), ndc = new Vector3();
+  /** Grid coordinates under a screen point (stage px), or null above the horizon. */
+  function gridAt(px, py) {
+    ndc.set((px / stage.clientWidth) * 2 - 1, -(py / stage.clientHeight) * 2 + 1, 0.5);
+    ray.setFromCamera(ndc, scene.camera);
+    if (!ray.ray.intersectPlane(ground, hitPt)) return null;
+    const [lng, lat] = toLngLat(hitPt.x, hitPt.z);
+    return toITM(lat, lng);
+  }
+  function layoutMarks() {
+    if (!marks.length) return;
+    const f = frame.getBoundingClientRect(), st = stage.getBoundingClientRect();
+    for (const m of marks) {
+      // Top ticks read along the frame's top edge; side ticks along its left (end) edge.
+      const px = m.side === 'top' ? f.right - st.left - f.width * m.at : f.left - st.left + 4;
+      const py = m.side === 'top' ? f.top - st.top + 4 : f.top - st.top + f.height * m.at;
+      const g = gridAt(px, py);
+      m.el.textContent = g ? String(Math.round(g[m.side === 'top' ? 0 : 1] / 100) * 100) : '';
+    }
+  }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const sheet = matchMedia('(max-width: 700px)');
 
@@ -62,11 +99,14 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   if (hint && /Mac|iPhone|iPad/.test(navigator.platform)) hint.textContent = 'כדי להתקרב: ⌘ וגלילה';
   // Touch: one finger scrolls the page, two fingers pan and pinch.
   scene.controls.touches.ONE = -1;
-  stage.addEventListener('pointerdown', () => scene.stopDrift());
+  let explored = false; // edge counters are wayfinding for exploring: the opening view stays clean
+  const explore = () => { explored = true; };
+  stage.addEventListener('pointerdown', () => { scene.stopDrift(); explore(); });
+  stage.addEventListener('wheel', (e) => { if (e.ctrlKey || e.metaKey) explore(); }, { passive: true });
   scene.controls.addEventListener('start', () => { scene.stopDrift(); if (!locked) closeCard(); });
 
-  hero.querySelector('.hero-zoom__in')?.addEventListener('click', () => { scene.stopDrift(); scene.zoomBy(0.5); });
-  hero.querySelector('.hero-zoom__out')?.addEventListener('click', () => { scene.stopDrift(); scene.zoomBy(2); });
+  hero.querySelector('.hero-zoom__in')?.addEventListener('click', () => { scene.stopDrift(); explore(); scene.zoomBy(0.5); });
+  hero.querySelector('.hero-zoom__out')?.addEventListener('click', () => { scene.stopDrift(); explore(); scene.zoomBy(2); });
   compass?.addEventListener('click', () => { closeCard(); scene.country(); });
 
   // Pins: a pool of DOM buttons re-laid out every frame.
@@ -112,6 +152,7 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
     cardItem = item;
     const p = item.p;
     const st = p.completed ? 4 : Math.min(4, Math.max(1, Number(p.stageNumber) || 1));
+    const stageRow = `<div class="stage-row${p.completed ? ' stage-row--done' : ''}"><span class="stage-row__track" aria-hidden="true" style="--now:${st}"><i></i><i></i><i></i><i></i><span class="stage-row__fill"></span></span><span class="stage-row__label">${esc(p.stageLabel)}</span></div>`;
     const place = [...new Set([p.city, p.authorityName].filter(Boolean))].join(' · ');
     const facts = [
       p.units ? [fmt.format(p.units), 'יח"ד'] : null,
@@ -119,21 +160,18 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
       p.dunam ? [fmt.format(p.dunam), 'דונם'] : null,
     ].filter(Boolean).slice(0, 3);
     card.innerHTML = `
-      <button type="button" class="hero-card__close" aria-label="סגירה">×</button>
+      <button type="button" class="hero-card__close" aria-label="סגירה"><i class="icon icon--close" aria-hidden="true"></i></button>
       <div class="hero-card__media${p.image ? '' : ' is-art'}">
         ${p.image ? `<img src="${esc(p.image)}" alt="" loading="eager" decoding="async">` : illustration(p)}
         ${p.domainName ? `<span class="hero-card__tag">${esc(p.domainName)}</span>` : ''}
       </div>
       <div class="hero-card__body">
-        ${place ? `<p class="hero-card__meta">${esc(place)}</p>` : ''}
+        <p class="hero-card__meta"><span>${esc(place)}</span>${p.grid ? `<span class="grid-ref">${esc(p.grid)}</span>` : ''}</p>
         <h3 class="hero-card__title">${esc(p.title)}</h3>
         ${facts.length ? `<dl class="hero-card__facts">${facts.map(([v, k]) => `<div><dd>${esc(v)}</dd><dt>${esc(k)}</dt></div>`).join('')}</dl>` : ''}
-        <div class="hero-card__stage" style="--st:${st}">
-          <span class="hero-card__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <span>${esc(p.stageLabel)}</span>
-        </div>
+        <div class="hero-card__stage">${stageRow}</div>
       </div>
-      ${p.page ? `<a class="hero-card__go" href="${esc(p.url)}"><span>לעמוד הפרויקט</span><i aria-hidden="true">←</i></a>` : ''}`;
+      ${p.page ? `<a class="hero-card__go" href="${esc(p.url)}"><span>לעמוד הפרויקט</span><i aria-hidden="true"></i></a>` : ''}`;
     showCard();
   }
   /** Overlapping projects: a short list to pick from, in the card's place. */
@@ -141,7 +179,7 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
     const it0 = items[0];
     cardItem = { ...it0, picker: true };
     card.innerHTML = `
-      <button type="button" class="hero-card__close" aria-label="סגירה">×</button>
+      <button type="button" class="hero-card__close" aria-label="סגירה"><i class="icon icon--close" aria-hidden="true"></i></button>
       <div class="hero-card__body">
         <p class="hero-card__meta">${fmt.format(items.length)} פרויקטים באותו מקום</p>
         <ul class="hero-card__pick">${items.map((it) => `<li><button type="button" data-id="${it.id}"><strong>${esc(it.p.title)}</strong><span>${esc([it.p.domainName, it.p.stageLabel].filter(Boolean).join(' · '))}</span></button></li>`).join('')}</ul>
@@ -233,13 +271,16 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   }
 
   function layoutEdges(offscreen, r) {
-    if (r > EDGES_FROM_RADIUS) { if (edgesEl.innerHTML) edgesEl.innerHTML = ''; return; }
-    const W = stage.clientWidth, H = stage.clientHeight, cx = W / 2, cy = H / 2, pad = 30;
+    if (r > EDGES_FROM_RADIUS || !explored) { if (edgesEl.innerHTML) edgesEl.innerHTML = ''; return; }
+    // Counters sit just inside the sheet's neatline frame, never under the header.
+    const f = frame?.getBoundingClientRect(), st = stage.getBoundingClientRect();
+    const box = f ? { l: f.left - st.left + 22, r: f.right - st.left - 22, t: f.top - st.top + 44, b: f.bottom - st.top - 112 } : { l: 30, r: stage.clientWidth - 30, t: 30, b: stage.clientHeight - 30 };
+    const cx = (box.l + box.r) / 2, cy = (box.t + box.b) / 2;
     const buckets = new Map();
     for (const { it, s } of offscreen) {
       if (!s) continue;
       const dx = s.x - cx, dy = s.y - cy;
-      const k = Math.min((cx - pad) / Math.abs(dx || 1e-6), (cy - pad) / Math.abs(dy || 1e-6));
+      const k = Math.min((box.r - box.l) / 2 / Math.abs(dx || 1e-6), (box.b - box.t) / 2 / Math.abs(dy || 1e-6));
       const ex = cx + dx * k, ey = cy + dy * k;
       const key = `${Math.round(ex / 160)}:${Math.round(ey / 160)}`;
       const b = buckets.get(key) || { x: 0, y: 0, items: [] };
@@ -271,9 +312,11 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   scene.onFrame((r) => {
     const W = stage.clientWidth, H = stage.clientHeight;
     const vis = [], off = [];
+    const fr = frame?.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    const inner = fr ? { l: fr.left - sr.left + 6, r: fr.right - sr.left - 6, t: fr.top - sr.top + 30, b: fr.bottom - sr.top - 6 } : { l: -10, r: W + 10, t: -10, b: H + 10 };
     for (const it of shown()) {
       const s = scene.toScreen(it.x, it.z);
-      if (s && s.x > -10 && s.x < W + 10 && s.y > -10 && s.y < H + 10) vis.push({ it, s });
+      if (s && s.x > inner.l && s.x < inner.r && s.y > inner.t && s.y < inner.b) vis.push({ it, s });
       else off.push({ it, s });
     }
     // Greedy screen-space clustering
@@ -298,7 +341,18 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
     });
     for (let i = clusters.length; i < pool.length; i++) pool[i].hidden = true;
 
-    if (++edgeTick % 6 === 0) layoutEdges(off, r);
+    if (++edgeTick % 6 === 0) {
+      layoutEdges(off, r);
+      // The sheet margin: the camera centre's grid reference and the map scale, live.
+      const [lng, lat] = toLngLat(scene.controls.target.x, scene.controls.target.z);
+      if (coordEl) coordEl.textContent = itmLabel(lat, lng);
+      layoutMarks();
+      if (scaleText) {
+        const denom = scene.metresPerPixel() / 0.0002645833; // CSS px at 96 dpi
+        const mag = 10 ** Math.floor(Math.log10(denom));
+        scaleText.textContent = `קנ״מ 1:${scaleFmt.format(Math.round(denom / mag) * mag)}`;
+      }
+    }
     placeCard();
     layoutLabels(r);
     hero.classList.toggle('is-exploring', r < scene.national.radius * 0.55);
@@ -317,6 +371,7 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   document.addEventListener('visibilitychange', () => (document.hidden ? scene.pause() : scene.resume()));
 
   function focusItem(it) {
+    explore();
     scene.flyTo(it.x, it.z).then(() => { openCard(it); lock(it); });
   }
 

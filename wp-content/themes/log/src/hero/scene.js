@@ -22,7 +22,7 @@ import { toLocal, toLngLat, lngLatToTile, tilesInBox, tileBoxLocal, ISRAEL_BOX }
 const C = {
   fog: '#1d2a3a',
   sea: '#2f4a63',
-  building: '#ff8d3a',
+  building: '#f7931d', // the pinned orange city (PRODUCT.md brand commitments), in the brand orange itself
   roadNational: '#9db1c6',
   roadRegional: '#b4c4d4',
   road: '#e3ebf2',
@@ -51,10 +51,10 @@ export async function createScene(container, { reduced = false } = {}) {
   scene.background = skyTexture();
   scene.fog = new THREE.Fog(C.fog, 1e5, 1e6);
   const camera = new THREE.PerspectiveCamera(30, 1, 10, 1e7);
-  // Glow: the orange city blooms softly against the navy (the reference's "lit" look).
+  // A trace of glow only: the survey sheet is printed, not lit (no SaaS halo).
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.62, 0.55, 0.52);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.14, 0.35, 0.78);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
@@ -89,7 +89,7 @@ export async function createScene(container, { reduced = false } = {}) {
     roadMajor: lineMaterial(C.roadMajor, 0.0, fogUniforms),
     rail: lineMaterial(C.road, 0.0, fogUniforms),
     sea: seaMaterial(C.sea, reduced ? 1 : 0, revealUniforms),
-    building: new THREE.MeshLambertMaterial({ color: C.building, emissive: '#6a2700', side: THREE.FrontSide }),
+    building: new THREE.MeshLambertMaterial({ color: C.building, emissive: '#241000', side: THREE.FrontSide }),
     planFill: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide }),
     planFillLarge: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide }),
     planEdge: lineMaterial('#fff6ec', 1.0, fogUniforms),
@@ -268,7 +268,7 @@ export async function createScene(container, { reduced = false } = {}) {
     mat.rail.uniforms.uOpacity.value = 0.25 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
     mat.roadMajor.uniforms.uOpacity.value = 0.55 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
     mat.national.uniforms.uOpacity.value = 0.42 * (1 - 0.6 * smooth(DETAIL_AT * 1.5, DETAIL_AT * 0.4, r));
-    mat.planFill.opacity = 0.7 - 0.6 * smooth(60000, 14000, r); // city level: the edge marks the plan, not a flood of orange
+    mat.planFill.opacity = 0.7 - 0.42 * smooth(60000, 14000, r); // city level: the plan stays readable under the orange city, its paper edge marks it
     mat.planFillLarge.opacity = 0.14 * (1 - smooth(80000, 30000, r)); // regional plans: gone by city level
     groups.regional.visible = r < REGIONAL_AT;
     groups.mid.visible = r < DETAIL_AT * 1.2 && r >= MID_AT;

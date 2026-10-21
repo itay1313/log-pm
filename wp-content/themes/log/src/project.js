@@ -33,7 +33,7 @@ export function initProject() {
   const dialog = document.createElement('dialog');
   dialog.className = 'lightbox';
   dialog.innerHTML = `
-    <button class="lightbox__close" type="button" aria-label="סגירה">×</button>
+    <button class="lightbox__close" type="button" aria-label="סגירה"><i class="icon icon--close" aria-hidden="true"></i></button>
     <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="הקודם">‹</button>
     <figure class="lightbox__figure"><img alt=""><figcaption></figcaption></figure>
     <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="הבא">›</button>

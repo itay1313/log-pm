@@ -6,3 +6,9 @@ wp-content/themes/log/assets/dist/
 .env
 tools/fixtures/private/
 .deploy/
+
+# Impeccable native engine binary (reinstall with: npx impeccable install --project --providers=claude)
+.claude/skills/impeccable/scripts/bin/
+# Impeccable working files: review captures and decision-page state stay local
+.impeccable/review/
+.impeccable/questions/

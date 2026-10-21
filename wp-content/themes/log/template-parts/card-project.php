@@ -1,6 +1,7 @@
 <?php
 /**
- * Project card (spec v6 §9): image · domain · name · city and authority · stage · one meaningful number.
+ * Project tile (spec v6 §9): image · domain · name · city and authority · stage · one meaningful number,
+ * plus the project's grid reference, set like a survey sheet's margin.
  * With a full page the whole card links to it; without one, the card shows what's known
  * and a small "לראות במפה" link to the project on the home map.
  * data-* attributes feed the client-side search and filters (projects.js).
@@ -13,6 +14,7 @@ $sqm    = log_field( 'sqm_employment', $id );
 $domain = log_first_term( $id, 'log_domain' );
 $place  = log_project_place( $id );
 $tag    = $page ? 'a' : 'div';
+$grid   = log_project_grid_ref( $id );
 ?>
 <article class="card card--project<?php echo $page ? '' : ' card--nopage'; ?><?php echo empty( $args['featured'] ) ? '' : ' card--featured'; ?>"
 	data-domain="<?php echo esc_attr( $domain?->slug ?? '' ); ?>"
@@ -24,14 +26,14 @@ $tag    = $page ? 'a' : 'div';
 			<?php if ( has_post_thumbnail() ) : ?>
 				<?php the_post_thumbnail( 'log-card', [ 'loading' => 'lazy' ] ); ?>
 			<?php else : // one fallback image per domain, drawn by CSS ?>
-				<span class="card__placeholder" data-domain="<?php echo esc_attr( $domain?->slug ?? '' ); ?>" aria-hidden="true"></span>
+				<span class="card__placeholder" data-id="<?php echo (int) $id; ?>" data-domain="<?php echo esc_attr( $domain?->slug ?? '' ); ?>" data-stage="<?php echo (int) ( $stage['completed'] ? 4 : $stage['number'] ); ?>" aria-hidden="true"></span>
 			<?php endif; ?>
 		</figure>
 		<div class="card__body">
-			<?php if ( $domain ) : ?><p class="card__meta"><?php echo esc_html( $domain->name ); ?></p><?php endif; ?>
+			<p class="card__meta"><span><?php echo esc_html( $domain?->name ?? '' ); ?></span><?php if ( $grid ) : ?><span class="grid-ref" title="רשת ישראל"><?php echo esc_html( $grid ); ?></span><?php endif; ?></p>
 			<h3 class="card__title"><?php the_title(); ?></h3>
 			<?php if ( $place ) : ?><p class="card__place"><?php echo esc_html( $place ); ?></p><?php endif; ?>
-			<p class="card__stage"><?php echo esc_html( $stage['label'] ); ?></p>
+			<?php echo log_stage_row( $stage, 'card__stage' ); ?>
 			<?php if ( $units ) : ?>
 				<p class="card__figure"><strong><?php echo log_number( $units ); ?></strong> יח"ד</p>
 			<?php elseif ( $sqm ) : ?>

@@ -13,7 +13,7 @@ while ( have_posts() ) : the_post();
 	?>
 	<article class="knowledge-item">
 		<?php get_template_part( 'template-parts/page-header', null, [
-			'eyebrow' => esc_html( implode( ' · ', array_filter( [ $type?->name, $outlet, get_the_date() ] ) ) ),
+			'meta'    => esc_html( implode( ' · ', array_filter( [ $type?->name, $outlet, get_the_date() ] ) ) ),
 			'title'   => get_the_title(),
 		] ); ?>
 		<p class="container"><a class="back-link" href="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>" data-back>למרכז הידע</a></p>

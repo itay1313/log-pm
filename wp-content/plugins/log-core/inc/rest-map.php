@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const LOG_MAP_TRANSIENT = 'log_map_geojson_v5';
+const LOG_MAP_TRANSIENT = 'log_map_geojson_v6';
 
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'log/v1', '/map', [
@@ -79,6 +79,7 @@ function log_build_map_geojson(): array {
 			'stageNumber' => $stage['number'],
 			'stageLabel' => $stage['label'],
 			'completed'  => $stage['completed'],
+			'grid'       => log_project_grid_ref( $id ),
 			'year'       => log_field( 'year', $id ),
 			'units'      => $num( log_field( 'units', $id ) ),
 			'sqm'        => $num( log_field( 'sqm_employment', $id ) ),

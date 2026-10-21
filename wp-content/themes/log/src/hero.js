@@ -67,7 +67,11 @@ export async function initHero(hero) {
     emptyEl.hidden = group.length > 0;
     hero.classList.toggle('is-filtered', filtered);
     allLink.href = projectsUrl + (stateQuery(state) ? `?${stateQuery(state)}` : '');
-    listButtons.forEach((b) => (b.querySelector('span').textContent = fmt.format(listItems(b.dataset.list).length)));
+    listButtons.forEach((b) => {
+      const n = listItems(b.dataset.list).length;
+      b.querySelector('span').textContent = fmt.format(n);
+      if (b.dataset.list === 'national') b.hidden = n === 0; // no national plans in the group: no empty list to open
+    });
     if (!drawer.hidden) renderList(drawer.dataset.list);
     map?.refilter({ fit: fit && filtered && group.length > 0 });
     writeUrl();
@@ -173,7 +177,7 @@ export async function initHero(hero) {
     drawer.innerHTML = `
       <div class="hero-drawer__head">
         <h2>${kind === 'national' ? 'פריסה ארצית' : 'כל הפרויקטים בקבוצה'} <span>${fmt.format(items.length)}</span></h2>
-        ${map ? '<button type="button" class="hero-drawer__close" aria-label="סגירת הרשימה">×</button>' : ''}
+        ${map ? '<button type="button" class="hero-drawer__close" aria-label="סגירת הרשימה"><i class="icon icon--close" aria-hidden="true"></i></button>' : ''}
       </div>
       ${items.length ? `<table class="hero-table">
         <thead><tr>${cols.map((c) => `<th scope="col">${c}</th>`).join('')}</tr></thead>

@@ -167,3 +167,41 @@ function log_project_from_param( $value ): int {
 	}
 	return $id && log_project_is_public( $id ) ? $id : 0;
 }
+
+/**
+ * Israeli grid (ITM) from WGS84, for the grid reference every project carries (spec v6 visual world:
+ * survey sheets). Transverse Mercator on GRS80 with the ITM origin, no datum shift: good to a few tens
+ * of metres, shown rounded to 10 m. Same formula as the theme's src/itm.js.
+ *
+ * @return array{0:float,1:float}|null [easting, northing]
+ */
+function log_itm( $lat, $lng ): ?array {
+	if ( ! is_numeric( $lat ) || ! is_numeric( $lng ) ) {
+		return null;
+	}
+	$a = 6378137.0; $f = 1 / 298.257222101; $e2 = $f * ( 2 - $f ); $ep2 = $e2 / ( 1 - $e2 );
+	$rad = M_PI / 180; $lat0 = 31.73439361 * $rad; $lon0 = 35.20451694 * $rad; $k0 = 1.0000067;
+	$m = static function ( float $p ) use ( $a, $e2 ): float {
+		$e4 = $e2 * $e2; $e6 = $e4 * $e2;
+		return $a * ( ( 1 - $e2 / 4 - 3 * $e4 / 64 - 5 * $e6 / 256 ) * $p
+			- ( 3 * $e2 / 8 + 3 * $e4 / 32 + 45 * $e6 / 1024 ) * sin( 2 * $p )
+			+ ( 15 * $e4 / 256 + 45 * $e6 / 1024 ) * sin( 4 * $p )
+			- ( 35 * $e6 / 3072 ) * sin( 6 * $p ) );
+	};
+	$phi = (float) $lat * $rad;
+	$s = sin( $phi ); $c = cos( $phi ); $t = tan( $phi );
+	$n  = $a / sqrt( 1 - $e2 * $s * $s );
+	$tt = $t * $t; $cc = $ep2 * $c * $c; $aa = ( (float) $lng * $rad - $lon0 ) * $c;
+	$x = $k0 * $n * ( $aa + ( 1 - $tt + $cc ) * $aa ** 3 / 6 + ( 5 - 18 * $tt + $tt * $tt + 72 * $cc - 58 * $ep2 ) * $aa ** 5 / 120 );
+	$y = $k0 * ( $m( $phi ) - $m( $lat0 ) + $n * $t * ( $aa * $aa / 2 + ( 5 - $tt + 9 * $cc + 4 * $cc * $cc ) * $aa ** 4 / 24 + ( 61 - 58 * $tt + $tt * $tt + 600 * $cc - 330 * $ep2 ) * $aa ** 6 / 720 ) );
+	return [ 219529.584 + $x, 626907.39 + $y ];
+}
+
+/** "180350 / 664120" for a project, or '' when it has no single location. */
+function log_project_grid_ref( int $post_id ): string {
+	if ( log_field( 'is_national', $post_id ) ) {
+		return '';
+	}
+	$itm = log_itm( log_field( 'lat', $post_id ), log_field( 'lng', $post_id ) );
+	return $itm ? sprintf( '%d / %d', round( $itm[0] / 10 ) * 10, round( $itm[1] / 10 ) * 10 ) : '';
+}

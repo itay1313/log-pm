@@ -19,7 +19,7 @@ while ( $clients->have_posts() ) {
 	$by[ log_field( 'body_type', get_the_ID(), 'other' ) ][] = get_post();
 }
 wp_reset_postdata();
-if ( ! $by ) : ?>
+if ( ! $by ) : if ( ! log_show_empty() ) { return; } ?>
 	<p class="placeholder">לוגואים בגוון אחד, לפי סוג גוף. מוצגים רק לקוחות שסומנו "אישור שימוש בלוגו".</p>
 	<?php return;
 endif;

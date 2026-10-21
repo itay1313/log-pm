@@ -11,7 +11,7 @@ $units = get_the_terms( $id, 'log_unit' );
 		<?php if ( has_post_thumbnail() ) : ?>
 			<?php the_post_thumbnail( 'log-card', [ 'loading' => 'lazy' ] ); ?>
 		<?php else : ?>
-			<span class="person__placeholder" aria-hidden="true"></span>
+			<span class="person__placeholder" aria-hidden="true"><?php echo esc_html( implode( '', array_map( static fn( $w ) => mb_substr( $w, 0, 1 ), array_slice( preg_split( '/\s+/u', trim( get_the_title() ) ), 0, 2 ) ) ) ); ?></span>
 		<?php endif; ?>
 	</figure>
 	<div class="person__body">

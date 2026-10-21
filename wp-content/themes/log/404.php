@@ -5,7 +5,6 @@
 get_header();
 ?>
 <section class="not-found container">
-	<p class="eyebrow">404</p>
 	<h1><?php echo esc_html( log_text( 'notfound_title', 'הכתובת הזו לא נמצאת במפה.', 'option' ) ); ?></h1>
 	<p><?php echo esc_html( log_text( 'notfound_text', 'אולי העמוד זז, אולי הקישור השתבש. אפשר להמשיך מכאן:', 'option' ) ); ?></p>
 	<ul class="not-found__links">

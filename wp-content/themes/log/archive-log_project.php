@@ -9,6 +9,7 @@ get_header();
 ?>
 <header class="page-header">
 	<h1 class="page-header__title"><?php echo esc_html( log_text( 'projects_title', 'הפרויקטים שלנו', 'option' ) ); ?></h1>
+	<?php echo log_sheet_label( sprintf( '%s פרויקטים', number_format_i18n( count( log_public_projects() ) ) ) ); ?>
 	<div class="page-header__prose"><?php echo wpautop( esc_html( log_text( 'projects_lede', "לוג מנהלת ומקדמת תכניות בכל קנה מידה: התחדשות עירונית, תכניות מתאר ותכניות מפורטות, ברשויות בכל הארץ.\n\nבכל פרויקט אנחנו מחזיקים את התהליך מקצה לקצה: מהאיתור וההיתכנות, דרך מוסדות התכנון, ועד המעקב אחרי מה שקורה בשטח.", 'option' ) ) ); ?></div>
 </header>
 <?php

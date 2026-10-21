@@ -44,8 +44,13 @@ while ( have_posts() ) : the_post();
 			<div class="project__hero-copy">
 				<a class="back-link back-link--light" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>" data-back data-back-home="חזרה למפה">חזרה לפרויקטים</a>
 				<h1 class="project__title"><?php the_title(); ?></h1>
-				<p class="eyebrow eyebrow--light"><?php echo log_project_meta_line( $pid ); ?></p>
-				<p class="project__stage"><?php echo esc_html( $stage['label'] ); ?></p>
+				<p class="project__meta"><?php echo log_project_meta_line( $pid ); ?></p>
+				<?php echo log_stage_row( $stage, 'project__stage' ); ?>
+				<?php if ( $grid = log_project_grid_ref( $pid ) ) : ?>
+					<p class="project__grid-ref">רשת ישראל<b><?php echo esc_html( $grid ); ?></b></p>
+				<?php elseif ( log_field( 'is_national', $pid ) ) : ?>
+					<p class="project__grid-ref">פריסה<b>ארצית</b></p>
+				<?php endif; ?>
 			</div>
 		</header>
 
@@ -59,7 +64,13 @@ while ( have_posts() ) : the_post();
 			</div>
 		<?php endif; ?>
 
-		<div class="container project__layout">
+		<?php
+		// A short story (under ~120 words, no milestones or gallery) would leave a column of air beside the
+		// details: the sheet then sets the details as a wide legend under the story, with the minimap beside it.
+		$story_words = str_word_count( wp_strip_all_tags( implode( ' ', array_filter( $story ) ) . ' ' . get_the_content() ), 0, 'אבגדהוזחטיכךלמםנןסעפףצץקרשת' );
+		$short       = $story_words < 120 && ! log_field( 'milestones', $pid ) && ! log_field( 'gallery', $pid ) && ! log_field( 'quote', $pid );
+		?>
+		<div class="container project__layout<?php echo $short ? ' project__layout--short' : ''; ?>">
 			<div class="project__story">
 				<?php if ( $quote = log_field( 'quote', $pid ) ) : ?>
 					<blockquote class="pull-quote"><p><?php echo esc_html( $quote ); ?></p>
