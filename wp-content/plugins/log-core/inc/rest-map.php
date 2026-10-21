@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const LOG_MAP_TRANSIENT = 'log_map_geojson_v4';
+const LOG_MAP_TRANSIENT = 'log_map_geojson_v5';
 
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'log/v1', '/map', [
@@ -70,6 +70,7 @@ function log_build_map_geojson(): array {
 			'page'       => $page,
 			'url'        => $page ? get_permalink( $p ) : null,
 			'city'       => log_field( 'city', $id, '' ),
+			'client'     => ( $c = log_field( 'client', $id ) ) ? html_entity_decode( get_the_title( (int) $c ), ENT_QUOTES, 'UTF-8' ) : null,
 			'authority'  => $auth ? rawurldecode( $auth->slug ) : null, // Hebrew slugs are stored encoded
 			'authorityName' => $auth ? html_entity_decode( $auth->name, ENT_QUOTES, 'UTF-8' ) : null,
 			'domain'     => $domain?->slug,

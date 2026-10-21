@@ -4,17 +4,7 @@
  * shared, and back/forward step through it:
  *   /projects?q=חולון&domain=urban-renewal&stage=stage-2&authority=חולון&view=map&p={slug}
  */
-const FILTERS = ['domain', 'stage', 'authority'];
-
-/** Lower-case, no niqqud, no geresh/gershayim or quotes, single spaces. */
-export const norm = (s) => String(s ?? '').toLowerCase().replace(/[֑-ׇ]/g, '').replace(/["'`׳״]/g, '').replace(/\s+/g, ' ').trim();
-
-/** Every word of the query appears in the haystack; a leading ה (the definite article) is optional. */
-export function matchesQuery(haystack, q) {
-  if (!q) return true;
-  const h = norm(haystack);
-  return norm(q).split(' ').every((w) => h.includes(w) || (w.length > 2 && w[0] === 'ה' && h.includes(w.slice(1))));
-}
+import { FILTERS, matches as match, mergeQuery, recordFromProps, setOptionCounts } from './filter.js';
 
 export function initProjects() {
   const form = document.querySelector('form.filters');
@@ -27,13 +17,14 @@ export function initProjects() {
   const count = document.querySelector('.filters__count');
   const empty = document.getElementById('projects-empty');
   const clears = [...document.querySelectorAll('.filters__clear')];
+  const featured = document.getElementById('projects-featured');
+  const moreBtn = document.getElementById('projects-more');
   const items = [...(grid?.children || []), ...(national?.querySelectorAll('li') || [])];
+  const PAGE = 24;
+  let limit = Math.max(PAGE, Number(history.state?.limit) || PAGE); // "חזרה לפרויקטים" brings back the cards that were loaded
   let mapApi = null;
   let mapLoading = null;
   let openSlug = null;
-
-  // Option labels without their counts, so counts can be rewritten as filters change.
-  for (const sel of Object.values(selects)) for (const o of sel.options) if (o.value) o.dataset.label ||= o.textContent.replace(/\s*\(\d+\)$/, '');
 
   const readUrl = () => {
     const q = new URLSearchParams(location.search);
@@ -47,31 +38,27 @@ export function initProjects() {
   });
   function writeUrl({ push = false } = {}) {
     const s = current();
-    const q = new URLSearchParams();
-    if (s.q) q.set('q', s.q);
-    for (const k of FILTERS) if (s[k]) q.set(k, s[k]);
-    if (s.view === 'map') q.set('view', 'map');
-    if (s.view === 'map' && s.p) q.set('p', s.p);
-    const url = location.pathname + (q.toString() ? `?${q}` : '');
-    if (url !== location.pathname + location.search) history[push ? 'pushState' : 'replaceState'](null, '', url);
+    const q = mergeQuery(location.search, s, { view: s.view === 'map' ? 'map' : '', p: s.view === 'map' ? s.p : '' });
+    const url = location.pathname + (q ? `?${q}` : '');
+    if (url !== location.pathname + location.search) history[push ? 'pushState' : 'replaceState']({ limit }, '', url);
   }
 
-  // One predicate for cards (data-*) and map features (properties).
-  const match = (s, rec, skip) => FILTERS.every((k) => k === skip || !s[k] || rec[k] === s[k]) && matchesQuery(rec.search, s.q);
+  // Cards carry the same record in data-*; map features in their properties.
   const fromEl = (el) => ({ domain: el.dataset.domain, stage: el.dataset.stage, authority: el.dataset.authority, search: el.dataset.search });
-  const fromProps = (p) => ({ domain: p.domain, stage: p.stage, authority: p.authority, search: `${p.title} ${p.city || ''} ${p.authorityName || ''}` });
 
   function apply() {
     const s = current();
     let shown = 0;
     for (const el of items) {
       const ok = match(s, fromEl(el));
-      el.hidden = !ok;
-      if (ok && el.closest('#projects-grid')) shown++;
+      const inGrid = el.parentElement === grid;
+      if (ok && inGrid) shown++;
+      el.hidden = !ok || (inGrid && shown > limit);
     }
+    if (moreBtn) moreBtn.hidden = shown <= limit || s.view === 'map';
     // National plans are in the list under the map, not in the grid: count them once, in either view.
     const nationalShown = national ? national.querySelectorAll('li:not([hidden])').length : 0;
-    if (mapApi) mapApi.setFeatures((p) => !p.national && match(s, fromProps(p)));
+    if (mapApi) mapApi.setFeatures((p) => !p.national && match(s, recordFromProps(p)));
 
     // Faceted counts: each option counts what it would show, given the other filters and the search.
     for (const [k, sel] of Object.entries(selects)) {
@@ -80,14 +67,11 @@ export function initProjects() {
         const r = fromEl(el);
         if (match(s, r, k)) n[r[k]] = (n[r[k]] || 0) + 1;
       }
-      for (const o of sel.options) {
-        if (!o.value) continue;
-        o.textContent = `${o.dataset.label} (${n[o.value] || 0})`;
-        o.hidden = !n[o.value] && o.value !== sel.value;
-      }
+      setOptionCounts(sel, n);
     }
 
     const filtered = s.q || FILTERS.some((k) => s[k]);
+    if (featured) featured.hidden = !!filtered; // featured projects only without search or filters
     if (count) count.textContent = filtered ? (shown === 1 ? 'פרויקט אחד' : `${shown} פרויקטים`) : '';
     clears.forEach((b) => { if (b.closest('form')) b.hidden = !filtered; });
     if (empty) empty.hidden = shown + nationalShown > 0;
@@ -116,6 +100,7 @@ export function initProjects() {
 
   function restore() {
     const s = readUrl();
+    limit = Math.max(PAGE, Number(history.state?.limit) || PAGE);
     if (search) search.value = s.q;
     for (const k of FILTERS) if (selects[k]) selects[k].value = [...selects[k].options].some((o) => o.value === s[k]) ? s[k] : '';
     openSlug = s.p;
@@ -123,10 +108,18 @@ export function initProjects() {
     setView(s.view);
   }
 
+  moreBtn?.addEventListener('click', () => {
+    const first = limit;
+    limit += PAGE;
+    history.replaceState({ ...history.state, limit }, '');
+    apply();
+    grid?.children[first]?.querySelector('a, .card__map')?.focus({ preventScroll: true });
+  });
   form?.addEventListener('submit', (e) => { e.preventDefault(); writeUrl({ push: true }); });
   let typing = 0;
-  search?.addEventListener('input', () => { apply(); clearTimeout(typing); typing = setTimeout(() => writeUrl(), 350); });
-  Object.values(selects).forEach((sel) => sel.addEventListener('change', () => { apply(); writeUrl({ push: true }); }));
+  search?.addEventListener('input', () => { limit = PAGE; apply(); clearTimeout(typing); typing = setTimeout(() => writeUrl(), 350); });
+  const resetLimit = () => { limit = PAGE; };
+  Object.values(selects).forEach((sel) => sel.addEventListener('change', () => { resetLimit(); apply(); writeUrl({ push: true }); }));
   viewButtons.forEach((b) => b.addEventListener('click', () => { setView(b.dataset.view); writeUrl({ push: true }); }));
   clears.forEach((b) => b.addEventListener('click', () => {
     if (search) search.value = '';

@@ -1,47 +1,39 @@
 <?php
 /**
- * /projects (spec v6 §9): opening text, search and filter row, gallery ↔ map toggle, all public projects.
+ * /projects (spec v6 §9). Blocks: opening, featured projects, search and filters, gallery ↔ map, all projects.
  * State lives in the query string (projects.js): ?q=&domain=&stage=&authority=&view=map&p={slug}.
- * One value per filter, or all. National plans have no pin: they're listed under the map.
+ * One value per filter, or all. Featured projects first, then newest; 24 cards, then "טעינת עוד".
+ * National plans have no pin: they're listed under the map.
  */
 get_header();
-get_template_part( 'template-parts/page-header', null, [
-	'title' => log_text( 'projects_title', 'מתכננים את המחר', 'option' ),
-	'lede'  => log_text( 'projects_lede', 'הפרויקטים שלנו: תחומים, קני מידה ופריסה ארצית.', 'option' ),
-] );
-
-$approved = log_approved_projects_query( [ 'posts_per_page' => -1 ] );
-$national = array_values( array_filter( $approved->posts, static fn( $p ) => log_project_is_public( $p->ID ) && log_field( 'is_national', $p->ID ) ) );
 ?>
+<header class="page-header">
+	<h1 class="page-header__title"><?php echo esc_html( log_text( 'projects_title', 'הפרויקטים שלנו', 'option' ) ); ?></h1>
+	<div class="page-header__prose"><?php echo wpautop( esc_html( log_text( 'projects_lede', "לוג מנהלת ומקדמת תכניות בכל קנה מידה: התחדשות עירונית, תכניות מתאר ותכניות מפורטות, ברשויות בכל הארץ.\n\nבכל פרויקט אנחנו מחזיקים את התהליך מקצה לקצה: מהאיתור וההיתכנות, דרך מוסדות התכנון, ועד המעקב אחרי מה שקורה בשטח.", 'option' ) ) ); ?></div>
+</header>
+<?php
+// Featured first (stable), then newest first.
+$public = log_public_projects();
+usort( $public, static fn( $a, $b ) => ( (int) log_field( 'featured', $b->ID ) <=> (int) log_field( 'featured', $a->ID ) ) ?: strcmp( $b->post_date, $a->post_date ) ?: $a->ID <=> $b->ID );
+$featured = array_slice( array_values( array_filter( $public, static fn( $p ) => log_field( 'featured', $p->ID ) && log_project_has_page( $p->ID ) ) ), 0, 6 );
+$national = array_values( array_filter( $public, static fn( $p ) => (bool) log_field( 'is_national', $p->ID ) ) );
+
+if ( count( $featured ) >= 1 ) : ?>
+	<section class="container featured" id="projects-featured" aria-labelledby="featured-title">
+		<h2 class="featured__title" id="featured-title"><?php echo esc_html( log_text( 'featured_title', 'פרויקטים נבחרים', 'option' ) ); ?></h2>
+		<div class="featured__grid">
+			<?php foreach ( $featured as $post ) : setup_postdata( $post ); // template scope is global scope
+				get_template_part( 'template-parts/card-project', null, [ 'featured' => true ] );
+			endforeach; wp_reset_postdata(); ?>
+		</div>
+	</section>
+<?php endif; ?>
 <div class="container">
 	<form class="filters" role="search" aria-label="חיפוש וסינון פרויקטים" action="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>">
 		<label class="filters__search"><span class="screen-reader-text">חיפוש פרויקט, עיר או רשות</span>
 			<input type="search" name="q" placeholder="שם פרויקט, עיר או רשות" autocomplete="off">
 		</label>
-		<?php
-		$public = array_values( array_filter( $approved->posts, static fn( $p ) => log_project_is_public( $p->ID ) ) );
-		foreach ( [ 'domain' => [ 'log_domain', 'תחום' ], 'stage' => [ 'log_stage', 'שלב או סטטוס' ], 'authority' => [ 'log_authority', 'רשות' ] ] as $param => [ $tax, $label ] ) :
-			$terms = $tax === 'log_domain' ? log_ordered_terms( $tax, true ) : get_terms( [ 'taxonomy' => $tax, 'hide_empty' => true ] );
-			if ( ! $terms || is_wp_error( $terms ) ) { continue; }
-			if ( $tax === 'log_stage' ) { // 1, 2, 3, 4, then completed
-				$rank = array_flip( array_keys( log_stage_terms() ) );
-				usort( $terms, static fn( $a, $b ) => ( $rank[ $a->slug ] ?? 99 ) <=> ( $rank[ $b->slug ] ?? 99 ) );
-			}
-			$counts = [];
-			foreach ( $public as $p ) {
-				foreach ( wp_get_post_terms( $p->ID, $tax, [ 'fields' => 'slugs' ] ) as $slug ) {
-					$counts[ $slug ] = ( $counts[ $slug ] ?? 0 ) + 1;
-				}
-			} ?>
-			<label class="filters__group"><span><?php echo esc_html( $label ); ?></span>
-				<select name="<?php echo esc_attr( $param ); ?>">
-					<option value="">הכל</option>
-					<?php foreach ( $terms as $t ) : if ( empty( $counts[ $t->slug ] ) ) { continue; } // Hebrew slugs are stored encoded; the URL and data-* carry them decoded ?>
-						<option value="<?php echo esc_attr( rawurldecode( $t->slug ) ); ?>" data-label="<?php echo esc_attr( $t->name ); ?>"><?php echo esc_html( $t->name ); ?> (<?php echo (int) $counts[ $t->slug ]; ?>)</option>
-					<?php endforeach; ?>
-				</select>
-			</label>
-		<?php endforeach; ?>
+		<?php get_template_part( 'template-parts/filter-selects', null, [ 'projects' => $public ] ); ?>
 		<div class="filters__view" role="group" aria-label="תצוגה">
 			<button type="button" class="is-active" data-view="grid" aria-pressed="true">גלריה</button>
 			<button type="button" data-view="map" aria-pressed="false">מפה</button>
@@ -50,7 +42,7 @@ $national = array_values( array_filter( $approved->posts, static fn( $p ) => log
 		<button type="button" class="filters__clear" hidden>ניקוי סינון</button>
 	</form>
 
-	<?php if ( $approved->have_posts() ) : ?>
+	<?php if ( $public ) : ?>
 		<div class="grid grid--projects" id="projects-grid">
 			<?php foreach ( $public as $post ) : setup_postdata( $post ); // template scope is global scope
 				get_template_part( 'template-parts/card-project' );
@@ -73,6 +65,8 @@ $national = array_values( array_filter( $approved->posts, static fn( $p ) => log
 				</ul>
 			</section>
 		<?php endif; ?>
+
+		<p class="projects-more"><button type="button" class="btn" id="projects-more" hidden>טעינת עוד</button></p>
 
 		<p class="placeholder" id="projects-empty" hidden>לא נמצאו פרויקטים. <button type="button" class="filters__clear">ניקוי סינון</button></p>
 	<?php else : ?>

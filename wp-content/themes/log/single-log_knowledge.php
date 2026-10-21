@@ -16,7 +16,7 @@ while ( have_posts() ) : the_post();
 			'eyebrow' => esc_html( implode( ' · ', array_filter( [ $type?->name, $outlet, get_the_date() ] ) ) ),
 			'title'   => get_the_title(),
 		] ); ?>
-		<p class="container"><a class="back-link" href="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>">למרכז הידע</a></p>
+		<p class="container"><a class="back-link" href="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>" data-back>למרכז הידע</a></p>
 		<?php if ( has_excerpt() ) : ?><p class="container knowledge-item__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
 		<?php if ( has_post_thumbnail() ) : ?><figure class="knowledge-item__media container"><?php the_post_thumbnail( 'log-wide' ); ?></figure><?php endif; ?>
 		<div class="container prose"><?php the_content(); ?></div>

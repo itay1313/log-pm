@@ -6,10 +6,8 @@ import { illustration } from './hero/illustration.js';
  * mount it never pay for it.
  */
 
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 // Header: search and mobile menu toggles
-for (const btn of document.querySelectorAll('[aria-controls]')) {
+for (const btn of document.querySelectorAll('.site-header [aria-controls]')) {
   const target = document.getElementById(btn.getAttribute('aria-controls'));
   if (!target) continue;
   btn.addEventListener('click', () => {
@@ -17,6 +15,24 @@ for (const btn of document.querySelectorAll('[aria-controls]')) {
     btn.setAttribute('aria-expanded', String(!open));
     target.hidden = open;
     if (!open) target.querySelector('input')?.focus();
+  });
+}
+
+// Back links on level-3 pages (spec v6 §5): when the visitor came from the area page (or, for projects,
+// from the home map), go back in history so search, filters, view, open popup and scroll are as they left them.
+// From outside the site, the link simply leads to the area page.
+for (const link of document.querySelectorAll('a[data-back]')) {
+  let from = null;
+  try { from = document.referrer ? new URL(document.referrer) : null; } catch { /* no referrer */ }
+  if (!from || from.origin !== location.origin) continue;
+  const trim = (p) => p.replace(/\/+$/, '');
+  const fromHome = from.pathname === '/' && link.dataset.backHome;
+  if (!fromHome && trim(from.pathname) !== trim(new URL(link.href).pathname)) continue; // the area page itself, not a sibling item
+  if (fromHome) { link.textContent = link.dataset.backHome; link.href = from.href; }
+  link.addEventListener('click', (e) => {
+    if (history.length < 2) return;
+    e.preventDefault();
+    history.back();
   });
 }
 
@@ -34,25 +50,29 @@ for (const btn of document.querySelectorAll('[data-copy-link]')) {
   });
 }
 
-// Counters in the hero: count up once when visible
-const counters = document.querySelectorAll('[data-count]');
-if (counters.length && !reduced && 'IntersectionObserver' in window) {
-  const fmt = new Intl.NumberFormat('he-IL');
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      io.unobserve(e.target);
-      const end = Number(e.target.dataset.count) || 0;
-      const t0 = performance.now();
-      const tick = (t) => {
-        const p = Math.min(1, (t - t0) / 1400);
-        e.target.textContent = fmt.format(Math.round(end * (1 - Math.pow(1 - p, 3))));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }
-  }, { threshold: 0.4 });
-  counters.forEach((c) => io.observe(c));
+// Tabs (clients by body type): arrow keys move between tabs, one panel shown at a time.
+for (const wrap of document.querySelectorAll('[data-tabs]')) {
+  const tabs = [...wrap.querySelectorAll('[role=tab]')];
+  if (!tabs.length) continue;
+  const select = (tab) => {
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', (e) => {
+      const d = { ArrowLeft: 1, ArrowRight: -1 }[e.key]; // RTL: left is next
+      if (!d) return;
+      const next = tabs[(i + d + tabs.length) % tabs.length];
+      select(next);
+      next.focus();
+    });
+  });
+  select(tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0]);
 }
 
 // Team tabs: filter people by organisational unit
@@ -92,7 +112,7 @@ if (document.querySelector('.project')) {
   import('./project.js').then((m) => m.initProject());
 }
 
-// Home hero: the 3D map. Reduced-motion users get the static copy and the list link.
+// Home map: interface first, then the 3D layer (reduced motion gets the map without animation).
 const hero = document.getElementById('hero');
 // Header and twin buttons sit on the cover picture (light) until it scrolls away.
 const cover = document.body.classList.contains('has-cover') && (hero || document.querySelector('.project__hero'));
@@ -101,5 +121,5 @@ if (cover) {
   new IntersectionObserver(([e]) => document.body.classList.toggle('over-hero', e.intersectionRatio > 0.12), { threshold: [0, 0.12, 0.5] }).observe(cover);
 }
 if (hero) {
-  if (!reduced) import('./hero.js').then((m) => m.initHero(hero)).catch((err) => { console.error(err); hero.classList.add('no-webgl'); });
+  import('./hero.js').then((m) => m.initHero(hero)).catch((err) => { console.error(err); hero.classList.add('no-webgl'); });
 }

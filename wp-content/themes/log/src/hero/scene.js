@@ -70,7 +70,7 @@ export async function createScene(container, { reduced = false } = {}) {
   controls.minDistance = 450;
   controls.maxDistance = 1200000;
   controls.maxPolarAngle = 1.18;
-  controls.enableZoom = false; // armed by a click (hero.js), so the page keeps scrolling
+  controls.enableZoom = false; // only with Ctrl/⌘ held (hero.js), so the page keeps scrolling
   controls.zoomSpeed = 1.4;
   controls.rotateSpeed = 0.5;
   controls.autoRotateSpeed = -0.12;
@@ -364,6 +364,18 @@ export async function createScene(container, { reduced = false } = {}) {
     },
 
     home() { return moveTo(HOME, { duration: 2.4 }); },
+
+    /** Zoom buttons: scale the distance to the target, inside the controls' limits. Preloads detail when close. */
+    zoomBy(factor) {
+      readView();
+      const radius = Math.min(controls.maxDistance, Math.max(controls.minDistance, view.radius * factor));
+      if (radius < 20000) {
+        const [lng, lat] = toLngLat(view.tx, view.tz);
+        ensureAround(lng, lat, 'regional');
+        ensureAround(lng, lat, 'detail');
+      }
+      return moveTo({ radius }, { duration: 0.7, ease: 'power2.out' });
+    },
 
     country() { return moveTo(NATIONAL, { duration: 2.6 }); },
 

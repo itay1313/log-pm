@@ -14,7 +14,7 @@ $domain = log_first_term( $id, 'log_domain' );
 $place  = log_project_place( $id );
 $tag    = $page ? 'a' : 'div';
 ?>
-<article class="card card--project<?php echo $page ? '' : ' card--nopage'; ?>"
+<article class="card card--project<?php echo $page ? '' : ' card--nopage'; ?><?php echo empty( $args['featured'] ) ? '' : ' card--featured'; ?>"
 	data-domain="<?php echo esc_attr( $domain?->slug ?? '' ); ?>"
 	data-stage="<?php echo esc_attr( $stage['slug'] ); ?>"
 	data-authority="<?php echo esc_attr( rawurldecode( log_first_term_slug( $id, 'log_authority' ) ?? '' ) ); ?>"

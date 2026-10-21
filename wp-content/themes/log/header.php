@@ -50,6 +50,6 @@
 	</nav>
 </header>
 
-<?php get_template_part( 'template-parts/twin-nav' ); ?>
+<?php if ( ! is_front_page() ) { get_template_part( 'template-parts/twin-nav' ); } // home: right after the map ?>
 
 <main id="main" class="site-main">

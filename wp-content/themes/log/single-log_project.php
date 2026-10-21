@@ -35,12 +35,14 @@ while ( have_posts() ) : the_post();
 		<header class="project__hero">
 			<?php if ( $video = log_field( 'video', $pid ) ) : ?>
 				<video class="project__media" src="<?php echo esc_url( $video['url'] ); ?>" muted loop playsinline preload="metadata" poster="<?php echo esc_url( get_the_post_thumbnail_url( $pid, 'log-wide' ) ); ?>" aria-hidden="true"></video>
+				<button type="button" class="project__pause" aria-pressed="false">עצירת הסרטון</button>
 			<?php elseif ( has_post_thumbnail() ) : ?>
 				<?php the_post_thumbnail( 'log-wide', [ 'class' => 'project__media', 'fetchpriority' => 'high', 'sizes' => '100vw' ] ); ?>
 			<?php else : // no photo yet: main.js draws the same building illustration the hero card shows ?>
 				<div class="project__media project__art" data-id="<?php echo (int) $pid; ?>" data-domain="<?php echo esc_attr( (string) log_first_term_slug( $pid, 'log_domain' ) ); ?>" data-stage="<?php echo (int) ( $stage['completed'] ? 4 : $stage['number'] ); ?>" aria-hidden="true"></div>
 			<?php endif; ?>
 			<div class="project__hero-copy">
+				<a class="back-link back-link--light" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>" data-back data-back-home="חזרה למפה">חזרה לפרויקטים</a>
 				<h1 class="project__title"><?php the_title(); ?></h1>
 				<p class="eyebrow eyebrow--light"><?php echo log_project_meta_line( $pid ); ?></p>
 				<p class="project__stage"><?php echo esc_html( $stage['label'] ); ?></p>

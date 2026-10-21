@@ -86,3 +86,56 @@ function log_project_meta_line( int $id ): string {
 function log_project_search_text( int $id ): string {
 	return mb_strtolower( get_the_title( $id ) . ' ' . log_project_place( $id ) );
 }
+
+/**
+ * Public projects (approved, published, not stopped), as post objects. Cached per request.
+ *
+ * @return WP_Post[]
+ */
+function log_public_projects(): array {
+	static $posts = null;
+	if ( $posts === null ) {
+		$posts = array_values( array_filter(
+			log_approved_projects_query()->posts,
+			static fn( $p ) => log_project_is_public( $p->ID )
+		) );
+	}
+	return $posts;
+}
+
+/**
+ * The three filters with their options and counts over the given projects (spec v6 §8–9).
+ * Option values are decoded slugs (Hebrew authority slugs are stored encoded).
+ *
+ * @param WP_Post[] $projects
+ * @return array<string, array{label:string, options:array<int, array{value:string, name:string, count:int}>}>
+ */
+function log_project_filters( array $projects ): array {
+	$out = [];
+	foreach ( [ 'domain' => [ 'log_domain', 'תחום' ], 'stage' => [ 'log_stage', 'שלב או סטטוס' ], 'authority' => [ 'log_authority', 'רשות' ] ] as $param => [ $tax, $label ] ) {
+		$counts = [];
+		foreach ( $projects as $p ) {
+			foreach ( wp_get_post_terms( $p->ID, $tax, [ 'fields' => 'slugs' ] ) as $slug ) {
+				$counts[ $slug ] = ( $counts[ $slug ] ?? 0 ) + 1;
+			}
+		}
+		$terms = $tax === 'log_domain' ? log_ordered_terms( $tax, true ) : get_terms( [ 'taxonomy' => $tax, 'hide_empty' => true ] );
+		if ( ! is_array( $terms ) ) {
+			continue;
+		}
+		if ( $tax === 'log_stage' ) { // 1, 2, 3, 4, then completed
+			$rank = array_flip( array_keys( log_stage_terms() ) );
+			usort( $terms, static fn( $a, $b ) => ( $rank[ $a->slug ] ?? 99 ) <=> ( $rank[ $b->slug ] ?? 99 ) );
+		}
+		$options = [];
+		foreach ( $terms as $t ) {
+			if ( ! empty( $counts[ $t->slug ] ) ) {
+				$options[] = [ 'value' => rawurldecode( $t->slug ), 'name' => $t->name, 'count' => $counts[ $t->slug ] ];
+			}
+		}
+		if ( $options ) {
+			$out[ $param ] = [ 'label' => $label, 'options' => $options ];
+		}
+	}
+	return $out;
+}

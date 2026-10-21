@@ -2,19 +2,20 @@
   "key": "group_log_page_home",
   "title": "עמוד הבית · תוכן",
   "fields": [
-    { "key": "field_lh_tab_hero", "label": "Hero", "name": "", "type": "tab" },
+    { "key": "field_lh_tab_hero", "label": "מפה", "name": "", "type": "tab" },
     { "key": "field_lh_hero_title", "label": "כותרת ראשית", "name": "hero_title", "type": "text", "placeholder": "מובילים את התכנון וההתחדשות העירונית בישראל" },
     { "key": "field_lh_hero_lede", "label": "משפט פתיחה", "name": "hero_lede", "type": "textarea", "rows": 2, "placeholder": "תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות." },
-    { "key": "field_lh_hero_cta", "label": "כפתור", "name": "hero_cta", "type": "text", "placeholder": "כל הפרויקטים", "wrapper": { "width": "50" } },
 
     { "key": "field_lh_tab_who", "label": "מי אנחנו", "name": "", "type": "tab" },
     { "key": "field_lh_who_title", "label": "כותרת", "name": "who_title", "type": "text", "placeholder": "מתכננים. מחברים. מובילים." },
-    { "key": "field_lh_who_text", "label": "פסקה", "name": "who_text", "type": "textarea", "rows": 3, "placeholder": "לוג מתכננת, מלווה ומבקרת את התכנון העירוני בישראל, מהשכונה ועד המדינה כולה." },
+    { "key": "field_lh_who_text", "label": "שלוש פסקאות", "name": "who_text", "type": "textarea", "rows": 8, "instructions": "שורה ריקה בין פסקה לפסקה. מתחת מופיעים שלושה קישורים קבועים: המומחיות שלנו, אודות, הפרויקטים." },
 
-    { "key": "field_lh_tab_control", "label": "זרוע הבקרה", "name": "", "type": "tab" },
-    { "key": "field_lh_control_eyebrow", "label": "שורה עליונה", "name": "control_eyebrow", "type": "text", "placeholder": "זרוע הבקרה הלאומית" },
-    { "key": "field_lh_control_title", "label": "כותרת", "name": "control_title", "type": "text", "placeholder": "מעקב וניתוח ארצי · התרת חסמים · חיבור בין השטח לממשל" },
-    { "key": "field_lh_control_image", "label": "תמונה", "name": "control_image", "type": "image", "return_format": "array", "preview_size": "medium" },
+    { "key": "field_lh_tab_domains", "label": "תחומי פעילות", "name": "", "type": "tab" },
+    { "key": "field_lh_domains_title", "label": "כותרת", "name": "domains_title", "type": "text", "placeholder": "תחומי פעילות", "instructions": "הכרטיסים עצמם מגיעים מ\"פרויקטים ← תחומי פעילות\": שם, משפט וסדר. תחום בלי פרויקטים מפורסמים לא מוצג." },
+
+    { "key": "field_lh_tab_control", "label": "חברת הבקרה", "name": "", "type": "tab" },
+    { "key": "field_lh_control_title", "label": "כותרת", "name": "control_title", "type": "text", "placeholder": "חברת הבקרה" },
+    { "key": "field_lh_control_text", "label": "משפט", "name": "control_text", "type": "textarea", "rows": 2, "instructions": "משפט על הפעילות. בלי נתונים: הם בעמוד חברת הבקרה." },
 
     { "key": "field_lh_tab_process", "label": "איך אנחנו עובדים", "name": "", "type": "tab" },
     { "key": "field_lh_process_title", "label": "כותרת", "name": "process_title", "type": "text", "placeholder": "איך אנחנו עובדים" },
@@ -22,15 +23,10 @@
       { "key": "field_lh_process_name", "label": "שם השלב", "name": "name", "type": "text", "wrapper": { "width": "35" } },
       { "key": "field_lh_process_text", "label": "משפט", "name": "text", "type": "text", "wrapper": { "width": "65" } }
     ] },
-    { "key": "field_lh_process_tagline", "label": "שורה מתחת", "name": "process_tagline", "type": "text", "placeholder": "תכנון מדויק מתחיל בנתונים חכמים" },
+    { "key": "field_lh_process_tagline", "label": "שורה מתחת", "name": "process_tagline", "type": "text", "placeholder": "נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע" },
 
-    { "key": "field_lh_tab_sections", "label": "שאר הסקשנים", "name": "", "type": "tab" },
-    { "key": "field_lh_featured_title", "label": "פרויקטים נבחרים · כותרת", "name": "featured_title", "type": "text", "placeholder": "פרויקטים נבחרים", "wrapper": { "width": "50" } },
-    { "key": "field_lh_numbers_title", "label": "מספרים · כותרת", "name": "numbers_title", "type": "text", "placeholder": "במספרים", "wrapper": { "width": "50" } },
-    { "key": "field_lh_clients_title", "label": "לקוחות · כותרת", "name": "clients_title", "type": "text", "placeholder": "לקוחות ושותפים", "wrapper": { "width": "50" } },
-    { "key": "field_lh_news_title", "label": "מה חדש · כותרת", "name": "news_title", "type": "text", "placeholder": "מה חדש", "wrapper": { "width": "50" } },
-    { "key": "field_lh_careers_title", "label": "קריירה · כותרת", "name": "careers_title", "type": "text", "placeholder": "מאחורי כל קו אופק, יש תכנית שלמה.", "wrapper": { "width": "50" } },
-    { "key": "field_lh_careers_cta", "label": "קריירה · כפתור", "name": "careers_cta", "type": "text", "placeholder": "למשרות הפתוחות", "wrapper": { "width": "50" } }
+    { "key": "field_lh_tab_sections", "label": "לקוחות ושותפים", "name": "", "type": "tab" },
+    { "key": "field_lh_clients_title", "label": "לקוחות · כותרת", "name": "clients_title", "type": "text", "placeholder": "לקוחות ושותפים" }
   ],
   "location": [[{ "param": "page_type", "operator": "==", "value": "front_page" }]],
   "position": "normal",

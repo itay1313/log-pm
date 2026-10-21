@@ -1,315 +1,238 @@
 /**
- * Home hero (spec §7): the 3D map and its interface.
+ * Home map (spec v6 §8). Two layers:
  *
- *  - pins from the CMS (/log/v1/map), clustered with counts while far away
- *  - hover/focus a pin: a card (image, place, title, short text, button) — statskog-style
- *  - click a pin: the camera dives in and the city rises; click the card's button: ring + wipe into the project
- *  - edge counters: how many projects lie beyond each edge of the screen, click to go there
- *  - bottom bar: compass (reset), scale, "all projects" drawer with domain chips
- *  - city names at the national level; the hero copy steps aside once you start exploring
- *  - wheel zooms the map only after a click on it, so the page keeps scrolling
- *  - /?p={slug} opens on that project with its card locked open; locking a card writes the same address
+ * 1. The interface, which works without WebGL: free search with suggestions, three filters,
+ *    the three live numbers, "פריסה ארצית" and "תצוגת רשימה" lists, and "לכל הפרויקטים" carrying
+ *    the same search. State lives in the address: /?q=&domain=&stage=&authority=&p={slug}.
+ * 2. The 3D map (hero/map3d.js, loaded after the interface): pins, clusters, edge counters, the
+ *    project card, zoom buttons, Ctrl/⌘ + wheel zoom. If WebGL is missing or the map fails,
+ *    the list view takes its place, so the content is always reachable.
+ *
+ * The numbers count the current group: public projects after search and filters, each once,
+ * national plans included. Moving the camera never changes them.
  */
-import { createScene } from './hero/scene.js';
-import { leave } from './hero/transition.js';
-import { toLocal } from './hero/geo.js';
-import { illustration } from './hero/illustration.js';
+import { FILTERS, matches, matchesQuery, mergeQuery, recordFromProps, readState, stateQuery, setOptionCounts } from './filter.js';
 
-const DOMAIN_LABEL = {
-  'urban-renewal': 'התחדשות עירונית', 'master-plans': 'תכניות מתאר', 'detailed-plans': 'תכניות מפורטות',
-  'national-plans': 'תכניות לאומיות', 'open-spaces': 'שטחים פתוחים', 'rural-arab': 'המגזר הכפרי והחברה הערבית',
-};
 const fmt = new Intl.NumberFormat('he-IL');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const CLUSTER_PX = 46;
-const clusterPx = (r) => (r > 150000 ? 64 : r > 30000 ? 54 : CLUSTER_PX);
+const slugOf = (p) => decodeURIComponent(p.slug || '');
+const placeOf = (p) => [...new Set([p.city, p.authorityName].filter(Boolean))].join(' · ');
 
 export async function initHero(hero) {
-  const stage = hero.querySelector('.hero-stage');
-  const pinsEl = hero.querySelector('.hero-pins');
-  const labelsEl = hero.querySelector('.hero-labels');
-  const edgesEl = hero.querySelector('.hero-edges');
-  const card = hero.querySelector('.hero-card');
+  const form = hero.querySelector('.hero-tools');
+  const input = form.querySelector('input[name=q]');
+  const suggest = hero.querySelector('.hero-suggest');
+  const selects = Object.fromEntries(FILTERS.map((k) => [k, form.querySelector(`select[name=${k}]`)]).filter(([, el]) => el));
+  const statsEl = form.querySelector('.hero__stats');
+  const emptyEl = form.querySelector('.hero-empty');
+  const allLink = form.querySelector('.hero-all-link');
   const drawer = hero.querySelector('.hero-drawer');
-  const compass = hero.querySelector('.hero-compass');
-  const scaleEl = hero.querySelector('.hero-scale');
-  const allBtn = hero.querySelector('.hero-all');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const listButtons = [...hero.querySelectorAll('.hero-list-btn')];
+  const projectsUrl = allLink.getAttribute('href').split('?')[0];
 
-  if (!webgl()) { hero.classList.add('no-webgl'); return; }
+  const data = await fetch(`${window.LOG.rest}map`).then((r) => r.json());
+  const features = data.features;
+  const hasUnits = features.some((f) => f.properties.units);
+  const hasSqm = features.some((f) => f.properties.sqm);
 
-  const [scene, data] = await Promise.all([
-    createScene(stage, { reduced }),
-    fetch(`${window.LOG.rest}map`).then((r) => r.json()),
-  ]);
+  const state = readState();
+  let locked = new URLSearchParams(location.search).get('p');
+  input.value = state.q;
+  for (const k of FILTERS) {
+    if (selects[k]) selects[k].value = [...selects[k].options].some((o) => o.value === state[k]) ? state[k] : '';
+    state[k] = selects[k]?.value || '';
+  }
 
-  // Projects with a place on the map
-  const all = data.features
-    .filter((f) => f.geometry && !f.properties.national)
-    .map((f) => { const [x, z] = toLocal(...f.geometry.coordinates); return { id: f.id, p: f.properties, x, z }; });
-  let active = '';
-  const shown = () => all.filter((it) => !active || it.p.domain === active);
-  scene.setPlans(data.features.filter((f) => !active || f.properties.domain === active));
-  if (allBtn) allBtn.querySelector('span').textContent = fmt.format(all.length);
+  const pred = (p, skip) => matches(state, recordFromProps(p), skip);
+  let map = null;
 
-  hero.classList.add('is-ready');
-  window.LOGhero = scene;
+  /* ---------------------------------------------------------------- interface */
 
-  // Arm wheel-zoom on click; disarm when the pointer leaves.
-  stage.addEventListener('pointerdown', () => { scene.controls.enableZoom = true; hero.classList.add('is-armed'); scene.stopDrift(); });
-  hero.addEventListener('pointerleave', () => { scene.controls.enableZoom = false; hero.classList.remove('is-armed'); });
-  scene.controls.addEventListener('start', () => { scene.stopDrift(); closeCard(); });
+  function apply({ fit = false } = {}) {
+    const group = features.filter((f) => pred(f.properties));
+    const sum = (k) => group.reduce((n, f) => n + (Number(f.properties[k]) || 0), 0);
+    // A number the data doesn't carry at all isn't shown; with no results, the numbers read zero.
+    setStat('projects', group.length, true);
+    setStat('units', sum('units'), hasUnits);
+    setStat('sqm', sum('sqm'), hasSqm);
 
-  // Pins: a pool of DOM nodes re-laid out every frame.
-  const pool = [];
-  function pinNode(i) {
-    if (!pool[i]) {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'hero-pin';
-      b.innerHTML = '<span class="hero-pin__shape" aria-hidden="true"></span><span class="hero-pin__count" aria-hidden="true"></span>';
-      pinsEl.appendChild(b);
-      b.addEventListener('mouseenter', () => b._item && openCard(b._item, b));
-      b.addEventListener('focus', () => b._item && openCard(b._item, b));
-      b.addEventListener('mouseleave', () => scheduleCloseUnlessLocked());
-      b.addEventListener('click', () => {
-        if (b._cluster) return scene.fit(b._cluster.map((it) => [it.x, it.z]));
-        if (b._item) { scene.flyTo(b._item.x, b._item.z); openCard(b._item, b); lock(b._item); }
-      });
-      pool[i] = b;
+    for (const [k, sel] of Object.entries(selects)) {
+      const n = {};
+      for (const f of features) if (pred(f.properties, k)) n[f.properties[k]] = (n[f.properties[k]] || 0) + 1;
+      setOptionCounts(sel, n);
     }
-    return pool[i];
+
+    const filtered = !!(state.q || FILTERS.some((k) => state[k]));
+    emptyEl.hidden = group.length > 0;
+    hero.classList.toggle('is-filtered', filtered);
+    allLink.href = projectsUrl + (stateQuery(state) ? `?${stateQuery(state)}` : '');
+    listButtons.forEach((b) => (b.querySelector('span').textContent = fmt.format(listItems(b.dataset.list).length)));
+    if (!drawer.hidden) renderList(drawer.dataset.list);
+    map?.refilter({ fit: fit && filtered && group.length > 0 });
+    writeUrl();
+  }
+  function setStat(key, value, show) {
+    const el = statsEl.querySelector(`[data-stat=${key}]`);
+    if (!el) return;
+    el.hidden = !show;
+    el.querySelector('dd').textContent = fmt.format(value);
+  }
+  function writeUrl() {
+    const qs = mergeQuery(location.search, state, { p: locked });
+    const url = location.pathname + (qs ? `?${qs}` : '') + location.hash;
+    if (url !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', url);
   }
 
-  let cardItem = null, cardPin = null, closeTimer = 0;
-  function openCard(item, pin) {
-    clearTimeout(closeTimer);
-    if (cardItem?.id === item.id) return;
-    cardItem = item; cardPin = pin;
-    const p = item.p;
-    const st = p.completed ? 4 : Math.min(4, Math.max(1, Number(p.stageNumber) || 1));
-    const place = [...new Set([p.city, p.authorityName].filter(Boolean))].join(' · ');
-    const facts = [
-      p.units ? [fmt.format(p.units), 'יח"ד'] : null,
-      p.dunam ? [fmt.format(p.dunam), 'דונם'] : null,
-      p.year ? [p.year, 'שנת תכנית'] : null,
-    ].filter(Boolean).slice(0, 2);
-    const domain = p.domainName || DOMAIN_LABEL[p.domain];
-    card.innerHTML = `
-      <div class="hero-card__media${p.image ? '' : ' is-art'}">
-        ${p.image ? `<img src="${esc(p.image)}" alt="" loading="eager" decoding="async">` : illustration(p)}
-        ${domain ? `<span class="hero-card__tag">${esc(domain)}</span>` : ''}
-      </div>
-      <div class="hero-card__body">
-        ${place ? `<p class="hero-card__meta">${esc(place)}</p>` : ''}
-        <h3 class="hero-card__title">${esc(p.title)}</h3>
-        ${p.excerpt ? `<p class="hero-card__text">${esc(p.excerpt)}</p>` : ''}
-        ${facts.length ? `<dl class="hero-card__facts">${facts.map(([v, k]) => `<div><dd>${esc(v)}</dd><dt>${esc(k)}</dt></div>`).join('')}</dl>` : ''}
-        <div class="hero-card__stage" style="--st:${st}">
-          <span class="hero-card__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <span>${esc(p.stageLabel)}</span>
-        </div>
-      </div>
-      ${p.page ? `<a class="hero-card__go" href="${esc(p.url)}"><span>לעמוד הפרויקט</span><i aria-hidden="true">←</i></a>` : ''}`;
-    card.hidden = false;
-    card.classList.remove('is-in');
-    requestAnimationFrame(() => card.classList.add('is-in'));
-    placeCard();
-  }
-  function scheduleClose() { clearTimeout(closeTimer); closeTimer = setTimeout(closeCard, 320); }
-  function closeCard() { clearTimeout(closeTimer); card.hidden = true; card.classList.remove('is-in'); cardItem = null; cardPin = null; lock(null); }
-
-  // A locked card (clicked, or opened from /?p=) lives in the address so it can be shared and returned to.
-  let locked = null;
-  function lock(item) {
-    if (item === locked) return;
-    locked = item;
-    const q = new URLSearchParams(location.search);
-    if (item) q.set('p', decodeURIComponent(item.p.slug)); else q.delete('p');
-    const qs = q.toString();
-    history.replaceState(history.state, '', location.pathname + (qs ? `?${qs}` : '') + location.hash);
-  }
-  function scheduleCloseUnlessLocked() { if (!locked) scheduleClose(); }
-  card.addEventListener('mouseenter', () => clearTimeout(closeTimer));
-  card.addEventListener('mouseleave', scheduleCloseUnlessLocked);
-  card.addEventListener('click', (e) => {
-    const go = e.target.closest('.hero-card__go');
-    if (!go || !cardItem) return;
+  // Filters apply at once; free text applies on Enter or when cleared (suggestions show as you type).
+  Object.entries(selects).forEach(([k, sel]) => sel.addEventListener('change', () => { state[k] = sel.value; apply({ fit: true }); }));
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const s = scene.toScreen(cardItem.x, cardItem.z);
-    const rect = stage.getBoundingClientRect();
-    scene.flyTo(cardItem.x, cardItem.z, { radius: 650, phi: 1.08, duration: 1.8 });
-    leave(go.href, { x: rect.left + (s?.x ?? rect.width / 2), y: rect.top + (s?.y ?? rect.height / 2), title: cardItem.p.title });
+    const active = suggest.querySelector('[aria-selected=true]');
+    if (active && !suggest.hidden) { choose(active.dataset.slug); return; }
+    state.q = input.value.trim();
+    closeSuggest();
+    apply({ fit: true });
   });
-  function placeCard() {
-    if (!cardItem || card.hidden) return;
-    const s = scene.toScreen(cardItem.x, cardItem.z);
-    if (!s) return closeCard();
-    const W = stage.clientWidth, H = stage.clientHeight, cw = card.offsetWidth, ch = card.offsetHeight;
-    const left = s.x > W / 2 ? s.x - cw - 34 : s.x + 34;
-    const top = Math.min(H - ch - 16, Math.max(84, s.y - ch / 2)); // 84: clear of the domain toggle
-    card.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
-  }
+  input.addEventListener('search', () => { if (!input.value && state.q) { state.q = ''; apply(); } });
+  form.querySelector('.hero-clear').addEventListener('click', () => {
+    input.value = '';
+    state.q = '';
+    for (const k of FILTERS) { state[k] = ''; if (selects[k]) selects[k].value = ''; }
+    apply();
+    map?.home();
+  });
 
-  // City names at the national level: only cities where LOG works, from the CMS, sized by count.
-  const cities = (() => {
-    const m = new Map();
-    for (const it of all) {
-      const c = it.p.city;
-      if (!c) continue;
-      const e = m.get(c) || { name: c, x: 0, z: 0, n: 0 };
-      e.x += it.x; e.z += it.z; e.n++;
-      m.set(c, e);
-    }
-    return [...m.values()].map((e) => ({ ...e, x: e.x / e.n, z: e.z / e.n })).sort((a, b) => b.n - a.n).slice(0, 12);
-  })();
-  labelsEl.innerHTML = cities.map((c) => `<span class="hero-label" data-n="${c.n}">${esc(c.name)}</span>`).join('');
-  const labelNodes = [...labelsEl.children];
-  function layoutLabels(r) {
-    const op = r > 120000 ? Math.min(1, (r - 120000) / 90000) : 0;
-    labelsEl.style.opacity = op;
-    if (!op) return;
-    cities.forEach((c, i) => {
-      const s = scene.toScreen(c.x, c.z);
-      labelNodes[i].style.display = s ? '' : 'none';
-      if (s) labelNodes[i].style.transform = `translate(${Math.round(s.x)}px, ${Math.round(s.y + 30)}px)`;
-    });
-  }
+  // Phones: the filters open as a bottom sheet; the numbers and search stay on the map.
+  const filterToggle = form.querySelector('.hero-filter-toggle');
+  const setFiltersOpen = (open) => {
+    hero.classList.toggle('filters-open', open);
+    filterToggle?.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('sheet-open', open);
+  };
+  filterToggle?.addEventListener('click', () => setFiltersOpen(!hero.classList.contains('filters-open')));
+  form.querySelector('.hero-filters__done')?.addEventListener('click', () => { setFiltersOpen(false); filterToggle?.focus(); });
 
-  // Edge counters for what's off-screen
-  function layoutEdges(offscreen) {
-    const W = stage.clientWidth, H = stage.clientHeight, cx = W / 2, cy = H / 2, pad = 30;
-    const buckets = new Map();
-    for (const { it, s } of offscreen) {
-      const dx = (s ? s.x : it._sx) - cx, dy = (s ? s.y : it._sy) - cy;
-      const k = Math.min((cx - pad) / Math.abs(dx || 1e-6), (cy - pad) / Math.abs(dy || 1e-6));
-      const ex = cx + dx * k, ey = cy + dy * k;
-      const key = `${Math.round(ex / 160)}:${Math.round(ey / 160)}`;
-      const b = buckets.get(key) || { x: 0, y: 0, items: [] };
-      b.x += ex; b.y += ey; b.items.push(it);
-      buckets.set(key, b);
-    }
-    const list = [...buckets.values()];
-    edgesEl.innerHTML = list.map((b, i) => {
-      const x = b.x / b.items.length, y = b.y / b.items.length;
-      const ang = Math.atan2(y - cy, x - cx) * 180 / Math.PI + 90;
-      return `<button type="button" class="hero-edge" data-i="${i}" style="transform:translate(${x.toFixed(0)}px,${y.toFixed(0)}px)" aria-label="${b.items.length} פרויקטים בכיוון הזה"><i style="transform:rotate(${ang.toFixed(0)}deg)"></i><span>${b.items.length}</span></button>`;
+  // Suggestions: projects by name, city or authority.
+  input.addEventListener('input', () => {
+    const q = input.value.trim();
+    if (q.length < 2) return closeSuggest();
+    const hits = features.filter((f) => matchesQuery(recordFromProps(f.properties).search, q))
+      .sort((a, b) => Number(!a.properties.title.startsWith(q)) - Number(!b.properties.title.startsWith(q)))
+      .slice(0, 8);
+    if (!hits.length) return closeSuggest();
+    suggest.innerHTML = hits.map((f, i) => {
+      const p = f.properties;
+      return `<li role="option" id="hero-opt-${i}" data-slug="${esc(slugOf(p))}" aria-selected="false"><strong>${esc(p.title)}</strong><span>${esc(placeOf(p))}</span></li>`;
     }).join('');
-    edgesEl._buckets = list;
+    suggest.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  });
+  input.addEventListener('keydown', (e) => {
+    if (suggest.hidden || !['ArrowDown', 'ArrowUp', 'Escape'].includes(e.key)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.key === 'Escape') return closeSuggest();
+    const opts = [...suggest.children];
+    const i = opts.findIndex((o) => o.getAttribute('aria-selected') === 'true');
+    const next = opts[(i + (e.key === 'ArrowDown' ? 1 : -1) + opts.length) % opts.length];
+    opts.forEach((o) => o.setAttribute('aria-selected', String(o === next)));
+    input.setAttribute('aria-activedescendant', next.id);
+  });
+  suggest.addEventListener('mousedown', (e) => { const li = e.target.closest('li'); if (li) { e.preventDefault(); choose(li.dataset.slug); } });
+  input.addEventListener('blur', () => setTimeout(closeSuggest, 150));
+  function closeSuggest() {
+    suggest.hidden = true;
+    suggest.innerHTML = '';
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
   }
-  edgesEl.addEventListener('click', (e) => {
-    const b = e.target.closest('.hero-edge');
-    if (b) scene.fit(edgesEl._buckets[Number(b.dataset.i)].items.map((it) => [it.x, it.z]));
-  });
 
-  // Per-frame layout
-  let edgeTick = 0;
-  scene.onFrame((r) => {
-    const W = stage.clientWidth, H = stage.clientHeight;
-    const vis = [], off = [];
-    for (const it of shown()) {
-      const s = scene.toScreen(it.x, it.z);
-      if (s && s.x > -10 && s.x < W + 10 && s.y > -10 && s.y < H + 10) vis.push({ it, s });
-      else off.push({ it, s });
-    }
-    // Greedy screen-space clustering
-    const clusters = [];
-    for (const v of vis) {
-      const px = clusterPx(r);
-      const c = clusters.find((c) => Math.abs(c.x - v.s.x) < px && Math.abs(c.y - v.s.y) < px);
-      if (c) { c.items.push(v.it); c.x = (c.x * (c.items.length - 1) + v.s.x) / c.items.length; c.y = (c.y * (c.items.length - 1) + v.s.y) / c.items.length; }
-      else clusters.push({ x: v.s.x, y: v.s.y, items: [v.it] });
-    }
-    clusters.forEach((c, i) => {
-      const b = pinNode(i);
-      const single = c.items.length === 1;
-      b._item = single ? c.items[0] : null;
-      b._cluster = single ? null : c.items;
-      b.classList.toggle('is-cluster', !single);
-      b.classList.toggle('is-active', single && cardItem?.id === c.items[0].id);
-      b.querySelector('.hero-pin__count').textContent = single ? '' : c.items.length;
-      b.setAttribute('aria-label', single ? `${c.items[0].p.title}${c.items[0].p.city ? `, ${c.items[0].p.city}` : ''}` : `${c.items.length} פרויקטים`);
-      b.style.transform = `translate(${Math.round(c.x)}px, ${Math.round(c.y)}px)`;
-      b.hidden = false;
-      if (single && cardItem?.id === c.items[0].id) cardPin = b;
-    });
-    for (let i = clusters.length; i < pool.length; i++) pool[i].hidden = true;
+  /** A chosen suggestion: fly to it on the map, or open its page, or the list it lives in. */
+  function choose(slug) {
+    closeSuggest();
+    const f = features.find((x) => slugOf(x.properties) === slug);
+    if (!f) return;
+    if (map && f.geometry && !f.properties.national && map.focusSlug(slug)) return;
+    if (f.properties.page) { location.href = f.properties.url; return; }
+    openList(f.properties.national || !f.geometry ? 'national' : 'all');
+  }
 
-    if (++edgeTick % 6 === 0) layoutEdges(off);
-    placeCard();
-    layoutLabels(r);
-    hero.classList.toggle('is-exploring', r < scene.national.radius * 0.55);
+  /* ---------------------------------------------------------------- lists */
 
-    if (compass) compass.style.setProperty('--rot', `${(-scene.theta() * 180) / Math.PI}deg`);
-    if (scaleEl) {
-      const m = scene.metresPerPixel() * 80;
-      const nice = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000].find((n) => n >= m) || 100000;
-      scaleEl.style.setProperty('--w', `${(80 * nice) / m}px`);
-      scaleEl.querySelector('span').textContent = nice >= 1000 ? `${nice / 1000} ק"מ` : `${nice} מ'`;
-    }
-  });
-
-  // Bottom bar
-  compass?.addEventListener('click', () => { closeCard(); scene.home(); });
-  allBtn?.addEventListener('click', () => {
-    const open = drawer.hidden;
-    drawer.hidden = !open;
-    allBtn.setAttribute('aria-expanded', String(open));
-    if (open) renderDrawer();
-  });
-  function renderDrawer() {
-    const domains = [...new Set(all.map((it) => it.p.domain).filter(Boolean))];
-    const byCity = new Map();
-    for (const it of shown()) { const c = it.p.city || 'ללא עיר'; byCity.set(c, [...(byCity.get(c) || []), it]); }
+  function listItems(kind) {
+    return features.filter((f) => pred(f.properties) && (kind === 'all' || f.properties.national || !f.geometry))
+      .sort((a, b) => a.properties.title.localeCompare(b.properties.title, 'he'));
+  }
+  function renderList(kind) {
+    const items = listItems(kind);
+    const cols = kind === 'national' ? ['שם', 'לקוח', 'שלב'] : ['שם', 'עיר', 'רשות', 'תחום', 'שלב'];
+    const cells = (p) => (kind === 'national' ? [p.client, p.stageLabel] : [p.city, p.authorityName, p.domainName, p.stageLabel]);
+    drawer.dataset.list = kind;
     drawer.innerHTML = `
-      <div class="hero-drawer__chips" role="group" aria-label="סינון לפי תחום">
-        <button type="button" class="chip${active ? '' : ' is-active'}" data-domain="" aria-pressed="${!active}">הכל</button>
-        ${domains.map((d) => `<button type="button" class="chip${active === d ? ' is-active' : ''}" data-domain="${esc(d)}" aria-pressed="${active === d}">${esc(DOMAIN_LABEL[d] || d)}</button>`).join('')}
+      <div class="hero-drawer__head">
+        <h2>${kind === 'national' ? 'פריסה ארצית' : 'כל הפרויקטים בקבוצה'} <span>${fmt.format(items.length)}</span></h2>
+        ${map ? '<button type="button" class="hero-drawer__close" aria-label="סגירת הרשימה">×</button>' : ''}
       </div>
-      <div class="hero-drawer__list">
-        ${[...byCity.entries()].sort((a, b) => b[1].length - a[1].length).map(([city, items]) => `
-          <section><h4>${esc(city)} <span>${items.length}</span></h4>
-          <ul>${items.map((it) => `<li><button type="button" data-id="${it.id}">${esc(it.p.title)}</button></li>`).join('')}</ul></section>`).join('')}
-      </div>`;
+      ${items.length ? `<table class="hero-table">
+        <thead><tr>${cols.map((c) => `<th scope="col">${c}</th>`).join('')}</tr></thead>
+        <tbody>${items.map((f) => {
+          const p = f.properties;
+          const onMap = map && f.geometry && !p.national;
+          const name = onMap
+            ? `<button type="button" data-slug="${esc(slugOf(p))}">${esc(p.title)}</button>`
+            : p.page ? `<a href="${esc(p.url)}">${esc(p.title)}</a>` : esc(p.title);
+          return `<tr><th scope="row">${name}</th>${cells(p).map((v) => `<td>${esc(v || '')}</td>`).join('')}</tr>`;
+        }).join('')}</tbody></table>` : '<p class="hero-drawer__empty">אין פרויקטים בקבוצה הזו.</p>'}`;
   }
-  drawer?.addEventListener('click', (e) => {
-    const chip = e.target.closest('.chip');
-    if (chip) {
-      active = chip.dataset.domain;
-      scene.setPlans(data.features.filter((f) => !active || f.properties.domain === active));
-      renderDrawer();
-      return;
-    }
-    const b = e.target.closest('button[data-id]');
-    if (b) {
-      const it = all.find((x) => x.id === Number(b.dataset.id));
-      drawer.hidden = true;
-      allBtn.setAttribute('aria-expanded', 'false');
-      flyAndLock(it);
-    }
+  function openList(kind) {
+    renderList(kind);
+    drawer.hidden = false;
+    listButtons.forEach((b) => b.setAttribute('aria-expanded', String(b.dataset.list === kind)));
+    if (map) document.body.classList.add('sheet-open');
+  }
+  function closeList() {
+    if (!map) return; // without the map, the list is the view
+    drawer.hidden = true;
+    listButtons.forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    document.body.classList.remove('sheet-open');
+  }
+  listButtons.forEach((b) => b.addEventListener('click', () => (b.getAttribute('aria-expanded') === 'true' ? closeList() : openList(b.dataset.list))));
+  drawer.addEventListener('click', (e) => {
+    if (e.target.closest('.hero-drawer__close')) return closeList();
+    const b = e.target.closest('button[data-slug]');
+    if (b && map) { closeList(); map.focusSlug(b.dataset.slug); }
   });
   hero.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (!drawer.hidden) { drawer.hidden = true; allBtn.setAttribute('aria-expanded', 'false'); allBtn.focus(); }
-    else if (!card.hidden) closeCard();
+    if (hero.classList.contains('filters-open')) { setFiltersOpen(false); filterToggle?.focus(); return; }
+    if (!drawer.hidden && map) { closeList(); listButtons[0]?.focus(); } else map?.closeCard();
   });
 
-  // Pause when off-screen or hidden
-  new IntersectionObserver(([e]) => (e.isIntersecting ? scene.resume() : scene.pause())).observe(hero);
-  document.addEventListener('visibilitychange', () => (document.hidden ? scene.pause() : scene.resume()));
+  /* ---------------------------------------------------------------- map */
 
-  function flyAndLock(it) {
-    scene.flyTo(it.x, it.z).then(() => { const pin = pool.find((p) => p._item?.id === it.id); if (pin) { openCard(it, pin); lock(it); } });
+  apply();
+  hero.classList.add('is-data'); // the numbers and filters are live before the map is
+
+  const fallback = (err) => {
+    if (err) console.error(err);
+    map = null;
+    hero.classList.add('no-webgl');
+    openList('all');
+  };
+  if (!webgl()) return fallback();
+  try {
+    const { mount3D } = await import('./hero/map3d.js');
+    map = await mount3D(hero, features, {
+      pred: (p) => pred(p),
+      onLock: (slug) => { locked = slug; writeUrl(); },
+      onSheet: (open) => document.body.classList.toggle('sheet-open', open || !drawer.hidden),
+    });
+  } catch (err) {
+    return fallback(err);
   }
-
-  hero.classList.add('is-intro');
-  await scene.intro();
-  hero.classList.remove('is-intro');
-  window.LOGhero = scene;
-
-  const wanted = new URLSearchParams(location.search).get('p');
-  const target = wanted && all.find((it) => decodeURIComponent(it.p.slug) === wanted);
-  if (target) flyAndLock(target);
+  apply();
+  await map.intro();
+  if (locked) map.focusSlug(locked);
 }
 
 function webgl() {

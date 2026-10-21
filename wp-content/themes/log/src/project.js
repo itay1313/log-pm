@@ -1,6 +1,6 @@
 /**
- * Project page (spec §9): mini-map (dark, non-interactive, click → big map), gallery lightbox,
- * hero video that plays only while on screen.
+ * Project page (spec v6 §10): mini-map (non-interactive, click → the project on the home map),
+ * gallery lightbox (Esc closes, arrows move, alt text kept), hero video that plays only while on screen.
  */
 export function initProject() {
   // Mini-map
@@ -15,9 +15,15 @@ export function initProject() {
   }
 
   // Hero video: play while visible, pause otherwise (spec §17 performance)
+  // Muted, with a pause button (spec v6 §10); once paused by hand it stays paused.
   const video = document.querySelector('video.project__media');
   if (video) {
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => (e.isIntersecting ? video.play().catch(() => {}) : video.pause())), { threshold: 0.3 });
+    const btn = document.querySelector('.project__pause');
+    let userPaused = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const sync = () => { if (btn) { btn.setAttribute('aria-pressed', String(userPaused)); btn.textContent = userPaused ? 'הפעלת הסרטון' : 'עצירת הסרטון'; } };
+    btn?.addEventListener('click', () => { userPaused = !userPaused; userPaused ? video.pause() : video.play().catch(() => {}); sync(); });
+    sync();
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => (e.isIntersecting && !userPaused ? video.play().catch(() => {}) : video.pause())), { threshold: 0.3 });
     io.observe(video);
   }
 
