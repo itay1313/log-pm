@@ -6,17 +6,19 @@ WordPress מותאם, בלי בילדרים. שני חלקים:
 |---|---|
 | `wp-content/plugins/log-core` | מודל התוכן: פרויקטים, משרות, מרכז ידע, צוות, לקוחות; מדרגת היקף אוטומטית; `GET /wp-json/log/v1/map` ו-`/stats`; סכמה (Organization, JobPosting); Setup בלחיצה אחת; ייבוא מ-ArcGIS (כלים → ייבוא מ-ArcGIS). |
 | `wp-content/themes/log` | תצוגה בלבד. תבניות לכל נתיב באפיון, שני הכפתורים הצמודים, גופנים עצמיים, Vite. |
-| `tools/deploy.sh` | בילד + העלאה ל-uPress (lftp, סיסמה מה-Keychain `log-pm-ftp`). |
+| `.github/workflows/deploy.yml` | כל פוש ל-`main` (מיזוג PR) בונה ומעלה ל-uPress ב-FTPS. פרטי ה-FTP בסודות של הריפו. |
+| `tools/deploy.sh` | אותה פריסה, ידנית מהמחשב (host ו-user מ-`.env`, סיסמה מה-Keychain `log-pm-ftp`). |
 | `tools/dev.sh` | WordPress מקומי ב-Playground על :8881, עם התיקיות מחוברות חי. |
-| `docs/` | האפיון (v6, ו-v5.1 הקודם), הצעת המחיר, מיפוי ArcGIS. |
+| `docs/` | מיפוי ArcGIS וה-spike. האפיונים והצעת המחיר (PDF) נשמרים מקומית בלבד, לא בגיט: הריפו ציבורי. |
 
 ## עבודה יומיומית
 
 ```bash
 ./tools/dev.sh            # מקומי: http://127.0.0.1:8881
 cd wp-content/themes/log && npm run dev   # Vite עם HMR (הגדירו LOG_VITE_DEV ב-wp-config)
-./tools/deploy.sh         # לשרת
 ```
+
+לשרת: פותחים PR וממזגים ל-`main`, והפריסה רצה לבד. כללי העבודה עם גיט ב-`CLAUDE.md`.
 
 אחרי פריסה ראשונה: wp-admin → תוספים → הפעלת LOG Core, עיצוב → הפעלת LOG, כלים → LOG Setup.
 
