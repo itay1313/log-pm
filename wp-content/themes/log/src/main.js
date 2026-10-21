@@ -1,5 +1,29 @@
 import './styles/main.css';
 import { illustration } from './hero/illustration.js';
+import { initConsent, track } from './consent.js';
+
+initConsent();
+
+// Measurement events that belong to a page load (spec v6 §21). Nothing personal is sent.
+{
+  const from = (() => {
+    try {
+      const r = document.referrer ? new URL(document.referrer) : null;
+      if (!r || r.origin !== location.origin) return r ? 'external' : 'direct';
+      if (r.pathname === '/') return new URLSearchParams(r.search).get('p') ? 'map' : 'home';
+      if (r.pathname.startsWith('/projects')) return new URLSearchParams(r.search).get('view') === 'map' ? 'map' : 'list';
+      if (r.pathname.startsWith('/search')) return 'search';
+      return 'site';
+    } catch { return 'direct'; }
+  })();
+  const utm = new URLSearchParams(location.search).get('utm_source');
+  const project = document.querySelector('.project[data-project]');
+  if (project) track('project_view', { project: project.dataset.project, from });
+  const job = document.querySelector('.job[data-job]');
+  if (job) track('job_view', { job: job.dataset.job, source: utm || from });
+  const search = document.querySelector('[data-search-term]');
+  if (search?.dataset.searchTerm) track('search', { term: search.dataset.searchTerm, where: 'site', results: Number(search.dataset.searchResults) });
+}
 
 /**
  * Entry. Everything heavy (the map) is a dynamic import, so pages that don't
@@ -34,6 +58,18 @@ for (const link of document.querySelectorAll('a[data-back]')) {
     e.preventDefault();
     history.back();
   });
+}
+
+// Job application in a dialog over the job page (spec v6 §14). Closing returns to the page.
+const applyDialog = document.getElementById('apply');
+if (applyDialog?.showModal) {
+  let opener = null;
+  const open = (btn) => { opener = btn || null; applyDialog.showModal(); applyDialog.querySelector('input:not([type=hidden]):not(.hp)')?.focus(); };
+  document.querySelectorAll('[data-apply]').forEach((b) => b.addEventListener('click', () => open(b)));
+  applyDialog.querySelector('.apply-dialog__close')?.addEventListener('click', () => applyDialog.close());
+  applyDialog.addEventListener('click', (e) => { if (e.target === applyDialog) applyDialog.close(); });
+  applyDialog.addEventListener('close', () => opener?.focus());
+  if (location.hash === '#apply') open();
 }
 
 // Copy link buttons (job, knowledge item)
@@ -91,6 +127,11 @@ if (teamGrid) {
 // Projects archive: filters, gallery ↔ map toggle, URL state. The map itself loads on first toggle.
 if (document.getElementById('projects-grid') || document.getElementById('projects-map')) {
   import('./projects.js').then((m) => m.initProjects());
+}
+
+// Knowledge center: type tabs, search, year, load more
+if (document.getElementById('knowledge-grid')) {
+  import('./knowledge.js').then((m) => m.initKnowledge());
 }
 
 // Forms: contact and apply

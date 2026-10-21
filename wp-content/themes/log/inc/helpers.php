@@ -139,3 +139,43 @@ function log_project_filters( array $projects ): array {
 	}
 	return $out;
 }
+
+/**
+ * The two offices from the settings page, in display order. Offices without an address or phone are skipped.
+ *
+ * @return array<int, array{name:string, address:string, phone:string, email:string, nav:string}>
+ */
+function log_offices(): array {
+	$out = [];
+	foreach ( [ 'tlv' => 'תל אביב', 'jlm' => 'ירושלים' ] as $key => $name ) {
+		$office = [
+			'name'    => $name,
+			'address' => (string) log_option( "{$key}_address", '' ),
+			'phone'   => (string) log_option( "{$key}_phone", '' ),
+			'email'   => (string) log_option( "{$key}_email", '' ),
+			'nav'     => (string) log_option( "{$key}_nav_url", '' ),
+		];
+		if ( $office['address'] || $office['phone'] ) {
+			$out[] = $office;
+		}
+	}
+	return $out;
+}
+
+/**
+ * Header and footer links (spec v6 §6), in the spec's order. Fixed in code so the order can't drift.
+ * Each: [label, url, is_current].
+ *
+ * @return array<int, array{0:string, 1:string, 2:bool}>
+ */
+function log_nav_items(): array {
+	$page = static fn( string $slug ) => ( $p = get_page_by_path( $slug ) ) ? get_permalink( $p ) : home_url( "/$slug/" );
+	return [
+		[ 'פרויקטים', get_post_type_archive_link( 'log_project' ), is_post_type_archive( 'log_project' ) || is_singular( 'log_project' ) ],
+		[ 'חברת הבקרה', $page( 'control' ), is_page( 'control' ) ],
+		[ 'אודות', $page( 'about' ), is_page( 'about' ) ],
+		[ 'מרכז ידע', get_post_type_archive_link( 'log_knowledge' ), is_post_type_archive( 'log_knowledge' ) || is_singular( 'log_knowledge' ) ],
+		[ 'קריירה', get_post_type_archive_link( 'log_job' ), is_post_type_archive( 'log_job' ) || is_singular( 'log_job' ) ],
+		[ 'צור קשר', $page( 'contact' ), is_page( 'contact' ) ],
+	];
+}

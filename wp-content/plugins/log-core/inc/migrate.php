@@ -9,11 +9,13 @@
  * - stage term for every project;
  * - knowledge types renamed/merged to the v6 list;
  * - team members' old "group" (owner/management) → the "הנהלה" unit.
+ *
+ * 3: the cookie policy page, and new rewrite rules (/search?q=).
  */
 
 defined( 'ABSPATH' ) || exit;
 
-const LOG_SCHEMA_VERSION = 2;
+const LOG_SCHEMA_VERSION = 3;
 
 add_action( 'init', function () {
 	if ( (int) get_option( 'log_schema_version', 1 ) >= LOG_SCHEMA_VERSION || wp_installing() ) {
@@ -24,7 +26,13 @@ add_action( 'init', function () {
 		return;
 	}
 	set_transient( 'log_migrating', 1, 5 * MINUTE_IN_SECONDS );
-	log_migrate_v2();
+	$from = (int) get_option( 'log_schema_version', 1 );
+	if ( $from < 2 ) {
+		log_migrate_v2();
+	}
+	if ( $from < 3 ) {
+		log_migrate_v3();
+	}
 	update_option( 'log_schema_version', LOG_SCHEMA_VERSION, true );
 	delete_transient( 'log_migrating' );
 	if ( function_exists( 'log_flush_map_cache' ) ) {
@@ -107,4 +115,11 @@ function log_migrate_merge_term( WP_Term $from, WP_Term $to ): void {
 		wp_set_object_terms( (int) $oid, $to->term_id, $to->taxonomy, true );
 	}
 	wp_delete_term( $from->term_id, $from->taxonomy );
+}
+
+function log_migrate_v3(): void {
+	if ( ! get_page_by_path( 'cookies' ) ) {
+		wp_insert_post( [ 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'מדיניות עוגיות', 'post_name' => 'cookies' ] );
+	}
+	flush_rewrite_rules( false );
 }

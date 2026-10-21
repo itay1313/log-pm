@@ -1,11 +1,10 @@
 <?php
 /**
- * "מה חדש" (spec §6.9, §15): social posts as a private CPT, merged with knowledge items by date.
+ * "מה חדש" in the knowledge center (spec v6 §13): up to eight latest Instagram posts.
  *
- * - Instagram: synced hourly from the Instagram API (token from settings). Long-lived tokens are
- *   refreshed automatically when they're older than 50 days.
- * - LinkedIn: manual entry at launch (spec §20). The record shape is identical, so an aggregator
- *   can fill it later without touching templates.
+ * - With a connected business account: synced hourly from the Instagram API (token from settings).
+ *   Long-lived tokens are refreshed automatically when they're older than 50 days.
+ * - Without one: posts chosen by hand, entered as "פוסטים ברשתות" records of the same shape.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -38,56 +37,36 @@ add_action( 'init', function () {
 
 add_filter( 'use_block_editor_for_post_type', fn( bool $use, string $type ) => $type === 'log_post' ? false : $use, 10, 2 );
 
-/* ---------- Merged feed ---------- */
+/* ---------- Feed ---------- */
 
 /**
- * The latest items for the "what's new" grid: knowledge items + social posts, newest first.
- * Each item: ['source' => knowledge|instagram|linkedin, 'title', 'text', 'url', 'image', 'date' (timestamp), 'external' => bool]
+ * The latest Instagram posts, newest first.
+ * Each item: ['text', 'url', 'image', 'date' (timestamp)]
  */
-function log_news_items( int $limit = 8 ): array {
-	$cached = get_transient( 'log_news_v1' );
-	if ( is_array( $cached ) ) {
-		return array_slice( $cached, 0, $limit );
+function log_instagram_items( int $limit = 8 ): array {
+	$cached = get_transient( 'log_instagram_v2' );
+	if ( ! is_array( $cached ) ) {
+		$cached = [];
+		$q      = new WP_Query( [ 'post_type' => 'log_post', 'post_status' => 'publish', 'posts_per_page' => 8, 'no_found_rows' => true, 'meta_key' => 'posted_at', 'orderby' => 'meta_value', 'order' => 'DESC' ] );
+		foreach ( $q->posts as $p ) {
+			$url = (string) log_field( 'url', $p->ID, '' );
+			if ( $url === '' ) {
+				continue;
+			}
+			$posted   = log_field( 'posted_at', $p->ID );
+			$cached[] = [
+				'text'  => wp_trim_words( (string) log_field( 'text', $p->ID, get_the_title( $p ) ), 18, '…' ),
+				'url'   => $url,
+				'image' => get_the_post_thumbnail_url( $p, 'log-card' ) ?: null,
+				'date'  => $posted ? strtotime( $posted ) : get_post_time( 'U', true, $p ),
+			];
+		}
+		set_transient( 'log_instagram_v2', $cached, HOUR_IN_SECONDS );
 	}
-	$items = [];
-
-	$knowledge = new WP_Query( [ 'post_type' => 'log_knowledge', 'posts_per_page' => $limit, 'no_found_rows' => true ] );
-	foreach ( $knowledge->posts as $p ) {
-		$type = get_the_terms( $p, 'log_knowledge_type' );
-		$items[] = [
-			'source'   => 'knowledge',
-			'label'    => $type && ! is_wp_error( $type ) ? $type[0]->name : 'מרכז ידע',
-			'title'    => get_the_title( $p ),
-			'text'     => get_the_excerpt( $p ),
-			'url'      => get_permalink( $p ),
-			'image'    => get_the_post_thumbnail_url( $p, 'log-card' ) ?: null,
-			'date'     => get_post_time( 'U', true, $p ),
-			'external' => false,
-		];
-	}
-
-	$social = new WP_Query( [ 'post_type' => 'log_post', 'post_status' => 'publish', 'posts_per_page' => $limit, 'no_found_rows' => true, 'meta_key' => 'posted_at', 'orderby' => 'meta_value', 'order' => 'DESC' ] );
-	foreach ( $social->posts as $p ) {
-		$source = log_field( 'source', $p->ID, 'instagram' );
-		$posted = log_field( 'posted_at', $p->ID );
-		$items[] = [
-			'source'   => $source,
-			'label'    => $source === 'linkedin' ? 'LinkedIn' : 'Instagram',
-			'title'    => '',
-			'text'     => wp_trim_words( (string) log_field( 'text', $p->ID, get_the_title( $p ) ), 24, '…' ),
-			'url'      => log_field( 'url', $p->ID, '' ),
-			'image'    => get_the_post_thumbnail_url( $p, 'log-card' ) ?: null,
-			'date'     => $posted ? strtotime( $posted ) : get_post_time( 'U', true, $p ),
-			'external' => true,
-		];
-	}
-
-	usort( $items, static fn( $a, $b ) => $b['date'] <=> $a['date'] );
-	set_transient( 'log_news_v1', $items, HOUR_IN_SECONDS );
-	return array_slice( $items, 0, $limit );
+	return array_slice( $cached, 0, $limit );
 }
-foreach ( [ 'save_post_log_post', 'save_post_log_knowledge', 'deleted_post' ] as $hook ) {
-	add_action( $hook, fn() => delete_transient( 'log_news_v1' ) );
+foreach ( [ 'save_post_log_post', 'deleted_post' ] as $hook ) {
+	add_action( $hook, fn() => delete_transient( 'log_instagram_v2' ) );
 }
 
 /* ---------- Instagram sync ---------- */
@@ -173,7 +152,7 @@ function log_instagram_import_items( array $items ): array {
 		log_sideload_thumbnail( $image, $id, $title );
 		$r['created']++;
 	}
-	delete_transient( 'log_news_v1' );
+	delete_transient( 'log_instagram_v2' );
 	return $r;
 }
 

@@ -1,6 +1,7 @@
 <?php
 /**
- * Job application form (spec §13). $args['job'] = job post ID, or 0 for a general application.
+ * Job application form (spec v6 §14, §20). Lives in a dialog on the job page; $args['job'] = the job's ID.
+ * CV: PDF, DOC or DOCX up to 5MB, checked in the browser and again on the server by content.
  */
 $job = (int) ( $args['job'] ?? 0 );
 $privacy = get_privacy_policy_url();

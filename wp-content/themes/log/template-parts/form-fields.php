@@ -7,4 +7,4 @@
 <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
 <input type="hidden" name="started" value="<?php echo (int) time(); ?>">
 <input type="hidden" name="utm_source"><input type="hidden" name="utm_medium"><input type="hidden" name="utm_campaign">
-<input type="hidden" name="referrer"><input type="hidden" name="landing">
+<input type="hidden" name="referrer"><input type="hidden" name="landing"><input type="hidden" name="page">

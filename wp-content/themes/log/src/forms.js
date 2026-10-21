@@ -2,6 +2,8 @@
  * Form submission over REST with inline errors. Loaded only on pages that have a [data-endpoint] form.
  * Source tracking fields are filled only after the visitor ticks consent (spec §5, §17).
  */
+import { track } from './consent.js';
+
 export function initForms() {
   const params = new URLSearchParams(location.search);
   const source = {
@@ -10,6 +12,7 @@ export function initForms() {
     utm_campaign: params.get('utm_campaign') || '',
     referrer: document.referrer || '',
     landing: sessionStorage.getItem('log_landing') || location.pathname,
+    page: location.pathname,
   };
   try { if (!sessionStorage.getItem('log_landing')) sessionStorage.setItem('log_landing', location.pathname); } catch {}
 
@@ -22,6 +25,11 @@ export function initForms() {
       }
     };
     consent?.addEventListener('change', fillSource);
+    // The prefilled project can be removed before sending.
+    form.querySelector('.form__context-clear')?.addEventListener('click', (e) => {
+      form.querySelector('[name=project]').value = '';
+      e.target.closest('.form__context').remove();
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -37,6 +45,12 @@ export function initForms() {
           markError(el, el.type === 'checkbox' ? 'צריך לאשר כדי לשלוח' : el.validity.valueMissing ? 'שדה חובה' : 'הערך לא תקין');
           firstBad ||= el;
         }
+      }
+      const cv = form.querySelector('input[type=file][name=cv]');
+      const file = cv?.files?.[0];
+      if (file && !firstBad) {
+        if (!/\.(pdf|docx?)$/i.test(file.name)) { markError(cv, 'רק PDF או Word'); firstBad = cv; }
+        else if (file.size > 5 * 1024 * 1024) { markError(cv, 'הקובץ גדול מ-5MB'); firstBad = cv; }
       }
       if (firstBad) { firstBad.focus(); return; }
 
@@ -67,6 +81,10 @@ export function initForms() {
         form.querySelectorAll('.form__grid, .check, [type=submit], .form__context').forEach((n) => (n.hidden = true));
         success.textContent = json.message;
         success.hidden = false;
+        form.querySelectorAll('.form__after').forEach((n) => (n.hidden = false));
+        form.dispatchEvent(new CustomEvent('log:sent', { bubbles: true }));
+        if (form.dataset.endpoint === 'apply') track('apply_submit', { job: form.querySelector('[name=job]')?.value, source: source.utm_source || 'site' });
+        else track('contact_submit', { topic: form.querySelector('[name=topic]')?.value, project: form.querySelector('[name=project]')?.value || undefined });
         success.setAttribute('tabindex', '-1');
         success.focus();
       } catch {

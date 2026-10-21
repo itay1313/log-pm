@@ -1,41 +1,81 @@
 <?php
 /**
- * /knowledge (spec §12): one lead item, then a list filtered by type.
+ * /knowledge (spec v6 §13). Blocks: opening, type tabs + search + year, featured item (only without
+ * filters), 12 cards then "טעינת עוד", and "מה חדש" from Instagram.
+ * Filtering runs client-side (knowledge.js) on every published item; state in ?type=&q=&year=.
  */
 get_header();
 get_template_part( 'template-parts/page-header', null, [
 	'title' => log_text( 'knowledge_title', 'מרכז ידע', 'option' ),
-	'lede'  => log_text( 'knowledge_lede', 'ניירות עמדה, הודעות לעיתונות, מאחורי הקלעים.', 'option' ),
+	'lede'  => log_text( 'knowledge_lede', 'מאמרים, ניירות עמדה, חדשות החברה ואזכורים בתקשורת.', 'option' ),
 ] );
+
+$all = new WP_Query( [ 'post_type' => 'log_knowledge', 'posts_per_page' => -1, 'no_found_rows' => true ] );
+$featured = null;
+foreach ( $all->posts as $p ) {
+	if ( log_field( 'featured', $p->ID ) ) {
+		$featured = $p;
+		break;
+	}
+}
+$types = array_values( array_filter(
+	array_map( static fn( $slug ) => get_term_by( 'slug', $slug, 'log_knowledge_type' ), array_keys( log_knowledge_type_terms() ) ),
+	static fn( $t ) => $t && $t->count > 0
+) );
+$years = array_values( array_unique( array_map( static fn( $p ) => get_the_date( 'Y', $p ), $all->posts ) ) );
+rsort( $years );
 ?>
 <div class="container">
-	<?php $types = get_terms( [ 'taxonomy' => 'log_knowledge_type', 'hide_empty' => true ] );
-	if ( $types && ! is_wp_error( $types ) ) : ?>
-		<nav class="filters" aria-label="סינון לפי סוג">
-			<a href="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>" class="<?php echo is_tax() ? '' : 'is-active'; ?>">הכל</a>
-			<?php foreach ( $types as $t ) : ?><a href="<?php echo esc_url( get_term_link( $t ) ); ?>"><?php echo esc_html( $t->name ); ?></a><?php endforeach; ?>
-		</nav>
-	<?php endif; ?>
+	<?php if ( $all->have_posts() ) : ?>
+		<form class="filters filters--knowledge" role="search" aria-label="סינון וחיפוש במרכז הידע" action="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>">
+			<div class="type-tabs" role="group" aria-label="סוג תוכן">
+				<button type="button" class="chip is-active" data-type="" aria-pressed="true">הכל</button>
+				<?php foreach ( $types as $t ) : ?><button type="button" class="chip" data-type="<?php echo esc_attr( $t->slug ); ?>" aria-pressed="false"><?php echo esc_html( $t->name ); ?></button><?php endforeach; ?>
+			</div>
+			<label class="filters__search"><span class="screen-reader-text">חיפוש במרכז הידע</span><input type="search" name="q" placeholder="חיפוש" autocomplete="off"></label>
+			<?php if ( count( $years ) > 1 ) : ?>
+				<label class="filters__group"><span>שנה</span>
+					<select name="year"><option value="">כל השנים</option><?php foreach ( $years as $y ) : ?><option value="<?php echo esc_attr( $y ); ?>"><?php echo esc_html( $y ); ?></option><?php endforeach; ?></select>
+				</label>
+			<?php endif; ?>
+		</form>
 
-	<?php if ( have_posts() ) : $i = 0; ?>
-		<div class="knowledge">
-			<?php while ( have_posts() ) : the_post(); $i++;
-				$type = get_the_terms( get_the_ID(), 'log_knowledge_type' ); ?>
-				<article class="card card--knowledge<?php echo $i === 1 && ! is_paged() ? ' card--lead' : ''; ?>">
-					<a class="card__link" href="<?php the_permalink(); ?>">
-						<?php if ( has_post_thumbnail() ) : ?><figure class="card__media"><?php the_post_thumbnail( 'log-card', [ 'loading' => $i === 1 ? 'eager' : 'lazy' ] ); ?></figure><?php endif; ?>
-						<div class="card__body">
-							<p class="card__meta"><?php if ( $type && ! is_wp_error( $type ) ) { echo esc_html( $type[0]->name ) . ' · '; } echo esc_html( get_the_date() ); ?></p>
-							<h2 class="card__title"><?php the_title(); ?></h2>
-							<p class="card__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></p>
-						</div>
-					</a>
-				</article>
-			<?php endwhile; ?>
+		<?php if ( $featured ) : ?>
+			<section class="knowledge-featured" id="knowledge-featured" aria-label="פריט נבחר">
+				<?php $post = $featured; setup_postdata( $post ); get_template_part( 'template-parts/card-knowledge', null, [ 'lead' => true ] ); wp_reset_postdata(); ?>
+			</section>
+		<?php endif; ?>
+
+		<div class="grid grid--knowledge" id="knowledge-grid">
+			<?php foreach ( $all->posts as $post ) : if ( $featured && $post->ID === $featured->ID ) { continue; } setup_postdata( $post );
+				get_template_part( 'template-parts/card-knowledge' );
+			endforeach; wp_reset_postdata(); ?>
 		</div>
-		<?php the_posts_pagination( [ 'prev_text' => 'הקודם', 'next_text' => 'הבא' ] ); ?>
+		<p class="projects-more"><button type="button" class="btn" id="knowledge-more" hidden>טעינת עוד</button></p>
+		<p class="placeholder" id="knowledge-empty" hidden>לא נמצאו פריטים. <button type="button" class="filters__clear">ניקוי סינון</button></p>
 	<?php else : ?>
 		<p class="placeholder">עדיין אין פריטי ידע.</p>
 	<?php endif; ?>
 </div>
-<?php get_footer();
+
+<?php
+$posts_ig = log_instagram_items( 8 );
+if ( $posts_ig ) : ?>
+	<section class="section section--news" data-section="news">
+		<div class="container">
+			<h2 class="section__title"><?php echo esc_html( log_text( 'news_title', 'מה חדש', 'option' ) ); ?></h2>
+			<ul class="news">
+				<?php foreach ( $posts_ig as $it ) : ?>
+					<li class="news__item">
+						<a class="news__link" href="<?php echo esc_url( $it['url'] ); ?>" target="_blank" rel="noopener">
+							<figure class="news__media"><?php if ( $it['image'] ) : ?><img src="<?php echo esc_url( $it['image'] ); ?>" alt="" loading="lazy"><?php else : ?><span class="news__placeholder" aria-hidden="true"></span><?php endif; ?></figure>
+							<p class="news__text"><?php echo esc_html( $it['text'] ); ?></p>
+						</a>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+			<?php if ( $ig = log_option( 'instagram' ) ) : ?><a class="link-more" href="<?php echo esc_url( $ig ); ?>" target="_blank" rel="noopener">לחשבון האינסטגרם שלנו</a><?php endif; ?>
+		</div>
+	</section>
+<?php endif;
+get_footer();

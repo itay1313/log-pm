@@ -25,6 +25,7 @@ require LOG_CORE_DIR . 'inc/schema.php';
 require LOG_CORE_DIR . 'inc/setup.php';
 require LOG_CORE_DIR . 'inc/import.php';
 require LOG_CORE_DIR . 'inc/forms.php';
+require LOG_CORE_DIR . 'inc/search.php';
 require LOG_CORE_DIR . 'inc/social.php';
 require LOG_CORE_DIR . 'inc/admin-list.php';
 require LOG_CORE_DIR . 'inc/coming-soon.php';

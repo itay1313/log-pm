@@ -5,6 +5,7 @@
  *   /projects?q=חולון&domain=urban-renewal&stage=stage-2&authority=חולון&view=map&p={slug}
  */
 import { FILTERS, matches as match, mergeQuery, recordFromProps, setOptionCounts } from './filter.js';
+import { track } from './consent.js';
 
 export function initProjects() {
   const form = document.querySelector('form.filters');
@@ -23,6 +24,7 @@ export function initProjects() {
   const PAGE = 24;
   let limit = Math.max(PAGE, Number(history.state?.limit) || PAGE); // "חזרה לפרויקטים" brings back the cards that were loaded
   let mapApi = null;
+  let lastCount = 0;
   let mapLoading = null;
   let openSlug = null;
 
@@ -55,6 +57,7 @@ export function initProjects() {
       if (ok && inGrid) shown++;
       el.hidden = !ok || (inGrid && shown > limit);
     }
+    lastCount = shown;
     if (moreBtn) moreBtn.hidden = shown <= limit || s.view === 'map';
     // National plans are in the list under the map, not in the grid: count them once, in either view.
     const nationalShown = national ? national.querySelectorAll('li:not([hidden])').length : 0;
@@ -87,7 +90,7 @@ export function initProjects() {
     if (mapLoading) return;
     mapEl.classList.add('is-loading');
     mapLoading = import('./map.js')
-      .then((m) => m.mount(mapEl, { onSelect: (p) => { openSlug = decodeURIComponent(p.slug); writeUrl(); } }))
+      .then((m) => m.mount(mapEl, { onSelect: (p) => { openSlug = decodeURIComponent(p.slug); writeUrl(); track('map_popup_open', { project: openSlug }); } }))
       .then((api) => {
         mapApi = api;
         window.LOGmap = api;
@@ -117,9 +120,12 @@ export function initProjects() {
   });
   form?.addEventListener('submit', (e) => { e.preventDefault(); writeUrl({ push: true }); });
   let typing = 0;
-  search?.addEventListener('input', () => { limit = PAGE; apply(); clearTimeout(typing); typing = setTimeout(() => writeUrl(), 350); });
+  search?.addEventListener('input', () => {
+    limit = PAGE; apply(); clearTimeout(typing);
+    typing = setTimeout(() => { writeUrl(); if (search.value.trim()) track('search', { term: search.value.trim(), where: 'list', results: lastCount }); }, 900);
+  });
   const resetLimit = () => { limit = PAGE; };
-  Object.values(selects).forEach((sel) => sel.addEventListener('change', () => { resetLimit(); apply(); writeUrl({ push: true }); }));
+  Object.entries(selects).forEach(([k, sel]) => sel.addEventListener('change', () => { resetLimit(); apply(); writeUrl({ push: true }); track('filter', { filter: k, value: sel.value || 'all', where: 'list' }); }));
   viewButtons.forEach((b) => b.addEventListener('click', () => { setView(b.dataset.view); writeUrl({ push: true }); }));
   clears.forEach((b) => b.addEventListener('click', () => {
     if (search) search.value = '';

@@ -26,8 +26,8 @@ add_action( 'admin_menu', function () {
 			echo 'probe picsum: ' . ( is_wp_error( $probe2 ) ? $probe2->get_error_message() : wp_remote_retrieve_response_code( $probe2 ) . ' ' . wp_remote_retrieve_header( $probe2, 'content-type' ) ) . "\n";
 			echo 'wikimedia body: ' . esc_html( substr( strip_tags( (string) wp_remote_retrieve_body( $probe ) ), 0, 160 ) ) . "\n";
 			echo 'outbound probe: ' . ( is_wp_error( $probe ) ? $probe->get_error_message() : wp_remote_retrieve_response_code( $probe ) . ' ' . strlen( wp_remote_retrieve_body( $probe ) ) . ' bytes' ) . "\n";
-			foreach ( log_news_items( 8 ) as $it ) {
-				echo wp_date( 'Y-m-d', $it['date'] ) . ' | ' . $it['source'] . ' | ' . ( $it['title'] ?: $it['text'] ) . ' | img=' . ( $it['image'] ? 'yes' : 'no' ) . "\n";
+			foreach ( log_instagram_items( 8 ) as $it ) {
+				echo wp_date( 'Y-m-d', $it['date'] ) . ' | ' . $it['text'] . ' | img=' . ( $it['image'] ? 'yes' : 'no' ) . "\n";
 			}
 			echo '</pre>';
 		}
@@ -101,8 +101,31 @@ add_action( 'admin_menu', function () {
 			}
 			echo '<pre id="fullpage-result">' . esc_html( wp_json_encode( $out, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) ) . '</pre>';
 		}
+		if ( isset( $_POST['samples'] ) && check_admin_referer( 'log_dev' ) ) {
+			// Local sample content for the v6 pages: two jobs (one closed), knowledge items, people.
+			$mk = static function ( string $type, string $title, array $fields = [], array $terms = [], string $content = '', string $excerpt = '' ): int {
+				$id = wp_insert_post( [ 'post_type' => $type, 'post_status' => 'publish', 'post_title' => $title, 'post_content' => $content, 'post_excerpt' => $excerpt ] );
+				foreach ( $fields as $k => $v ) {
+					log_set_field( $k, $v, $id );
+				}
+				foreach ( $terms as $tax => $slug ) {
+					wp_set_object_terms( $id, $slug, $tax, false );
+				}
+				return $id;
+			};
+			$ids = [
+				$mk( 'log_job', 'מנהל/ת פרויקטים בהתחדשות עירונית', [ 'is_open' => 1, 'team' => 'התחדשות עירונית', 'location' => 'tel-aviv', 'scope' => 'full', 'job_number' => 'LOG-114', 'about' => 'ניהול תכניות פינוי-בינוי מול רשויות ומוסדות תכנון.', 'what_you_do' => "ניהול תכניות מקצה לקצה\nעבודה מול הוועדה המחוזית\nתיאום יועצים", 'requirements' => "תואר בתכנון ערים או אדריכלות\nשלוש שנות ניסיון", 'advantage' => 'היכרות עם מבא"ת', 'whats_waiting' => "צוות של 12 מתכננים\nמשרד בתל אביב", 'team_size' => '12', 'reports_to' => 'ראש צוות התחדשות' ] ),
+				$mk( 'log_job', 'אנליסט/ית נתונים לחברת הבקרה', [ 'is_open' => 0, 'team' => 'חברת הבקרה', 'location' => 'jerusalem', 'scope' => 'full' ] ),
+				$mk( 'log_knowledge', 'איך מקדמים תכנית מתאר בעיר בינונית', [ 'featured' => 1 ], [ 'log_knowledge_type' => 'article' ], '<p>מאמר לדוגמה.</p>', 'מה למדנו משלוש תכניות מתאר בשנה האחרונה.' ),
+				$mk( 'log_knowledge', 'לוג בכלכליסט: הבקרה על ההתחדשות העירונית', [ 'is_control' => 1, 'outlet' => 'כלכליסט', 'external_url' => 'https://www.calcalist.co.il/' ], [ 'log_knowledge_type' => 'media' ], '', 'ראיון על תמונת המצב הלאומית.' ),
+				$mk( 'log_person', 'נועה לוי', [ 'role' => 'מנכ"לית' ], [ 'log_unit' => 'management' ] ),
+				$mk( 'log_person', 'דן כהן', [ 'role' => 'אנליסט בקרה' ], [ 'log_unit' => 'control' ] ),
+			];
+			echo '<pre id="samples-result">' . esc_html( wp_json_encode( $ids ) ) . '</pre>';
+		}
 		echo '<form method="post">';
 		wp_nonce_field( 'log_dev' );
+		submit_button( 'Spec v6: sample jobs, knowledge, people', 'secondary', 'samples' );
 		submit_button( 'Spec v6: give one project a full page', 'secondary', 'fullpage' );
 		submit_button( 'Spec v6 migration: rebuild pre-v6 data and migrate', 'secondary', 'migrate' );
 		submit_button( 'Run Instagram import on fixture (twice)', 'primary', 'run' );

@@ -24,6 +24,9 @@
     { "key": "field_ls_ig_note", "label": "", "name": "", "type": "message", "message": "סנכרון אינסטגרם: טוקן ארוך-טווח (60 יום) מאפליקציית Instagram של לוג ב-developers.facebook.com. מתרענן אוטומטית. הסנכרון רץ כל שעה; \"סנכרון עכשיו\" ברשימת הפוסטים.", "esc_html": 0 },
     { "key": "field_ls_ig_token", "label": "Instagram access token", "name": "instagram_token", "type": "text", "instructions": "IGQ… או IGAA…" },
 
+    { "key": "field_ls_tab_measure", "label": "מדידה", "name": "", "type": "tab" },
+    { "key": "field_ls_ga_id", "label": "Google Analytics 4 · Measurement ID", "name": "ga_id", "type": "text", "placeholder": "G-XXXXXXXXXX", "instructions": "נטען רק אחרי שהמבקר אישר עוגיות. ריק: אין מדידה." },
+
     { "key": "field_ls_tab_map", "label": "מפה", "name": "", "type": "tab" },
     { "key": "field_ls_mapbox_token", "label": "Mapbox public token", "name": "mapbox_token", "type": "text", "instructions": "pk.… מחשבון Mapbox של לוג. מוגבל לדומיין log-pm.co.il." },
     { "key": "field_ls_mapbox_style", "label": "Mapbox style URL", "name": "mapbox_style", "type": "text", "placeholder": "mapbox://styles/log-pm/…" }

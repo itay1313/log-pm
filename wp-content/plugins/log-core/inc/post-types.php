@@ -119,19 +119,49 @@ add_filter( 'use_block_editor_for_post_type', function ( bool $use, string $type
 }, 10, 2 );
 
 /**
- * Projects and knowledge items show up in site search; people and clients never do.
- * Posts (the blog) are not part of this site, so they're excluded too.
+ * The projects archive: 24 per page server-side (the template renders them all; projects.js pages them).
+ * Site search is handled in search.php / inc/search.php.
  */
 add_action( 'pre_get_posts', function ( WP_Query $q ) {
 	if ( is_admin() || ! $q->is_main_query() ) {
 		return;
-	}
-	if ( $q->is_search() ) {
-		$q->set( 'post_type', [ 'log_project', 'log_job', 'log_knowledge', 'page' ] );
 	}
 	if ( $q->is_post_type_archive( 'log_project' ) ) {
 		$q->set( 'posts_per_page', 24 );
 		$q->set( 'orderby', 'menu_order date' );
 		$q->set( 'order', 'DESC' );
 	}
+} );
+
+/**
+ * Closed jobs (spec v6 §14): the address keeps working and says the job is closed, but it's
+ * kept out of Google (noindex) and out of the sitemap. Reopening restores both.
+ */
+function log_job_is_closed( int $id ): bool {
+	return get_post_type( $id ) === 'log_job' && ! log_field( 'is_open', $id );
+}
+add_filter( 'wp_robots', function ( array $robots ): array {
+	if ( is_singular( 'log_job' ) && log_job_is_closed( get_queried_object_id() ) ) {
+		$robots['noindex'] = true;
+		$robots['follow']  = true;
+	}
+	return $robots;
+} );
+add_filter( 'wpseo_robots', function ( $robots ) {
+	return is_singular( 'log_job' ) && log_job_is_closed( get_queried_object_id() ) ? 'noindex, follow' : $robots;
+} );
+add_filter( 'wp_sitemaps_posts_query_args', function ( array $args, string $type ): array {
+	if ( $type === 'log_job' ) {
+		$args['meta_query'] = [ [ 'key' => 'is_open', 'value' => '1' ] ];
+	}
+	return $args;
+}, 10, 2 );
+add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $ids ) {
+	$closed = get_posts( [
+		'post_type'      => 'log_job',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+		'meta_query'     => [ 'relation' => 'OR', [ 'key' => 'is_open', 'value' => '1', 'compare' => '!=' ], [ 'key' => 'is_open', 'compare' => 'NOT EXISTS' ] ],
+	] );
+	return array_merge( (array) $ids, $closed );
 } );

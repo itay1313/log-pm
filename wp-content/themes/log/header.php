@@ -16,38 +16,23 @@
 			<?php get_template_part( 'template-parts/logo' ); ?>
 		</a>
 
-		<nav class="site-nav" aria-label="ניווט ראשי">
-			<?php wp_nav_menu( [
-				'theme_location' => 'primary',
-				'container'      => false,
-				'menu_class'     => 'site-nav__list',
-				'fallback_cb'    => false,
-				'depth'          => 1,
-			] ); ?>
-		</nav>
-
 		<div class="site-header__tools">
 			<button class="search-toggle" type="button" aria-expanded="false" aria-controls="site-search">חיפוש</button>
 			<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php echo esc_html( log_text( 'header_cta', 'בואו נדבר', 'option' ) ); ?></a>
-			<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span></span></button>
 		</div>
+
+		<nav class="site-nav" aria-label="ניווט ראשי">
+			<ul class="site-nav__list">
+				<?php foreach ( log_nav_items() as [ $label, $url, $current ] ) : ?>
+					<li<?php echo $current ? ' class="is-current"' : ''; ?>><a href="<?php echo esc_url( $url ); ?>"<?php echo $current ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a></li>
+				<?php endforeach; ?>
+			</ul>
+		</nav>
 	</div>
 
 	<div class="site-search" id="site-search" hidden>
 		<?php get_search_form(); ?>
 	</div>
-
-	<nav class="mobile-nav" id="mobile-nav" aria-label="ניווט" hidden>
-		<?php wp_nav_menu( [
-			'theme_location' => 'primary',
-			'container'      => false,
-			'menu_class'     => 'mobile-nav__list',
-			'fallback_cb'    => false,
-			'depth'          => 1,
-		] ); ?>
-		<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php echo esc_html( log_text( 'header_cta', 'בואו נדבר', 'option' ) ); ?></a>
-		<?php get_search_form(); ?>
-	</nav>
 </header>
 
 <?php if ( ! is_front_page() ) { get_template_part( 'template-parts/twin-nav' ); } // home: right after the map ?>

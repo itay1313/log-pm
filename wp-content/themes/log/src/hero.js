@@ -12,6 +12,7 @@
  * national plans included. Moving the camera never changes them.
  */
 import { FILTERS, matches, matchesQuery, mergeQuery, recordFromProps, readState, stateQuery, setOptionCounts } from './filter.js';
+import { track } from './consent.js';
 
 const fmt = new Intl.NumberFormat('he-IL');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -84,7 +85,7 @@ export async function initHero(hero) {
   }
 
   // Filters apply at once; free text applies on Enter or when cleared (suggestions show as you type).
-  Object.entries(selects).forEach(([k, sel]) => sel.addEventListener('change', () => { state[k] = sel.value; apply({ fit: true }); }));
+  Object.entries(selects).forEach(([k, sel]) => sel.addEventListener('change', () => { state[k] = sel.value; apply({ fit: true }); track('filter', { filter: k, value: sel.value || 'all', where: 'map' }); }));
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const active = suggest.querySelector('[aria-selected=true]');
@@ -92,6 +93,7 @@ export async function initHero(hero) {
     state.q = input.value.trim();
     closeSuggest();
     apply({ fit: true });
+    if (state.q) track('search', { term: state.q, where: 'map', results: features.filter((f) => pred(f.properties)).length });
   });
   input.addEventListener('search', () => { if (!input.value && state.q) { state.q = ''; apply(); } });
   form.querySelector('.hero-clear').addEventListener('click', () => {
@@ -224,7 +226,7 @@ export async function initHero(hero) {
     const { mount3D } = await import('./hero/map3d.js');
     map = await mount3D(hero, features, {
       pred: (p) => pred(p),
-      onLock: (slug) => { locked = slug; writeUrl(); },
+      onLock: (slug) => { locked = slug; writeUrl(); if (slug) track('map_popup_open', { project: slug }); },
       onSheet: (open) => document.body.classList.toggle('sheet-open', open || !drawer.hidden),
     });
   } catch (err) {

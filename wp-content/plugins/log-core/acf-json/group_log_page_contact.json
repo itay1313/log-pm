@@ -2,12 +2,7 @@
   "key": "group_log_page_contact",
   "title": "צור קשר · תוכן",
   "fields": [
-    { "key": "field_lct_title", "label": "כותרת", "name": "hero_title", "type": "text", "placeholder": "נשמח לדבר איתכם." },
-    { "key": "field_lct_lede", "label": "משפט פתיחה", "name": "hero_lede", "type": "text", "placeholder": "שני משרדים, טלפון אחד, ומייל שמישהו באמת קורא." },
-    { "key": "field_lct_jobs_title", "label": "מועמדות · כותרת", "name": "jobs_title", "type": "text", "placeholder": "מצאתם את התפקיד שלכם?", "wrapper": { "width": "50" } },
-    { "key": "field_lct_jobs_lede", "label": "מועמדות · משפט פתיחה", "name": "jobs_lede", "type": "text", "placeholder": "שלחו קורות חיים ונחזור אליכם אם יש התאמה.", "wrapper": { "width": "50" } },
-    { "key": "field_lct_success", "label": "הודעת תודה (פנייה)", "name": "success_contact", "type": "text", "placeholder": "תודה, קיבלנו. נחזור אליכם בהקדם.", "wrapper": { "width": "50" } },
-    { "key": "field_lct_success_apply", "label": "הודעת תודה (מועמדות)", "name": "success_apply", "type": "text", "placeholder": "תודה! קורות החיים אצלנו. אם יש התאמה, נחזור אליכם.", "wrapper": { "width": "50" } },
+    { "key": "field_lct_title", "label": "כותרת", "name": "hero_title", "type": "text", "placeholder": "דברו איתנו", "instructions": "כותרת בלבד, בלי שורת משנה." },
     { "key": "field_lct_note", "label": "", "name": "", "type": "message", "message": "כתובות המשרדים, הטלפונים והמיילים לפי נושא נמצאים ב\"הגדרות לוג\".", "esc_html": 0 }
   ],
   "location": [[{ "param": "page_template", "operator": "==", "value": "page-contact.php" }]],

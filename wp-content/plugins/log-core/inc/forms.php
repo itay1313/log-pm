@@ -114,7 +114,7 @@ function log_form_source( WP_REST_Request $r ): array {
 		return [];
 	}
 	$src = [];
-	foreach ( [ 'utm_source', 'utm_medium', 'utm_campaign', 'referrer', 'landing' ] as $k ) {
+	foreach ( [ 'page', 'utm_source', 'utm_medium', 'utm_campaign', 'referrer', 'landing' ] as $k ) {
 		if ( ! empty( $r[ $k ] ) ) {
 			$src[ $k ] = sanitize_text_field( substr( (string) $r[ $k ], 0, 300 ) );
 		}
@@ -199,6 +199,7 @@ function log_rest_contact( WP_REST_Request $r ) {
 		'הודעה'   => $data['message'],
 		'פרויקט'  => $data['project'] ? get_the_title( $data['project'] ) . ' (' . log_project_link( $data['project'] ) . ')' : '',
 		'מקור'    => $source ? wp_json_encode( $source, JSON_UNESCAPED_UNICODE ) : '',
+		'נשלח'    => wp_date( 'd/m/Y H:i' ),
 	];
 	log_send_lead_mail( $to, 'פנייה מהאתר: ' . $topics[ $topic ][0] . ' · ' . $data['name'], $rows );
 
@@ -215,6 +216,12 @@ function log_rest_apply( WP_REST_Request $r ) {
 		'email'    => [ 'מייל', true, 'email' ],
 		'linkedin' => [ 'LinkedIn', false, 'url' ],
 	] );
+
+	// Applications come only from an open job's page (spec v6 §14).
+	$job = (int) ( $r['job'] ?? 0 );
+	if ( ! $job || get_post_type( $job ) !== 'log_job' || get_post_status( $job ) !== 'publish' || ! log_field( 'is_open', $job ) ) {
+		return new WP_Error( 'job_closed', 'המשרה הזו כבר לא פתוחה להגשה.', [ 'status' => 410 ] );
+	}
 
 	$files = $r->get_file_params();
 	$cv    = $files['cv'] ?? null;
@@ -248,7 +255,6 @@ function log_rest_apply( WP_REST_Request $r ) {
 		return new WP_Error( 'upload', 'לא הצלחנו לשמור את הקובץ. נסו שוב.', [ 'status' => 500 ] );
 	}
 
-	$job  = (int) ( $r['job'] ?? 0 );
 	$data = [
 		'name'       => sanitize_text_field( $r['name'] ),
 		'phone'      => sanitize_text_field( $r['phone'] ),
@@ -259,12 +265,13 @@ function log_rest_apply( WP_REST_Request $r ) {
 		'keep'       => ! empty( $r['keep'] ),
 	];
 	$source = log_form_source( $r );
-	$title  = $data['name'] . ' · ' . ( $job ? get_the_title( $job ) : 'מועמדות כללית' );
+	$title  = $data['name'] . ' · ' . get_the_title( $job );
 	$lead   = log_store_lead( 'apply', $title, $data, $source, (int) $attachment );
 
 	$to   = log_option( 'email_jobs' ) ?: log_option( 'email' ) ?: get_option( 'admin_email' );
 	$rows = [
-		'משרה'          => $job ? get_the_title( $job ) . ' (' . get_permalink( $job ) . ')' : 'מועמדות כללית',
+		'משרה'          => get_the_title( $job ) . ' (' . get_permalink( $job ) . ')',
+		'מספר משרה'     => (string) log_field( 'job_number', $job, '' ),
 		'שם'            => $data['name'],
 		'טלפון'         => $data['phone'],
 		'מייל'          => $data['email'],
@@ -272,10 +279,22 @@ function log_rest_apply( WP_REST_Request $r ) {
 		'איך שמעו עלינו' => $data['heard'],
 		'שמירה למשרות עתידיות' => $data['keep'] ? 'כן' : 'לא',
 		'מקור'          => $source ? wp_json_encode( $source, JSON_UNESCAPED_UNICODE ) : '',
+		'נשלח'          => wp_date( 'd/m/Y H:i' ),
 	];
 	log_send_lead_mail( $to, 'מועמדות: ' . $title, $rows, get_attached_file( $attachment ) );
 
-	return rest_ensure_response( [ 'ok' => true, 'lead' => $lead, 'message' => 'תודה! קורות החיים אצלנו. אם יש התאמה, נחזור אליכם.' ] );
+	// Confirmation to the candidate.
+	wp_mail(
+		$data['email'],
+		'קיבלנו את המועמדות שלך: ' . html_entity_decode( get_the_title( $job ), ENT_QUOTES, 'UTF-8' ),
+		sprintf(
+			"שלום %s,\n\nתודה שהגשת מועמדות למשרת %s בלוג ניהול פרויקטים. קורות החיים אצלנו, ואם יש התאמה נחזור אלייך.\n\nלוג ניהול פרויקטים",
+			$data['name'],
+			html_entity_decode( get_the_title( $job ), ENT_QUOTES, 'UTF-8' )
+		)
+	);
+
+	return rest_ensure_response( [ 'ok' => true, 'lead' => $lead, 'message' => 'תודה! קורות החיים אצלנו, ושלחנו לך אישור במייל. אם יש התאמה, נחזור אלייך.' ] );
 }
 
 function log_cv_upload_dir( array $dir ): array {

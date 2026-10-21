@@ -43,6 +43,7 @@ function log_system_pages(): array {
 		'contact'       => [ 'צור קשר', 'page-contact.php' ],
 		'accessibility' => [ 'הצהרת נגישות', '' ],
 		'privacy'       => [ 'מדיניות פרטיות', '' ],
+		'cookies'       => [ 'מדיניות עוגיות', '' ],
 	];
 }
 
@@ -93,8 +94,9 @@ function log_run_setup(): array {
 
 	$menus = [
 		'primary' => [ 'תפריט ראשי', [
-			[ 'בית', $page( $ids['home'] ) ],
-			[ 'אודות והצוות', $page( $ids['about'] ) ],
+			[ 'פרויקטים', $archive( 'log_project' ) ],
+			[ 'חברת הבקרה', $page( $ids['control'] ) ],
+			[ 'אודות', $page( $ids['about'] ) ],
 			[ 'מרכז ידע', $archive( 'log_knowledge' ) ],
 			[ 'קריירה', $archive( 'log_job' ) ],
 			[ 'צור קשר', $page( $ids['contact'] ) ],
@@ -106,6 +108,7 @@ function log_run_setup(): array {
 		'footer' => [ 'תפריט תחתון', [
 			[ 'הצהרת נגישות', $page( $ids['accessibility'] ) ],
 			[ 'מדיניות פרטיות', $page( $ids['privacy'] ) ],
+			[ 'מדיניות עוגיות', $page( $ids['cookies'] ) ],
 		] ],
 	];
 

@@ -43,7 +43,7 @@ add_filter( 'wp_script_attributes', function ( array $attrs ) {
 } );
 
 /**
- * Small inline config the JS reads: REST base, map token, reduced-motion default.
+ * Small inline config the JS reads: REST base, map token, measurement id.
  */
 add_action( 'wp_head', function () {
 	$config = [
@@ -52,6 +52,8 @@ add_action( 'wp_head', function () {
 			'token' => function_exists( 'log_option' ) ? (string) log_option( 'mapbox_token', '' ) : '',
 			'style' => function_exists( 'log_option' ) ? (string) log_option( 'mapbox_style', '' ) : '',
 		],
+		// GA4 measurement id; loaded only after cookie consent (consent.js).
+		'ga'     => function_exists( 'log_option' ) ? (string) log_option( 'ga_id', '' ) : '',
 	];
 	echo '<script>window.LOG=' . wp_json_encode( $config ) . ';</script>' . "\n";
 }, 5 );

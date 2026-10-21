@@ -31,7 +31,7 @@ while ( have_posts() ) : the_post();
 		'מספר תכנית'  => log_field( 'plan_number', $pid ),
 	] );
 	?>
-	<article class="project">
+	<article class="project" data-project="<?php echo esc_attr( rawurldecode( get_post_field( 'post_name', $pid ) ) ); ?>">
 		<header class="project__hero">
 			<?php if ( $video = log_field( 'video', $pid ) ) : ?>
 				<video class="project__media" src="<?php echo esc_url( $video['url'] ); ?>" muted loop playsinline preload="metadata" poster="<?php echo esc_url( get_the_post_thumbnail_url( $pid, 'log-wide' ) ); ?>" aria-hidden="true"></video>
