@@ -22,8 +22,6 @@ const THEMES = {
     boundary: '#d6d1c9', label: '#6e6f73', ringFill: '#fbfaf8', ink: '#24242b', planFill: ORANGE, planOpacity: [0.15, 0.35], glow: 'rgba(247,147,29,.25)', building3d: '#e1ddd7',
   },
 };
-const STAGE_LABEL = { 1: 'איתור והיתכנות', 2: 'תכנון וקידום סטטוטורי', 3: 'ליווי ואישור', 4: 'בקרה ומעקב' };
-const SCALE_LABEL = { s: 'S', m: 'M', l: 'L', xl: 'XL' };
 const DOMAIN_LABEL = {
   'urban-renewal': 'התחדשות עירונית', 'master-plans': 'תכניות מתאר', 'detailed-plans': 'תכניות מפורטות',
   'national-plans': 'תכניות לאומיות', 'open-spaces': 'שטחים פתוחים', 'rural-arab': 'המגזר הכפרי והחברה הערבית',
@@ -209,6 +207,13 @@ export async function mount(el, { theme = 'dark', mini = false, hero = false, fo
       flyTo(f);
       return true;
     },
+    /** Deep link by slug (?p={slug}, decoded). */
+    focusSlug(slug) {
+      const f = all.features.find((x) => x.geometry && decodeURIComponent(x.properties.slug || '') === slug);
+      if (!f) return false;
+      flyTo(f);
+      return true;
+    },
     deselect,
     /** Back to the whole country (hero "חזרה למפה"). */
     reset() { deselect(); map.easeTo({ pitch: 0, bearing: 0, duration: 800 }); fit(current); },
@@ -272,16 +277,16 @@ function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&am
 function num(n) { return n ? new Intl.NumberFormat('he-IL').format(Number(n)) : ''; }
 
 function card(p) {
-  const stage = Math.min(4, Math.max(1, Number(p.stage) || 1));
-  const meta = [p.domain && DOMAIN_LABEL[p.domain], p.city, SCALE_LABEL[p.scale]].filter(Boolean).join(' · ');
-  const figure = p.units ? `<strong>${num(p.units)}</strong> יח"ד` : p.dunam ? `<strong>${num(p.dunam)}</strong> דונם` : '';
+  // Spec v6 §8: always name, domain, authority, stage; image, city and numbers when they exist.
+  const meta = [p.domainName || DOMAIN_LABEL[p.domain], ...new Set([p.city, p.authorityName].filter(Boolean))].filter(Boolean).join(' · ');
+  const figure = [p.units ? `<strong>${num(p.units)}</strong> יח"ד` : '', p.sqm ? `<strong>${num(p.sqm)}</strong> מ"ר` : '', p.dunam ? `<strong>${num(p.dunam)}</strong> דונם` : ''].filter(Boolean).join(' · ');
   return `
     <article class="log-popup__card">
       ${p.image ? `<img class="log-popup__img" src="${esc(p.image)}" alt="">` : ''}
-      <span class="stage stage--${stage}" role="img" aria-label="שלב ${stage} מתוך 4: ${STAGE_LABEL[stage]}"><i></i><i></i><i></i><i></i></span>
       <p class="log-popup__meta">${esc(meta)}</p>
       <h3 class="log-popup__title">${esc(p.title)}</h3>
-      <p class="log-popup__figure">${figure}${p.year ? ` <span>${esc(p.year)}</span>` : ''}</p>
-      <a class="btn btn--primary log-popup__link" href="${esc(p.url)}">לעמוד המלא</a>
+      <p class="log-popup__stage">${esc(p.stageLabel)}</p>
+      ${figure ? `<p class="log-popup__figure">${figure}</p>` : ''}
+      ${p.page ? `<a class="btn btn--primary log-popup__link" href="${esc(p.url)}">לעמוד הפרויקט</a>` : ''}
     </article>`;
 }

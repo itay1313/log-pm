@@ -70,6 +70,8 @@ function log_field( string $name, $post_id = false, $default = null ) {
 		$v = get_field( $name, $post_id );
 	} elseif ( $post_id === 'option' || $post_id === 'options' ) {
 		$v = get_option( "options_$name" );
+	} elseif ( $term_id = log_term_id( $post_id ) ) {
+		$v = get_term_meta( $term_id, $name, true );
 	} else {
 		$v = get_post_meta( $post_id ? (int) $post_id : get_the_ID(), $name, true );
 	}
@@ -97,6 +99,11 @@ function log_set_field( string $name, $value, $post_id ): void {
 		if ( $key ) {
 			update_option( "_options_$name", $key, false );
 		}
+	} elseif ( $term_id = log_term_id( $post_id ) ) {
+		update_term_meta( $term_id, $name, $value );
+		if ( $key ) {
+			update_term_meta( $term_id, "_$name", $key );
+		}
 	} else {
 		update_post_meta( (int) $post_id, $name, $value );
 		if ( $key ) {
@@ -122,6 +129,8 @@ function log_acf_field_key( string $name, $post_id = null ): ?string {
 						$scopes[] = $rule['value'];
 					} elseif ( ( $rule['param'] ?? '' ) === 'options_page' ) {
 						$scopes[] = 'option';
+					} elseif ( ( $rule['param'] ?? '' ) === 'taxonomy' ) {
+						$scopes[] = 'term';
 					}
 				}
 			}
@@ -135,6 +144,24 @@ function log_acf_field_key( string $name, $post_id = null ): ?string {
 			}
 		}
 	}
-	$scope = ( $post_id === 'option' || $post_id === 'options' ) ? 'option' : ( $post_id ? get_post_type( (int) $post_id ) : '*' );
+	$scope = match ( true ) {
+		$post_id === 'option' || $post_id === 'options' => 'option',
+		(bool) log_term_id( $post_id )                  => 'term',
+		(bool) $post_id                                 => get_post_type( (int) $post_id ),
+		default                                         => '*',
+	};
 	return $map[ $scope ][ $name ] ?? null;
+}
+
+/**
+ * ACF's term address ("term_12", "log_domain_12" or a WP_Term) → term ID; 0 for anything else.
+ */
+function log_term_id( $post_id ): int {
+	if ( $post_id instanceof WP_Term ) {
+		return $post_id->term_id;
+	}
+	if ( is_string( $post_id ) && preg_match( '/^(?:term|[a-z_]+)_(\d+)$/', $post_id, $m ) && ! ctype_digit( $post_id ) ) {
+		return (int) $m[1];
+	}
+	return 0;
 }

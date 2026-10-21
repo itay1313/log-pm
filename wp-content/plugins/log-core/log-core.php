@@ -16,7 +16,9 @@ define( 'LOG_CORE_URL', plugin_dir_url( __FILE__ ) );
 
 require LOG_CORE_DIR . 'inc/post-types.php';
 require LOG_CORE_DIR . 'inc/taxonomies.php';
-require LOG_CORE_DIR . 'inc/scale.php';
+require LOG_CORE_DIR . 'inc/stage.php';
+require LOG_CORE_DIR . 'inc/projects.php';
+require LOG_CORE_DIR . 'inc/migrate.php';
 require LOG_CORE_DIR . 'inc/acf.php';
 require LOG_CORE_DIR . 'inc/rest-map.php';
 require LOG_CORE_DIR . 'inc/schema.php';

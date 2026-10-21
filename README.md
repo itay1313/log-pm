@@ -8,7 +8,7 @@ WordPress מותאם, בלי בילדרים. שני חלקים:
 | `wp-content/themes/log` | תצוגה בלבד. תבניות לכל נתיב באפיון, שני הכפתורים הצמודים, גופנים עצמיים, Vite. |
 | `tools/deploy.sh` | בילד + העלאה ל-uPress (lftp, סיסמה מה-Keychain `log-pm-ftp`). |
 | `tools/dev.sh` | WordPress מקומי ב-Playground על :8881, עם התיקיות מחוברות חי. |
-| `docs/` | האפיון (v5.1), הצעת המחיר, מיפוי ArcGIS. |
+| `docs/` | האפיון (v6, ו-v5.1 הקודם), הצעת המחיר, מיפוי ArcGIS. |
 
 ## עבודה יומיומית
 

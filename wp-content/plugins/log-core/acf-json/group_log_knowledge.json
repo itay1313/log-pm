@@ -2,8 +2,10 @@
   "key": "group_log_knowledge",
   "title": "פרטי פריט ידע",
   "fields": [
-    { "key": "field_lk_author", "label": "כותב/ת", "name": "author_person", "type": "post_object", "post_type": ["log_person"], "allow_null": 1, "return_format": "id", "wrapper": { "width": "50" } },
-    { "key": "field_lk_project", "label": "פרויקט קשור", "name": "related_project", "type": "post_object", "post_type": ["log_project"], "allow_null": 1, "return_format": "id", "wrapper": { "width": "50" } },
+    { "key": "field_lk_featured", "label": "פריט נבחר", "name": "featured", "type": "true_false", "instructions": "מוצג בגדול בראש מרכז הידע כשאין סינון. פריט אחד.", "ui": 1, "wrapper": { "width": "50" } },
+    { "key": "field_lk_control", "label": "קשור לבקרה", "name": "is_control", "type": "true_false", "instructions": "מופיע גם בעמוד חברת הבקרה, תחת \"פריטים מקצועיים\".", "ui": 1, "wrapper": { "width": "50" } },
+    { "key": "field_lk_outlet", "label": "כלי התקשורת", "name": "outlet", "type": "text", "instructions": "לאזכור בתקשורת בלבד.", "wrapper": { "width": "50" } },
+    { "key": "field_lk_external", "label": "קישור לכתבה המקורית", "name": "external_url", "type": "url", "instructions": "לאזכור בתקשורת. נפתח בלשונית חדשה.", "wrapper": { "width": "50" } },
     { "key": "field_lk_files", "label": "קבצים להורדה", "name": "files", "type": "repeater", "layout": "table", "button_label": "הוספת קובץ", "sub_fields": [
       { "key": "field_lk_file_label", "label": "כותרת", "name": "label", "type": "text", "wrapper": { "width": "50" } },
       { "key": "field_lk_file", "label": "קובץ", "name": "file", "type": "file", "return_format": "array", "wrapper": { "width": "50" } }

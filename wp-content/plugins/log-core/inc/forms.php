@@ -18,11 +18,11 @@ const LOG_CV_MAX_BYTES = 5 * MB_IN_BYTES;
 
 function log_contact_topics(): array {
 	return [
-		'business' => [ 'פיתוח עסקי ושיתופי פעולה', 'email' ],
+		'business' => [ 'פיתוח עסקי ושיתופי פעולה', 'email_business' ],
 		'control'  => [ 'חברת הבקרה', 'email_control' ],
 		'jobs'     => [ 'גיוס', 'email_jobs' ],
-		'finance'  => [ 'הנהלת חשבונות', 'email' ],
-		'press'    => [ 'תקשורת', 'email' ],
+		'finance'  => [ 'הנהלת חשבונות', 'email_finance' ],
+		'press'    => [ 'תקשורת', 'email_press' ],
 		'other'    => [ 'אחר', 'email' ],
 	];
 }
@@ -166,8 +166,8 @@ function log_rest_contact( WP_REST_Request $r ) {
 	$errors = log_form_field_errors( $r->get_params(), [
 		'name'    => [ 'שם', true, 'text' ],
 		'email'   => [ 'מייל', true, 'email' ],
-		'phone'   => [ 'טלפון', false, 'phone' ],
-		'message' => [ 'הודעה', true, 'text' ],
+		'phone'   => [ 'טלפון', true, 'phone' ],
+		'message' => [ 'הודעה', false, 'text' ],
 	] );
 	$topic = sanitize_key( $r['topic'] ?? 'other' );
 	if ( ! isset( $topics[ $topic ] ) ) {
@@ -183,8 +183,8 @@ function log_rest_contact( WP_REST_Request $r ) {
 		'phone'   => sanitize_text_field( $r['phone'] ?? '' ),
 		'email'   => sanitize_email( $r['email'] ),
 		'topic'   => $topic,
-		'message' => sanitize_textarea_field( $r['message'] ),
-		'project' => (int) ( $r['project'] ?? 0 ),
+		'message' => sanitize_textarea_field( $r['message'] ?? '' ),
+		'project' => log_project_from_param( $r['project'] ?? '' ),
 	];
 	$source = log_form_source( $r );
 	$lead   = log_store_lead( 'contact', $data['name'] . ' · ' . $topics[ $topic ][0], $data, $source );
@@ -197,7 +197,7 @@ function log_rest_contact( WP_REST_Request $r ) {
 		'טלפון'   => $data['phone'],
 		'מייל'    => $data['email'],
 		'הודעה'   => $data['message'],
-		'פרויקט'  => $data['project'] ? get_the_title( $data['project'] ) . ' (' . get_permalink( $data['project'] ) . ')' : '',
+		'פרויקט'  => $data['project'] ? get_the_title( $data['project'] ) . ' (' . log_project_link( $data['project'] ) . ')' : '',
 		'מקור'    => $source ? wp_json_encode( $source, JSON_UNESCAPED_UNICODE ) : '',
 	];
 	log_send_lead_mail( $to, 'פנייה מהאתר: ' . $topics[ $topic ][0] . ' · ' . $data['name'], $rows );

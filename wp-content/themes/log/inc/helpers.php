@@ -6,34 +6,25 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Which of the two twin buttons is active. "projects" everywhere except the control page.
- * Project pages flagged as control projects light up "control" too.
+ * Which of the two twin buttons is active (spec v6 §6): "control" on the control page,
+ * "projects" on the projects list and project pages, none elsewhere.
  */
 function log_twin_state(): string {
 	if ( is_page( 'control' ) ) {
 		return 'control';
 	}
-	if ( is_singular( 'log_project' ) && function_exists( 'log_field' ) && log_field( 'is_control', get_the_ID() ) ) {
-		return 'control';
+	if ( is_post_type_archive( 'log_project' ) || is_singular( 'log_project' ) ) {
+		return 'projects';
 	}
-	return 'projects';
+	return '';
 }
 
 /**
- * Stage 1–4 as the quarter-ring marker from the spec. Pure markup; CSS draws it.
+ * Step marker 1–4 (process steps, roles, recruitment path). Decorative: the step's own heading carries the meaning.
  */
-function log_stage_ring( int $stage, bool $with_label = true ): string {
-	$stage = max( 1, min( 4, $stage ) );
-	$labels = [ 1 => 'איתור והיתכנות', 2 => 'תכנון וקידום סטטוטורי', 3 => 'ליווי ואישור', 4 => 'בקרה ומעקב' ];
-	$html = sprintf(
-		'<span class="stage stage--%1$d" role="img" aria-label="שלב %1$d מתוך 4: %2$s"><i></i><i></i><i></i><i></i></span>',
-		$stage,
-		esc_attr( $labels[ $stage ] )
-	);
-	if ( $with_label ) {
-		$html .= sprintf( '<span class="stage__label">שלב %d מתוך 4 · %s</span>', $stage, esc_html( $labels[ $stage ] ) );
-	}
-	return $html;
+function log_stage_ring( int $step ): string {
+	$step = max( 1, min( 4, $step ) );
+	return sprintf( '<span class="stage stage--%d" aria-hidden="true"><i></i><i></i><i></i><i></i></span>', $step );
 }
 
 /**
@@ -65,21 +56,33 @@ function log_lines_to_list( ?string $text, string $class = '' ): string {
 }
 
 /**
- * Stage/scale/domain line for cards: "שלב 2 מתוך 4 · התחדשות עירונית · חולון · M".
+ * "חולון · עיריית חולון": the city and the authority, once each (ArcGIS often gives the same name).
+ */
+function log_project_place( int $id ): string {
+	$parts = [ (string) log_field( 'city', $id, '' ) ];
+	$auth  = get_the_terms( $id, 'log_authority' );
+	if ( $auth && ! is_wp_error( $auth ) ) {
+		$parts[] = $auth[0]->name;
+	}
+	return implode( ' · ', array_unique( array_filter( array_map( 'trim', $parts ) ) ) );
+}
+
+/**
+ * "התחדשות עירונית · חולון": domain, then place. Plain text, escaped.
  */
 function log_project_meta_line( int $id ): string {
-	$parts = [];
+	$parts  = [];
 	$domain = get_the_terms( $id, 'log_domain' );
 	if ( $domain && ! is_wp_error( $domain ) ) {
 		$parts[] = $domain[0]->name;
 	}
-	$city = function_exists( 'log_field' ) ? log_field( 'city', $id ) : null;
-	if ( $city ) {
-		$parts[] = $city;
-	}
-	$scale = get_the_terms( $id, 'log_scale' );
-	if ( $scale && ! is_wp_error( $scale ) ) {
-		$parts[] = $scale[0]->name;
-	}
-	return esc_html( implode( ' · ', $parts ) );
+	$parts[] = log_project_place( $id );
+	return esc_html( implode( ' · ', array_filter( $parts ) ) );
+}
+
+/**
+ * Lower-case haystack for the client-side search on cards and lists: name, city, authority.
+ */
+function log_project_search_text( int $id ): string {
+	return mb_strtolower( get_the_title( $id ) . ' ' . log_project_place( $id ) );
 }

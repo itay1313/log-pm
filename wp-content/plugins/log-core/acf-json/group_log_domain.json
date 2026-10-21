@@ -1,0 +1,14 @@
+{
+  "key": "group_log_domain",
+  "title": "תחום פעילות",
+  "fields": [
+    { "key": "field_ld_sentence", "label": "משפט", "name": "sentence", "type": "textarea", "rows": 2, "instructions": "מופיע בכרטיס התחום בעמוד הבית." },
+    { "key": "field_ld_order", "label": "סדר הצגה", "name": "order", "type": "number", "min": 0, "step": 1 }
+  ],
+  "location": [[{ "param": "taxonomy", "operator": "==", "value": "log_domain" }]],
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "active": true,
+  "show_in_rest": 0
+}

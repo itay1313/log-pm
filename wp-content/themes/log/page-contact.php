@@ -1,11 +1,11 @@
 <?php
 /**
  * Contact (spec §14): the two offices, phone/email, socials, and one form routed by topic.
- * ?topic=jobs swaps the contact form for the application form; ?project=ID pre-links a project.
+ * ?topic=jobs swaps the contact form for the application form; ?project={slug} pre-links a project.
  */
 get_header();
 $topic   = sanitize_key( $_GET['topic'] ?? '' );
-$project = (int) ( $_GET['project'] ?? 0 );
+$project = log_project_from_param( wp_unslash( $_GET['project'] ?? '' ) );
 $job     = (int) ( $_GET['job'] ?? 0 );
 $privacy = get_privacy_policy_url();
 $offices = [
@@ -27,13 +27,13 @@ $offices = [
 			<form class="form form--contact" data-endpoint="contact" novalidate>
 				<?php get_template_part( 'template-parts/form-fields' ); ?>
 				<input type="hidden" name="project" value="<?php echo $project; ?>">
-				<?php if ( $project && get_post_type( $project ) === 'log_project' ) : ?>
+				<?php if ( $project ) : ?>
 					<p class="form__context">בנוגע לפרויקט <strong><?php echo esc_html( get_the_title( $project ) ); ?></strong></p>
 				<?php endif; ?>
 				<div class="form__grid">
 					<label class="field"><span>שם</span><input type="text" name="name" required autocomplete="name"></label>
 					<label class="field"><span>ארגון <small>(לא חובה)</small></span><input type="text" name="org" autocomplete="organization"></label>
-					<label class="field"><span>טלפון <small>(לא חובה)</small></span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label>
+					<label class="field"><span>טלפון</span><input type="tel" name="phone" required autocomplete="tel" inputmode="tel"></label>
 					<label class="field"><span>מייל</span><input type="email" name="email" required autocomplete="email"></label>
 					<label class="field field--wide"><span>נושא</span>
 						<select name="topic" required>
@@ -42,7 +42,7 @@ $offices = [
 							<?php endforeach; ?>
 						</select>
 					</label>
-					<label class="field field--wide"><span>הודעה</span><textarea name="message" rows="5" required></textarea></label>
+					<label class="field field--wide"><span>הודעה <small>(לא חובה)</small></span><textarea name="message" rows="5"></textarea></label>
 				</div>
 				<label class="check"><input type="checkbox" name="consent" value="1" required> קראתי את <a href="<?php echo esc_url( $privacy ); ?>" target="_blank" rel="noopener">מדיניות הפרטיות</a> ומאשר/ת שתחזרו אליי.</label>
 				<p class="form__error" role="alert" hidden></p>

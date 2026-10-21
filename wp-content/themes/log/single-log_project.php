@@ -1,37 +1,34 @@
 <?php
 /**
- * Project page (spec §9). One template; blocks without content don't render.
- * Unapproved projects 404 for the public.
+ * Project page (spec v6 §10). One template; blocks without content don't render, headings included.
+ * Who gets here is decided in log-core (projects.php): only public projects with a full page.
  */
-if ( ! log_field( 'approved', get_the_ID() ) && ! current_user_can( 'edit_posts' ) ) {
-	global $wp_query;
-	$wp_query->set_404();
-	status_header( 404 );
-	get_template_part( '404' );
-	exit;
-}
 get_header();
 while ( have_posts() ) : the_post();
-	$pid    = get_the_ID();
-	$stage = (int) log_field( 'stage', $pid, 1 );
+	$pid   = get_the_ID();
+	$stage = log_project_stage( $pid );
 	$story = [
-		'האתגר'    => log_field( 'challenge', $pid ),
-		'התהליך'   => log_field( 'process', $pid ),
-		'הפתרון'   => log_field( 'solution', $pid ),
-		'הצעד הבא' => $stage < 4 ? log_field( 'next_step', $pid ) : null,
+		'האתגר'                         => log_field( 'challenge', $pid ),
+		'העבודה של לוג והניהול המקצועי' => log_field( 'process', $pid ),
+		'ההתקדמות והתוצאות'             => log_field( 'solution', $pid ),
+		'השלב הבא'                      => $stage['completed'] ? null : log_field( 'next_step', $pid ),
 	];
+	$years   = log_project_years( $pid );
+	$numbers = array_filter( [
+		'יחידות דיור'  => log_field( 'units', $pid ),
+		'מ"ר'          => log_field( 'sqm_employment', $pid ),
+		'דונם'         => log_field( 'dunam', $pid ),
+		'שנים בתהליך'  => $years,
+	] );
+	$auth  = log_first_term( $pid, 'log_authority' );
 	$facts = array_filter( [
-		'לקוח'          => ( $c = log_field( 'client', $pid ) ) ? get_the_title( $c ) : null,
-		'מיקום'         => log_field( 'city', $pid ),
-		'רשות'          => log_field( 'authority', $pid ),
-		'מחוז'          => log_field( 'district', $pid ),
-		'סוג תכנית'     => log_field( 'plan_type', $pid ),
-		'מוסד תכנון'    => log_field( 'institution', $pid ),
-		'יח"ד'          => log_number( log_field( 'units', $pid ) ),
-		'מ"ר תעסוקה'    => log_number( log_field( 'sqm_employment', $pid ) ),
-		'דונם'          => log_number( log_field( 'dunam', $pid ) ),
-		'שנת תכנון'     => log_field( 'year', $pid ),
-		'מספר תכנית'    => log_field( 'plan_number', $pid ),
+		'לקוח'        => ( $c = log_field( 'client', $pid ) ) ? get_the_title( $c ) : null,
+		'רשות'        => $auth?->name,
+		'מיקום'       => log_field( 'is_national', $pid ) ? 'פריסה ארצית' : log_field( 'city', $pid ),
+		'יח"ד'        => log_number( log_field( 'units', $pid ) ),
+		'מ"ר'         => log_number( log_field( 'sqm_employment', $pid ) ),
+		'שטח'         => log_number( log_field( 'dunam', $pid ), 'דונם' ),
+		'מספר תכנית'  => log_field( 'plan_number', $pid ),
 	] );
 	?>
 	<article class="project">
@@ -41,29 +38,39 @@ while ( have_posts() ) : the_post();
 			<?php elseif ( has_post_thumbnail() ) : ?>
 				<?php the_post_thumbnail( 'log-wide', [ 'class' => 'project__media', 'fetchpriority' => 'high', 'sizes' => '100vw' ] ); ?>
 			<?php else : // no photo yet: main.js draws the same building illustration the hero card shows ?>
-				<div class="project__media project__art" data-id="<?php echo (int) $pid; ?>" data-domain="<?php echo esc_attr( (string) log_first_term_slug( $pid, 'log_domain' ) ); ?>" data-stage="<?php echo (int) $stage; ?>" aria-hidden="true"></div>
+				<div class="project__media project__art" data-id="<?php echo (int) $pid; ?>" data-domain="<?php echo esc_attr( (string) log_first_term_slug( $pid, 'log_domain' ) ); ?>" data-stage="<?php echo (int) ( $stage['completed'] ? 4 : $stage['number'] ); ?>" aria-hidden="true"></div>
 			<?php endif; ?>
 			<div class="project__hero-copy">
-				<?php echo log_stage_ring( $stage ); ?>
-				<p class="eyebrow eyebrow--light"><?php echo log_project_meta_line( $pid ); ?></p>
 				<h1 class="project__title"><?php the_title(); ?></h1>
+				<p class="eyebrow eyebrow--light"><?php echo log_project_meta_line( $pid ); ?></p>
+				<p class="project__stage"><?php echo esc_html( $stage['label'] ); ?></p>
 			</div>
 		</header>
 
+		<?php if ( $numbers ) : ?>
+			<div class="container">
+				<dl class="project__numbers">
+					<?php foreach ( $numbers as $label => $n ) : ?>
+						<div><dd><?php echo log_number( $n ); ?></dd><dt><?php echo esc_html( $label ); ?></dt></div>
+					<?php endforeach; ?>
+				</dl>
+			</div>
+		<?php endif; ?>
+
 		<div class="container project__layout">
 			<div class="project__story">
+				<?php if ( $quote = log_field( 'quote', $pid ) ) : ?>
+					<blockquote class="pull-quote"><p><?php echo esc_html( $quote ); ?></p>
+						<?php if ( $by = log_field( 'quote_by', $pid ) ) : ?><cite><?php echo esc_html( $by ); ?></cite><?php endif; ?>
+					</blockquote>
+				<?php endif; ?>
+
 				<?php foreach ( $story as $heading => $text ) : if ( ! $text ) { continue; } ?>
 					<section class="story-block">
 						<h2><?php echo esc_html( $heading ); ?></h2>
 						<?php echo wpautop( esc_html( $text ) ); ?>
 					</section>
 				<?php endforeach; ?>
-
-				<?php if ( $quote = log_field( 'quote', $pid ) ) : ?>
-					<blockquote class="pull-quote"><p><?php echo esc_html( $quote ); ?></p>
-						<?php if ( $by = log_field( 'quote_by', $pid ) ) : ?><cite><?php echo esc_html( $by ); ?></cite><?php endif; ?>
-					</blockquote>
-				<?php endif; ?>
 
 				<?php if ( get_the_content() ) : ?><div class="prose"><?php the_content(); ?></div><?php endif; ?>
 
@@ -72,7 +79,7 @@ while ( have_posts() ) : the_post();
 						<h2>אבני דרך</h2>
 						<ol class="timeline">
 							<?php foreach ( $ms as $m ) : ?>
-								<li class="<?php echo ! empty( $m['pending'] ) ? 'is-pending' : ''; ?>"><span class="timeline__year"><?php echo esc_html( $m['year'] ); ?></span> <?php echo esc_html( $m['event'] ); ?></li>
+								<li class="<?php echo ! empty( $m['pending'] ) ? 'is-pending' : ''; ?>"><span class="timeline__year"><?php echo esc_html( $m['year'] ); ?></span> <?php echo esc_html( $m['event'] ); ?><?php if ( ! empty( $m['pending'] ) ) : ?> <span class="timeline__later">בהמשך</span><?php endif; ?></li>
 							<?php endforeach; ?>
 						</ol>
 					</section>
@@ -105,23 +112,27 @@ while ( have_posts() ) : the_post();
 					<h3>שותפים</h3>
 					<ul class="partners"><?php foreach ( $partners as $p ) : ?><li><?php echo esc_html( $p['name'] ); ?><?php if ( $p['role'] ) : ?> <span>· <?php echo esc_html( $p['role'] ); ?></span><?php endif; ?></li><?php endforeach; ?></ul>
 				<?php endif; ?>
-				<?php if ( log_field( 'lat', $pid ) && ! log_field( 'is_national', $pid ) ) : ?>
-					<a class="minimap" data-project="<?php echo $pid; ?>" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) . '#view=map&p=' . $pid ); ?>" aria-label="מיקום הפרויקט על המפה. לחיצה פותחת את המפה הגדולה."><span class="minimap__cta">לראות במפה הגדולה</span></a>
-				<?php endif; ?>
-				<?php if ( log_field( 'is_control', $pid ) ) : ?>
-					<a class="badge badge--control" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">פרויקט בליווי חברת הבקרה</a>
+				<?php if ( log_field( 'is_national', $pid ) ) : ?>
+					<p class="minimap minimap--national">פריסה ארצית</p>
+				<?php elseif ( log_field( 'lat', $pid ) ) : ?>
+					<a class="minimap" data-project="<?php echo $pid; ?>" href="<?php echo esc_url( log_project_map_url( $pid ) ); ?>" aria-label="מיקום הפרויקט על המפה. לחיצה פותחת את המפה הגדולה."><span class="minimap__cta">לראות במפה הגדולה</span></a>
 				<?php endif; ?>
 				<button type="button" class="btn btn--ghost" data-copy-link>העתקת קישור לפרויקט</button>
 			</aside>
 		</div>
 
 		<?php
-		$domain = log_first_term_slug( $pid, 'log_domain' );
-		$related   = $domain ? log_approved_projects_query( [
-			'posts_per_page' => 3,
-			'post__not_in'   => [ $pid ],
-			'tax_query'      => [ [ 'taxonomy' => 'log_domain', 'field' => 'slug', 'terms' => $domain ] ],
+		// Up to three projects from the same domain that have a page of their own.
+		$domain  = log_first_term_slug( $pid, 'log_domain' );
+		$related = $domain ? log_approved_projects_query( [
+			'post__not_in' => [ $pid ],
+			'meta_query'   => [ [ 'key' => 'approved', 'value' => '1' ], [ 'key' => 'full_page', 'value' => '1' ] ],
+			'tax_query'    => [ [ 'taxonomy' => 'log_domain', 'field' => 'slug', 'terms' => $domain ] ],
 		] ) : null;
+		if ( $related ) {
+			$related->posts      = array_slice( array_values( array_filter( $related->posts, static fn( $p ) => log_project_has_page( $p->ID ) ) ), 0, 3 );
+			$related->post_count = count( $related->posts );
+		}
 		if ( $related && $related->have_posts() ) : ?>
 			<section class="section section--more">
 				<div class="container">
@@ -129,6 +140,7 @@ while ( have_posts() ) : the_post();
 					<div class="grid grid--projects">
 						<?php while ( $related->have_posts() ) : $related->the_post(); get_template_part( 'template-parts/card-project' ); endwhile; wp_reset_postdata(); ?>
 					</div>
+					<a class="btn" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>">לכל הפרויקטים</a>
 				</div>
 			</section>
 		<?php endif; ?>
@@ -136,7 +148,7 @@ while ( have_posts() ) : the_post();
 		<section class="section section--cta">
 			<div class="container">
 				<h2 class="section__title">רוצים פרויקט דומה?</h2>
-				<a class="btn btn--primary" href="<?php echo esc_url( add_query_arg( 'project', $pid, home_url( '/contact/' ) ) ); ?>">בואו נדבר</a>
+				<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/contact/?topic=business&project=' . get_post_field( 'post_name', $pid ) ) ); ?>">בואו נדבר</a>
 			</div>
 		</section>
 	</article>

@@ -41,7 +41,7 @@ $jobs = new WP_Query( [
 		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_path_title', 'מסלול הגיוס', 'option' ) ); ?></h2>
 		<ol class="process">
 			<?php foreach ( array_slice( $path, 0, 4 ) as $i => $step ) : ?>
-				<li><?php echo log_stage_ring( $i + 1, false ); ?><h3><?php echo esc_html( $step['name'] ?? '' ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
+				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $step['name'] ?? '' ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
 			<?php endforeach; ?>
 		</ol>
 	</section>

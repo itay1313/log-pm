@@ -51,7 +51,7 @@ function log_run_setup(): array {
 	log_register_post_types();
 	log_register_taxonomies();
 	log_seed_terms();
-	$log[] = 'מונחי טקסונומיה: תחומים, מדרגות, סוגי פריטים';
+	$log[] = 'מונחי טקסונומיה: תחומים, שלבים, יחידות ארגוניות, סוגי פריטים';
 
 	$ids = [];
 	foreach ( log_system_pages() as $slug => [ $title, $template ] ) {

@@ -23,9 +23,11 @@
 
     { "key": "field_lc_tab_numbers", "label": "מספרים", "name": "", "type": "tab" },
     { "key": "field_lcp_numbers_note", "label": "", "name": "", "type": "message", "message": "מוצגים רק מספרים שמולאו, ורק מה שהרשות אישרה לפרסום.", "esc_html": 0 },
-    { "key": "field_lcp_numbers", "label": "מספרים", "name": "numbers", "type": "repeater", "max": 4, "layout": "table", "button_label": "הוספת מספר", "sub_fields": [
+    { "key": "field_lcp_numbers", "label": "נתוני בקרה", "name": "numbers", "type": "repeater", "max": 4, "layout": "table", "button_label": "הוספת מספר", "instructions": "רק נתונים שאושרו לפרסום מוצגים. בלי נתונים מאושרים הבלוק לא מוצג. נפרד לגמרי מנתוני הפרויקטים.", "sub_fields": [
       { "key": "field_lcp_number_value", "label": "מספר", "name": "value", "type": "number", "wrapper": { "width": "40" } },
-      { "key": "field_lcp_number_label", "label": "תווית", "name": "label", "type": "text", "wrapper": { "width": "60" } }
+      { "key": "field_lcp_number_label", "label": "תווית", "name": "label", "type": "text", "wrapper": { "width": "60" } },
+      { "key": "field_lpc_num_updated", "label": "תאריך עדכון", "name": "updated", "type": "date_picker", "display_format": "d/m/Y", "return_format": "Y-m-d" },
+      { "key": "field_lpc_num_approved", "label": "אושר לפרסום", "name": "approved", "type": "true_false", "ui": 1 }
     ] },
 
     { "key": "field_lc_tab_partners", "label": "עם מי עובדים", "name": "", "type": "tab" },

@@ -2,7 +2,7 @@
 /**
  * Projects list in wp-admin: publication approval at a glance, and in bulk.
  *
- * - Column "אישור": ✓ when the project is approved for the site and the map.
+ * - Column "אישור": ✓ when the project is approved for the site and the map, plus its full-page state.
  * - Bulk actions: "אישור ופרסום" (approve + publish) and "ביטול אישור" (unapprove, keep the post).
  *   Approval is management's call (spec §15), so it's an explicit action, never automatic.
  */
@@ -27,6 +27,12 @@ add_action( 'manage_log_project_posts_custom_column', function ( string $col, in
 	echo log_field( 'approved', $id )
 		? '<span style="color:#1e7e34;font-weight:600" aria-label="מאושר">✓</span>'
 		: '<span style="color:#8c8f94" aria-label="לא מאושר">—</span>';
+	if ( log_field( 'full_page', $id ) ) {
+		$missing = log_project_page_missing( $id );
+		echo $missing
+			? '<br><span class="description" title="' . esc_attr( 'חסר: ' . implode( ', ', $missing ) ) . '">עמוד מלא: חסר תוכן</span>'
+			: '<br><span class="description">עמוד מלא</span>';
+	}
 }, 10, 2 );
 
 add_filter( 'bulk_actions-edit-log_project', function ( array $actions ): array {

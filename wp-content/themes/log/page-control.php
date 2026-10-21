@@ -17,7 +17,7 @@ $method = log_rows( 'method', [
 	[ 'name' => 'ניתוח', 'text' => 'מגמות, חסמים וסיכונים ברמה ארצית ועירונית.' ],
 	[ 'name' => 'החזרת תובנות', 'text' => 'דוחות והמלצות לרשויות ולמשרדי הממשלה.' ],
 ] );
-$numbers  = array_filter( log_rows( 'numbers', [] ), static fn( $n ) => ! empty( $n['value'] ) );
+$numbers  = array_filter( log_rows( 'numbers', [] ), static fn( $n ) => ! empty( $n['value'] ) && ! empty( $n['approved'] ) ); // approved control data only
 $partners = array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', log_text( 'partners', "הרשות הממשלתית להתחדשות עירונית\nמינהלות עירוניות\nמוסדות תכנון\nמשרדי ממשלה" ) ) ) );
 ?>
 <section class="control-hero">
@@ -45,7 +45,7 @@ $partners = array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', log_tex
 		<h2 class="section__title"><?php echo esc_html( log_text( 'roles_title', 'שלושה תפקידים' ) ); ?></h2>
 		<ol class="roles">
 			<?php foreach ( $roles as $i => $r ) : ?>
-				<li class="roles__item"><?php echo log_stage_ring( $i + 1, false ); ?><h3><?php echo esc_html( $r['name'] ?? '' ); ?></h3><p><?php echo esc_html( $r['text'] ?? '' ); ?></p></li>
+				<li class="roles__item"><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $r['name'] ?? '' ); ?></h3><p><?php echo esc_html( $r['text'] ?? '' ); ?></p></li>
 			<?php endforeach; ?>
 		</ol>
 	</div>
@@ -56,7 +56,7 @@ $partners = array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', log_tex
 		<h2 class="section__title"><?php echo esc_html( log_text( 'method_title', 'איך זה עובד' ) ); ?></h2>
 		<ol class="process">
 			<?php foreach ( $method as $i => $m ) : ?>
-				<li><?php echo log_stage_ring( $i + 1, false ); ?><h3><?php echo esc_html( $m['name'] ?? '' ); ?></h3><p><?php echo esc_html( $m['text'] ?? '' ); ?></p></li>
+				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $m['name'] ?? '' ); ?></h3><p><?php echo esc_html( $m['text'] ?? '' ); ?></p></li>
 			<?php endforeach; ?>
 		</ol>
 	</div>

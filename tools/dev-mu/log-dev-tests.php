@@ -50,8 +50,61 @@ add_action( 'admin_menu', function () {
 				echo '<pre id="arcgis-result">' . esc_html( wp_json_encode( [ 'summary' => array_diff_key( $res, [ 'rows' => 1 ] ), 'approved' => $approved ], JSON_UNESCAPED_UNICODE ) ) . '</pre>';
 			}
 		}
+		if ( isset( $_POST['migrate'] ) && check_admin_referer( 'log_dev' ) ) {
+			// Rebuild the pre-v6 shape (log_city terms, no authority/stage terms), then run the v6 migration.
+			register_taxonomy( 'log_city', [ 'log_project' ], [ 'public' => false, 'rewrite' => false ] );
+			$ids = get_posts( [ 'post_type' => 'log_project', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids' ] );
+			foreach ( $ids as $id ) {
+				$auth = wp_get_object_terms( $id, 'log_authority', [ 'fields' => 'names' ] );
+				if ( $auth ) {
+					wp_set_object_terms( $id, $auth[0], 'log_city', false );
+				}
+				wp_set_object_terms( $id, [], 'log_authority', false );
+				wp_set_object_terms( $id, [], 'log_stage', false );
+			}
+			$before = [ 'city_terms' => (int) wp_count_terms( [ 'taxonomy' => 'log_city', 'hide_empty' => false ] ) ];
+			update_option( 'log_schema_version', 1 );
+			log_migrate_v2();
+			update_option( 'log_schema_version', LOG_SCHEMA_VERSION );
+			log_flush_map_cache();
+			$stages = [];
+			foreach ( get_terms( [ 'taxonomy' => 'log_stage', 'hide_empty' => false ] ) as $t ) {
+				$stages[ $t->slug ] = $t->count;
+			}
+			$after = [
+				'city_terms_left'  => (int) wp_count_terms( [ 'taxonomy' => 'log_city', 'hide_empty' => false ] ),
+				'authority_terms'  => (int) wp_count_terms( [ 'taxonomy' => 'log_authority', 'hide_empty' => true ] ),
+				'projects_without_authority' => count( array_filter( $ids, static fn( $id ) => ! has_term( '', 'log_authority', $id ) ) ),
+				'stages'           => $stages,
+				'units'            => wp_list_pluck( log_ordered_terms( 'log_unit' ), 'name' ),
+				'knowledge_types'  => wp_list_pluck( get_terms( [ 'taxonomy' => 'log_knowledge_type', 'hide_empty' => false ] ), 'name', 'slug' ),
+			];
+			echo '<pre id="migrate-result">' . esc_html( wp_json_encode( [ 'before' => $before, 'after' => $after ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) ) . '</pre>';
+		}
+		if ( isset( $_POST['fullpage'] ) && check_admin_referer( 'log_dev' ) ) {
+			// One full page to test with: "החווה החקלאית" gets a domain, a story and full_page.
+			$post = get_page_by_path( sanitize_title( 'החווה-החקלאית' ), OBJECT, 'log_project' );
+			$out  = [ 'found' => (bool) $post ];
+			if ( $post ) {
+				wp_set_object_terms( $post->ID, 'urban-renewal', 'log_domain', false );
+				log_set_field( 'full_page', 1, $post->ID );
+				$out['missing_before_story'] = log_project_page_missing( $post->ID );
+				$out['has_page_before_story'] = log_project_has_page( $post->ID );
+				log_set_field( 'challenge', 'שכונה ותיקה, בעלות מפוצלת וצורך בתכנית אחת לכל המתחם.', $post->ID );
+				log_set_field( 'year', 2018, $post->ID );
+				log_flush_map_cache();
+				$out['has_page'] = log_project_has_page( $post->ID );
+				$out['permalink'] = rawurldecode( get_permalink( $post ) );
+				$out['map_url']   = log_project_map_url( $post->ID );
+				$out['years']     = log_project_years( $post->ID );
+				$out['from_param_slug'] = log_project_from_param( rawurldecode( $post->post_name ) );
+			}
+			echo '<pre id="fullpage-result">' . esc_html( wp_json_encode( $out, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) ) . '</pre>';
+		}
 		echo '<form method="post">';
 		wp_nonce_field( 'log_dev' );
+		submit_button( 'Spec v6: give one project a full page', 'secondary', 'fullpage' );
+		submit_button( 'Spec v6 migration: rebuild pre-v6 data and migrate', 'secondary', 'migrate' );
 		submit_button( 'Run Instagram import on fixture (twice)', 'primary', 'run' );
 		submit_button( 'Import private ArcGIS GeoJSON + approve all (local only)', 'secondary', 'arcgis' );
 		echo '</form></div>';

@@ -7,7 +7,7 @@
  * Rules:
  * - Match by ACF `arcgis_id` (= OBJECTID); fallback match on `plan_number` when OBJECTID is missing.
  * - New posts are drafts with approved=0. Re-imports touch only ArcGIS-sourced fields,
- *   never story/media/approved/featured.
+ *   never story/media/approved/full_page/featured, and never a city the editor already set.
  * - Geometry: centroid → lat/lng, Douglas-Peucker simplification → boundary, geodesic area → dunam.
  *   Shape__Area is ignored (Web Mercator inflates it ~1.4× at this latitude).
  */
@@ -478,11 +478,12 @@ function log_import_feature( array $feature, bool $dry ): array {
 		'units'       => $get( 'יחד_מוצע' ) === '' ? null : (int) $get( 'יחד_מוצע' ),
 	];
 
-	$city = $get( 'רשות_מקומית' );
-	if ( $city === 'לא רלוונטי' ) {
-		$city = '';
+	// רשות_מקומית is the authority (it includes regional councils). The city text starts as the same
+	// name and is LOG's to correct afterwards, so it's only written while empty.
+	$authority = $get( 'רשות_מקומית' );
+	if ( $authority === 'לא רלוונטי' ) {
+		$authority = '';
 	}
-	$fields['city'] = $city;
 
 	$milestone = log_import_resolve( $get( 'אבן_דרך' ), log_import_milestone_codes() );
 	if ( $milestone === null && $get( 'אבן_דרך' ) !== '' ) {
@@ -558,8 +559,8 @@ function log_import_feature( array $feature, bool $dry ): array {
 	}
 
 	$client_id = $client_name !== '' ? log_import_client( $client_name, $body_type, $dry, $notes ) : 0;
-	if ( $city !== '' && ! term_exists( $city, 'log_city' ) ) {
-		$notes[] = "עיר חדשה: $city";
+	if ( $authority !== '' && ! term_exists( $authority, 'log_authority' ) ) {
+		$notes[] = "רשות חדשה: $authority";
 	}
 
 	if ( $dry ) {
@@ -595,9 +596,13 @@ function log_import_feature( array $feature, bool $dry ): array {
 	if ( $client_id ) {
 		log_set_field( 'client', $client_id, $post_id );
 	}
-	if ( $city !== '' ) {
-		wp_set_object_terms( $post_id, $city, 'log_city', false );
+	if ( $authority !== '' ) {
+		wp_set_object_terms( $post_id, $authority, 'log_authority', false );
+		if ( ! log_field( 'city', $post_id ) ) {
+			log_set_field( 'city', $authority, $post_id );
+		}
 	}
+	update_post_meta( $post_id, 'synced_at', time() );
 	log_project_recompute_derived( (int) $post_id );
 
 	return $row;

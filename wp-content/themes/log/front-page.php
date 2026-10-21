@@ -23,9 +23,10 @@ $process = log_rows( 'process', [
 		<h1 class="hero__title"><?php echo esc_html( log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' ) ); ?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
 		<dl class="hero__stats">
-			<div><dt>יח"ד</dt><dd data-count="<?php echo (int) $stats['units']; ?>"><?php echo log_number( $stats['units'] ); ?></dd></div>
-			<div><dt>פרויקטים פעילים</dt><dd data-count="<?php echo (int) $stats['projects']; ?>"><?php echo log_number( $stats['projects'] ); ?></dd></div>
-			<div><dt>רשויות</dt><dd data-count="<?php echo (int) $stats['authorities']; ?>"><?php echo log_number( $stats['authorities'] ); ?></dd></div>
+			<?php foreach ( [ 'projects' => 'פרויקטים', 'units' => 'יחידות דיור', 'sqm' => 'מ"ר' ] as $key => $label ) :
+				if ( ! $stats[ $key ] ) { continue; } // a missing number isn't shown as zero ?>
+				<div><dt><?php echo esc_html( $label ); ?></dt><dd data-count="<?php echo (int) $stats[ $key ]; ?>"><?php echo log_number( $stats[ $key ] ); ?></dd></div>
+			<?php endforeach; ?>
 		</dl>
 		<a class="hero__fallback btn btn--primary" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>"><?php echo esc_html( log_text( 'hero_cta', 'כל הפרויקטים' ) ); ?></a>
 	</div>
@@ -59,7 +60,7 @@ $process = log_rows( 'process', [
 		<h2 class="section__title"><?php echo esc_html( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
 		<ol class="process">
 			<?php foreach ( array_slice( $process, 0, 4 ) as $i => $step ) : ?>
-				<li><?php echo log_stage_ring( $i + 1, false ); ?><h3><?php echo esc_html( $step['name'] ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
+				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $step['name'] ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
 			<?php endforeach; ?>
 		</ol>
 		<p class="section__lede"><?php echo esc_html( log_text( 'process_tagline', 'תכנון מדויק מתחיל בנתונים חכמים.' ) ); ?></p>
@@ -86,18 +87,6 @@ $process = log_rows( 'process', [
 		<?php else : ?>
 			<p class="placeholder">כאן תופיע מוזאיקה של עד 6 פרויקטים מסומנים כ"נבחרים".</p>
 		<?php endif; ?>
-	</div>
-</section>
-
-<section class="section section--numbers" data-section="numbers">
-	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'numbers_title', 'במספרים' ) ); ?></h2>
-		<dl class="numbers">
-			<div><dd><?php echo log_number( $stats['units'] ); ?></dd><dt>יח"ד בתכנון ובבקרה</dt></div>
-			<div><dd><?php echo log_number( $stats['authorities'] ); ?></dd><dt>רשויות</dt></div>
-			<div><dd><?php echo log_number( $stats['projects'] ); ?></dd><dt>פרויקטים פעילים</dt></div>
-			<div><dd><?php echo log_number( $stats['team'] ); ?></dd><dt>אנשי צוות</dt></div>
-		</dl>
 	</div>
 </section>
 

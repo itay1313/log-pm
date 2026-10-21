@@ -1,7 +1,7 @@
 <?php
 /**
  * The two twin buttons (spec §5): "ניהול פרויקטים" ↔ "חברת הבקרה".
- * Outside the primary menu; always visible; exactly one is active.
+ * Outside the primary menu; always visible. Marked only inside its own world (spec v6 §6).
  */
 $state = log_twin_state();
 ?>

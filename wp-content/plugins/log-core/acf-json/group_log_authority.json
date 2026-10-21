@@ -1,0 +1,13 @@
+{
+  "key": "group_log_authority",
+  "title": "רשות",
+  "fields": [
+    { "key": "field_la_type", "label": "סוג", "name": "authority_type", "type": "select", "allow_null": 1, "choices": { "city": "עירייה", "local": "מועצה מקומית", "regional": "מועצה אזורית", "other": "אחר" }, "return_format": "value" }
+  ],
+  "location": [[{ "param": "taxonomy", "operator": "==", "value": "log_authority" }]],
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "active": true,
+  "show_in_rest": 0
+}

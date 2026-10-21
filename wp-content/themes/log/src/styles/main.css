@@ -281,7 +281,11 @@ html.is-wiping body::before { content: ''; position: fixed; inset: 0; z-index: 9
 .card__city { color: var(--grey); font-weight: 400; }
 .card__figure { font-size: .9375rem; color: var(--grey); margin: 0; }
 .card__figure strong { color: var(--ink); font-family: var(--font-display); }
-.card__year { margin-inline-start: .75rem; }
+.card__place { font-size: .9375rem; color: var(--grey); margin: 0 0 .25rem; }
+.card__stage { font-size: .8125rem; color: var(--grey); margin: 0 0 .5rem; }
+.card--nopage { position: relative; }
+.card--nopage .card__link { cursor: default; }
+.card__map { display: inline-block; margin: .25rem 0 0; font-size: .875rem; color: var(--ink); text-decoration-color: var(--orange); }
 .card--lead { grid-column: 1 / -1; }
 
 /* Filters */
@@ -289,6 +293,10 @@ html.is-wiping body::before { content: ''; position: fixed; inset: 0; z-index: 9
 .filters__group { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .5rem 1rem; }
 .filters__group legend { font-size: .8125rem; color: var(--grey); margin-bottom: .4rem; }
 .filters__group label { font-size: .9375rem; }
+label.filters__group { display: grid; gap: .3rem; font-size: .8125rem; color: var(--grey); }
+.filters select, .filters__search input { font: inherit; font-size: .9375rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 0; padding: .55rem .75rem; min-width: 11rem; }
+.filters__search { flex: 1 1 16rem; }
+.filters__search input { width: 100%; }
 .filters__view { margin-inline-start: auto; display: flex; }
 .filters__view button { font: inherit; background: none; border: 1px solid var(--line); padding: .4em 1em; cursor: pointer; }
 .filters__view button.is-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
@@ -363,6 +371,12 @@ html.is-wiping body::before { content: ''; position: fixed; inset: 0; z-index: 9
 .facts dd { margin: 0; font-family: var(--font-display); font-weight: 500; }
 .timeline li { padding: .5rem 0; border-bottom: 1px solid var(--line); }
 .timeline li.is-pending { color: var(--grey); }
+.timeline__later { font-size: .8125rem; color: var(--grey); margin-inline-start: .5rem; }
+.project__stage { margin: .5rem 0 0; color: #c9ced4; }
+.project__numbers { display: flex; flex-wrap: wrap; gap: 2rem 3.5rem; margin: 2.5rem 0 0; padding-bottom: 2rem; border-bottom: 1px solid var(--line); }
+.project__numbers div { display: flex; flex-direction: column-reverse; }
+.project__numbers dd { margin: 0; font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
+.project__numbers dt { font-size: .875rem; color: var(--grey); margin-top: .4rem; }
 .timeline__year { font-family: var(--font-display); font-weight: 600; margin-inline-end: 1rem; }
 .gallery__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
 .gallery__grid figure { margin: 0; }

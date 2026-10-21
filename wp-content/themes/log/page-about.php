@@ -1,24 +1,13 @@
 <?php
 /**
- * About & team (spec §11). Order is final: opening, owners, management, whole team, values,
- * offices, clients, CTA. Texts are ACF fields with fallbacks; page body = opening paragraph.
+ * About & team (spec v6 §12). Texts are ACF fields with fallbacks; page body = opening paragraph.
+ * Team: five organisational units as tabs, "כולם" first. Photo, name and role only: no personal pages.
  */
 get_header();
 the_post();
 
-$people = static fn( string $group ) => new WP_Query( [
-	'post_type'      => 'log_person',
-	'posts_per_page' => -1,
-	'orderby'        => 'menu_order title',
-	'order'          => 'ASC',
-	'meta_key'       => 'group',
-	'meta_value'     => $group,
-	'no_found_rows'  => true,
-] );
-$owners     = $people( 'owner' );
-$management = $people( 'management' );
-$team       = new WP_Query( [ 'post_type' => 'log_person', 'posts_per_page' => -1, 'orderby' => 'menu_order title', 'order' => 'ASC', 'no_found_rows' => true ] );
-$domains    = get_terms( [ 'taxonomy' => 'log_domain', 'hide_empty' => false ] );
+$team  = new WP_Query( [ 'post_type' => 'log_person', 'posts_per_page' => -1, 'orderby' => 'menu_order title', 'order' => 'ASC', 'no_found_rows' => true ] );
+$units = log_ordered_terms( 'log_unit', true );
 
 $values = log_rows( 'values', [
 	[ 'name' => 'אחריות אישית', 'line' => 'כל אחת ואחד אצלנו מחזיקים את הפרויקט שלהם מקצה לקצה.' ],
@@ -43,32 +32,21 @@ $galleries = [
 	</div>
 </section>
 
-<?php foreach ( [ [ $owners, log_text( 'owners_label', 'הבעלים' ), 'owners' ], [ $management, log_text( 'management_label', 'הנהלה' ), 'management' ] ] as [ $q, $label, $key ] ) : if ( ! $q->have_posts() ) { continue; } ?>
-	<section class="section section--<?php echo $key; ?>" data-section="<?php echo $key; ?>">
-		<div class="container">
-			<p class="eyebrow"><?php echo esc_html( $label ); ?></p>
-			<div class="people people--lg">
-				<?php while ( $q->have_posts() ) : $q->the_post(); get_template_part( 'template-parts/card-person', null, [ 'size' => 'lg' ] ); endwhile; wp_reset_postdata(); ?>
-			</div>
-		</div>
-	</section>
-<?php endforeach; ?>
-
-<section class="section section--team" data-section="team">
+<section class="section section--team" id="team" data-section="team">
 	<div class="container">
 		<h2 class="section__title"><?php echo esc_html( log_text( 'team_title', 'כל הצוות' ) ); ?></h2>
 		<?php if ( $team->have_posts() ) : ?>
-			<?php if ( $domains && ! is_wp_error( $domains ) ) : ?>
-				<div class="filters filters--chips" role="group" aria-label="סינון לפי תחום">
-					<button type="button" class="chip is-active" data-filter="" aria-pressed="true">הכל</button>
-					<?php foreach ( $domains as $d ) : ?><button type="button" class="chip" data-filter="<?php echo esc_attr( $d->slug ); ?>" aria-pressed="false"><?php echo esc_html( $d->name ); ?></button><?php endforeach; ?>
+			<?php if ( count( $units ) > 1 ) : ?>
+				<div class="filters filters--chips" role="group" aria-label="סינון לפי יחידה">
+					<button type="button" class="chip is-active" data-filter="" aria-pressed="true">כולם</button>
+					<?php foreach ( $units as $u ) : ?><button type="button" class="chip" data-filter="<?php echo esc_attr( $u->slug ); ?>" aria-pressed="false"><?php echo esc_html( $u->name ); ?></button><?php endforeach; ?>
 				</div>
 			<?php endif; ?>
 			<div class="people" id="team-grid">
 				<?php while ( $team->have_posts() ) : $team->the_post(); get_template_part( 'template-parts/card-person' ); endwhile; wp_reset_postdata(); ?>
 			</div>
 		<?php else : ?>
-			<p class="placeholder">כאן תופיע רשת הצוות: תמונה, שם, תפקיד, תחום ומשפט אישי. מתמלא מ"צוות" במערכת הניהול.</p>
+			<p class="placeholder">כאן תופיע רשת הצוות: תמונה, שם ותפקיד, לפי יחידות. מתמלא מ"צוות" במערכת הניהול.</p>
 		<?php endif; ?>
 	</div>
 </section>

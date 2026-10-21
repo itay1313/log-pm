@@ -55,7 +55,7 @@ if (counters.length && !reduced && 'IntersectionObserver' in window) {
   counters.forEach((c) => io.observe(c));
 }
 
-// Team chips: filter people by domain
+// Team tabs: filter people by organisational unit
 const teamGrid = document.getElementById('team-grid');
 if (teamGrid) {
   const chips = document.querySelectorAll('.filters--chips .chip');
@@ -63,7 +63,7 @@ if (teamGrid) {
     chip.addEventListener('click', () => {
       chips.forEach((c) => { c.classList.toggle('is-active', c === chip); c.setAttribute('aria-pressed', String(c === chip)); });
       const f = chip.dataset.filter;
-      for (const card of teamGrid.children) card.hidden = !!f && card.dataset.domain !== f;
+      for (const card of teamGrid.children) card.hidden = !!f && !(card.dataset.unit || '').split(' ').includes(f);
     })
   );
 }

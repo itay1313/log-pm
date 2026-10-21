@@ -15,6 +15,7 @@ while ( have_posts() ) : the_post();
 		'גודל הצוות'    => log_field( 'team_size', $jid ),
 		'כפיפות'        => log_field( 'reports_to', $jid ),
 		'תחילת עבודה'   => log_field( 'start_date', $jid ),
+		'מספר משרה'     => log_field( 'job_number', $jid ),
 	] );
 	$blocks = [
 		'על התפקיד'   => [ 'about', false ],
@@ -23,7 +24,6 @@ while ( have_posts() ) : the_post();
 		'דרישות'      => [ 'requirements', true ],
 		'יתרון'       => [ 'advantage', true ],
 		'מה מחכה לכם' => [ 'whats_waiting', false ],
-		'איך מתקבלים' => [ 'how_to_apply', false ],
 	];
 	?>
 	<article class="job">

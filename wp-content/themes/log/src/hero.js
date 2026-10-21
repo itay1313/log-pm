@@ -8,6 +8,7 @@
  *  - bottom bar: compass (reset), scale, "all projects" drawer with domain chips
  *  - city names at the national level; the hero copy steps aside once you start exploring
  *  - wheel zooms the map only after a click on it, so the page keeps scrolling
+ *  - /?p={slug} opens on that project with its card locked open; locking a card writes the same address
  */
 import { createScene } from './hero/scene.js';
 import { leave } from './hero/transition.js';
@@ -18,7 +19,6 @@ const DOMAIN_LABEL = {
   'urban-renewal': 'התחדשות עירונית', 'master-plans': 'תכניות מתאר', 'detailed-plans': 'תכניות מפורטות',
   'national-plans': 'תכניות לאומיות', 'open-spaces': 'שטחים פתוחים', 'rural-arab': 'המגזר הכפרי והחברה הערבית',
 };
-const STAGE_LABEL = { 1: 'איתור והיתכנות', 2: 'תכנון וקידום סטטוטורי', 3: 'ליווי ואישור', 4: 'בקרה ומעקב' };
 const fmt = new Intl.NumberFormat('he-IL');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const CLUSTER_PX = 46;
@@ -71,10 +71,10 @@ export async function initHero(hero) {
       pinsEl.appendChild(b);
       b.addEventListener('mouseenter', () => b._item && openCard(b._item, b));
       b.addEventListener('focus', () => b._item && openCard(b._item, b));
-      b.addEventListener('mouseleave', () => scheduleClose());
+      b.addEventListener('mouseleave', () => scheduleCloseUnlessLocked());
       b.addEventListener('click', () => {
         if (b._cluster) return scene.fit(b._cluster.map((it) => [it.x, it.z]));
-        if (b._item) { scene.flyTo(b._item.x, b._item.z); openCard(b._item, b); }
+        if (b._item) { scene.flyTo(b._item.x, b._item.z); openCard(b._item, b); lock(b._item); }
       });
       pool[i] = b;
     }
@@ -87,38 +87,51 @@ export async function initHero(hero) {
     if (cardItem?.id === item.id) return;
     cardItem = item; cardPin = pin;
     const p = item.p;
-    const st = Math.min(4, Math.max(1, Number(p.stage) || 1));
+    const st = p.completed ? 4 : Math.min(4, Math.max(1, Number(p.stageNumber) || 1));
+    const place = [...new Set([p.city, p.authorityName].filter(Boolean))].join(' · ');
     const facts = [
       p.units ? [fmt.format(p.units), 'יח"ד'] : null,
       p.dunam ? [fmt.format(p.dunam), 'דונם'] : null,
       p.year ? [p.year, 'שנת תכנית'] : null,
     ].filter(Boolean).slice(0, 2);
-    const domain = DOMAIN_LABEL[p.domain];
+    const domain = p.domainName || DOMAIN_LABEL[p.domain];
     card.innerHTML = `
       <div class="hero-card__media${p.image ? '' : ' is-art'}">
         ${p.image ? `<img src="${esc(p.image)}" alt="" loading="eager" decoding="async">` : illustration(p)}
         ${domain ? `<span class="hero-card__tag">${esc(domain)}</span>` : ''}
       </div>
       <div class="hero-card__body">
-        ${p.city ? `<p class="hero-card__meta">${esc(p.city)}</p>` : ''}
+        ${place ? `<p class="hero-card__meta">${esc(place)}</p>` : ''}
         <h3 class="hero-card__title">${esc(p.title)}</h3>
         ${p.excerpt ? `<p class="hero-card__text">${esc(p.excerpt)}</p>` : ''}
         ${facts.length ? `<dl class="hero-card__facts">${facts.map(([v, k]) => `<div><dd>${esc(v)}</dd><dt>${esc(k)}</dt></div>`).join('')}</dl>` : ''}
         <div class="hero-card__stage" style="--st:${st}">
           <span class="hero-card__bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <span>שלב ${st} מתוך 4 · ${esc(STAGE_LABEL[st])}</span>
+          <span>${esc(p.stageLabel)}</span>
         </div>
       </div>
-      <a class="hero-card__go" href="${esc(p.url)}"><span>לסיפור הפרויקט</span><i aria-hidden="true">←</i></a>`;
+      ${p.page ? `<a class="hero-card__go" href="${esc(p.url)}"><span>לעמוד הפרויקט</span><i aria-hidden="true">←</i></a>` : ''}`;
     card.hidden = false;
     card.classList.remove('is-in');
     requestAnimationFrame(() => card.classList.add('is-in'));
     placeCard();
   }
   function scheduleClose() { clearTimeout(closeTimer); closeTimer = setTimeout(closeCard, 320); }
-  function closeCard() { clearTimeout(closeTimer); card.hidden = true; card.classList.remove('is-in'); cardItem = null; cardPin = null; }
+  function closeCard() { clearTimeout(closeTimer); card.hidden = true; card.classList.remove('is-in'); cardItem = null; cardPin = null; lock(null); }
+
+  // A locked card (clicked, or opened from /?p=) lives in the address so it can be shared and returned to.
+  let locked = null;
+  function lock(item) {
+    if (item === locked) return;
+    locked = item;
+    const q = new URLSearchParams(location.search);
+    if (item) q.set('p', decodeURIComponent(item.p.slug)); else q.delete('p');
+    const qs = q.toString();
+    history.replaceState(history.state, '', location.pathname + (qs ? `?${qs}` : '') + location.hash);
+  }
+  function scheduleCloseUnlessLocked() { if (!locked) scheduleClose(); }
   card.addEventListener('mouseenter', () => clearTimeout(closeTimer));
-  card.addEventListener('mouseleave', scheduleClose);
+  card.addEventListener('mouseleave', scheduleCloseUnlessLocked);
   card.addEventListener('click', (e) => {
     const go = e.target.closest('.hero-card__go');
     if (!go || !cardItem) return;
@@ -272,7 +285,7 @@ export async function initHero(hero) {
       const it = all.find((x) => x.id === Number(b.dataset.id));
       drawer.hidden = true;
       allBtn.setAttribute('aria-expanded', 'false');
-      scene.flyTo(it.x, it.z).then(() => { const pin = pool.find((p) => p._item?.id === it.id); if (pin) openCard(it, pin); });
+      flyAndLock(it);
     }
   });
   hero.addEventListener('keydown', (e) => {
@@ -285,10 +298,18 @@ export async function initHero(hero) {
   new IntersectionObserver(([e]) => (e.isIntersecting ? scene.resume() : scene.pause())).observe(hero);
   document.addEventListener('visibilitychange', () => (document.hidden ? scene.pause() : scene.resume()));
 
+  function flyAndLock(it) {
+    scene.flyTo(it.x, it.z).then(() => { const pin = pool.find((p) => p._item?.id === it.id); if (pin) { openCard(it, pin); lock(it); } });
+  }
+
   hero.classList.add('is-intro');
   await scene.intro();
   hero.classList.remove('is-intro');
   window.LOGhero = scene;
+
+  const wanted = new URLSearchParams(location.search).get('p');
+  const target = wanted && all.find((it) => decodeURIComponent(it.p.slug) === wanted);
+  if (target) flyAndLock(target);
 }
 
 function webgl() {
