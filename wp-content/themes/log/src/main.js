@@ -118,6 +118,18 @@ if (applyDialog?.showModal) {
   if (location.hash === '#apply') open();
 }
 
+// Contact: a topic on the side sign picks it in the form and moves on to the first field.
+for (const b of document.querySelectorAll('[data-topic]')) {
+  b.addEventListener('click', () => {
+    const select = document.querySelector('.form--contact select[name=topic]');
+    if (!select) return;
+    select.value = b.dataset.topic;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    document.querySelectorAll('[data-topic]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelector('.form--contact input[name=name]')?.focus();
+  });
+}
+
 // Copy link buttons (job, knowledge item)
 for (const btn of document.querySelectorAll('[data-copy-link]')) {
   btn.addEventListener('click', async () => {

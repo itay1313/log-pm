@@ -55,6 +55,16 @@ $privacy = get_privacy_policy_url();
 	</div>
 
 	<aside class="contact__side">
+		<?php if ( $topics ) : // where the message goes: each topic routes to its own inbox; choosing one sets the form ?>
+			<div class="contact__topics">
+				<p class="contact__topics-title">לאן הפנייה?</p>
+				<ul>
+					<?php foreach ( $topics as $key => [ $label ] ) : ?>
+						<li><button type="button" data-topic="<?php echo esc_attr( $key ); ?>"><span><?php echo esc_html( $label ); ?></span><i class="arrow" aria-hidden="true"></i></button></li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+		<?php endif; ?>
 		<?php foreach ( log_offices() as $office ) { get_template_part( 'template-parts/office', null, $office ); } ?>
 		<ul class="social">
 			<?php foreach ( [ 'linkedin' => 'LinkedIn', 'instagram' => 'Instagram' ] as $key => $label ) :
