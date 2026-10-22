@@ -1,7 +1,7 @@
 <?php
 /**
  * Home (spec v6 §7). Blocks in order: projects map, who we are, practice areas, how we work,
- * the control company, clients and partners. The twin buttons sit right after the map and stay stuck.
+ * the control company, clients and partners. The twin buttons hang in the header (bottom bar on phones).
  * Every text is an ACF field with fallback copy until LOG's texts file arrives.
  * The 3D map mounts into .hero-stage and is loaded lazily by main.js, never on other pages.
  */
@@ -15,39 +15,45 @@ $process = log_rows( 'process', [
 ] );
 $projects_url = get_post_type_archive_link( 'log_project' );
 ?>
-<section class="hero sheet--night" id="hero" data-section="map" aria-label="מפת הפרויקטים">
-	<div class="hero-stage" role="region" aria-label="מפת הפרויקטים של לוג בתלת-ממד. גרירה מזיזה, Ctrl וגלילה מקרבים. כל סיכה היא כפתור עם שם הפרויקט; Enter פותח חלונית ו-Esc סוגר."></div>
+<section class="hero" id="hero" data-section="map" aria-labelledby="hero-title">
+	<div class="hero-stage" role="region" aria-label="מפת הפרויקטים של לוג בתלת-ממד. גרירה מזיזה, Ctrl וגלילה מקרבים. כל סימן הוא כפתור עם שם הפרויקט; Enter פותח חלונית ו-Esc סוגר."></div>
 	<div class="hero-labels" aria-hidden="true"></div>
-	<div class="hero-frame" aria-hidden="true">
-		<span class="hero-frame__coord">מרכז המבט · רשת ישראל<b data-coord>—</b></span>
-	</div>
 	<div class="hero-pins"></div>
 	<div class="hero-edges"></div>
 	<div class="hero-card" role="dialog" aria-live="polite" hidden></div>
 	<p class="hero__loading" role="status">טוענים את המפה…</p>
 
-	<form class="hero-tools cartouche" role="search" aria-label="חיפוש וסינון במפה" action="<?php echo esc_url( $projects_url ); ?>">
-		<div class="cartouche__head"><b>גיליון 00 · מפת הפרויקטים</b><span class="map-key"><span class="map-key__pin">פרויקט</span><span class="map-key__plan">גבול תכנית</span></span><span data-scale-text>ישראל</span></div>
-		<h1 class="hero__title"><?php echo esc_html( log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' ) ); ?></h1>
+	<div class="hero-lead">
+		<h1 class="hero__title" id="hero-title"><?php
+			$title = log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' );
+			// The last word is the destination: it prints in works orange.
+			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' <em>' . esc_html( $m[2] ) . '</em>' : esc_html( $title );
+		?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
-		<div class="hero-search">
-			<label class="screen-reader-text" for="hero-q">חיפוש פרויקט, עיר או רשות</label>
-			<input type="search" id="hero-q" name="q" placeholder="חיפוש פרויקט, עיר או רשות" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="hero-suggest" aria-autocomplete="list">
-			<ul class="hero-suggest" id="hero-suggest" role="listbox" hidden></ul>
-		</div>
-		<button type="button" class="hero-filter-toggle" aria-expanded="false" aria-controls="hero-filters">סינון לפי תחום, שלב ורשות</button>
-		<div class="hero-filters" id="hero-filters">
-			<?php get_template_part( 'template-parts/filter-selects' ); ?>
-			<button type="button" class="hero-filters__done">הצגת התוצאות</button>
-		</div>
-		<dl class="hero__stats" aria-live="polite">
-			<?php foreach ( [ 'projects' => 'פרויקטים', 'units' => 'יחידות דיור', 'sqm' => 'סך מ"ר' ] as $key => $label ) : ?>
-				<div data-stat="<?php echo esc_attr( $key ); ?>"<?php echo $stats[ $key ] ? '' : ' hidden'; ?>><dt><?php echo esc_html( $label ); ?></dt><dd><?php echo log_number( $stats[ $key ] ); ?></dd></div>
-			<?php endforeach; ?>
-		</dl>
-		<p class="hero-empty" hidden>לא נמצאו פרויקטים. <button type="button" class="hero-clear">ניקוי סינון</button></p>
-		<a class="hero-all-link" href="<?php echo esc_url( $projects_url ); ?>">לכל הפרויקטים</a>
-	</form>
+
+		<form class="hero-tools" role="search" aria-label="חיפוש וסינון במפה" action="<?php echo esc_url( $projects_url ); ?>">
+			<div class="hero-search">
+				<label class="hero-search__label" for="hero-q">לאן?</label>
+				<input type="search" id="hero-q" name="q" placeholder="פרויקט, עיר או רשות" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="hero-suggest" aria-autocomplete="list">
+				<button type="submit" class="hero-search__go" aria-label="חיפוש במפה"><i class="arrow" aria-hidden="true"></i></button>
+				<ul class="hero-suggest" id="hero-suggest" role="listbox" hidden></ul>
+			</div>
+			<button type="button" class="hero-filter-toggle plate" aria-expanded="false" aria-controls="hero-filters">סינון<span class="hero-filter-toggle__more"> לפי תחום, שלב ורשות</span></button>
+			<div class="hero-filters" id="hero-filters">
+				<?php get_template_part( 'template-parts/filter-selects' ); ?>
+				<button type="button" class="hero-filters__done">הצגת התוצאות</button>
+			</div>
+			<div class="hero-dist">
+				<dl class="hero__stats" aria-live="polite">
+					<?php foreach ( [ 'projects' => 'פרויקטים', 'units' => 'יחידות דיור', 'sqm' => 'סך מ"ר' ] as $key => $label ) : ?>
+						<div data-stat="<?php echo esc_attr( $key ); ?>"<?php echo $stats[ $key ] ? '' : ' hidden'; ?>><dt><?php echo esc_html( $label ); ?></dt><dd><?php echo log_number( $stats[ $key ] ); ?></dd></div>
+					<?php endforeach; ?>
+				</dl>
+				<p class="hero-empty" hidden>לא נמצאו פרויקטים. <button type="button" class="hero-clear">ניקוי סינון</button></p>
+				<a class="hero-all-link" href="<?php echo esc_url( $projects_url ); ?>">לכל הפרויקטים<i class="arrow" aria-hidden="true"></i></a>
+			</div>
+		</form>
+	</div>
 
 	<div class="hero-bar">
 		<button type="button" class="hero-list-btn" data-list="national" aria-expanded="false" aria-controls="hero-drawer">פריסה ארצית <span></span></button>
@@ -62,8 +68,6 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 	<div class="hero-drawer" id="hero-drawer" hidden></div>
 	<p class="hero__hint" aria-hidden="true">כדי להתקרב: Ctrl וגלילה</p>
 </section>
-
-<?php get_template_part( 'template-parts/twin-nav' ); ?>
 
 <section class="section section--who" data-section="who">
 	<div class="container">

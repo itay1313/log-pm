@@ -30,9 +30,11 @@ const C = {
   plan: '#f7931d',
 };
 const NATIONAL = { tx: 70000, tz: -20000, radius: 430000, phi: 0.62, theta: -0.18 };
-// Home: Gush Dan, tilted, the city standing. Target nudged east so the copy (right) has room.
+// Home: Gush Dan from the north, looking south. The sea fills the start (right) side, where the
+// headline sits; the orange city stands on the end side.
 const [HX, HZ] = toLocal(34.795, 32.05);
-const HOME = { tx: HX + 1700, tz: HZ, radius: 9800, phi: 1.07, theta: -0.42 };
+const HOME = { tx: HX - 4400, tz: HZ + 300, radius: 11500, phi: 0.98, theta: Math.PI - 0.47 };
+const SWAY = 0.1; // the resting camera breathes this far and back instead of orbiting the sea away
 const MID_AT = 9000; // below this the full-detail z14 city takes over from the z13 one
 const REGIONAL_AT = 170000;
 const DETAIL_AT = 42000;
@@ -227,10 +229,18 @@ export async function createScene(container, { reduced = false } = {}) {
     const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
     Object.assign(view, { tx: controls.target.x, tz: controls.target.z, radius: s.radius, phi: s.phi, theta: s.theta });
   }
-  let tween = null;
+  let tween = null, sway = null;
+  /** The resting camera sways slowly around home, so the sea stays under the headline. */
+  function startSway() {
+    if (reduced) return;
+    readView();
+    sway?.kill();
+    sway = gsap.to(view, { theta: view.theta + SWAY, duration: 18, ease: 'sine.inOut', yoyo: true, repeat: -1, onUpdate: applyView });
+  }
   function moveTo(to, { duration = 2.2, ease = 'power3.inOut' } = {}) {
     readView();
     tween?.kill();
+    sway?.kill();
     controls.enabled = false;
     controls.autoRotate = false;
     // shortest way round
@@ -340,7 +350,7 @@ export async function createScene(container, { reduced = false } = {}) {
       gsap.to(revealUniforms.uReveal, { value: 750000, duration: 3.4, ease: 'power2.inOut', delay: 0.1 });
       await moveTo({ ...NATIONAL, radius: 520000 }, { duration: 2.2, ease: 'power2.inOut' });
       await moveTo(HOME, { duration: 4.2, ease: 'power3.inOut' });
-      controls.autoRotate = true;
+      startSway();
     },
 
     moveTo,
@@ -363,7 +373,7 @@ export async function createScene(container, { reduced = false } = {}) {
       return moveTo({ tx: (minX + maxX) / 2, tz: (minZ + maxZ) / 2, radius: span * 2.2, phi: 0.8 }, { duration });
     },
 
-    home() { return moveTo(HOME, { duration: 2.4 }); },
+    home() { return moveTo(HOME, { duration: 2.4 }).then(startSway); },
 
     /** Zoom buttons: scale the distance to the target, inside the controls' limits. Preloads detail when close. */
     zoomBy(factor) {
@@ -379,7 +389,7 @@ export async function createScene(container, { reduced = false } = {}) {
 
     country() { return moveTo(NATIONAL, { duration: 2.6 }); },
 
-    stopDrift() { controls.autoRotate = false; },
+    stopDrift() { controls.autoRotate = false; sway?.kill(); },
 
     dispose() {
       cancelAnimationFrame(raf);
