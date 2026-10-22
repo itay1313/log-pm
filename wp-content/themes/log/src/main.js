@@ -75,7 +75,7 @@ if (menu?.showModal && menuBtn) {
 // band to the footer. It stands for everyone; motion.js draws it with the scroll when motion is allowed.
 {
   const main = document.querySelector('.site-main');
-  const first = document.getElementById('hero') || main?.querySelector('.page-header, .about-hero, .careers-hero, .control-hero, .project__hero');
+  const first = document.getElementById('drive') || document.getElementById('hero') || main?.querySelector('.page-header, .about-hero, .careers-hero, .control-hero, .project__hero');
   if (main && main.offsetHeight > innerHeight * 1.5) {
     const line = document.createElement('div');
     line.className = 'lane-line';
@@ -230,7 +230,7 @@ const hero = document.getElementById('hero');
 if (hero) {
   // While the map fills the screen, phones park the lane bar (the search sits on that edge); off screen the map stops drawing.
   new IntersectionObserver(([e]) => {
-    document.body.classList.toggle('at-map', e.intersectionRatio > 0.35);
+    document.body.classList.toggle('at-map', e.intersectionRatio > 0.35 && !hero.classList.contains('is-driving'));
     if (document.body.classList.contains('menu-open')) return;
     if (e.isIntersecting) window.LOGhero?.resume(); else window.LOGhero?.pause();
   }, { threshold: [0, 0.35, 0.6] }).observe(hero);

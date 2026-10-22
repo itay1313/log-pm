@@ -100,20 +100,6 @@ body.page-template-page-control .stage { box-shadow: inset 0 0 0 3px var(--plate
 .section--who .section__prose { font-size: clamp(1.1875rem, 1.6vw, 1.375rem); line-height: 1.6; }
 @media (max-width: 900px) { .section--who .container { grid-template-columns: 1fr; row-gap: 3rem; } }
 
-/* The orientation board: Israel's grid on a navy plate, every LOG project a works-orange point */
-.sheet-index { margin: 0; justify-self: center; padding: clamp(20px, 2.4vw, 32px) clamp(20px, 2.4vw, 32px) 1.25rem; border-radius: 14px; background: var(--plate); color: var(--legend); box-shadow: inset 0 0 0 7px var(--plate), inset 0 0 0 9px var(--legend); }
-.sheet-index__link { display: block; color: inherit; text-decoration: none; }
-.sheet-index__svg { display: block; height: min(64vh, 600px); width: auto; max-width: 100%; overflow: visible; font-family: var(--font-display); }
-@media (max-width: 900px) { .sheet-index { justify-self: start; } .sheet-index__svg { height: 420px; } }
-.sheet-index__grid line { stroke: var(--plate-line); stroke-width: .35; }
-.sheet-index__frame { fill: none; stroke: var(--legend-muted); stroke-width: .6; }
-.sheet-index__labels text { font-size: 5px; fill: var(--legend-muted); font-variant-numeric: tabular-nums; }
-.sheet-index__city circle { fill: var(--legend); }
-.sheet-index__city text { font-size: 6.5px; font-weight: 700; fill: var(--legend); text-anchor: start; direction: rtl; }
-.sheet-index__dots circle { fill: var(--works); stroke: var(--plate); stroke-width: .6; transition: r .4s var(--ease-out); }
-.sheet-index__link:hover .sheet-index__dots circle { r: 2.6; }
-.sheet-index figcaption { margin-top: 1rem; font: 500 .9375rem var(--font-display); color: var(--legend-muted); }
-
 /* Destination rows: practice areas, jobs. Hovering lights the row as a sign. */
 .domains, .jobs { margin-top: 2.5rem; border-top: 3px solid var(--ink); }
 .domain, .jobs__item { border-bottom: 2px solid var(--rule); }

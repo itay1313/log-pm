@@ -217,6 +217,45 @@ export async function createScene(container, { reduced = false } = {}) {
     }
   }
 
+  // Beacons: one point per project for the drive's national chapter, lit in turn as uLit runs 0 → 1.
+  const beaconMat = new THREE.ShaderMaterial({
+    transparent: true, depthTest: false, depthWrite: false,
+    uniforms: { uLit: { value: 0 }, uSize: { value: 11 }, uWorks: { value: new THREE.Color(C.plan) }, uPlate: { value: new THREE.Color(C.fog) } },
+    vertexShader: /* glsl */ `
+      attribute float aOrder;
+      uniform float uLit, uSize;
+      varying float vOn;
+      void main() {
+        vOn = smoothstep(aOrder - 0.05, aOrder, uLit);
+        float pop = 1.0 + 1.6 * vOn * (1.0 - vOn); // a beat bigger while it lights
+        gl_PointSize = uSize * pop;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uWorks, uPlate;
+      varying float vOn;
+      void main() {
+        vec2 c = abs(gl_PointCoord - 0.5);
+        float d = max(c.x, c.y);
+        if (d > 0.5 || vOn < 0.01) discard;
+        // The marker in miniature: works orange at the heart, a navy keyline round it.
+        gl_FragColor = vec4(d > 0.32 ? uPlate : uWorks, vOn);
+      }`,
+  });
+  const beacons = new THREE.Points(new THREE.BufferGeometry(), beaconMat);
+  beacons.renderOrder = 10;
+  beacons.frustumCulled = false;
+  beacons.visible = false;
+  scene.add(beacons);
+  /** Points in local x/z, lit in order of distance from (ox, oz): a ripple out from where the camera stood. */
+  function setBeacons(points, ox, oz) {
+    const ranked = points.map(([x, z]) => [x, z, Math.hypot(x - ox, z - oz)]).sort((a, b) => a[2] - b[2]);
+    const pos = new Float32Array(ranked.length * 3), order = new Float32Array(ranked.length);
+    ranked.forEach(([x, z], i) => { pos.set([x, 20, z], i * 3); order[i] = 0.05 + 0.95 * (i / Math.max(1, ranked.length - 1)); });
+    beacons.geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    beacons.geometry.setAttribute('aOrder', new THREE.BufferAttribute(order, 1));
+  }
+
   // Camera ------------------------------------------------------------------
   const view = { ...NATIONAL };
   function applyView() {
@@ -229,15 +268,18 @@ export async function createScene(container, { reduced = false } = {}) {
     const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
     Object.assign(view, { tx: controls.target.x, tz: controls.target.z, radius: s.radius, phi: s.phi, theta: s.theta });
   }
-  let tween = null, sway = null;
+  let tween = null, sway = null, settle = null;
+  // While the page's scroll drives the camera (home/drive.js), moves and the sway stand aside.
+  let held = false, heldSwaying = false, introDone = false;
   /** The resting camera sways slowly around home, so the sea stays under the headline. */
   function startSway() {
-    if (reduced) return;
+    if (reduced || held) return;
     readView();
     sway?.kill();
     sway = gsap.to(view, { theta: view.theta + SWAY, duration: 18, ease: 'sine.inOut', yoyo: true, repeat: -1, onUpdate: applyView });
   }
   function moveTo(to, { duration = 2.2, ease = 'power3.inOut' } = {}) {
+    if (held) return Promise.resolve();
     readView();
     tween?.kill();
     sway?.kill();
@@ -249,8 +291,11 @@ export async function createScene(container, { reduced = false } = {}) {
       d = Math.atan2(Math.sin(d), Math.cos(d));
       to = { ...to, theta: view.theta + d };
     }
+    // A move cut short by another never settles (the opening must not carry on over a visitor's flight);
+    // only hold() settles the one in flight.
     return new Promise((resolve) => {
-      tween = gsap.to(view, { ...to, duration: reduced ? 0 : duration, ease, onUpdate: applyView, onComplete: () => { controls.enabled = true; controls.update(); resolve(); } });
+      settle = resolve;
+      tween = gsap.to(view, { ...to, duration: reduced ? 0 : duration, ease, onUpdate: applyView, onComplete: () => { settle = null; controls.enabled = true; controls.update(); resolve(); } });
     });
   }
 
@@ -262,7 +307,7 @@ export async function createScene(container, { reduced = false } = {}) {
   function frame(now) {
     raf = requestAnimationFrame(frame);
     if (!running) return;
-    if (!tween?.isActive()) controls.update();
+    if (!held && !tween?.isActive()) controls.update();
     const r = camera.position.distanceTo(controls.target);
     camera.near = Math.max(1, r * 0.004);
     camera.far = r * 40;
@@ -303,6 +348,7 @@ export async function createScene(container, { reduced = false } = {}) {
     composer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    beaconMat.uniforms.uSize.value = (w < 700 ? 8 : 11) * renderer.getPixelRatio();
   }
   const ro = new ResizeObserver(resize);
   ro.observe(container);
@@ -342,7 +388,7 @@ export async function createScene(container, { reduced = false } = {}) {
       const [hlng, hlat] = toLngLat(HOME.tx, HOME.tz);
       ensureAround(hlng, hlat, 'regional');
       ensureAround(hlng, hlat, 'mid');
-      if (reduced) { Object.assign(view, HOME); applyView(); return; }
+      if (reduced) { Object.assign(view, HOME); applyView(); introDone = true; return; }
       // From high above the whole country, the map drawing itself in, down into Tel Aviv.
       Object.assign(view, { ...NATIONAL, radius: 1300000, phi: 0.02, theta: NATIONAL.theta - 1.1 });
       applyView();
@@ -350,6 +396,7 @@ export async function createScene(container, { reduced = false } = {}) {
       gsap.to(revealUniforms.uReveal, { value: 750000, duration: 3.4, ease: 'power2.inOut', delay: 0.1 });
       await moveTo({ ...NATIONAL, radius: 520000 }, { duration: 2.2, ease: 'power2.inOut' });
       await moveTo(HOME, { duration: 4.2, ease: 'power3.inOut' });
+      if (!held) introDone = true;
       startSway();
     },
 
@@ -388,6 +435,34 @@ export async function createScene(container, { reduced = false } = {}) {
     },
 
     country() { return moveTo(NATIONAL, { duration: 2.6 }); },
+
+    /** The page's scroll takes the camera: any move stops where it is, and the view it left is returned. */
+    hold() {
+      if (held) return { ...view };
+      readView();
+      heldSwaying = !!sway?.isActive();
+      tween?.kill();
+      sway?.kill();
+      held = true;
+      settle?.();
+      settle = null;
+      controls.enabled = false;
+      return { ...view };
+    },
+    /** Set the view outright (the scroll calls this every frame it moves). */
+    setView(v) { Object.assign(view, v); applyView(); },
+    /** Hand the camera back. An interrupted opening finishes its flight home; a resting camera sways again. */
+    release() {
+      if (!held) return;
+      held = false;
+      controls.enabled = true;
+      controls.update();
+      if (!introDone) { introDone = true; moveTo(HOME, { duration: 2.4 }).then(startSway); } else if (heldSwaying) startSway();
+    },
+    setBeacons,
+    /** 0 → 1 lights the beacons in turn; 0 hides them. */
+    lightBeacons(v) { beaconMat.uniforms.uLit.value = v; beacons.visible = v > 0; },
+    homeView: () => ({ ...HOME }),
 
     stopDrift() { controls.autoRotate = false; sway?.kill(); },
 

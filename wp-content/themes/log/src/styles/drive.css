@@ -1,0 +1,46 @@
+/* ------------------------------------------------------------------ home: the drive */
+
+/*
+ * The map stays pinned behind the first chapter and the scroll moves its camera (src/home/drive.js).
+ * Everything here starts as an ordinary night section under the map; html.drive-on, set once the 3D map is up
+ * and motion is allowed, turns the map sticky and lays the chapter over it as a sticky legend on the sea.
+ */
+.drive { position: relative; }
+
+/* The figures: big tabular numbers under an orange 3px rule, no plate. */
+.drive-figures { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin: 0; align-self: end; }
+.drive-figures > div { display: flex; flex-direction: column-reverse; gap: .4rem; padding-top: .85rem; border-top: 3px solid var(--works); }
+.drive-figures dt { font: 500 .9375rem var(--font-display); color: var(--legend-muted); }
+.drive-figures dd { margin: 0; font: 700 clamp(3.25rem, 6.4vw, 6.25rem)/.9 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+html.drive-on .hero { position: sticky; top: 0; }
+html.drive-on .drive-country { --drive-len: 300vh; height: var(--drive-len); padding: 0; z-index: 6; background: transparent; pointer-events: none; }
+html.drive-on .drive-country a { pointer-events: auto; }
+html.drive-on .drive-country__inner {
+  position: sticky; top: 0; height: 100vh; height: 100svh; align-items: end; align-content: end;
+  padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(28px, 8vh, 96px);
+}
+/* A scrim on the start side and the bottom keeps the legend readable over the country; no panel. */
+html.drive-on .drive-country__inner::before {
+  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; opacity: var(--scrim, 0);
+  background:
+    linear-gradient(270deg, rgba(11,20,30,.86) 0%, rgba(11,20,30,.6) 34%, rgba(11,20,30,0) 66%),
+    linear-gradient(0deg, rgba(11,20,30,.82) 0%, rgba(11,20,30,0) 46%);
+}
+html.drive-on .drive-country .section__title { text-shadow: 0 2px 30px rgba(11,20,30,.5); }
+html.drive-on .drive-figures dd { text-shadow: 0 2px 24px rgba(11,20,30,.6); }
+
+/* While the scroll holds the camera, the map's own tools step back (drive.js also makes them inert). */
+.hero.is-driving :is(.hero-pins, .hero-edges, .hero-card, .hero-drawer, .hero__hint) { opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+.hero.is-driving :is(.hero-lead, .hero-bar) { pointer-events: none; }
+
+@media (max-width: 900px) {
+  .drive-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-row: 1; align-self: start; }
+  html.drive-on .drive-country { --drive-len: 240vh; }
+  html.drive-on .drive-country__inner { align-content: space-between; row-gap: 0; padding-top: calc(var(--header-h) + 1.25rem); padding-bottom: calc(58px + 1.25rem + env(safe-area-inset-bottom)); } /* clear of the lane bar */
+  html.drive-on .drive-country .section__title { font-size: clamp(2.5rem, 12vw, 3.5rem); }
+  html.drive-on .drive-country .section__prose p { margin-bottom: .6em; }
+  html.drive-on .drive-figures dd { font-size: clamp(2.5rem, 12vw, 3.5rem); }
+  html.drive-on .drive-country .section__prose { font-size: 1.0625rem; }
+  html.drive-on .drive-country__inner::before { background: linear-gradient(0deg, rgba(11,20,30,.9) 0%, rgba(11,20,30,.55) 55%, rgba(11,20,30,.75) 100%); }
+}

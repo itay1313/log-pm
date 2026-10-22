@@ -15,6 +15,11 @@ $process = log_rows( 'process', [
 ] );
 $projects_url = get_post_type_archive_link( 'log_project' );
 ?>
+<?php
+// The drive: the map stays pinned behind the first chapter and the scroll moves its camera (src/home/drive.js).
+// Without WebGL, or with reduced motion, the chapter is an ordinary night section under the map.
+?>
+<div class="drive" id="drive">
 <section class="hero" id="hero" data-section="map" aria-labelledby="hero-title">
 	<div class="hero-stage" role="region" aria-label="מפת הפרויקטים של לוג בתלת-ממד. גרירה מזיזה, Ctrl וגלילה מקרבים. כל סימן הוא כפתור עם שם הפרויקט; Enter פותח חלונית ו-Esc סוגר."></div>
 	<div class="hero-labels" aria-hidden="true"></div>
@@ -70,10 +75,10 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 	<p class="hero__hint" aria-hidden="true">כדי להתקרב: Ctrl וגלילה</p>
 </section>
 
-<section class="section section--who" data-section="who">
-	<div class="container">
+<section class="section section--who section--night drive-country" data-section="who" aria-labelledby="who-title">
+	<div class="drive-country__inner container">
 		<div class="who__text">
-			<h2 class="section__title"><?php echo log_route_shield( 3 ); ?><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
+			<h2 class="section__title" id="who-title"><?php echo log_route_shield( 3 ); ?><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
 			<div class="section__prose">
 				<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
 			</div>
@@ -83,12 +88,14 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 				<li><a href="<?php echo esc_url( $projects_url ); ?>">הפרויקטים</a></li>
 			</ul>
 		</div>
-		<figure class="sheet-index">
-			<a href="<?php echo esc_url( add_query_arg( 'view', 'map', $projects_url ) ); ?>" class="sheet-index__link"><?php echo log_sheet_index_svg(); ?></a>
-			<figcaption>מפתח גיליונות · כל פרויקט של לוג כנקודה על רשת ישראל</figcaption>
-		</figure>
+		<dl class="drive-figures">
+			<?php foreach ( [ 'projects' => 'פרויקטים', 'units' => 'יחידות דיור' ] as $key => $label ) : if ( empty( $stats[ $key ] ) ) { continue; } ?>
+				<div><dt><?php echo esc_html( $label ); ?></dt><dd data-count="<?php echo (int) $stats[ $key ]; ?>"><?php echo log_number( $stats[ $key ] ); ?></dd></div>
+			<?php endforeach; ?>
+		</dl>
 	</div>
 </section>
+</div>
 
 <?php
 // Practice areas: one card per domain with published projects, counted live.

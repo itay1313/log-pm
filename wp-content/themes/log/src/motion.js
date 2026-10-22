@@ -61,10 +61,7 @@ function heroIntro() {
   const bar = hero.querySelectorAll('.hero-bar > *');
   gsap.set(bar, { opacity: 1 });
   gsap.from(bar, { x: -16, opacity: 0, duration: 0.8, stagger: 0.06, ease: 'expo.out', delay: 1.2, clearProps: 'transform' });
-
-  // Leaving the map, the legend drifts up and lets the map go first. (Never transform .hero-lead itself:
-  // it would become the containing block of the distance sign.)
-  gsap.to(hero.querySelectorAll('.hero__title, .hero__lede'), { y: -90, opacity: 0.1, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom 30%', scrub: 0.5 } });
+  // Leaving the map is the drive's business (home/drive.js): it fades the map's tools as the camera is taken.
 }
 
 /* ---------------------------------------------------------------- inner pages */
@@ -82,7 +79,7 @@ function titleBands() {
 function sections() {
   // Section legends
   for (const h of document.querySelectorAll('.site-main .section__title, .site-main .section h2:not(.section__title), .featured__title, .national__title')) {
-    if (h.closest('.hero, .page-header')) continue;
+    if (h.closest('.hero, .page-header, .drive-country')) continue; // the drive lights its own legend
     SplitText.create(h, {
       type: 'lines', mask: 'lines', autoSplit: true,
       onSplit: (self) => gsap.from(self.lines, { yPercent: 112, duration: 1.05, stagger: 0.08, ease: 'power4.out', scrollTrigger: { trigger: h, start: 'top 88%', once: true } }),
@@ -94,14 +91,15 @@ function sections() {
   rowsIn(rows);
 
   // Pictures and plates unroll from the top as they come near.
-  const media = gsap.utils.toArray('.card__media, .person__photo, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .sheet-index, .minimap, .gallery__grid figure');
+  const media = gsap.utils.toArray('.card__media, .person__photo, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .minimap, .gallery__grid figure');
   ScrollTrigger.batch(media, {
     start: 'top 92%', once: true,
     onEnter: (batch) => gsap.fromTo(batch, { clipPath: 'inset(0% 0% 100% 0% round 10px)' }, { clipPath: 'inset(0% 0% 0% 0% round 10px)', duration: 1.2, stagger: 0.08, ease: 'expo.out', clearProps: 'clipPath' }),
   });
 
   // Prose and ledes settle from an already-visible state.
-  ScrollTrigger.batch('.site-main .section__lede, .site-main .section__prose, .story-block, .link-row, .section > .container > .btn, .card__body', {
+  const settle = gsap.utils.toArray('.site-main .section__lede, .site-main .section__prose, .story-block, .link-row, .section > .container > .btn, .card__body').filter((el) => !el.closest('.drive-country'));
+  ScrollTrigger.batch(settle, {
     start: 'top 92%', once: true,
     onEnter: (batch) => gsap.fromTo(batch, { opacity: 0.2, y: 22 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.07, ease: 'expo.out', clearProps: 'transform,opacity' }),
   });
