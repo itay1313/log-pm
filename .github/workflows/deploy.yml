@@ -1,5 +1,8 @@
-# Every push to main (a merged PR) builds the theme and uploads the theme and log-core to uPress over FTPS.
+# Every push to main (a merged PR) builds the theme and installs the theme and log-core on uPress.
 # Run it by hand from the Actions tab to deploy any branch for testing.
+#
+# Upload goes over HTTPS to log-core's /wp-json/log/v1/deploy (see log-core/inc/deploy.php), not FTP:
+# uPress only lets approved IPs through on FTP, and GitHub's runners change IP every run.
 name: Deploy to uPress
 
 on:
@@ -10,6 +13,10 @@ on:
 concurrency:
   group: deploy-upress
   cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write # lets the job ask GitHub for the signed token that log-core checks
 
 jobs:
   deploy:
@@ -24,16 +31,30 @@ jobs:
           cache: npm
           cache-dependency-path: wp-content/themes/log/package-lock.json
 
-      - name: Install theme dependencies
-        run: npm ci
+      - name: Build the theme
         working-directory: wp-content/themes/log
+        run: npm ci && npm run build
 
-      - name: Install lftp
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Package
+        run: |
+          mkdir -p build/themes build/plugins
+          rsync -a --exclude node_modules/ --exclude src/ --exclude .DS_Store --exclude .impeccable/ wp-content/themes/log build/themes/
+          rsync -a --exclude .DS_Store wp-content/plugins/log-core build/plugins/
+          (cd build && zip -qr ../deploy.zip themes plugins)
+          ls -l deploy.zip
 
-      - name: Build and upload
-        run: ./tools/deploy.sh
+      - name: Upload to the site
         env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-          FTP_USER: ${{ secrets.FTP_USER }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
+        run: |
+          sha=$(sha256sum deploy.zip | cut -d' ' -f1)
+          # The token's audience carries the zip's hash, so it can only install this exact zip.
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=log-pm-deploy:$sha" | jq -r .value)
+          echo "::add-mask::$token"
+          # -k because the temporary uPress domain's certificate doesn't match it. The token is bound to the zip
+          # and accepted once, so TLS here is only privacy. Drop -k when DEPLOY_URL moves to log-pm.co.il.
+          curl -sS -k --fail-with-body --max-time 300 -X POST \
+            -H "X-Log-Deploy-Token: $token" -H "Content-Type: application/zip" \
+            --data-binary @deploy.zip "$DEPLOY_URL"
+          echo

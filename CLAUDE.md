@@ -25,9 +25,10 @@ The repo is https://github.com/itay1313/log-pm. `main` is the restore point Itay
 
 ## Deploy
 
-Merging a PR is deploying it. Every push to `main` runs `.github/workflows/deploy.yml`, which builds the theme and uploads the theme and log-core to uPress over FTPS. FTP details live in the repo secrets `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD`.
+Merging a PR is deploying it. Every push to `main` runs `.github/workflows/deploy.yml`, which builds the theme, zips the theme and log-core, and POSTs the zip over HTTPS to `/wp-json/log/v1/deploy` on uPress (secret `DEPLOY_URL`). log-core (`inc/deploy.php`) accepts it only with a GitHub OIDC token from this repo's deploy.yml, bound to the zip's hash, then swaps both folders in. The version it replaced stays in `wp-content/upgrade/log-deploy/previous/`.
 
 - After a merge, check the run: `gh run list --workflow deploy.yml --limit 1`, then `gh run watch`.
 - To test a branch on uPress before merging: `gh workflow run deploy.yml --ref <branch>`, and say so in the PR. The next merge to `main` overwrites it.
-- `tools/deploy.sh` still works from this machine (host and user from `.env`, password from the Keychain). Use it only when Actions is down.
+- FTP doesn't work from GitHub: uPress only lets approved IPs through on port 21. `tools/deploy.sh` (FTP, host and user from `.env`, password from the Keychain) works from this Mac only while its IP is approved in the uPress panel. Use it only when Actions is down, or if a broken log-core can't receive deploys anymore.
+- Renaming the repo or moving `deploy.yml` breaks deploys: the repo name, its id and the workflow path are pinned in `inc/deploy.php`.
 - The repo is public. Client documents (`docs/*.pdf`) stay local and ignored; never commit FTP details, keys or quotes.
