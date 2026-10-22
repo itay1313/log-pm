@@ -111,8 +111,35 @@ function log_page_has_texts( int $page_id ): bool {
 		return false;
 	}
 	return $page_id === (int) get_option( 'page_on_front' )
-		|| in_array( get_page_template_slug( $page_id ), [ 'page-about.php', 'page-control.php', 'page-contact.php' ], true );
+		|| in_array( log_page_template( $page_id ), [ 'page-about.php', 'page-control.php', 'page-contact.php' ], true );
 }
+
+/**
+ * The template a page actually renders with. The theme's page-{slug}.php files have no
+ * "Template Name", so the editor's template select doesn't list them and every save writes
+ * "default" back, while WordPress still picks page-about.php by slug. Resolve it the same way.
+ */
+function log_page_template( int $page_id ): string {
+	$set = get_page_template_slug( $page_id );
+	if ( $set ) {
+		return $set;
+	}
+	$slug = rawurldecode( (string) get_post_field( 'post_name', $page_id ) );
+	return $slug && locate_template( "page-$slug.php" ) ? "page-$slug.php" : '';
+}
+
+/**
+ * ACF's "page template" location rule reads the saved template only; give it the resolved one,
+ * or the About, Control and Contact fields vanish the first time someone saves those pages.
+ */
+add_filter( 'acf/location/rule_match/page_template', function ( $match, array $rule, array $screen ) {
+	$page_id = (int) ( $screen['post_id'] ?? 0 );
+	if ( ! $page_id || get_post_type( $page_id ) !== 'page' || get_page_template_slug( $page_id ) ) {
+		return $match;
+	}
+	$is = log_page_template( $page_id ) === $rule['value'];
+	return $rule['operator'] === '==' ? $is : ! $is;
+}, 10, 3 );
 
 /**
  * Admin bar on the site: a direct way from the page you're reading to the fields that hold its text.
