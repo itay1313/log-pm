@@ -456,7 +456,7 @@ body.page-template-page-control .person__placeholder, .section--night .person__p
 .search-empty { padding-block: 2rem 4rem; }
 
 .contact { display: grid; grid-template-columns: minmax(0, 7fr) minmax(260px, 4fr); gap: clamp(2.5rem, 7vw, 7rem); padding-block: clamp(3rem, 6vw, 5rem) clamp(4rem, 8vw, 7rem); }
-@media (max-width: 860px) { .contact { grid-template-columns: 1fr; } }
+@media (max-width: 860px) { .contact { grid-template-columns: 1fr; } .contact__side { order: -1; } } /* the topic sign comes before the form it sets */
 .contact__side { display: grid; gap: 1rem; align-content: start; }
 .contact__topics { padding: 1.4rem 1.6rem 1.1rem; border-radius: 12px; background: var(--plate); color: var(--legend); box-shadow: inset 0 0 0 6px var(--plate), inset 0 0 0 8px var(--legend); }
 .contact__topics-title { margin: 0 0 .5rem; font: 700 1.625rem var(--font-display); }
