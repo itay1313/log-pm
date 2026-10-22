@@ -31,15 +31,43 @@ import('./motion.js').then((m) => m.initMotion()).catch(() => document.documentE
  * mount it never pay for it.
  */
 
-// Header: search and mobile menu toggles
-for (const btn of document.querySelectorAll('.site-header [aria-controls]')) {
-  const target = document.getElementById(btn.getAttribute('aria-controls'));
-  if (!target) continue;
-  btn.addEventListener('click', () => {
-    const open = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!open));
-    target.hidden = open;
-    if (!open) target.querySelector('input')?.focus();
+// The gantry: the header turns into a solid navy bar once the page moves.
+const header = document.querySelector('.site-header');
+if (header) {
+  const solid = () => header.classList.toggle('is-solid', scrollY > 8);
+  addEventListener('scroll', solid, { passive: true });
+  solid();
+}
+
+// The menu: a modal dialog (focus stays inside, Esc closes, the page behind is inert). The map pauses under it.
+const menu = document.getElementById('site-menu');
+const menuBtn = document.querySelector('.menu-toggle');
+if (menu?.showModal && menuBtn) {
+  const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let closing = false;
+  const open = () => {
+    menu.showModal();
+    menuBtn.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('menu-open');
+    window.LOGhero?.pause();
+    if (!still()) import('./motion.js').then((m) => m.menuIn(menu)).catch(() => {});
+  };
+  const close = async () => {
+    if (closing || !menu.open) return;
+    closing = true;
+    if (!still()) await import('./motion.js').then((m) => m.menuOut(menu)).catch(() => {});
+    menu.close();
+    closing = false;
+  };
+  menuBtn.addEventListener('click', open);
+  menu.querySelector('.gantry__close')?.addEventListener('click', close);
+  menu.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
+  menu.addEventListener('click', (e) => { if (e.target === menu) close(); });
+  menu.addEventListener('close', () => {
+    menuBtn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('menu-open');
+    window.LOGhero?.resume();
+    menuBtn.focus();
   });
 }
 
@@ -170,12 +198,12 @@ if (document.querySelector('.project')) {
 
 // Home map: interface first, then the 3D layer (reduced motion gets the map without animation).
 const hero = document.getElementById('hero');
-// Header and twin buttons sit on the cover picture (light) until it scrolls away.
-const cover = document.body.classList.contains('has-cover') && (hero || document.querySelector('.project__hero'));
-if (cover) {
-  document.body.classList.add('over-hero');
-  new IntersectionObserver(([e]) => document.body.classList.toggle('over-hero', e.intersectionRatio > 0.12), { threshold: [0, 0.12, 0.5] }).observe(cover);
-}
 if (hero) {
+  // While the map fills the screen, phones park the lane bar (the search sits on that edge); off screen the map stops drawing.
+  new IntersectionObserver(([e]) => {
+    document.body.classList.toggle('at-map', e.intersectionRatio > 0.35);
+    if (document.body.classList.contains('menu-open')) return;
+    if (e.isIntersecting) window.LOGhero?.resume(); else window.LOGhero?.pause();
+  }, { threshold: [0, 0.35, 0.6] }).observe(hero);
   import('./hero.js').then((m) => m.initHero(hero)).catch((err) => { console.error(err); hero.classList.add('no-webgl'); });
 }
