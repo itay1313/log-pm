@@ -6,8 +6,8 @@ WordPress מותאם, בלי בילדרים. שני חלקים:
 |---|---|
 | `wp-content/plugins/log-core` | מודל התוכן: פרויקטים, משרות, מרכז ידע, צוות, לקוחות; מדרגת היקף אוטומטית; `GET /wp-json/log/v1/map` ו-`/stats`; סכמה (Organization, JobPosting); Setup בלחיצה אחת; ייבוא מ-ArcGIS (כלים → ייבוא מ-ArcGIS). |
 | `wp-content/themes/log` | תצוגה בלבד. תבניות לכל נתיב באפיון, שני הכפתורים הצמודים, גופנים עצמיים, Vite. |
-| `.github/workflows/deploy.yml` | כל פוש ל-`main` (מיזוג PR) בונה ומעלה ל-uPress ב-FTPS. פרטי ה-FTP בסודות של הריפו. |
-| `tools/deploy.sh` | אותה פריסה, ידנית מהמחשב (host ו-user מ-`.env`, סיסמה מה-Keychain `log-pm-ftp`). |
+| `.github/workflows/deploy.yml` | כל פוש ל-`main` (מיזוג PR) בונה, אורז את התבנית והתוסף ושולח ב-HTTPS ל-`/wp-json/log/v1/deploy`. התוסף מתקין רק עם טוקן חתום של GitHub מהריפו הזה (`log-core/inc/deploy.php`). |
+| `tools/deploy.sh` | גיבוי: פריסה ב-FTP מהמחשב, רק כשה-IP מאושר בפאנל של uPress (host ו-user מ-`.env`, סיסמה מה-Keychain `log-pm-ftp`). |
 | `tools/dev.sh` | WordPress מקומי ב-Playground על :8881, עם התיקיות מחוברות חי. |
 | `docs/` | מיפוי ArcGIS וה-spike. האפיונים והצעת המחיר (PDF) נשמרים מקומית בלבד, לא בגיט: הריפו ציבורי. |
 
