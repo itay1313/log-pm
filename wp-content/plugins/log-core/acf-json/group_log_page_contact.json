@@ -2,11 +2,11 @@
   "key": "group_log_page_contact",
   "title": "צור קשר · תוכן",
   "fields": [
-    { "key": "field_lct_title", "label": "כותרת", "name": "hero_title", "type": "text", "placeholder": "דברו איתנו", "instructions": "כותרת בלבד, בלי שורת משנה." },
+    { "key": "field_lct_title", "label": "כותרת", "name": "hero_title", "type": "text", "instructions": "כותרת בלבד, בלי שורת משנה.", "default_value": "דברו איתנו" },
     { "key": "field_lct_note", "label": "", "name": "", "type": "message", "message": "כתובות המשרדים, הטלפונים והמיילים לפי נושא נמצאים ב\"הגדרות לוג\".", "esc_html": 0 }
   ],
   "location": [[{ "param": "page_template", "operator": "==", "value": "page-contact.php" }]],
-  "position": "normal",
+  "position": "acf_after_title",
   "hide_on_screen": ["the_content", "discussion", "comments", "author"],
   "active": true
 }

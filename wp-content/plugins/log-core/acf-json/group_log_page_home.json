@@ -3,33 +3,33 @@
   "title": "עמוד הבית · תוכן",
   "fields": [
     { "key": "field_lh_tab_hero", "label": "מפה", "name": "", "type": "tab" },
-    { "key": "field_lh_hero_title", "label": "כותרת ראשית", "name": "hero_title", "type": "text", "placeholder": "מובילים את התכנון וההתחדשות העירונית בישראל" },
-    { "key": "field_lh_hero_lede", "label": "משפט פתיחה", "name": "hero_lede", "type": "textarea", "rows": 2, "placeholder": "תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות." },
+    { "key": "field_lh_hero_title", "label": "כותרת ראשית", "name": "hero_title", "type": "text", "default_value": "מובילים את התכנון וההתחדשות העירונית בישראל" },
+    { "key": "field_lh_hero_lede", "label": "משפט פתיחה", "name": "hero_lede", "type": "textarea", "rows": 2, "default_value": "תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות." },
 
     { "key": "field_lh_tab_who", "label": "מי אנחנו", "name": "", "type": "tab" },
-    { "key": "field_lh_who_title", "label": "כותרת", "name": "who_title", "type": "text", "placeholder": "מתכננים. מחברים. מובילים." },
-    { "key": "field_lh_who_text", "label": "שלוש פסקאות", "name": "who_text", "type": "textarea", "rows": 8, "instructions": "שורה ריקה בין פסקה לפסקה. מתחת מופיעים שלושה קישורים קבועים: המומחיות שלנו, אודות, הפרויקטים." },
+    { "key": "field_lh_who_title", "label": "כותרת", "name": "who_title", "type": "text", "default_value": "מתכננים. מחברים. מובילים." },
+    { "key": "field_lh_who_text", "label": "שלוש פסקאות", "name": "who_text", "type": "textarea", "rows": 8, "instructions": "שורה ריקה בין פסקה לפסקה. מתחת מופיעים שלושה קישורים קבועים: המומחיות שלנו, אודות, הפרויקטים.", "default_value": "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." },
 
     { "key": "field_lh_tab_domains", "label": "תחומי פעילות", "name": "", "type": "tab" },
-    { "key": "field_lh_domains_title", "label": "כותרת", "name": "domains_title", "type": "text", "placeholder": "תחומי פעילות", "instructions": "הכרטיסים עצמם מגיעים מ\"פרויקטים ← תחומי פעילות\": שם, משפט וסדר. תחום בלי פרויקטים מפורסמים לא מוצג." },
+    { "key": "field_lh_domains_title", "label": "כותרת", "name": "domains_title", "type": "text", "instructions": "הכרטיסים עצמם מגיעים מ\"פרויקטים ← תחומי פעילות\": שם, משפט וסדר. תחום בלי פרויקטים מפורסמים לא מוצג.", "default_value": "תחומי פעילות" },
 
     { "key": "field_lh_tab_control", "label": "חברת הבקרה", "name": "", "type": "tab" },
-    { "key": "field_lh_control_title", "label": "כותרת", "name": "control_title", "type": "text", "placeholder": "חברת הבקרה" },
-    { "key": "field_lh_control_text", "label": "משפט", "name": "control_text", "type": "textarea", "rows": 2, "instructions": "משפט על הפעילות. בלי נתונים: הם בעמוד חברת הבקרה." },
+    { "key": "field_lh_control_title", "label": "כותרת", "name": "control_title", "type": "text", "default_value": "חברת הבקרה" },
+    { "key": "field_lh_control_text", "label": "משפט", "name": "control_text", "type": "textarea", "rows": 2, "instructions": "משפט על הפעילות. בלי נתונים: הם בעמוד חברת הבקרה.", "default_value": "לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל." },
 
     { "key": "field_lh_tab_process", "label": "איך אנחנו עובדים", "name": "", "type": "tab" },
-    { "key": "field_lh_process_title", "label": "כותרת", "name": "process_title", "type": "text", "placeholder": "איך אנחנו עובדים" },
-    { "key": "field_lh_process", "label": "ארבעת השלבים", "name": "process", "type": "repeater", "min": 4, "max": 4, "layout": "table", "button_label": "", "sub_fields": [
+    { "key": "field_lh_process_title", "label": "כותרת", "name": "process_title", "type": "text", "default_value": "איך אנחנו עובדים" },
+    { "key": "field_lh_process", "label": "ארבעת השלבים", "name": "process", "type": "repeater", "min": 4, "max": 4, "layout": "table", "button_label": "", "log_default_rows": [{"name": "איתור והיתכנות", "text": "איפה יש פוטנציאל, ומה צריך כדי לממש אותו."}, {"name": "תכנון וקידום סטטוטורי", "text": "מהרעיון ועד תכנית שאפשר להפקיד."}, {"name": "ליווי ואישור", "text": "מוסדות תכנון, התנגדויות, מתן תוקף."}, {"name": "בקרה ומעקב", "text": "מה קורה בשטח אחרי האישור, ומה צריך לתקן."}], "sub_fields": [
       { "key": "field_lh_process_name", "label": "שם השלב", "name": "name", "type": "text", "wrapper": { "width": "35" } },
       { "key": "field_lh_process_text", "label": "משפט", "name": "text", "type": "text", "wrapper": { "width": "65" } }
     ] },
-    { "key": "field_lh_process_tagline", "label": "שורה מתחת", "name": "process_tagline", "type": "text", "placeholder": "נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע" },
+    { "key": "field_lh_process_tagline", "label": "שורה מתחת", "name": "process_tagline", "type": "text", "default_value": "נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע הם חלק מהעבודה, לא תוספת לה." },
 
     { "key": "field_lh_tab_sections", "label": "לקוחות ושותפים", "name": "", "type": "tab" },
-    { "key": "field_lh_clients_title", "label": "לקוחות · כותרת", "name": "clients_title", "type": "text", "placeholder": "לקוחות ושותפים" }
+    { "key": "field_lh_clients_title", "label": "לקוחות · כותרת", "name": "clients_title", "type": "text", "default_value": "לקוחות ושותפים" }
   ],
   "location": [[{ "param": "page_type", "operator": "==", "value": "front_page" }]],
-  "position": "normal",
+  "position": "acf_after_title",
   "hide_on_screen": ["the_content", "excerpt", "discussion", "comments", "slug", "author"],
   "active": true
 }

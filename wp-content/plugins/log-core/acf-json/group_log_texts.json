@@ -3,15 +3,15 @@
   "title": "טקסטים · ארכיונים ועמודי מערכת",
   "fields": [
     { "key": "field_lt_tab_projects", "label": "פרויקטים", "name": "", "type": "tab" },
-    { "key": "field_lt_projects_title", "label": "כותרת", "name": "projects_title", "type": "text", "placeholder": "מתכננים את המחר" },
-    { "key": "field_lt_projects_lede", "label": "שתי פסקאות פתיחה", "name": "projects_lede", "type": "textarea", "rows": 6, "instructions": "על הפעילות של לוג והניהול המקצועי. שורה ריקה בין הפסקאות." },
-    { "key": "field_lt_featured_title", "label": "פרויקטים נבחרים · כותרת", "name": "featured_title", "type": "text", "placeholder": "פרויקטים נבחרים", "instructions": "הפרויקטים עצמם: \"פרויקט נבחר\" בעריכת הפרויקט (4 עד 6, רק עם עמוד מלא). מוצגים רק כשאין חיפוש או סינון." },
+    { "key": "field_lt_projects_title", "label": "כותרת", "name": "projects_title", "type": "text", "default_value": "הפרויקטים שלנו" },
+    { "key": "field_lt_projects_lede", "label": "שתי פסקאות פתיחה", "name": "projects_lede", "type": "textarea", "rows": 6, "instructions": "על הפעילות של לוג והניהול המקצועי. שורה ריקה בין הפסקאות.", "default_value": "לוג מנהלת ומקדמת תכניות בכל קנה מידה: התחדשות עירונית, תכניות מתאר ותכניות מפורטות, ברשויות בכל הארץ.\n\nבכל פרויקט אנחנו מחזיקים את התהליך מקצה לקצה: מהאיתור וההיתכנות, דרך מוסדות התכנון, ועד המעקב אחרי מה שקורה בשטח." },
+    { "key": "field_lt_featured_title", "label": "פרויקטים נבחרים · כותרת", "name": "featured_title", "type": "text", "instructions": "הפרויקטים עצמם: \"פרויקט נבחר\" בעריכת הפרויקט (4 עד 6, רק עם עמוד מלא). מוצגים רק כשאין חיפוש או סינון.", "default_value": "פרויקטים נבחרים" },
 
     { "key": "field_lt_tab_careers", "label": "קריירה", "name": "", "type": "tab" },
-    { "key": "field_lt_careers_title", "label": "כותרת", "name": "careers_title", "type": "text", "placeholder": "בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה." },
-    { "key": "field_lt_careers_lede", "label": "משפט פתיחה", "name": "careers_lede", "type": "textarea", "rows": 2, "instructions": "על מה שמחכה לעובדים בלוג. מתחת: \"למשרות הפתוחות\" ו\"איך מתקבלים\"." },
+    { "key": "field_lt_careers_title", "label": "כותרת", "name": "careers_title", "type": "text", "default_value": "בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה." },
+    { "key": "field_lt_careers_lede", "label": "משפט פתיחה", "name": "careers_lede", "type": "textarea", "rows": 2, "instructions": "על מה שמחכה לעובדים בלוג. מתחת: \"למשרות הפתוחות\" ו\"איך מתקבלים\".", "default_value": "עבודה על תכניות שמשנות ערים, בצוות שמלמד אחד את השני." },
     { "key": "field_lt_careers_image", "label": "תמונת צוות", "name": "careers_image", "type": "image", "return_format": "array", "preview_size": "medium" },
-    { "key": "field_lt_careers_culture_title", "label": "איך זה נראה · כותרת", "name": "careers_culture_title", "type": "text", "placeholder": "איך זה נראה" },
+    { "key": "field_lt_careers_culture_title", "label": "איך זה נראה · כותרת", "name": "careers_culture_title", "type": "text", "default_value": "איך זה נראה" },
     { "key": "field_lt_careers_gallery", "label": "תמונות: עובדים, משרדים, אווירה", "name": "careers_gallery", "type": "gallery", "return_format": "array", "preview_size": "medium" },
     { "key": "field_lt_careers_videos", "label": "סרטונים", "name": "careers_videos", "type": "repeater", "layout": "block", "button_label": "הוספת סרטון", "instructions": "מתנגנים רק בלחיצה. כתוביות בקובץ VTT.", "sub_fields": [
       { "key": "field_lt_cv_title", "label": "כותרת", "name": "title", "type": "text", "wrapper": { "width": "50" } },
@@ -19,35 +19,35 @@
       { "key": "field_lt_cv_captions", "label": "כתוביות (VTT)", "name": "captions", "type": "file", "mime_types": "vtt", "return_format": "array", "wrapper": { "width": "50" } },
       { "key": "field_lt_cv_poster", "label": "תמונת פתיחה", "name": "poster", "type": "image", "return_format": "array", "preview_size": "thumbnail", "wrapper": { "width": "50" } }
     ] },
-    { "key": "field_lt_careers_people_title", "label": "האנשים · כותרת", "name": "careers_people_title", "type": "text", "placeholder": "האנשים", "wrapper": { "width": "50" } },
-    { "key": "field_lt_careers_people_text", "label": "האנשים · פסקה קצרה", "name": "careers_people_text", "type": "text", "instructions": "על הצוות הרב-תחומי. מתחת: קישור לצוות בעמוד אודות.", "wrapper": { "width": "50" } },
-    { "key": "field_lt_careers_path_title", "label": "מסלול הגיוס · כותרת", "name": "careers_path_title", "type": "text", "placeholder": "מסלול הגיוס" },
-    { "key": "field_lt_careers_path", "label": "מסלול הגיוס · שלבים", "name": "careers_path", "type": "repeater", "max": 4, "layout": "table", "button_label": "הוספת שלב", "sub_fields": [
+    { "key": "field_lt_careers_people_title", "label": "האנשים · כותרת", "name": "careers_people_title", "type": "text", "wrapper": { "width": "50" }, "default_value": "האנשים" },
+    { "key": "field_lt_careers_people_text", "label": "האנשים · פסקה קצרה", "name": "careers_people_text", "type": "text", "instructions": "על הצוות הרב-תחומי. מתחת: קישור לצוות בעמוד אודות.", "wrapper": { "width": "50" }, "default_value": "אדריכלים, מתכננים, כלכלנים ואנשי נתונים, באותו צוות ועל אותן תכניות." },
+    { "key": "field_lt_careers_path_title", "label": "מסלול הגיוס · כותרת", "name": "careers_path_title", "type": "text", "default_value": "מסלול הגיוס" },
+    { "key": "field_lt_careers_path", "label": "מסלול הגיוס · שלבים", "name": "careers_path", "type": "repeater", "max": 4, "layout": "table", "button_label": "הוספת שלב", "log_default_rows": [{"name": "קורות חיים", "text": "שולחים מתוך עמוד המשרה."}, {"name": "שיחת היכרות", "text": "שיחה קצרה עם מי שמגייס לצוות."}, {"name": "משימת בית וראיון מקצועי", "text": "משימה קצרה מהעבודה עצמה, ושיחה עליה."}, {"name": "ברוכים הבאים", "text": "חפיפה מסודרת ואדם שמלווה אתכם בהתחלה."}], "sub_fields": [
       { "key": "field_lt_path_name", "label": "שם", "name": "name", "type": "text", "wrapper": { "width": "35" } },
       { "key": "field_lt_path_text", "label": "משפט", "name": "text", "type": "text", "wrapper": { "width": "65" } }
     ] },
-    { "key": "field_lt_careers_values_title", "label": "הערכים בפועל · כותרת", "name": "careers_values_title", "type": "text", "placeholder": "הערכים בפועל", "instructions": "הערכים עצמם מגיעים מעמוד אודות (שם וביטוי מעשי)." },
-    { "key": "field_lt_careers_jobs_title", "label": "משרות · כותרת", "name": "careers_jobs_title", "type": "text", "placeholder": "משרות פתוחות", "wrapper": { "width": "50" } },
-    { "key": "field_lt_careers_empty", "label": "אין משרות · טקסט", "name": "careers_empty", "type": "text", "placeholder": "אין כרגע משרות פתוחות. משרות חדשות מתפרסמות גם ברשתות.", "instructions": "מתחת מופיעים קישורים ל-LinkedIn ול-Instagram.", "wrapper": { "width": "50" } },
+    { "key": "field_lt_careers_values_title", "label": "הערכים בפועל · כותרת", "name": "careers_values_title", "type": "text", "instructions": "הערכים עצמם מגיעים מעמוד אודות (שם וביטוי מעשי).", "default_value": "הערכים בפועל" },
+    { "key": "field_lt_careers_jobs_title", "label": "משרות · כותרת", "name": "careers_jobs_title", "type": "text", "wrapper": { "width": "50" }, "default_value": "משרות פתוחות" },
+    { "key": "field_lt_careers_empty", "label": "אין משרות · טקסט", "name": "careers_empty", "type": "text", "instructions": "מתחת מופיעים קישורים ל-LinkedIn ול-Instagram.", "wrapper": { "width": "50" }, "default_value": "אין כרגע משרות פתוחות. משרות חדשות מתפרסמות גם ברשתות." },
 
     { "key": "field_lt_tab_knowledge", "label": "מרכז ידע", "name": "", "type": "tab" },
-    { "key": "field_lt_knowledge_title", "label": "כותרת", "name": "knowledge_title", "type": "text", "placeholder": "מרכז ידע", "wrapper": { "width": "50" } },
-    { "key": "field_lt_knowledge_lede", "label": "משפט", "name": "knowledge_lede", "type": "text", "placeholder": "מאמרים, ניירות עמדה, חדשות החברה ואזכורים בתקשורת.", "wrapper": { "width": "50" } },
-    { "key": "field_lt_news_title", "label": "מה חדש · כותרת", "name": "news_title", "type": "text", "placeholder": "מה חדש", "instructions": "עד שמונה פוסטים אחרונים מאינסטגרם. בלי חיבור אוטומטי: פוסטים שנבחרו ידנית ב\"פוסטים ברשתות\". בלי פוסטים הבלוק לא מוצג." },
+    { "key": "field_lt_knowledge_title", "label": "כותרת", "name": "knowledge_title", "type": "text", "wrapper": { "width": "50" }, "default_value": "מרכז ידע" },
+    { "key": "field_lt_knowledge_lede", "label": "משפט", "name": "knowledge_lede", "type": "text", "wrapper": { "width": "50" }, "default_value": "מאמרים, ניירות עמדה, חדשות החברה ואזכורים בתקשורת." },
+    { "key": "field_lt_news_title", "label": "מה חדש · כותרת", "name": "news_title", "type": "text", "instructions": "עד שמונה פוסטים אחרונים מאינסטגרם. בלי חיבור אוטומטי: פוסטים שנבחרו ידנית ב\"פוסטים ברשתות\". בלי פוסטים הבלוק לא מוצג.", "default_value": "מה חדש" },
 
     { "key": "field_lt_tab_system", "label": "404 וחיפוש", "name": "", "type": "tab" },
-    { "key": "field_lt_404_title", "label": "404 · כותרת", "name": "notfound_title", "type": "text", "placeholder": "הכתובת הזו לא נמצאת במפה.", "wrapper": { "width": "50" } },
-    { "key": "field_lt_404_text", "label": "404 · משפט", "name": "notfound_text", "type": "text", "placeholder": "אולי העמוד זז, אולי הקישור השתבש. אפשר להמשיך מכאן:", "wrapper": { "width": "50" } },
-    { "key": "field_lt_search_empty", "label": "חיפוש · אין תוצאות", "name": "search_empty", "type": "text", "placeholder": "לא מצאנו תוצאות. אפשר לנסות מילה אחרת, או להתחיל מכאן:" },
+    { "key": "field_lt_404_title", "label": "404 · כותרת", "name": "notfound_title", "type": "text", "wrapper": { "width": "50" }, "default_value": "הכתובת הזו לא נמצאת במפה." },
+    { "key": "field_lt_404_text", "label": "404 · משפט", "name": "notfound_text", "type": "text", "wrapper": { "width": "50" }, "default_value": "אולי העמוד זז, אולי הקישור השתבש. אפשר להמשיך מכאן:" },
+    { "key": "field_lt_search_empty", "label": "חיפוש · אין תוצאות", "name": "search_empty", "type": "text", "default_value": "לא מצאנו תוצאות. אפשר לנסות מילה אחרת, או להתחיל מכאן:" },
 
     { "key": "field_lt_tab_header", "label": "כותרת ותחתית", "name": "", "type": "tab" },
-    { "key": "field_lt_header_cta", "label": "כפתור בכותרת", "name": "header_cta", "type": "text", "placeholder": "בואו נדבר", "wrapper": { "width": "50" } },
-    { "key": "field_lt_footer_line", "label": "משפט בתחתית", "name": "footer_line", "type": "text", "placeholder": "מתכננים. מחברים. מובילים.", "wrapper": { "width": "50" } },
-    { "key": "field_lt_twin_projects", "label": "כפתור צמוד · ניהול פרויקטים", "name": "twin_projects", "type": "text", "placeholder": "ניהול פרויקטים", "wrapper": { "width": "50" } },
-    { "key": "field_lt_twin_projects_line", "label": "כפתור צמוד · ניהול פרויקטים · משפט", "name": "twin_projects_line", "type": "text", "placeholder": "תכנון וניהול ברמת הרשות והמתחם", "instructions": "משפט קצר. לא מוצג בטלפון.", "wrapper": { "width": "50" } },
-    { "key": "field_lt_twin_control", "label": "כפתור צמוד · חברת הבקרה", "name": "twin_control", "type": "text", "placeholder": "חברת הבקרה", "wrapper": { "width": "50" } },
-    { "key": "field_lt_twin_control_line", "label": "כפתור צמוד · חברת הבקרה · משפט", "name": "twin_control_line", "type": "text", "placeholder": "הבקרה הלאומית בהתחדשות עירונית", "instructions": "משפט קצר. לא מוצג בטלפון.", "wrapper": { "width": "50" } },
-    { "key": "field_lt_cookie_text", "label": "באנר עוגיות · טקסט", "name": "cookie_text", "type": "text", "placeholder": "אנחנו משתמשים בעוגיות מדידה כדי להבין איך משתמשים באתר. הן נטענות רק אם תאשרו." }
+    { "key": "field_lt_header_cta", "label": "כפתור בכותרת", "name": "header_cta", "type": "text", "wrapper": { "width": "50" }, "default_value": "בואו נדבר" },
+    { "key": "field_lt_footer_line", "label": "משפט בתחתית", "name": "footer_line", "type": "text", "wrapper": { "width": "50" }, "default_value": "מתכננים. מחברים. מובילים." },
+    { "key": "field_lt_twin_projects", "label": "כפתור צמוד · ניהול פרויקטים", "name": "twin_projects", "type": "text", "wrapper": { "width": "50" }, "default_value": "ניהול פרויקטים" },
+    { "key": "field_lt_twin_projects_line", "label": "כפתור צמוד · ניהול פרויקטים · משפט", "name": "twin_projects_line", "type": "text", "instructions": "משפט קצר. לא מוצג בטלפון.", "wrapper": { "width": "50" }, "default_value": "תכנון וניהול ברמת הרשות והמתחם" },
+    { "key": "field_lt_twin_control", "label": "כפתור צמוד · חברת הבקרה", "name": "twin_control", "type": "text", "wrapper": { "width": "50" }, "default_value": "חברת הבקרה" },
+    { "key": "field_lt_twin_control_line", "label": "כפתור צמוד · חברת הבקרה · משפט", "name": "twin_control_line", "type": "text", "instructions": "משפט קצר. לא מוצג בטלפון.", "wrapper": { "width": "50" }, "default_value": "הבקרה הלאומית בהתחדשות עירונית" },
+    { "key": "field_lt_cookie_text", "label": "באנר עוגיות · טקסט", "name": "cookie_text", "type": "text", "default_value": "אנחנו משתמשים בעוגיות מדידה כדי להבין איך משתמשים באתר. הן נטענות רק אם תאשרו." }
   ],
   "location": [[{ "param": "options_page", "operator": "==", "value": "log-texts" }]],
   "active": true
