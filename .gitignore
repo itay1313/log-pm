@@ -12,3 +12,7 @@ tools/fixtures/private/
 # Impeccable working files: review captures and decision-page state stay local
 .impeccable/review/
 .impeccable/questions/
+
+# Client documents and page dumps: local only, never on GitHub (the repo is public)
+docs/*.pdf
+r.html
