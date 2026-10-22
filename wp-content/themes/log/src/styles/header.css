@@ -79,10 +79,10 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
     background: var(--plate); box-shadow: 0 -1px 0 var(--plate-line); padding-bottom: env(safe-area-inset-bottom);
     transition: translate .45s var(--ease-out);
   }
-  .twin-nav__item { justify-content: center; padding: .95rem .5rem; border-radius: 0; }
-  .twin-nav__item + .twin-nav__item { box-shadow: inset -1px 0 0 var(--plate-line); }
-  .twin-nav__item.is-active { box-shadow: inset 0 4px 0 var(--works); }
-  .twin-nav__item + .twin-nav__item.is-active { box-shadow: inset 0 4px 0 var(--works), inset -1px 0 0 var(--plate-line); }
+  .twin-nav:not(.twin-nav--sign) .twin-nav__item { justify-content: center; padding: .95rem .5rem; border-radius: 0; }
+  .twin-nav:not(.twin-nav--sign) .twin-nav__item + .twin-nav__item { box-shadow: inset -1px 0 0 var(--plate-line); }
+  .twin-nav:not(.twin-nav--sign) .twin-nav__item.is-active { box-shadow: inset 0 4px 0 var(--works); }
+  .twin-nav:not(.twin-nav--sign) .twin-nav__item + .twin-nav__item.is-active { box-shadow: inset 0 4px 0 var(--works), inset -1px 0 0 var(--plate-line); }
   .site-footer { padding-bottom: calc(2.5rem + 58px + env(safe-area-inset-bottom)); } /* room for the lane bar */
   body.home.at-map .twin-nav:not(.twin-nav--sign), body.sheet-open .twin-nav:not(.twin-nav--sign) { translate: 0 110%; }
 }
