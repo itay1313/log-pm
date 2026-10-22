@@ -4,6 +4,7 @@
  * Description: Content model for log-pm.co.il — projects, jobs, knowledge, people, clients, the map endpoint and structured data. Survives a theme change.
  * Version: 0.1.0
  * Author: com-mando
+ * Author URI: https://itaycode.com
  * Text Domain: log-core
  * Requires PHP: 8.1
  */
