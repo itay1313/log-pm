@@ -3,32 +3,32 @@
   "title": "חברת הבקרה · תוכן",
   "fields": [
     { "key": "field_lc_tab_hero", "label": "פתיחה", "name": "", "type": "tab" },
-    { "key": "field_lcp_title", "label": "כותרת", "name": "hero_title", "type": "text", "placeholder": "חברת הבקרה" },
-    { "key": "field_lcp_eyebrow", "label": "משפט על המעמד", "name": "hero_eyebrow", "type": "text", "placeholder": "לוג היא חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." },
+    { "key": "field_lcp_title", "label": "כותרת", "name": "hero_title", "type": "text", "default_value": "חברת הבקרה" },
+    { "key": "field_lcp_eyebrow", "label": "משפט על המעמד", "name": "hero_eyebrow", "type": "text", "default_value": "לוג היא חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." },
     { "key": "field_lcp_note", "label": "", "name": "", "type": "message", "message": "שתי הפסקאות של \"מה הפעילות\" נכתבות בעורך הרגיל של העמוד. התמונה הראשית היא תמונת הפתיחה.", "esc_html": 0 },
 
-    { "key": "field_lcp_what_title", "label": "מה הפעילות · כותרת", "name": "what_title", "type": "text", "placeholder": "מה הפעילות" },
+    { "key": "field_lcp_what_title", "label": "מה הפעילות · כותרת", "name": "what_title", "type": "text", "default_value": "מה הפעילות" },
 
     { "key": "field_lc_tab_roles", "label": "שלושה תפקידים", "name": "", "type": "tab" },
-    { "key": "field_lcp_roles_title", "label": "כותרת", "name": "roles_title", "type": "text", "placeholder": "שלושה תפקידים" },
-    { "key": "field_lcp_roles", "label": "התפקידים", "name": "roles", "type": "repeater", "min": 0, "max": 3, "layout": "table", "button_label": "הוספת תפקיד", "sub_fields": [
+    { "key": "field_lcp_roles_title", "label": "כותרת", "name": "roles_title", "type": "text", "default_value": "שלושה תפקידים" },
+    { "key": "field_lcp_roles", "label": "התפקידים", "name": "roles", "type": "repeater", "min": 0, "max": 3, "layout": "table", "button_label": "הוספת תפקיד", "log_default_rows": [{"name": "מעקב וניתוח ארצי", "text": "תמונת מצב של כל פרויקטי הפינוי-בינוי במדינה, מעודכנת ומאומתת."}, {"name": "התרת חסמים בירוקרטיים", "text": "זיהוי מה תוקע פרויקט, ומי יכול לשחרר אותו."}, {"name": "חיבור בין השטח לממשל", "text": "מינהלות, מוסדות תכנון ומשרדי ממשלה סביב שולחן אחד."}], "sub_fields": [
       { "key": "field_lcp_role_name", "label": "שם", "name": "name", "type": "text", "wrapper": { "width": "35" } },
       { "key": "field_lcp_role_text", "label": "פסקה קצרה", "name": "text", "type": "textarea", "rows": 2, "wrapper": { "width": "65" } }
     ] },
 
     { "key": "field_lc_tab_method", "label": "שיטת העבודה", "name": "", "type": "tab" },
-    { "key": "field_lcp_method_title", "label": "כותרת", "name": "method_title", "type": "text", "placeholder": "שיטת העבודה" },
-    { "key": "field_lcp_method", "label": "השלבים", "name": "method", "type": "repeater", "min": 0, "max": 4, "layout": "table", "button_label": "הוספת שלב", "sub_fields": [
+    { "key": "field_lcp_method_title", "label": "כותרת", "name": "method_title", "type": "text", "default_value": "שיטת העבודה" },
+    { "key": "field_lcp_method", "label": "השלבים", "name": "method", "type": "repeater", "min": 0, "max": 4, "layout": "table", "button_label": "הוספת שלב", "log_default_rows": [{"name": "איסוף", "text": "נתונים מהרשויות, מהמינהלות ומהמערכות הממשלתיות."}, {"name": "טיוב ובקרה", "text": "אימות, השלמה ואחידות של כל רשומה."}, {"name": "זיהוי מגמות וחסמים", "text": "מה מתקדם, מה נתקע, ואיפה."}, {"name": "החזרת תובנות", "text": "ממצאים והמלצות לרשות ולמשרדי הממשלה."}], "sub_fields": [
       { "key": "field_lcp_method_name", "label": "שם", "name": "name", "type": "text", "wrapper": { "width": "35" } },
       { "key": "field_lcp_method_text", "label": "משפט", "name": "text", "type": "text", "wrapper": { "width": "65" } }
     ] },
 
     { "key": "field_lc_tab_team", "label": "צוות ופריטים", "name": "", "type": "tab" },
-    { "key": "field_lcp_team_title", "label": "הצוות · כותרת", "name": "team_title", "type": "text", "placeholder": "הצוות", "instructions": "עובדי היחידה \"חברת הבקרה\" מרשימת הצוות.", "wrapper": { "width": "50" } },
-    { "key": "field_lcp_items_title", "label": "פריטים מקצועיים · כותרת", "name": "items_title", "type": "text", "placeholder": "פריטים מקצועיים", "instructions": "פריטי ידע שסומנו \"קשור לבקרה\". בלי פריטים הבלוק לא מוצג.", "wrapper": { "width": "50" } },
+    { "key": "field_lcp_team_title", "label": "הצוות · כותרת", "name": "team_title", "type": "text", "instructions": "עובדי היחידה \"חברת הבקרה\" מרשימת הצוות.", "wrapper": { "width": "50" }, "default_value": "הצוות" },
+    { "key": "field_lcp_items_title", "label": "פריטים מקצועיים · כותרת", "name": "items_title", "type": "text", "instructions": "פריטי ידע שסומנו \"קשור לבקרה\". בלי פריטים הבלוק לא מוצג.", "wrapper": { "width": "50" }, "default_value": "פריטים מקצועיים" },
 
     { "key": "field_lc_tab_numbers", "label": "במספרים", "name": "", "type": "tab" },
-    { "key": "field_lcp_numbers_title", "label": "כותרת", "name": "numbers_title", "type": "text", "placeholder": "במספרים" },
+    { "key": "field_lcp_numbers_title", "label": "כותרת", "name": "numbers_title", "type": "text", "default_value": "במספרים" },
     { "key": "field_lcp_numbers", "label": "נתוני בקרה", "name": "numbers", "type": "repeater", "max": 4, "layout": "table", "button_label": "הוספת מספר", "instructions": "רק נתונים שאושרו לפרסום מוצגים. בלי נתונים מאושרים הבלוק לא מוצג. נפרד לגמרי מנתוני הפרויקטים.", "sub_fields": [
       { "key": "field_lcp_number_value", "label": "מספר", "name": "value", "type": "number", "wrapper": { "width": "40" } },
       { "key": "field_lcp_number_label", "label": "תווית", "name": "label", "type": "text", "wrapper": { "width": "60" } },
@@ -37,13 +37,13 @@
     ] },
 
     { "key": "field_lc_tab_partners", "label": "שותפים ופנייה", "name": "", "type": "tab" },
-    { "key": "field_lcp_partners_title", "label": "כותרת", "name": "partners_title", "type": "text", "placeholder": "שותפי העבודה" },
-    { "key": "field_lcp_partners", "label": "רשימה", "name": "partners", "type": "textarea", "rows": 4, "instructions": "שורה לכל גוף.", "placeholder": "הרשות הממשלתית להתחדשות עירונית\nמינהלות עירוניות\nמוסדות תכנון\nמשרדי ממשלה" },
-    { "key": "field_lcp_contact_title", "label": "פנייה · כותרת", "name": "contact_title", "type": "text", "placeholder": "פנייה לחברת הבקרה", "wrapper": { "width": "50" } },
-    { "key": "field_lcp_cta", "label": "פנייה · כפתור", "name": "cta", "type": "text", "placeholder": "לטופס הפנייה", "instructions": "פותח את צור קשר עם הנושא \"חברת הבקרה\".", "wrapper": { "width": "50" } }
+    { "key": "field_lcp_partners_title", "label": "כותרת", "name": "partners_title", "type": "text", "default_value": "שותפי העבודה" },
+    { "key": "field_lcp_partners", "label": "רשימה", "name": "partners", "type": "textarea", "rows": 4, "instructions": "שורה לכל גוף.", "default_value": "הרשות הממשלתית להתחדשות עירונית\nמינהלות להתחדשות עירונית\nמוסדות תכנון\nמשרדי ממשלה" },
+    { "key": "field_lcp_contact_title", "label": "פנייה · כותרת", "name": "contact_title", "type": "text", "wrapper": { "width": "50" }, "default_value": "פנייה לחברת הבקרה" },
+    { "key": "field_lcp_cta", "label": "פנייה · כפתור", "name": "cta", "type": "text", "instructions": "פותח את צור קשר עם הנושא \"חברת הבקרה\".", "wrapper": { "width": "50" }, "default_value": "לטופס הפנייה" }
   ],
   "location": [[{ "param": "page_template", "operator": "==", "value": "page-control.php" }]],
-  "position": "normal",
+  "position": "acf_after_title",
   "hide_on_screen": ["discussion", "comments", "author"],
   "active": true
 }
