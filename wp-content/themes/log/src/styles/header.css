@@ -93,7 +93,7 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; column-gap: clamp(1rem, 3vw, 2.5rem);
   padding: clamp(.35rem, 1.1vh, .7rem) 0; border-bottom: 2px solid var(--plate-line); color: var(--legend); text-decoration: none;
 }
-.dest__name { display: block; overflow: hidden; font: 700 clamp(2.25rem, 4.4vw + 1.2vh, 5.5rem)/1.04 var(--font-display); letter-spacing: -0.03em; padding-bottom: .04em; }
+.dest__name { display: block; overflow: hidden; font: 700 clamp(2.25rem, min(4.4vw + 1.2vh, 9vh), 5.5rem)/1.04 var(--font-display); letter-spacing: -0.03em; padding-bottom: .04em; }
 .dest__name > span { display: inline-block; transition: color .3s, translate .5s var(--ease-out); }
 .dest__dist { font: 500 1.0625rem var(--font-display); color: var(--legend-muted); font-variant-numeric: tabular-nums; text-align: end; }
 .dest__row .arrow { width: clamp(1.75rem, 2.4vw, 2.4rem); height: clamp(1.2rem, 1.6vw, 1.6rem); color: var(--legend-muted); transition: translate .5s var(--ease-out), color .3s; }
