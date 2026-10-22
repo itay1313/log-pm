@@ -274,6 +274,8 @@ RTL throughout; "start" is the right edge, "forward" is left. The container is 1
 
 The home page is the map, full viewport. The headline sits straight on the sea at the start side with no panel behind it; a gradient scrim darkens the start and bottom edges instead. Under it the destination plate and three lane filters hang 8px apart. The distance sign stands at the bottom end corner, the lane-split pair at the bottom start, and map controls as small plates along the end edge.
 
+**The drive.** The map does not end at the first screen. It stays pinned behind the first chapter, and the scroll moves its camera (`src/home/drive.js`): from Gush Dan up to the whole country seen from over the sea, every project lighting as a small orange beacon rippling out from where the camera stood. The chapter's legend sits straight on the sea under a start-and-bottom scrim, lights word by word, and its figures count with the beacons. On phones the country stands upright, north up, between the figures and the legend. Scrolling back to the top hands the camera back exactly where the visitor left it.
+
 Below the map, content is rows, not grids of boxes: destination rows with a 3px ink rule on top and 2px rules between. Project tiles use an auto-fill grid (min 300px, gaps 3.25rem by 1.75rem). Steps are four columns on one dashed orange lane, turning vertical on phones. Title bands are a two-column grid with the title on the start side and the orange sheet label at the end.
 
 **The Lane Line.** One dashed orange line (4px wide, 30px dash, 24px gap; 3px, 18/16 on phones) runs down the start edge of the main content and draws in as the reader scrolls.
@@ -351,7 +353,7 @@ Project stage is four lane dashes lit in orange up to "now"; a finished project'
 Every inner page opens on a navy band that continues the header strip, with a display title, an optional meta line and lede, and an orange sheet label at the end giving how much lies down this road. Hero images hang from the band into the paper.
 
 ### Motion
-GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger). Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Reduced motion turns all of it off and shows everything.
+GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger). Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. On the home page Lenis smooths the wheel and ScrollTrigger drives the camera (the drive, see Layout); Ctrl/⌘ + wheel stays the map's zoom. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
 
 ## Swap points for TwoPointFour
 
