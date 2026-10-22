@@ -360,6 +360,8 @@ When TwoPointFour's visual language lands, the world changes in three places and
 2. The night token swap in `src/styles/pages.css` on `.sheet--night, .section--control, .section--night, .site-footer` and on `body.page-template-page-control` (the only place `night-rule-soft` is written).
 3. The `C` palette at the top of `src/hero/scene.js` for the 3D map.
 
+One copy lives outside the theme: the coming-soon gate (`log-core/inc/coming-soon.php`) renders without the theme's CSS, so it carries the few tokens it uses inline. Update it with tokens.css.
+
 The legacy aliases in tokens.css (`--orange`, `--night`, `--night-ink`, `--grey`, `--line` and the rest) point at the new tokens; new code uses the new names.
 
 ## Do's and Don'ts

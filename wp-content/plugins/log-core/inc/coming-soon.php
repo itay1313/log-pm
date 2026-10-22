@@ -51,6 +51,11 @@ add_action( 'template_redirect', function () {
 	exit;
 }, 0 );
 
+/**
+ * The page is one full-screen gantry sign, the same plate as the theme's menu: route shield 00 and the
+ * legend, then a lane marking that is painted as far as the works plate and stops there.
+ * Self-contained (inline CSS, the theme's self-hosted fonts, no script), so it never depends on the build.
+ */
 function log_coming_soon_page(): void {
 	$fonts = get_template_directory_uri() . '/assets/fonts/';
 	$name  = get_bloginfo( 'name' );
@@ -61,45 +66,130 @@ function log_coming_soon_page(): void {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#091018">
 <title><?php echo esc_html( $name ); ?> · בקרוב</title>
+<link rel="preload" href="<?php echo esc_url( $fonts . 'ploni_tzar_bold.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 <style>
-@font-face { font-family: 'Ploni'; src: url('<?php echo esc_url( $fonts ); ?>ploni_light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
-@font-face { font-family: 'Ploni'; src: url('<?php echo esc_url( $fonts ); ?>ploni_demibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
-:root { --ink: #121922; --line: rgba(255,246,236,.12); --paper: #fbfaf8; --mute: #8f99a6; --orange: #f7931d; }
-* { box-sizing: border-box; margin: 0; }
-html, body { height: 100%; overflow: hidden; }
-body { background: var(--ink); color: var(--paper); font: 300 18px/1.6 'Ploni', system-ui, sans-serif; overflow: hidden;
-  background-image: radial-gradient(90% 70% at 20% 85%, #2b3d50 0%, transparent 60%),
-    repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 72px),
-    repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 72px); }
-main { min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding: clamp(24px, 5vw, 64px); position: relative; overflow: hidden; height: 100%; }
-.mark { font-weight: 600; font-size: 22px; letter-spacing: .02em; display: flex; align-items: center; gap: 10px; }
-.mark i { display: block; flex: none; width: 18px; height: 18px; border: 3px solid var(--orange); border-radius: 50%; }
-.copy { align-self: center; position: relative; z-index: 1; max-width: 34ch; }
-.kicker { color: var(--orange); font-weight: 600; font-size: 15px; letter-spacing: .08em; margin-bottom: 18px; }
-h1 { font-weight: 600; font-size: clamp(44px, 8vw, 104px); line-height: .95; letter-spacing: -.01em; }
-p.lead { margin-top: 24px; color: #c9cfd6; max-width: 30ch; }
-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 14px; color: var(--mute); }
-footer a { color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--orange); }
-.ring { position: absolute; left: clamp(-180px, -8vw, -60px); bottom: clamp(-180px, -10vw, -60px); width: min(70vw, 620px); aspect-ratio: 1; pointer-events: none; }
-.ring circle { fill: none; stroke: var(--orange); stroke-width: 22; stroke-dasharray: 1200; stroke-dashoffset: 1200; animation: draw 2.4s cubic-bezier(.65,0,.35,1) .3s forwards; }
-@keyframes draw { to { stroke-dashoffset: 300; } }
-@media (prefers-reduced-motion: reduce) { .ring circle { animation: none; stroke-dashoffset: 300; } }
+@font-face { font-family: 'Ploni'; src: url('<?php echo esc_url( $fonts . 'ploni_regular.woff2' ); ?>') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Ploni Tzar'; src: url('<?php echo esc_url( $fonts . 'ploni_tzar_medium.woff2' ); ?>') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Ploni Tzar'; src: url('<?php echo esc_url( $fonts . 'ploni_tzar_bold.woff2' ); ?>') format('woff2'); font-weight: 700; font-display: swap; }
+/* A copy of the tokens this page uses from the theme's src/styles/tokens.css; swap both together. */
+:root {
+  --ground: #091018; /* behind the sign: the menu's backdrop, made solid */
+  --plate: #13212f; --plate-line: #3a4e62; --legend: #f2f4f1; --legend-muted: #a3b3bf;
+  --works: #f7931d; --sign-ink: #15202b;
+  --font-display: 'Ploni Tzar', 'Ploni', system-ui, sans-serif;
+  --font-text: 'Ploni', system-ui, sans-serif;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 18'%3E%3Cpath d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--ground); }
+body {
+  margin: 0; min-height: 100vh; min-height: 100dvh; padding: 10px; display: grid;
+  background: var(--ground); color: var(--legend); font: 400 1.0625rem/1.6 var(--font-text);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+::selection { background: var(--works); color: var(--plate); }
+:focus-visible { outline: 3px solid var(--works); outline-offset: 3px; }
+
+/* The gantry: navy ground, white keyline inset 10px, 20px corners (the theme's .gantry__plate).
+   The keyline is a bordered layer rather than the theme's two inset shadows: on this dark ground the shadows
+   leave a white fringe on the outer corner. */
+.sign {
+  position: relative; display: grid; grid-template-rows: auto 1fr auto; border-radius: 20px; background: var(--plate);
+  padding: clamp(30px, 3.6vw, 52px) clamp(34px, 5vw, 84px) clamp(30px, 3.2vw, 46px);
+}
+.sign::before { content: ''; position: absolute; inset: 10px; border: 3px solid var(--legend); border-radius: 10px; pointer-events: none; }
+.logo { display: inline-flex; align-items: center; gap: .5rem; font: 700 1.5rem/1 var(--font-display); letter-spacing: -0.02em; }
+.logo i { display: block; width: .8em; height: .8em; border-radius: 50%; border: .18em solid var(--works); }
+
+.legend { align-self: center; padding-block: clamp(2.5rem, 7vh, 5rem); }
+h1 {
+  margin: 0; overflow: hidden; padding-top: .08em;
+  font: 700 clamp(3.75rem, 11vw, 11.5rem)/.92 var(--font-display); letter-spacing: -0.035em;
+}
+h1 > span { display: inline-block; }
+/* The route shield: 00 is home in the header order. */
+.shield {
+  display: inline-block; vertical-align: .5em; margin-inline-end: .45em; padding: .3em .5em .24em; border-radius: .35em;
+  font: 700 max(.8125rem, .26em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
+  background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 .17em var(--works), inset 0 0 0 .3em var(--sign-ink);
+}
+
+/* The lane marking is painted forward from the legend and stops at the works plate. Whole dashes only (round). */
+.lane { display: flex; align-items: center; gap: clamp(14px, 1.6vw, 24px); margin-block: clamp(1.6rem, 4.2vh, 2.75rem) clamp(1.4rem, 3.4vh, 2.25rem); }
+.lane i { flex: 1; height: 4px; background: linear-gradient(to left, var(--works) 30px, transparent 0) right / 54px 100% round; }
+.works {
+  flex: none; margin: 0; padding: .8rem 1.2rem .75rem; border-radius: 10px; white-space: nowrap;
+  background: var(--works); color: var(--plate); font: 700 1.25rem/1 var(--font-display);
+  box-shadow: inset 0 0 0 4px var(--works), inset 0 0 0 6px var(--plate);
+}
+.lede { max-width: 40ch; margin: 0; color: var(--legend-muted); font-size: clamp(1.0625rem, 1.3vw, 1.3125rem); line-height: 1.5; text-wrap: pretty; }
+
+.foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem;
+  padding-top: clamp(1.1rem, 2.6vh, 1.6rem); border-top: 2px solid var(--plate-line);
+  font: 500 .9375rem var(--font-display); color: var(--legend-muted); font-variant-numeric: tabular-nums;
+}
+/* The way forward is a sign you can press: navy plate, white keyline that turns orange, the arrow steps forward. */
+.go {
+  position: relative; display: inline-flex; align-items: center; gap: .75em; padding: 1.05em 1.6em; border-radius: 10px;
+  color: var(--legend); text-decoration: none; font: 700 1.0625rem/1.2 var(--font-display);
+}
+.go::before { content: ''; position: absolute; inset: 5px; border: 2px solid var(--legend); border-radius: 5px; transition: border-color .3s var(--ease-out); }
+.go:hover::before, .go:focus-visible::before { border-color: var(--works); }
+.arrow {
+  display: inline-block; flex: none; width: 1.3em; height: .9em; background: currentColor;
+  -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat;
+  transition: translate .45s var(--ease-out);
+}
+.go:hover .arrow, .go:focus-visible .arrow { translate: -6px 0; }
+
+@media (max-width: 760px) {
+  .lane i { height: 3px; background-size: 34px 100%; background-image: linear-gradient(to left, var(--works) 18px, transparent 0); }
+  .works { font-size: 1.0625rem; padding: .7rem 1rem .65rem; }
+}
+@media (max-width: 560px) {
+  body { padding: 6px; }
+  .sign { border-radius: 14px; padding: 24px 24px 22px; }
+  .sign::before { inset: 7px; border-width: 2px; border-radius: 7px; }
+  .logo { font-size: 1.25rem; }
+  .foot { flex-direction: column-reverse; align-items: stretch; }
+  .go { justify-content: space-between; }
+}
+
+/* Mounting, as the theme's GSAP does it: the sign unrolls, the legend rises, the lane is painted, the works plate drops in.
+   Nothing here runs or hides anything under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .sign { animation: unroll .8s cubic-bezier(.87, 0, .13, 1) both; }
+  .logo { animation: arrive .9s cubic-bezier(.19, 1, .22, 1) .4s both; }
+  h1 > span { animation: rise 1.15s cubic-bezier(.165, .84, .44, 1) .45s both; }
+  .lane i { animation: paint 1s cubic-bezier(.65, 0, .35, 1) .75s both; }
+  .works { animation: mount .8s cubic-bezier(.19, 1, .22, 1) 1.5s both; }
+  .lede { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) .9s both; }
+  .foot { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) 1.05s both; }
+}
+@keyframes unroll { from { clip-path: inset(0 0 100% 0 round 20px); } to { clip-path: inset(0 0 0 0 round 20px); } }
+@keyframes rise { from { transform: translateY(112%); } }
+@keyframes paint { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } } /* forward is left: paint from the start edge */
+@keyframes mount { from { clip-path: inset(0 0 100% 0 round 10px); } to { clip-path: inset(0 0 0 0 round 10px); } }
+@keyframes arrive { from { opacity: 0; transform: translateY(14px); } }
 </style>
 </head>
 <body>
-<main>
-	<div class="mark"><i></i>לוג ניהול פרויקטים</div>
-	<div class="copy">
-		<div class="kicker">אתר חדש · בתכנון מתקדם</div>
-		<h1>האתר בבנייה.</h1>
-		<p class="lead">אנחנו מתכננים שכונות וערים, ועכשיו גם את הבית החדש שלנו ברשת. נחזור בקרוב עם מפת כל הפרויקטים.</p>
+<main class="sign">
+	<div class="logo"><i></i>לוג ניהול פרויקטים</div>
+	<div class="legend">
+		<h1><span><span class="shield" aria-hidden="true">00</span>האתר בבנייה.</span></h1>
+		<div class="lane"><i aria-hidden="true"></i><p class="works">אתר חדש · בתכנון מתקדם</p></div>
+		<p class="lede">אנחנו מתכננים שכונות וערים, ועכשיו גם את הבית החדש שלנו ברשת. נחזור בקרוב עם מפת כל הפרויקטים.</p>
 	</div>
-	<footer>
+	<footer class="foot">
 		<span>© <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php echo esc_html( $name ); ?></span>
-		<a href="https://www.instagram.com/log_projectmanagement/" rel="noopener">בינתיים, באינסטגרם</a>
+		<a class="go" href="https://www.instagram.com/log_projectmanagement/" rel="noopener">בינתיים, באינסטגרם<i class="arrow" aria-hidden="true"></i></a>
 	</footer>
-	<svg class="ring" viewBox="0 0 440 440" aria-hidden="true"><circle cx="220" cy="220" r="190" transform="rotate(-90 220 220)"/></svg>
 </main>
 </body>
 </html>
