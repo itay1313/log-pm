@@ -53,6 +53,85 @@ function log_rows( string $name, array $fallback, $post_id = false ): array {
 }
 
 /**
+ * In wp-admin every text field shows the copy that is live on the site, never an empty box.
+ * The copy comes from the templates' fallbacks, copied into acf-json by tools/sync-text-defaults.py:
+ * "default_value" on text fields, "log_default_rows" on lists. ACF fills default_value by itself only
+ * while the field was never saved; this also covers a field that was saved empty, which the site
+ * shows as the fallback anyway. Front end untouched: log_text()/log_rows() already fall back.
+ */
+add_filter( 'acf/load_value', function ( $value, $post_id, array $field ) {
+	if ( ! is_admin() || ! in_array( $field['type'], [ 'text', 'textarea' ], true ) ) {
+		return $value;
+	}
+	return ( $value === '' || $value === null ) && ( $field['default_value'] ?? '' ) !== '' ? $field['default_value'] : $value;
+}, 20, 3 );
+
+add_filter( 'acf/load_value/type=repeater', function ( $value, $post_id, array $field ) {
+	if ( ! is_admin() || ! empty( $value ) || empty( $field['log_default_rows'] ) ) {
+		return $value;
+	}
+	// Admin rows are keyed by sub field key, not name.
+	$keys = array_column( $field['sub_fields'] ?? [], 'key', 'name' );
+	return array_map(
+		static fn( array $row ) => array_combine(
+			array_map( static fn( $name ) => $keys[ $name ] ?? $name, array_keys( $row ) ),
+			array_values( $row )
+		),
+		$field['log_default_rows']
+	);
+}, 20, 3 );
+
+/**
+ * One line above the text fields, so the editor knows what they're looking at.
+ */
+add_action( 'admin_notices', function () {
+	$screen = get_current_screen();
+	$texts  = $screen && str_ends_with( $screen->id, '_page_log-texts' );
+	$page   = $screen && $screen->base === 'post' && $screen->post_type === 'page' && log_page_has_texts( (int) ( $_GET['post'] ?? 0 ) );
+	if ( ! $texts && ! $page ) {
+		return;
+	}
+	echo '<div class="notice notice-info"><p>הטקסט בשדות הוא הטקסט שמופיע עכשיו באתר. משנים, שומרים, וזה עולה. שדה שמרוקנים חוזר לטקסט המקורי.</p></div>';
+} );
+
+/**
+ * Text pages open in the classic screen: the block editor shows an empty canvas and folds the
+ * fields into a strip at the bottom, where nobody finds them. Classic puts the fields first,
+ * and ACF's hide_on_screen drops the content box on home and contact, whose templates don't print it.
+ */
+add_filter( 'use_block_editor_for_post', function ( bool $use, WP_Post $post ): bool {
+	return log_page_has_texts( $post->ID ) ? false : $use;
+}, 10, 2 );
+
+/**
+ * Pages whose template reads its texts from ACF (home, about, control, contact).
+ */
+function log_page_has_texts( int $page_id ): bool {
+	if ( ! $page_id ) {
+		return false;
+	}
+	return $page_id === (int) get_option( 'page_on_front' )
+		|| in_array( get_page_template_slug( $page_id ), [ 'page-about.php', 'page-control.php', 'page-contact.php' ], true );
+}
+
+/**
+ * Admin bar on the site: a direct way from the page you're reading to the fields that hold its text.
+ * Pages get WordPress's own "edit page"; archives and system pages read from the Texts options page.
+ */
+add_action( 'admin_bar_menu', function ( WP_Admin_Bar $bar ) {
+	if ( is_admin() || ! current_user_can( 'edit_pages' ) || ! function_exists( 'acf_add_options_page' ) ) {
+		return;
+	}
+	if ( is_post_type_archive( [ 'log_project', 'log_job', 'log_knowledge' ] ) || is_singular( 'log_job' ) || is_404() || is_search() ) {
+		$bar->add_node( [
+			'id'    => 'log-texts',
+			'title' => 'עריכת הטקסטים בעמוד',
+			'href'  => admin_url( 'admin.php?page=log-texts' ),
+		] );
+	}
+}, 80 );
+
+/**
  * Loud notice when ACF Pro is missing: the whole content model depends on it.
  */
 add_action( 'admin_notices', function () {
