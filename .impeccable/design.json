@@ -1,140 +1,12 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-21T18:18:31+00:00",
+  "generatedAt": "2026-10-22T15:09:14+00:00",
   "title": "Design System: LOG Project Management",
   "extensions": {
     "colorMeta": {
-      "orange": {
-        "role": "primary",
-        "displayName": "LOG Survey Orange",
-        "canonical": "#f7931d",
-        "oklch": "oklch(75.2% 0.166 62.3)",
-        "tonalRamp": [
-          "#190500",
-          "#381c00",
-          "#5f3400",
-          "#884d02",
-          "#b26914",
-          "#e0851d",
-          "#fbb270",
-          "#ffeada"
-        ]
-      },
-      "orange-deep": {
-        "role": "primary",
-        "displayName": "Burnt Orange",
-        "canonical": "#c96f06",
-        "oklch": "oklch(63.1% 0.148 59.0)",
-        "tonalRamp": [
-          "#1b0400",
-          "#3a1b00",
-          "#613200",
-          "#8c4a00",
-          "#b7660c",
-          "#e0842d",
-          "#fcb276",
-          "#ffeadb"
-        ]
-      },
-      "paper": {
+      "plate": {
         "role": "neutral",
-        "displayName": "Survey Paper",
-        "canonical": "#e8ece9",
-        "oklch": "oklch(93.9% 0.006 153.8)",
-        "tonalRamp": [
-          "#090c0a",
-          "#222523",
-          "#3d413e",
-          "#5b5f5c",
-          "#7b7e7c",
-          "#9c9f9d",
-          "#c1c5c2",
-          "#ecf0ed"
-        ]
-      },
-      "paper-2": {
-        "role": "neutral",
-        "displayName": "Field Paper",
-        "canonical": "#f3f5f3",
-        "oklch": "oklch(96.8% 0.003 145.5)",
-        "tonalRamp": [
-          "#0a0c0a",
-          "#232423",
-          "#3f403f",
-          "#5c5e5c",
-          "#7c7e7c",
-          "#9d9f9d",
-          "#c3c5c3",
-          "#edefed"
-        ]
-      },
-      "ink": {
-        "role": "neutral",
-        "displayName": "Drafting Ink",
-        "canonical": "#1b1f25",
-        "oklch": "oklch(23.8% 0.013 258.4)",
-        "tonalRamp": [
-          "#080b11",
-          "#20242a",
-          "#3c4047",
-          "#595e65",
-          "#797e85",
-          "#9a9fa7",
-          "#bfc4cd",
-          "#e9eff7"
-        ]
-      },
-      "slate": {
-        "role": "neutral",
-        "displayName": "Slate Note",
-        "canonical": "#56625e",
-        "oklch": "oklch(48.5% 0.016 173.6)",
-        "tonalRamp": [
-          "#050d0b",
-          "#1c2723",
-          "#37433f",
-          "#55615d",
-          "#74817c",
-          "#95a29d",
-          "#bac8c3",
-          "#e4f2ed"
-        ]
-      },
-      "rule": {
-        "role": "neutral",
-        "displayName": "Slate Rule",
-        "canonical": "#8a9590",
-        "oklch": "oklch(65.9% 0.015 166.9)",
-        "tonalRamp": [
-          "#060d0a",
-          "#1d2622",
-          "#39423e",
-          "#56605c",
-          "#75807b",
-          "#96a19c",
-          "#bcc7c2",
-          "#e6f2ec"
-        ]
-      },
-      "rule-soft": {
-        "role": "neutral",
-        "displayName": "Faint Rule",
-        "canonical": "#c3cbc6",
-        "oklch": "oklch(83.4% 0.011 158.8)",
-        "tonalRamp": [
-          "#070d09",
-          "#202622",
-          "#3b423e",
-          "#59605b",
-          "#787f7b",
-          "#99a19c",
-          "#bec6c1",
-          "#e9f1ec"
-        ]
-      },
-      "night": {
-        "role": "neutral",
-        "displayName": "Night Navy",
+        "displayName": "Guide-Sign Navy",
         "canonical": "#13212f",
         "oklch": "oklch(24.2% 0.033 249.3)",
         "tonalRamp": [
@@ -142,376 +14,638 @@
           "#172534",
           "#324151",
           "#4f5f70",
-          "#6e7f91",
-          "#8fa1b3",
-          "#b4c6d9",
+          "#718294",
+          "#95a7b9",
+          "#bbcde0",
           "#e3f0fe"
         ]
       },
-      "night-2": {
+      "plate-2": {
         "role": "neutral",
-        "displayName": "Deep Navy",
-        "canonical": "#1a2b3c",
-        "oklch": "oklch(28.3% 0.039 249.3)",
+        "displayName": "Raised Navy",
+        "canonical": "#1b2c3d",
+        "oklch": "oklch(28.7% 0.039 249.3)",
         "tonalRamp": [
           "#010c1b",
           "#152536",
           "#304254",
           "#4d6073",
-          "#6c8094",
-          "#8ca1b6",
-          "#b2c7dd",
-          "#e3f0fe"
-        ]
-      },
-      "night-line": {
-        "role": "neutral",
-        "displayName": "Contour Slate",
-        "canonical": "#3d5063",
-        "oklch": "oklch(42.3% 0.040 248.8)",
-        "tonalRamp": [
-          "#000c1b",
-          "#142536",
-          "#2f4254",
-          "#4c6073",
-          "#6b8094",
-          "#8ca1b7",
-          "#b1c7dd",
-          "#e3f0fe"
-        ]
-      },
-      "night-rule-soft": {
-        "role": "neutral",
-        "displayName": "Night Faint Rule",
-        "canonical": "#2b3e51",
-        "oklch": "oklch(35.6% 0.041 249.0)",
-        "tonalRamp": [
-          "#000c1c",
-          "#132537",
-          "#2f4255",
-          "#4c6074",
-          "#6b8095",
-          "#8ba1b8",
-          "#b0c7de",
+          "#6f8397",
+          "#93a7bc",
+          "#b8cde3",
           "#e2f0ff"
         ]
       },
-      "night-ink": {
+      "plate-line": {
         "role": "neutral",
-        "displayName": "Night Ink",
-        "canonical": "#e8ece9",
-        "oklch": "oklch(93.9% 0.006 153.8)",
+        "displayName": "Plate Rule",
+        "canonical": "#3a4e62",
+        "oklch": "oklch(41.6% 0.042 248.9)",
         "tonalRamp": [
-          "#090c0a",
-          "#222523",
-          "#3d413e",
-          "#5b5f5c",
-          "#7b7e7c",
-          "#9c9f9d",
-          "#c1c5c2",
-          "#ecf0ed"
+          "#000c1c",
+          "#132537",
+          "#2e4255",
+          "#4b6075",
+          "#6d8399",
+          "#91a7be",
+          "#b6cde5",
+          "#e3f0fe"
         ]
       },
-      "night-muted": {
+      "legend": {
         "role": "neutral",
-        "displayName": "Night Slate",
-        "canonical": "#9aabb8",
-        "oklch": "oklch(73.2% 0.027 240.8)",
+        "displayName": "Retroreflective White",
+        "canonical": "#f2f4f1",
+        "oklch": "oklch(96.5% 0.004 134.8)",
         "tonalRamp": [
-          "#020c15",
-          "#182630",
-          "#33424d",
-          "#50606c",
-          "#70808c",
-          "#90a1ae",
-          "#b5c7d4",
-          "#e1f1fe"
+          "#0a0c0a",
+          "#232422",
+          "#3f403e",
+          "#5c5e5c",
+          "#7f817e",
+          "#a3a5a2",
+          "#c9cbc8",
+          "#edefec"
+        ]
+      },
+      "legend-muted": {
+        "role": "neutral",
+        "displayName": "Faded Legend",
+        "canonical": "#a3b3bf",
+        "oklch": "oklch(75.8% 0.025 240.2)",
+        "tonalRamp": [
+          "#030c15",
+          "#19262f",
+          "#34424c",
+          "#51606a",
+          "#73838e",
+          "#97a7b3",
+          "#bdcdd9",
+          "#e0f1fe"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Road Paper",
+        "canonical": "#e7eae6",
+        "oklch": "oklch(93.4% 0.006 137.8)",
+        "tonalRamp": [
+          "#0a0c09",
+          "#232522",
+          "#3e403d",
+          "#5c5e5b",
+          "#7e817d",
+          "#a3a5a2",
+          "#c8cbc8",
+          "#ecefeb"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Light Paper",
+        "canonical": "#f4f5f2",
+        "oklch": "oklch(96.9% 0.004 121.6)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242422",
+          "#3f403e",
+          "#5d5e5b",
+          "#80817e",
+          "#a4a5a2",
+          "#cacbc8",
+          "#eeefec"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Road Ink",
+        "canonical": "#15202b",
+        "oklch": "oklch(23.9% 0.026 249.0)",
+        "tonalRamp": [
+          "#040c16",
+          "#1a2530",
+          "#35414d",
+          "#525f6c",
+          "#748290",
+          "#98a6b5",
+          "#beccdb",
+          "#e2f0ff"
+        ]
+      },
+      "slate": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "#53606a",
+        "oklch": "oklch(48.2% 0.023 241.1)",
+        "tonalRamp": [
+          "#040c14",
+          "#1a262e",
+          "#35414b",
+          "#53606a",
+          "#75828d",
+          "#99a7b2",
+          "#becdd8",
+          "#e2f1fd"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#b8c0c2",
+        "oklch": "oklch(80.2% 0.009 214.4)",
+        "tonalRamp": [
+          "#070c0e",
+          "#1f2527",
+          "#3a4143",
+          "#585f61",
+          "#7a8284",
+          "#9ea6a8",
+          "#c4ccce",
+          "#e8f0f2"
+        ]
+      },
+      "rule-soft": {
+        "role": "neutral",
+        "displayName": "Soft Rule",
+        "canonical": "#d3d8d6",
+        "oklch": "oklch(87.8% 0.006 170.4)",
+        "tonalRamp": [
+          "#090c0b",
+          "#212524",
+          "#3d413f",
+          "#5a5f5d",
+          "#7d8180",
+          "#a1a6a4",
+          "#c7ccca",
+          "#ebf0ee"
+        ]
+      },
+      "works": {
+        "role": "primary",
+        "displayName": "Works-Zone Orange",
+        "canonical": "#f7931d",
+        "oklch": "oklch(75.2% 0.166 62.3)",
+        "tonalRamp": [
+          "#150700",
+          "#381c00",
+          "#5e3402",
+          "#884d01",
+          "#b96a00",
+          "#eb8908",
+          "#ffba7c",
+          "#ffead9"
+        ]
+      },
+      "works-deep": {
+        "role": "primary",
+        "displayName": "Deep Works Orange",
+        "canonical": "#b9650a",
+        "oklch": "oklch(59.2% 0.139 58.1)",
+        "tonalRamp": [
+          "#160700",
+          "#3a1b00",
+          "#613100",
+          "#8c4a01",
+          "#bc6710",
+          "#e48c42",
+          "#feba85",
+          "#feeadc"
+        ]
+      },
+      "sign-ink": {
+        "role": "neutral",
+        "displayName": "Sign Ink",
+        "canonical": "#15202b",
+        "oklch": "oklch(23.9% 0.026 249.0)",
+        "tonalRamp": [
+          "#040c16",
+          "#1a2530",
+          "#35414d",
+          "#525f6c",
+          "#748290",
+          "#98a6b5",
+          "#beccdb",
+          "#e2f0ff"
         ]
       },
       "danger": {
         "role": "error",
-        "displayName": "Survey Red",
+        "displayName": "Danger Red",
         "canonical": "#b3261e",
         "oklch": "oklch(50.1% 0.178 28.7)",
         "tonalRamp": [
-          "#210000",
-          "#4c0000",
-          "#7d0102",
+          "#1f0000",
+          "#4b0001",
+          "#7c0203",
           "#ac1d17",
-          "#d2463a",
-          "#f96a5b",
-          "#feac9f",
-          "#fee9e5"
+          "#d64a3d",
+          "#ff7363",
+          "#feb6ab",
+          "#ffe9e5"
+        ]
+      },
+      "night-rule-soft": {
+        "role": "neutral",
+        "displayName": "Night Soft Rule",
+        "canonical": "#2a3d50",
+        "oklch": "oklch(35.2% 0.041 249.1)",
+        "tonalRamp": [
+          "#000c1c",
+          "#132537",
+          "#2e4255",
+          "#4c6074",
+          "#6e8398",
+          "#91a7be",
+          "#b7cde5",
+          "#e3f0fe"
+        ]
+      },
+      "map-fog": {
+        "role": "map",
+        "displayName": "Map Fog",
+        "canonical": "#1d2a3a",
+        "oklch": "oklch(28.1% 0.035 254.0)",
+        "tonalRamp": [
+          "#030b19",
+          "#182535",
+          "#334152",
+          "#505f71",
+          "#728295",
+          "#96a6ba",
+          "#bbcce1",
+          "#e4f0fe"
+        ]
+      },
+      "map-sea": {
+        "role": "map",
+        "displayName": "Map Sea",
+        "canonical": "#2f4a63",
+        "oklch": "oklch(39.9% 0.054 247.5)",
+        "tonalRamp": [
+          "#000c1b",
+          "#0b263d",
+          "#27425b",
+          "#45617b",
+          "#67849f",
+          "#8aa8c5",
+          "#afceec",
+          "#e2f0fe"
+        ]
+      },
+      "map-road-national": {
+        "role": "map",
+        "displayName": "National Road",
+        "canonical": "#9db1c6",
+        "oklch": "oklch(75.2% 0.038 249.6)",
+        "tonalRamp": [
+          "#010c1a",
+          "#152536",
+          "#304153",
+          "#4e6072",
+          "#6f8296",
+          "#93a7bc",
+          "#b9cde3",
+          "#e3f0fe"
+        ]
+      },
+      "map-road-regional": {
+        "role": "map",
+        "displayName": "Regional Road",
+        "canonical": "#b4c4d4",
+        "oklch": "oklch(81.3% 0.029 248.2)",
+        "tonalRamp": [
+          "#030c17",
+          "#192531",
+          "#34414e",
+          "#515f6d",
+          "#738291",
+          "#97a7b6",
+          "#bdcddd",
+          "#e2f0ff"
+        ]
+      },
+      "map-road": {
+        "role": "map",
+        "displayName": "Street",
+        "canonical": "#e3ebf2",
+        "oklch": "oklch(93.6% 0.013 244.3)",
+        "tonalRamp": [
+          "#070c10",
+          "#1f252a",
+          "#3a4146",
+          "#585f64",
+          "#7a8187",
+          "#9ea6ac",
+          "#c4ccd2",
+          "#e8f0f7"
+        ]
+      },
+      "map-road-major": {
+        "role": "map",
+        "displayName": "Major Road",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
         ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Page and sheet titles; project covers push larger."
+        "purpose": "Page titles in the navy title band; the home headline on the sea."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Section titles, max 18ch."
+        "purpose": "Section titles on road paper."
+      },
+      "destination": {
+        "displayName": "Destination",
+        "purpose": "Names in destination rows and the menu gantry."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Tile titles, process steps, list items."
+        "purpose": "Step, card and sidebar titles."
       },
       "figure": {
         "displayName": "Figure",
-        "purpose": "Legend numbers in number strips, project facts and the cartouche legend; tabular."
+        "purpose": "Counts on distance signs, tabular."
+      },
+      "sign-legend": {
+        "displayName": "Sign Legend",
+        "purpose": "Text on a plate: buttons, menu toggle, header links."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Default running text in Ploni."
+        "purpose": "Default running text."
       },
       "prose": {
         "displayName": "Prose",
-        "purpose": "Long-form section prose, max 62ch."
+        "purpose": "Long reading, 62-66ch."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Sheet labels, cartouche head, filter captions, tile meta, table heads; tabular, never uppercase."
+        "purpose": "Filter captions, card meta, table heads; sentence case."
       }
     },
     "shadows": [
       {
-        "name": "sheet-lift",
-        "value": "0 30px 60px -20px rgba(5,10,16,.65)",
-        "purpose": "Paper sheets over the night map: cartouche, list drawer."
+        "name": "keyline",
+        "value": "inset 0 0 0 5px <ground>, inset 0 0 0 7px <line>",
+        "purpose": "Draws the plate keyline; scaled 3/5, 4/6, 6/8, 10/13 by plate size."
       },
       {
-        "name": "sheet-lift-card",
+        "name": "map-plate-drop",
+        "value": "0 24px 50px -20px rgba(5,10,16,.7)",
+        "purpose": "Plates standing on the map."
+      },
+      {
+        "name": "white-sign-drop",
         "value": "0 30px 60px -18px rgba(5,10,16,.7), 0 4px 12px rgba(5,10,16,.3)",
-        "purpose": "Project card beside a pin."
+        "purpose": "White signs over the map or page."
       },
       {
-        "name": "sheet-lift-dialog",
-        "value": "0 40px 80px -20px rgba(5,10,16,.6)",
-        "purpose": "Apply dialog."
+        "name": "control-drop",
+        "value": "0 10px 24px -10px rgba(5,10,16,.7)",
+        "purpose": "Small map controls."
       },
       {
-        "name": "pin-drop",
-        "value": "drop-shadow(0 4px 6px rgba(5,10,16,.55))",
-        "purpose": "Trig-point pins on the map plate (filter)."
-      },
-      {
-        "name": "active-underline",
-        "value": "inset 0 -3px 0 #f7931d",
-        "purpose": "Focus and active state on fields, view toggles, twin doors. State, not elevation."
+        "name": "focus-ring",
+        "value": "outline: 3px solid #f7931d; outline-offset: 3px",
+        "purpose": "Every focusable element; fields use 0 0 0 3px #f7931d."
       }
     ],
     "motion": [
       {
         "name": "ease-out",
         "value": "cubic-bezier(.16, 1, .3, 1)",
-        "purpose": "CSS transitions: underline wipes, arrow nudges, image settles, neatline draw."
+        "purpose": "CSS state transitions; arrows step 6px over .45s."
       },
       {
-        "name": "gsap-ease",
-        "value": "expo.out",
-        "purpose": "GSAP settle of title blocks and the cartouche, figure count-up."
+        "name": "ease-in-out",
+        "value": "cubic-bezier(.76, 0, .24, 1)",
+        "purpose": "Symmetric CSS moves."
       },
       {
-        "name": "neatline-draw",
-        "value": "transform scaleX(0 to 1) 1.4s ease-out, from the start side",
-        "purpose": "Each sheet's neatline draws once as it enters (threshold 0.12)."
+        "name": "legend-rise",
+        "value": "GSAP yPercent 112 -> 0, power4.out, 1.05-1.15s, stagger .08",
+        "purpose": "Headings rise out of line masks."
       },
       {
-        "name": "sheet-settle",
-        "value": "y 18px, opacity .35 to 1, 1.1s expo.out, stagger .07s",
-        "purpose": "Section contents and page headers settle from an already-visible state."
+        "name": "plate-unroll",
+        "value": "GSAP clipPath inset(0 0 100% 0 round 10px) -> inset(0), expo.out, 1.2s, stagger .08",
+        "purpose": "Plates and tiles mount from their top edge."
       },
       {
-        "name": "cartouche-settle",
-        "value": "y 28px to 0, 1.4s expo.out, delay .15s; rows y 12px opacity .25, stagger .06s",
-        "purpose": "Home cartouche on load."
+        "name": "count-once",
+        "value": "GSAP expo.out, 1.4s",
+        "purpose": "Figures count up once on entering view."
       },
       {
-        "name": "frame-reveal",
-        "value": "clip-path inset(0 0 100% 0) to inset(0), 1.8s power3.inOut",
-        "purpose": "Home map neatline frame on load."
+        "name": "lane-line-draw",
+        "value": "GSAP scaleY 0 -> 1, scrub .6",
+        "purpose": "The lane line draws as far as the reader has scrolled."
       },
       {
-        "name": "count-up",
-        "value": "from 70% of value, 1.4s expo.out",
-        "purpose": "Legend figures of 10 or more count up once."
+        "name": "gantry-open",
+        "value": "GSAP clipPath round 20px, expo.inOut .8s; names power4.out 1s stagger .055",
+        "purpose": "The full-screen menu."
       },
       {
-        "name": "reduced-motion",
-        "value": "no movement, no hiding",
-        "purpose": "All motion removed under prefers-reduced-motion; content always visible."
+        "name": "page-cover",
+        "value": "GSAP clipPath, expo.in .55s out / expo.inOut .85s in",
+        "purpose": "Navy cover between pages."
       }
     ],
     "breakpoints": [
       {
-        "name": "phone-narrow",
-        "value": "560px"
+        "name": "lane-short",
+        "value": "1180px"
       },
       {
-        "name": "phone",
-        "value": "700px"
-      },
-      {
-        "name": "map-phone",
-        "value": "760px"
-      },
-      {
-        "name": "layout-collapse",
-        "value": "860px"
-      },
-      {
-        "name": "header-wrap",
+        "name": "tablet",
         "value": "900px"
       },
       {
-        "name": "cartouche-narrow",
-        "value": "1100px"
+        "name": "phone",
+        "value": "760px"
+      },
+      {
+        "name": "narrow",
+        "value": "700px"
+      },
+      {
+        "name": "small",
+        "value": "560px"
+      },
+      {
+        "name": "short-viewport",
+        "value": "max-height 760px"
       }
     ],
-    "tokenSwap": [
-      "wp-content/themes/log/src/styles/main.css :root block",
-      "wp-content/themes/log/src/styles/main.css body.page-template-page-control token redefinition",
-      "wp-content/themes/log/src/hero/scene.js C palette (building, plan, sea, fog, roads)",
-      "wp-content/themes/log/assets/img/contours-night.svg stroke color",
-      "rgba literals of night (19,33,47), night-ink (232,236,233) and orange (247,147,29) in main.css"
+    "swapPoints": [
+      {
+        "file": "wp-content/themes/log/src/styles/tokens.css",
+        "what": "Every colour, font, radius, keyline and icon token."
+      },
+      {
+        "file": "wp-content/themes/log/src/styles/pages.css",
+        "what": "Night token swap on .sheet--night, .section--control, .section--night, .site-footer and body.page-template-page-control (holds #2a3d50 night-rule-soft)."
+      },
+      {
+        "file": "wp-content/themes/log/src/hero/scene.js",
+        "what": "The C palette of the 3D map: fog, sea, roads, building and plan colours."
+      }
     ]
   },
   "components": [
     {
-      "name": "Primary Button",
+      "name": "Primary Button (navy plate)",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Ink button; an orange bar wipes in along the bottom edge on hover and focus.",
-      "html": "<button class=\"ds-btn ds-btn-primary\">לכל הפרויקטים</button>",
-      "css": ".ds-btn{position:relative;display:inline-flex;align-items:center;gap:.6em;font-family:var(--font-display,'Ploni Tzar',system-ui,sans-serif);font-weight:500;font-size:1rem;line-height:1.2;padding:.85em 1.5em;border:1px solid currentColor;border-radius:0;background:transparent;color:#1b1f25;cursor:pointer;overflow:hidden;isolation:isolate;transition:color .35s cubic-bezier(.16,1,.3,1)}.ds-btn::after{content:'';position:absolute;inset:auto 0 0 0;height:3px;background:#f7931d;transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.16,1,.3,1);z-index:-1}.ds-btn:hover::after,.ds-btn:focus-visible::after{transform:scaleX(1)}.ds-btn:focus-visible{outline:2px solid #f7931d;outline-offset:3px}.ds-btn-primary{background:#1b1f25;color:#e8ece9;border-color:#1b1f25}.ds-btn-primary:hover{color:#fff}"
+      "description": "The default sign you press: navy plate, white keyline; hover turns the keyline orange.",
+      "html": "<button class=\"ds-btn\">לכל הפרויקטים <svg class=\"ds-arrow\" viewBox='0 0 26 18' width='22' height='15' aria-hidden='true'><path fill='currentColor' d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/></svg></button>",
+      "css": ".ds-btn { --k-ground: var(--plate, #13212f); --k-line: var(--legend, #f2f4f1); display: inline-flex; align-items: center; gap: .75em; font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 700; font-size: 1.0625rem; line-height: 1.2; padding: 1.05em 1.6em; border: 0; border-radius: var(--r-plate, 10px); background: var(--k-ground); color: var(--legend, #f2f4f1); box-shadow: inset 0 0 0 var(--keyline-inset, 5px) var(--k-ground), inset 0 0 0 calc(var(--keyline-inset, 5px) + var(--keyline, 2px)) var(--k-line); cursor: pointer; transition: box-shadow .3s cubic-bezier(.16,1,.3,1); } .ds-btn .ds-arrow { transition: translate .45s cubic-bezier(.16,1,.3,1); } .ds-btn:hover, .ds-btn:focus-visible { --k-line: var(--works, #f7931d); } .ds-btn:hover .ds-arrow { translate: -6px 0; } .ds-btn:focus-visible { outline: 3px solid var(--works, #f7931d); outline-offset: 3px; }"
     },
     {
-      "name": "Ghost Button",
+      "name": "Works Button (orange plate)",
       "kind": "button",
-      "refersTo": "button-ghost",
-      "description": "Transparent button with a faint rule border; same orange wipe.",
-      "html": "<button class=\"ds-btn ds-btn-ghost\">בואו נדבר</button>",
-      "css": ".ds-btn{position:relative;display:inline-flex;align-items:center;font-family:'Ploni Tzar',system-ui,sans-serif;font-weight:500;font-size:1rem;line-height:1.2;padding:.85em 1.5em;border:1px solid #c3cbc6;border-radius:0;background:transparent;color:#1b1f25;cursor:pointer;overflow:hidden;isolation:isolate}.ds-btn::after{content:'';position:absolute;inset:auto 0 0 0;height:3px;background:#f7931d;transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.16,1,.3,1);z-index:-1}.ds-btn:hover::after,.ds-btn:focus-visible::after{transform:scaleX(1)}.ds-btn:focus-visible{outline:2px solid #f7931d;outline-offset:3px}"
+      "refersTo": "button-works",
+      "description": "Orange plate with a navy keyline, for the main way forward on a navy ground.",
+      "html": "<button class=\"ds-btn-works\">לחברת הבקרה</button>",
+      "css": ".ds-btn-works { --k-ground: var(--works, #f7931d); --k-line: var(--plate, #13212f); font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 700; font-size: 1.0625rem; padding: 1.05em 1.6em; border: 0; border-radius: 10px; background: var(--k-ground); color: var(--plate, #13212f); box-shadow: inset 0 0 0 var(--keyline-inset, 5px) var(--k-ground), inset 0 0 0 calc(var(--keyline-inset, 5px) + var(--keyline, 2px)) var(--k-line); cursor: pointer; transition: background-color .3s, box-shadow .3s; } .ds-btn-works:hover, .ds-btn-works:focus-visible { --k-ground: var(--legend, #f2f4f1); } .ds-btn-works:focus-visible { outline: 3px solid var(--works, #f7931d); outline-offset: 3px; }"
     },
     {
-      "name": "Field",
+      "name": "Day Button (white plate)",
+      "kind": "button",
+      "refersTo": "button-day",
+      "description": "White sign with a sign-ink keyline; hover keyline turns deep orange.",
+      "html": "<button class=\"ds-btn-day\">דחייה</button>",
+      "css": ".ds-btn-day { --k-ground: var(--legend, #f2f4f1); --k-line: var(--sign-ink, #15202b); font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 700; font-size: 1.0625rem; padding: 1.05em 1.6em; border: 0; border-radius: 10px; background: var(--k-ground); color: var(--sign-ink, #15202b); box-shadow: inset 0 0 0 var(--keyline-inset, 5px) var(--k-ground), inset 0 0 0 calc(var(--keyline-inset, 5px) + var(--keyline, 2px)) var(--k-line); cursor: pointer; transition: box-shadow .3s; } .ds-btn-day:hover { --k-line: var(--works-deep, #b9650a); } .ds-btn-day:focus-visible { outline: 3px solid var(--works, #f7931d); outline-offset: 3px; }"
+    },
+    {
+      "name": "Destination Plate",
+      "kind": "input",
+      "refersTo": "destination-plate",
+      "description": "The \"לאן?\" search on the home map: the page's primary action.",
+      "html": "<form class=\"ds-dest\" dir=\"rtl\"><label class=\"ds-dest__label\" for=\"ds-q\">לאן?</label><input id=\"ds-q\" type=\"search\" placeholder=\"פרויקט, עיר או רשות\"><button class=\"ds-dest__go\" aria-label=\"חיפוש\"><svg viewBox='0 0 26 18' width='22' height='15' aria-hidden='true'><path fill='currentColor' d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/></svg></button></form>",
+      "css": ".ds-dest { --k-ground: #13212f; --k-line: #f2f4f1; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; width: min(100%, 620px); min-height: 78px; border-radius: 10px; background: var(--k-ground); box-shadow: inset 0 0 0 var(--keyline-inset, 5px) var(--k-ground), inset 0 0 0 calc(var(--keyline-inset, 5px) + var(--keyline, 2px)) var(--k-line), 0 24px 50px -20px rgba(5,10,16,.7); transition: box-shadow .3s; } .ds-dest:focus-within { --k-line: #f7931d; } .ds-dest__label { padding-inline: 1.6rem .9rem; font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 700; font-size: 1.5rem; color: #f7931d; } .ds-dest input { min-width: 0; height: 100%; border: 0; background: transparent; color: #f2f4f1; font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 500; font-size: 1.3125rem; } .ds-dest input::placeholder { color: #a3b3bf; } .ds-dest input:focus { outline: none; } .ds-dest__go { align-self: stretch; display: grid; place-items: center; width: 68px; margin: 9px; border: 0; border-radius: 5px; background: #f7931d; color: #13212f; cursor: pointer; transition: background-color .25s; } .ds-dest__go:hover, .ds-dest__go:focus-visible { background: #f2f4f1; }"
+    },
+    {
+      "name": "Text Field",
       "kind": "input",
       "refersTo": "input-field",
-      "description": "Survey-form box: hairline, square, label above; focus adds an inset orange underline.",
+      "description": "Form field on paper: white ground, 2px ink border, orange ring on focus.",
       "html": "<label class=\"ds-field\" dir=\"rtl\"><span>שם מלא</span><input type=\"text\" placeholder=\"איך קוראים לך\"></label>",
-      "css": ".ds-field{display:grid;gap:.4rem;max-width:22rem}.ds-field span{font:500 .875rem 'Ploni Tzar',system-ui,sans-serif;color:#1b1f25}.ds-field input{font:400 1rem 'Ploni',system-ui,sans-serif;color:#1b1f25;background:#f3f5f3;border:1px solid #8a9590;border-radius:0;padding:.75em .9em;transition:border-color .25s,box-shadow .25s}.ds-field input:focus,.ds-field input:focus-visible{outline:none;border-color:#1b1f25;box-shadow:inset 0 -3px 0 #f7931d}"
+      "css": ".ds-field { display: grid; gap: .45rem; } .ds-field > span { font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-size: .9375rem; font-weight: 500; color: #15202b; } .ds-field input { font: inherit; font-size: 1.0625rem; color: #15202b; background: #f2f4f1; border: 2px solid #15202b; border-radius: 6px; padding: .8em .95em; transition: box-shadow .25s; } .ds-field input:focus { outline: none; box-shadow: 0 0 0 3px #f7931d; }"
     },
     {
-      "name": "Tabs",
+      "name": "Chip",
       "kind": "chip",
-      "refersTo": "tab-active",
-      "description": "Filter tabs on a hairline; the active tab carries a 3px orange bottom border.",
-      "html": "<div class=\"ds-tabs\" dir=\"rtl\"><button class=\"ds-tab is-active\">הכל</button><button class=\"ds-tab\">מאמרים</button><button class=\"ds-tab\">חדשות</button></div>",
-      "css": ".ds-tabs{display:flex;border-bottom:1px solid #8a9590}.ds-tab{font:500 1rem 'Ploni Tzar',system-ui,sans-serif;padding:.7rem 0;margin-inline-end:1.75rem;margin-bottom:-1px;border:0;border-bottom:3px solid transparent;background:none;color:#56625e;cursor:pointer;transition:color .25s,border-color .25s}.ds-tab:hover{color:#1b1f25}.ds-tab.is-active{color:#1b1f25;border-bottom-color:#f7931d}.ds-tab:focus-visible{outline:2px solid #f7931d;outline-offset:3px}"
+      "refersTo": "chip",
+      "description": "Filter chip; the active one becomes a navy plate with an orange keyline.",
+      "html": "<div dir=\"rtl\" style=\"display:flex;gap:.5rem\"><button class=\"ds-chip is-active\">הכל</button><button class=\"ds-chip\">הנהלה</button><button class=\"ds-chip\">תכנון</button></div>",
+      "css": ".ds-chip { font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 700; font-size: 1rem; padding: .6rem 1.1rem; border: 0; border-radius: 8px; background: transparent; color: #53606a; box-shadow: inset 0 0 0 2px #b8c0c2; cursor: pointer; transition: color .25s, background-color .25s, box-shadow .25s; } .ds-chip:hover { color: #15202b; box-shadow: inset 0 0 0 2px #15202b; } .ds-chip.is-active { background: #13212f; color: #f2f4f1; box-shadow: inset 0 0 0 3px #13212f, inset 0 0 0 5px #f7931d; } .ds-chip:focus-visible { outline: 3px solid #f7931d; outline-offset: 3px; }"
     },
     {
-      "name": "Header navigation",
+      "name": "Route Shield",
+      "kind": "custom",
+      "refersTo": "route-shield",
+      "description": "The page number set inline at the start of a page title.",
+      "html": "<h1 class=\"ds-title\" dir=\"rtl\"><span class=\"ds-shield\">03</span>אודות</h1>",
+      "css": ".ds-title { font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 700; font-size: 3.5rem; line-height: .94; letter-spacing: -0.035em; color: #f2f4f1; background: #13212f; padding: 1.5rem; margin: 0; } .ds-shield { display: inline-block; vertical-align: .5em; margin-inline-end: .45em; padding: .3em .5em .24em; border-radius: .35em; font: 700 max(.8125rem, .26em)/1 'Ploni Tzar', system-ui, sans-serif; letter-spacing: 0; font-variant-numeric: tabular-nums; background: #f7931d; color: #15202b; box-shadow: inset 0 0 0 .17em #f7931d, inset 0 0 0 .3em #15202b; }"
+    },
+    {
+      "name": "Distance Sign",
+      "kind": "card",
+      "refersTo": "distance-sign",
+      "description": "Live figures on a navy plate with the road to all of them.",
+      "html": "<div class=\"ds-dist\" dir=\"rtl\"><div><span>פרויקטים</span><b>94</b></div><div><span>יחידות דיור</span><b>108,092</b></div><a href=\"#\">לכל הפרויקטים <svg viewBox='0 0 26 18' width='22' height='15' aria-hidden='true'><path fill='currentColor' d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/></svg></a></div>",
+      "css": ".ds-dist { min-width: 330px; padding: 1.15rem 1.65rem 1rem; border-radius: 10px; background: #13212f; color: #f2f4f1; box-shadow: inset 0 0 0 5px #13212f, inset 0 0 0 7px #f2f4f1; font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); } .ds-dist div { display: flex; justify-content: space-between; align-items: baseline; gap: 2.5rem; padding: .2rem 0; } .ds-dist span { font-weight: 500; font-size: 1.0625rem; } .ds-dist b { font-size: 3rem; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; } .ds-dist a { display: flex; justify-content: space-between; align-items: center; margin-top: .75rem; padding-top: .8rem; border-top: 2px solid #3a4e62; color: #f7931d; font-weight: 700; font-size: 1.125rem; text-decoration: none; } .ds-dist a:hover { color: #f2f4f1; } .ds-dist a svg { transition: translate .45s cubic-bezier(.16,1,.3,1); } .ds-dist a:hover svg { translate: -6px 0; }"
+    },
+    {
+      "name": "Destination Row",
+      "kind": "custom",
+      "refersTo": "destination-row",
+      "description": "A practice area or job as a destination; hovering lights the row as a navy sign.",
+      "html": "<a class=\"ds-row\" href=\"#\" dir=\"rtl\"><b>התחדשות עירונית</b><span>תכנון, ליווי ובקרה מהשלב הראשון</span><em>32 פרויקטים</em></a>",
+      "css": ".ds-row { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1.6fr) auto; align-items: center; column-gap: 2rem; padding: 1.5rem 0; border-top: 2px solid #b8c0c2; border-bottom: 2px solid #b8c0c2; color: #15202b; text-decoration: none; transition: background-color .35s cubic-bezier(.16,1,.3,1), color .35s, padding .45s cubic-bezier(.16,1,.3,1), border-radius .35s; } .ds-row b { font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-size: 2.25rem; line-height: 1.02; letter-spacing: -0.025em; } .ds-row span { color: #53606a; } .ds-row em { font-style: normal; font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-weight: 700; font-size: 1.125rem; font-variant-numeric: tabular-nums; } .ds-row:hover, .ds-row:focus-visible { background: #13212f; color: #f2f4f1; padding-inline: 1.5rem; border-radius: 10px; outline: none; } .ds-row:hover span { color: #a3b3bf; } .ds-row:hover em { color: #f7931d; }"
+    },
+    {
+      "name": "Lane Split",
       "kind": "nav",
-      "refersTo": "",
-      "description": "Display-face links on paper over a hairline; a 2px orange underline wipes in on hover and stays on the current page.",
-      "html": "<nav class=\"ds-nav\" dir=\"rtl\"><a href=\"#\" class=\"is-current\">פרויקטים</a><a href=\"#\">חברת הבקרה</a><a href=\"#\">אודות</a><a href=\"#\">קריירה</a></nav>",
-      "css": ".ds-nav{display:flex;gap:1.75rem;padding:1rem 0;border-bottom:1px solid #8a9590;background:#e8ece9}.ds-nav a{position:relative;padding-block:.4rem;font:500 1rem 'Ploni Tzar',system-ui,sans-serif;color:#1b1f25;text-decoration:none}.ds-nav a::after{content:'';position:absolute;inset-inline:0;bottom:-2px;height:2px;background:#f7931d;transform:scaleX(0);transform-origin:right;transition:transform .4s cubic-bezier(.16,1,.3,1)}.ds-nav a:hover::after,.ds-nav a:focus-visible::after,.ds-nav a.is-current::after{transform:scaleX(1)}.ds-nav a:focus-visible{outline:2px solid #f7931d;outline-offset:3px}"
-    },
-    {
-      "name": "Stage row",
-      "kind": "custom",
-      "refersTo": "",
-      "description": "Four steps on one unbroken line; orange fill to the current step ending in a 'now' dot.",
-      "html": "<div class=\"ds-stage\" dir=\"rtl\" style=\"--now:2\"><span class=\"ds-stage__track\"><i></i><i></i><i></i><i></i><span class=\"ds-stage__fill\"></span></span><span class=\"ds-stage__label\">שלב 2 מתוך 4 · תכנון סטטוטורי</span></div>",
-      "css": ".ds-stage{display:grid;gap:.45rem;max-width:26rem;background:#e8ece9;padding:1rem}.ds-stage__track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);height:10px}.ds-stage__track::before{content:'';position:absolute;inset-inline:0;top:4px;height:1px;background:#8a9590}.ds-stage__track i{position:relative}.ds-stage__track i::before{content:'';position:absolute;inset-inline-start:0;top:0;width:1px;height:9px;background:#8a9590}.ds-stage__track i:last-child::after{content:'';position:absolute;inset-inline-end:0;top:0;width:1px;height:9px;background:#8a9590}.ds-stage__fill{position:absolute;inset-inline-start:0;top:3px;height:3px;width:calc(var(--now,0)*25%);background:#f7931d}.ds-stage__fill::after{content:'';position:absolute;inset-inline-end:-5px;top:-4px;width:11px;height:11px;border-radius:50%;background:#f7931d;box-shadow:0 0 0 3px #e8ece9}.ds-stage__label{font:500 .8125rem 'Ploni Tzar',system-ui,sans-serif;color:#56625e}"
-    },
-    {
-      "name": "Cartouche",
-      "kind": "card",
-      "refersTo": "cartouche",
-      "description": "The home sheet's title block over the night map: orange top rule, head line with map key, title, search, filter cells, live legend.",
-      "html": "<div class=\"ds-night\"><form class=\"ds-cart\" dir=\"rtl\"><div class=\"ds-cart__head\"><b>גיליון 00 · מפת הפרויקטים</b><span class=\"ds-key\"><span class=\"ds-key__pin\">פרויקט</span><span class=\"ds-key__plan\">תוכנית של לוג</span></span></div><h1 class=\"ds-cart__title\">הפרויקטים של לוג, על המפה</h1><div class=\"ds-cart__search\"><input type=\"search\" placeholder=\"חיפוש פרויקט, רשות או עיר\"></div><dl class=\"ds-cart__stats\"><div><dd>99</dd><dt>תוכניות</dt></div><div><dd>38</dd><dt>רשויות</dt></div></dl></form></div>",
-      "css": ".ds-night{background:#13212f;padding:2rem}.ds-cart{max-width:36rem;background:#e8ece9;color:#1b1f25;border-top:4px solid #f7931d;box-shadow:0 30px 60px -20px rgba(5,10,16,.65)}.ds-cart__head{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 1.5rem;border-bottom:1px solid #8a9590;font:500 .8125rem 'Ploni Tzar',system-ui,sans-serif;color:#56625e;font-variant-numeric:tabular-nums}.ds-cart__head b{color:#1b1f25;font-weight:500}.ds-key{display:inline-flex;gap:1.1rem}.ds-key span{display:inline-flex;align-items:center;gap:.4em}.ds-key__pin::before{content:'';width:10px;height:9px;background:#1b1f25;clip-path:polygon(50% 0,100% 100%,0 100%)}.ds-key__plan::before{content:'';width:14px;height:9px;background:rgba(247,147,29,.55);outline:1px solid #1b1f25;outline-offset:-1px}.ds-cart__title{margin:0;padding:1.4rem 1.5rem .5rem;font:700 2.75rem/1 'Ploni Tzar',system-ui,sans-serif;letter-spacing:-.035em}.ds-cart__search{padding:0 1.5rem 1rem}.ds-cart__search input{width:100%;box-sizing:border-box;font:400 1.0625rem 'Ploni',system-ui,sans-serif;background:#f3f5f3;border:1px solid #1b1f25;border-radius:0;padding:.85rem 1rem}.ds-cart__search input:focus{outline:none;box-shadow:inset 0 -3px 0 #f7931d}.ds-cart__stats{display:grid;grid-template-columns:1fr 1fr;margin:0;border-top:1px solid #8a9590}.ds-cart__stats div{display:flex;flex-direction:column-reverse;padding:.8rem 1.5rem .9rem}.ds-cart__stats div+div{border-inline-start:1px solid #8a9590}.ds-cart__stats dt{font:500 .8125rem 'Ploni Tzar',system-ui,sans-serif;color:#56625e}.ds-cart__stats dd{margin:0;font:500 2.25rem/1 'Ploni Tzar',system-ui,sans-serif;letter-spacing:-.02em;font-variant-numeric:tabular-nums}"
-    },
-    {
-      "name": "Project tile",
-      "kind": "card",
-      "refersTo": "project-tile-meta",
-      "description": "Plate image in an offset rule outline, meta line with practice area and grid reference, title, place.",
-      "html": "<article class=\"ds-tile\" dir=\"rtl\"><a href=\"#\"><div class=\"ds-tile__media\"></div><p class=\"ds-tile__meta\"><span>התחדשות עירונית</span><span class=\"ds-ref\">181250 / 663400</span></p><h3 class=\"ds-tile__title\">מתחם הרצל, בת ים</h3><p class=\"ds-tile__place\">בת ים</p></a></article>",
-      "css": ".ds-tile{max-width:300px;background:#e8ece9;padding:1rem}.ds-tile a{display:grid;gap:.3rem;color:#1b1f25;text-decoration:none}.ds-tile__media{aspect-ratio:4/3;background:#13212f;outline:1px solid #8a9590;outline-offset:5px;margin-bottom:1.1rem;transition:outline-color .3s}.ds-tile a:hover .ds-tile__media,.ds-tile a:focus-visible .ds-tile__media{outline-color:#f7931d}.ds-tile a:focus-visible{outline:none}.ds-tile__meta{display:flex;justify-content:space-between;gap:1rem;margin:0;font:500 .8125rem 'Ploni Tzar',system-ui,sans-serif;color:#56625e}.ds-ref{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}.ds-tile__title{margin:0;font:500 1.375rem/1.08 'Ploni Tzar',system-ui,sans-serif;letter-spacing:-.01em}.ds-tile__place{margin:0;font:400 .9375rem 'Ploni',system-ui,sans-serif;color:#56625e}"
-    },
-    {
-      "name": "Sheet label",
-      "kind": "custom",
-      "refersTo": "sheet-label",
-      "description": "The sheet number in a title block's end column.",
-      "html": "<p class=\"ds-sheet\" dir=\"rtl\"><b>03</b>גיליון · אודות</p>",
-      "css": ".ds-sheet{font:500 .8125rem/1.5 'Ploni Tzar',system-ui,sans-serif;color:#56625e;text-align:left;margin:0;background:#e8ece9;padding:1rem;width:fit-content}.ds-sheet b{display:block;font-size:2.25rem;font-weight:300;color:#1b1f25;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}"
+      "refersTo": "button-primary",
+      "description": "The two worlds as two plates that part ways; the current one carries an orange keyline.",
+      "html": "<nav class=\"ds-lanes\" dir=\"rtl\"><a class=\"is-active\" href=\"#\"><span><b>ניהול פרויקטים</b><small>תכנון וניהול ברמת הרשות</small></span><svg style='rotate:45deg' viewBox='0 0 26 18' width='22' height='15' aria-hidden='true'><path fill='currentColor' d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/></svg></a><a href=\"#\"><svg style='rotate:135deg' viewBox='0 0 26 18' width='22' height='15' aria-hidden='true'><path fill='currentColor' d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/></svg><span><b>חברת הבקרה</b><small>הבקרה הלאומית בהתחדשות עירונית</small></span></a></nav>",
+      "css": ".ds-lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .ds-lanes a { display: flex; align-items: center; justify-content: space-between; gap: .9rem; padding: .95rem 1.2rem 1rem; border-radius: 10px; background: #13212f; color: #a3b3bf; text-decoration: none; box-shadow: inset 0 0 0 5px #13212f, inset 0 0 0 7px #f2f4f1; transition: box-shadow .3s; } .ds-lanes span { display: grid; } .ds-lanes b { font-family: var(--font-display, 'Ploni Tzar', 'Ploni', system-ui, sans-serif); font-size: 1.25rem; color: #f2f4f1; } .ds-lanes small { font-size: .8125rem; } .ds-lanes a:hover, .ds-lanes a.is-active { box-shadow: inset 0 0 0 5px #13212f, inset 0 0 0 7px #f7931d; } .ds-lanes a.is-active svg, .ds-lanes a:hover svg { color: #f7931d; } .ds-lanes a:focus-visible { outline: 3px solid #f7931d; outline-offset: 3px; }"
     }
   ],
   "narrative": {
-    "northStar": "The Survey Sheet Series",
-    "overview": "**Creative North Star: \"The Survey Sheet Series\"**\n\nEvery page is a sheet in one series of topographic sheets of Israel. A sheet has a neatline (its border rule), a title block, a sheet number, a legend, and a margin that carries grid references. The site is built from those parts and nothing else: hairline rules instead of boxes, legend tables instead of feature cards, figures and coordinates set in tabular numerals because they are data.\n\nThe series is printed in two editions. The day edition is survey paper with ink and slate rules, and it carries most pages. The night edition is navy with faint contour lines; it carries the home map, the control company's whole page, and the footer, which is the sheet's margin band shared by both editions. An edition is chosen per world, never mixed inside one sheet: the control company is a separate world and lives entirely in the night edition.\n\nOrange is LOG's mark on the map. It prints LOG's plans and the 3D city, marks the active state of the interface, and tops the title block. Everything else is ink, slate and paper. Density is that of a printed sheet: tight legend rows, generous margins, one long horizontal rule per section.",
+    "northStar": "The Guide Sign",
+    "overview": "**Creative North Star: \"The Guide Sign\"**\n\nThe site is Israel's road guide-sign system turned to planning work. Every surface answers the same three questions a sign answers: where you are, how far it is, and which way is forward. The building block is the plate: a navy ground, a white keyline inset a few pixels from the edge, rounded corners. Buttons, the destination search, the filters, the figures, the map markers, the menu and the page-change cover are all plates of different sizes. Nothing is a floating card with a soft blur; a thing either is a sign or it sits on the road.\n\nThere are two grounds. Navy plate carries the home map, every page's title band, the full-screen menu, the control company's whole page and the footer. Road paper, a cool off-white, carries reading below the title band. Works-zone orange is LOG's own colour on the map and the colour of anything active: hover keylines, focus rings, the current lane, the route shields, the \"go\" button, the lane line that draws down the page as you scroll. A white sign with an ink keyline (the project card, the list drawer, the dialog, the cookie banner) is the third material, used when a sign has to hold reading content over the map or a page.\n\nDensity follows signage: big legends in Ploni Tzar, tabular figures, one arrow shape for every link that goes somewhere, and rows of destinations instead of card grids. Motion is GSAP: legends rise out of line masks, plates unroll from their top edge, arrows step forward on hover, figures count once. Under reduced motion nothing moves and nothing is hidden.",
     "keyCharacteristics": [
-      "Two editions of one sheet: day (paper #e8ece9) and night (navy #13212f with contour lines).",
-      "Square corners everywhere; hairline 1px rules carry all structure.",
-      "Orange only for LOG's plans, the active state, and the title block's top rule.",
-      "Ploni Tzar for display, labels and figures; Ploni for running text; tabular numerals for every number.",
-      "Grid references and ITM coordinates read left to right inside RTL Hebrew.",
-      "One authored motion per sheet: the neatline draws in, the title block settles."
+      "The plate (navy, 2px white keyline inset 5px, 10px corners) is the one container, drawn with two inset shadows and no extra element.",
+      "Works orange marks LOG's work and every active state, and nothing decorative.",
+      "Route shields number the pages: a small orange shield at the start of each page title and menu row.",
+      "One authored guide-sign arrow (broad head, square shaft), pointing forward, which is left in RTL.",
+      "Ploni Tzar for every legend and figure, Ploni for running text, tabular numerals for every number.",
+      "Night is a token swap, never a repaint of individual components."
     ],
     "rules": [
       {
-        "name": "The Plans-and-Pointer Rule",
-        "body": "Orange marks LOG's plans, the 3D city, the active state and the title block's top rule. Nothing else turns orange at rest. Body text and large fills are never orange.",
+        "name": "The Works Zone Rule",
+        "body": "Orange means one of two things: LOG's work, or \"this is active\". Hover, focus, current page, selected filter, live count. If orange appears on something idle and decorative, it is wrong.",
         "section": "colors"
       },
       {
-        "name": "The One-Edition Rule",
-        "body": "A sheet is day or night, never both. The night edition is applied by swapping tokens (the control page redefines paper, ink, slate and rule to their night values), not by painting individual components.",
-        "section": "colors"
-      },
-      {
-        "name": "The Pinned City Rule",
-        "body": "The 3D city stays flat brand orange because PRODUCT.md binds \"navy plate, orange buildings\". On the map, LOG's plans are distinguished by their paper-edged plates and the trig-point pins, and the cartouche's map key explains both.",
+        "name": "The Token Swap Rule",
+        "body": "Night is made by reassigning tokens on a container (`paper` becomes `plate`, `ink` becomes `legend`, `slate` becomes `legend-muted`, `rule` becomes `plate-line`, `rule-soft` becomes `night-rule-soft`, `works-deep` becomes `works`). Components follow by themselves. Never write a night variant of a component by hand.",
         "section": "colors"
       },
       {
         "name": "The Tabular Rule",
-        "body": "Every figure, count, year and coordinate is set with tabular numerals.",
+        "body": "Every number (counts, units, distances, years, shields, grid references) is set with tabular numerals. Grid references are isolated left-to-right inside RTL text.",
         "section": "typography"
       },
       {
-        "name": "The Surveyor's Direction Rule",
-        "body": "Grid references (easting / northing) and margin coordinates are isolated left to right inside RTL text, as surveyors write them.",
+        "name": "The Legend Rule",
+        "body": "Text that sits on a plate is Ploni Tzar 700. Ploni regular is for reading, not for signs.",
         "section": "typography"
       },
       {
-        "name": "The Paper-Over-Night Rule",
-        "body": "Only paper sheets that float over the night map or the page cast a shadow, and always downward. Day-edition content never lifts.",
+        "name": "The Lane Line",
+        "body": "One dashed orange line (4px wide, 30px dash, 24px gap; 3px, 18/16 on phones) runs down the start edge of the main content and draws in as the reader scrolls.",
+        "section": "layout"
+      },
+      {
+        "name": "The Keyline Rule",
+        "body": "State changes the keyline, not the shadow. Hover and focus recolour the keyline to orange; a plate does not lift, grow a glow, or change its drop.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do build structure from 1px hairlines (rule for neatlines, rule-soft for row separators) and keep every corner square.",
-      "Do set every figure, count and coordinate in tabular numerals, and isolate grid references left to right.",
-      "Do switch a whole world to the night edition by redefining paper, ink, slate and rule, as the control page does.",
-      "Do mark active and hover states with orange: an underline, bottom bar, or inset 3px rule.",
-      "Do give every project its grid reference on its tile, card and cover.",
-      "Do use GSAP with an exponential ease-out (expo.out; CSS cubic-bezier(.16, 1, .3, 1)): neatlines draw in once per sheet, title blocks settle upward 12-28px from an already-visible 0.25-0.35 opacity, figures count up once from 70% of their value. Reduced motion removes movement and never hides content.",
-      "Do swap tokens in one place when TwoPointFour's visual language lands: the :root block of src/styles/main.css, the night redefinition on body.page-template-page-control, the C palette in src/hero/scene.js, and the stroke color inside assets/img/contours-night.svg."
+      "**Do** build every new container as a plate: navy ground, white 2px keyline inset 5px, 10px corners, drawn with the two inset shadows.",
+      "**Do** reserve works orange for LOG's work and active state, and use `works-deep` when orange has to be read as small text on paper.",
+      "**Do** make night by swapping tokens on the container (The Token Swap Rule).",
+      "**Do** use the one guide-sign arrow for every link that goes somewhere, pointing forward (left), and move it forward on hover.",
+      "**Do** set every number in tabular numerals and isolate grid references left to right.",
+      "**Do** put a route shield at the start of every page title and its menu row.",
+      "**Do** show state by recolouring the keyline orange, not by lifting or glowing."
     ],
     "donts": [
-      "Don't use orange for body text, large fills or decoration at rest; it belongs to LOG's plans, the city, the active state and the title block's top rule.",
-      "Don't mix the editions inside one sheet, or put the control company's content on the day edition.",
-      "Don't add rounded cards, pill buttons or boxed feature grids; legend rows and hairline-divided strips do that job.",
-      "Don't put ticks or coordinate values on day-page neatlines; live ticks belong to the home map frame.",
-      "Don't add glow to the orange city or the pins; the city is printed flat in brand orange.",
-      "Don't cast shadows from day-edition content; only paper sheets over the map or page lift.",
-      "Don't add icons outside the authored arrow and caret masks, and don't use text glyphs as icons."
+      "**Don't** put a panel behind the home headline or anything that hides the map; the headline sits on the sea.",
+      "**Don't** fall back to a centred headline with two buttons, or a three-card service grid; lists of things are destination rows.",
+      "**Don't** use a second icon family, emoji or glyph characters as icons; the authored arrow, close, plus, minus and caret masks are the whole set.",
+      "**Don't** add small uppercase kickers above headings; the route shield and the title band already say where you are.",
+      "**Don't** paint night variants of single components or hard-code navy into a component.",
+      "**Don't** let a white sign's keyline swap with the night world; it stays `sign-ink`."
     ]
   }
 }
