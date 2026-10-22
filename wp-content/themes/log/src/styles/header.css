@@ -65,7 +65,7 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   .twin-nav__item + .twin-nav__item { box-shadow: inset -1px 0 0 var(--plate-line); }
   .twin-nav__item.is-active { box-shadow: inset 0 4px 0 var(--works); }
   .twin-nav__item + .twin-nav__item.is-active { box-shadow: inset 0 4px 0 var(--works), inset -1px 0 0 var(--plate-line); }
-  body { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+  .site-footer { padding-bottom: calc(2.5rem + 58px + env(safe-area-inset-bottom)); } /* room for the lane bar */
   body.home.at-map .twin-nav, body.sheet-open .twin-nav { translate: 0 110%; }
 }
 

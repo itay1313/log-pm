@@ -498,7 +498,7 @@ label.filters__group { display: grid; gap: .4rem; font: 500 .875rem var(--font-d
 .site-footer__nav .site-footer__copy { margin: 0; }
 
 /* Cookie banner: low, compact, a white sign; accept and decline weigh the same */
-.cookie-banner { position: fixed; z-index: 90; inset-inline-end: var(--gutter); bottom: var(--gutter); width: min(28rem, calc(100% - 2 * var(--gutter))); display: grid; gap: 1rem; padding: 1.35rem 1.5rem 1.4rem; border-radius: 12px; background: var(--legend); color: var(--sign-ink); box-shadow: inset 0 0 0 5px var(--legend), inset 0 0 0 7px var(--sign-ink), 0 24px 48px -16px rgba(5,10,16,.45); }
+.cookie-banner { position: fixed; z-index: 90; inset-inline-start: var(--gutter); bottom: var(--gutter); width: min(28rem, calc(100% - 2 * var(--gutter))); display: grid; gap: 1rem; padding: 1.35rem 1.5rem 1.4rem; border-radius: 12px; background: var(--legend); color: var(--sign-ink); box-shadow: inset 0 0 0 5px var(--legend), inset 0 0 0 7px var(--sign-ink), 0 24px 48px -16px rgba(5,10,16,.45); }
 .cookie-banner__text { margin: 0; font-size: .9375rem; }
 .cookie-banner__actions { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
 .cookie-banner__actions .btn { padding: .85em 1em; }
