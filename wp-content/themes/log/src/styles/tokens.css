@@ -1,0 +1,73 @@
+/*
+ * LOG · visual world: Israel's guide-sign system for planning work (direction contract in .impeccable/surfaces/).
+ * Navy guide plates with a white keyline, works-zone orange for LOG's active work and every active state,
+ * road paper for reading. Every token lives here: swap this file when TwoPointFour's visual language lands,
+ * together with the C palette in src/hero/scene.js.
+ */
+
+:root {
+  /* Sign plates: the guide-sign ground, the map, the control company, the footer */
+  --plate: #13212f;
+  --plate-2: #1b2c3d;
+  --plate-line: #3a4e62;
+  --legend: #f2f4f1;          /* retroreflective white */
+  --legend-muted: #a3b3bf;
+  /* Road paper: the day ground of reading pages */
+  --paper: #e7eae6;
+  --paper-2: #f4f5f2;
+  --ink: #15202b;
+  --slate: #53606a;
+  --rule: #b8c0c2;
+  --rule-soft: #d3d8d6;
+  /* Works zone: LOG's active work, hover, focus, the current lane */
+  --works: #f7931d;
+  --works-deep: #b9650a;      /* orange that has to read as small text on paper */
+  --sign-ink: #15202b;        /* the white sign's legend and keyline; never swapped by a night world */
+  --danger: #b3261e;
+
+  /* Legacy names some markup and the map still read */
+  --orange: var(--works);
+  --orange-deep: var(--works-deep);
+  --night: var(--plate);
+  --night-2: var(--plate-2);
+  --night-line: var(--plate-line);
+  --night-ink: var(--legend);
+  --night-muted: var(--legend-muted);
+  --grey: var(--slate);
+  --line: var(--rule-soft);
+
+  --font-display: 'Ploni Tzar', 'Ploni', system-ui, sans-serif;
+  --font-text: 'Ploni', system-ui, sans-serif;
+
+  /* The plate: a guide sign's rounded corner and its white keyline, inset from the edge */
+  --r-plate: 10px;
+  --r-small: 6px;
+  --keyline: 2px;
+  --keyline-inset: 5px;
+
+  --container: 1320px;
+  --gutter: clamp(16px, 4vw, 56px);
+  --header-h: 84px;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.76, 0, .24, 1);
+
+  /* One authored icon set. The guide-sign arrow (broad head, square shaft) points forward: left in RTL. */
+  --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 18'%3E%3Cpath d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/%3E%3C/svg%3E");
+  --icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.5 1.5l9 9M10.5 1.5l-9 9' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
+  --icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 1v10M1 6h10' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
+  --icon-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1 6h10' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
+  --icon-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 7'%3E%3Cpath d='M0 0h10L5 7z'/%3E%3C/svg%3E");
+
+  color-scheme: light;
+  accent-color: var(--works);
+}
+
+/* Fonts: Ploni (text) + Ploni Tzar (display), licensed webfonts, self-hosted. */
+@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_demibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }

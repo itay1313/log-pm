@@ -1,48 +1,66 @@
 ---
 name: LOG Project Management
-description: One survey-sheet series of Israel, printed in two editions, day paper and night navy.
+description: Israel's guide-sign system for planning work. Navy plates with a white keyline, works-zone orange for anything active, road paper for reading.
 colors:
-  orange: "#f7931d"
-  orange-deep: "#c96f06"
-  paper: "#e8ece9"
-  paper-2: "#f3f5f3"
-  ink: "#1b1f25"
-  slate: "#56625e"
-  rule: "#8a9590"
-  rule-soft: "#c3cbc6"
-  night: "#13212f"
-  night-2: "#1a2b3c"
-  night-line: "#3d5063"
-  night-rule-soft: "#2b3e51"
-  night-ink: "#e8ece9"
-  night-muted: "#9aabb8"
+  plate: "#13212f"
+  plate-2: "#1b2c3d"
+  plate-line: "#3a4e62"
+  legend: "#f2f4f1"
+  legend-muted: "#a3b3bf"
+  paper: "#e7eae6"
+  paper-2: "#f4f5f2"
+  ink: "#15202b"
+  slate: "#53606a"
+  rule: "#b8c0c2"
+  rule-soft: "#d3d8d6"
+  works: "#f7931d"
+  works-deep: "#b9650a"
+  sign-ink: "#15202b"
   danger: "#b3261e"
+  night-rule-soft: "#2a3d50"
+  map-fog: "#1d2a3a"
+  map-sea: "#2f4a63"
+  map-road-national: "#9db1c6"
+  map-road-regional: "#b4c4d4"
+  map-road: "#e3ebf2"
+  map-road-major: "#ffffff"
 typography:
   display:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.5rem, 5.4vw, 5.25rem)"
+    fontSize: "clamp(2.75rem, 6vw, 6rem)"
     fontWeight: 700
-    lineHeight: 1.08
+    lineHeight: 0.94
     letterSpacing: "-0.035em"
   headline:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2rem, 3.6vw, 3.25rem)"
-    fontWeight: 500
-    lineHeight: 1.08
-    letterSpacing: "-0.02em"
+    fontSize: "clamp(2.375rem, 4.8vw, 4.5rem)"
+    fontWeight: 700
+    lineHeight: 0.96
+    letterSpacing: "-0.035em"
+  destination:
+    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
+    fontSize: "clamp(1.75rem, 3vw, 2.75rem)"
+    fontWeight: 700
+    lineHeight: 1.02
+    letterSpacing: "-0.025em"
   title:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "1.375rem"
+    fontSize: "1.5rem"
     fontWeight: 500
-    lineHeight: 1.08
+    lineHeight: 1.1
     letterSpacing: "-0.01em"
   figure:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.25rem, 4.5vw, 3.75rem)"
-    fontWeight: 500
+    fontSize: "clamp(2.25rem, 3.2vw, 3.25rem)"
+    fontWeight: 700
     lineHeight: 1
-    letterSpacing: "-0.03em"
+    letterSpacing: "-0.02em"
     fontFeature: "tnum"
+  sign-legend:
+    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 700
+    lineHeight: 1.2
   body:
     fontFamily: "'Ploni', system-ui, sans-serif"
     fontSize: "1.0625rem"
@@ -52,235 +70,313 @@ typography:
     fontFamily: "'Ploni', system-ui, sans-serif"
     fontSize: "1.1875rem"
     fontWeight: 400
-    lineHeight: 1.65
+    lineHeight: 1.7
   label:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
     fontSize: "0.8125rem"
     fontWeight: 500
-    lineHeight: 1.5
-    fontFeature: "tnum"
+    lineHeight: 1.4
 rounded:
-  none: "0"
+  small: "6px"
+  chip: "8px"
+  plate: "10px"
+  panel: "12px"
+  board: "14px"
+  gantry: "20px"
 spacing:
+  keyline: "2px"
+  keyline-inset: "5px"
+  plate-gap: "8px"
   gutter: "clamp(16px, 4vw, 56px)"
-  section: "clamp(44px, 5.6vw, 84px)"
-  tick: "72px"
-  header: "76px"
+  section: "clamp(56px, 7vw, 108px)"
+  header: "84px"
+  header-phone: "68px"
   container: "1320px"
 components:
   button-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.none}"
-    padding: "0.85em 1.5em"
-  button-ghost:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
-    padding: "0.85em 1.5em"
-  button-primary-night:
-    backgroundColor: "{colors.night-ink}"
-    textColor: "{colors.night}"
-    rounded: "{rounded.none}"
-    padding: "0.85em 1.5em"
-  input-field:
-    backgroundColor: "{colors.paper-2}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
-    padding: "0.75em 0.9em"
-  cartouche:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
-    width: "min(46rem, 48vw)"
-  cartouche-head:
-    textColor: "{colors.slate}"
-    typography: "{typography.label}"
-    padding: "0.7rem 1.5rem"
-  tab:
-    textColor: "{colors.slate}"
-    padding: "0.7rem 0"
-  tab-active:
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+    typography: "{typography.sign-legend}"
+    rounded: "{rounded.plate}"
+    padding: "1.05em 1.6em"
+  button-primary-hover:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+  button-day:
+    backgroundColor: "{colors.legend}"
+    textColor: "{colors.sign-ink}"
+    typography: "{typography.sign-legend}"
+    rounded: "{rounded.plate}"
+    padding: "1.05em 1.6em"
+  button-works:
+    backgroundColor: "{colors.works}"
+    textColor: "{colors.plate}"
+    typography: "{typography.sign-legend}"
+    rounded: "{rounded.plate}"
+    padding: "1.05em 1.6em"
+  button-works-hover:
+    backgroundColor: "{colors.legend}"
+    textColor: "{colors.plate}"
+  destination-plate:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+    rounded: "{rounded.plate}"
+    height: "78px"
+    width: "min(100%, 620px)"
+  destination-plate-go:
+    backgroundColor: "{colors.works}"
+    textColor: "{colors.plate}"
+    rounded: "5px"
+    width: "68px"
+  lane-filter:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+    rounded: "{rounded.plate}"
+    padding: "0.7rem 1.15rem 0.75rem"
+  distance-sign:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+    typography: "{typography.figure}"
+    rounded: "{rounded.plate}"
+    padding: "1.15rem 1.65rem 1rem"
+  route-shield:
+    backgroundColor: "{colors.works}"
+    textColor: "{colors.sign-ink}"
+    rounded: "0.35em"
+    padding: "0.3em 0.5em 0.24em"
   sheet-label:
+    backgroundColor: "{colors.works}"
+    textColor: "{colors.plate}"
+    rounded: "{rounded.plate}"
+    padding: "0.8rem 1.2rem 0.75rem"
+  marker:
+    backgroundColor: "{colors.plate}"
+    rounded: "{rounded.small}"
+    size: "26px"
+  marker-active:
+    backgroundColor: "{colors.works}"
+  white-sign:
+    backgroundColor: "{colors.legend}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.panel}"
+    padding: "8px"
+  destination-row:
+    textColor: "{colors.ink}"
+    typography: "{typography.destination}"
+    padding: "clamp(1.25rem, 2.2vw, 1.9rem) 0"
+  destination-row-hover:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+    rounded: "{rounded.plate}"
+    padding: "clamp(1.25rem, 2.2vw, 1.9rem) 1.5rem"
+  chip:
+    backgroundColor: "transparent"
     textColor: "{colors.slate}"
-    typography: "{typography.label}"
-  project-tile-meta:
-    textColor: "{colors.slate}"
-    typography: "{typography.label}"
-  night-sheet:
-    backgroundColor: "{colors.night}"
-    textColor: "{colors.night-ink}"
+    rounded: "{rounded.chip}"
+    padding: "0.6rem 1.1rem"
+  chip-active:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+  input-field:
+    backgroundColor: "{colors.legend}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.small}"
+    padding: "0.8em 0.95em"
+  title-band:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+    typography: "{typography.display}"
+  gantry-plate:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
+    rounded: "{rounded.gantry}"
+  night-section:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.legend}"
 ---
 
 # Design System: LOG Project Management
 
 ## Overview
 
-**Creative North Star: "The Survey Sheet Series"**
+**Creative North Star: "The Guide Sign"**
 
-Every page is a sheet in one series of topographic sheets of Israel. A sheet has a neatline (its border rule), a title block, a sheet number, a legend, and a margin that carries grid references. The site is built from those parts and nothing else: hairline rules instead of boxes, legend tables instead of feature cards, figures and coordinates set in tabular numerals because they are data.
+The site is Israel's road guide-sign system turned to planning work. Every surface answers the same three questions a sign answers: where you are, how far it is, and which way is forward. The building block is the plate: a navy ground, a white keyline inset a few pixels from the edge, rounded corners. Buttons, the destination search, the filters, the figures, the map markers, the menu and the page-change cover are all plates of different sizes. Nothing is a floating card with a soft blur; a thing either is a sign or it sits on the road.
 
-The series is printed in two editions. The day edition is survey paper with ink and slate rules, and it carries most pages. The night edition is navy with faint contour lines; it carries the home map, the control company's whole page, and the footer, which is the sheet's margin band shared by both editions. An edition is chosen per world, never mixed inside one sheet: the control company is a separate world and lives entirely in the night edition.
+There are two grounds. Navy plate carries the home map, every page's title band, the full-screen menu, the control company's whole page and the footer. Road paper, a cool off-white, carries reading below the title band. Works-zone orange is LOG's own colour on the map and the colour of anything active: hover keylines, focus rings, the current lane, the route shields, the "go" button, the lane line that draws down the page as you scroll. A white sign with an ink keyline (the project card, the list drawer, the dialog, the cookie banner) is the third material, used when a sign has to hold reading content over the map or a page.
 
-Orange is LOG's mark on the map. It prints LOG's plans and the 3D city, marks the active state of the interface, and tops the title block. Everything else is ink, slate and paper. Density is that of a printed sheet: tight legend rows, generous margins, one long horizontal rule per section.
+Density follows signage: big legends in Ploni Tzar, tabular figures, one arrow shape for every link that goes somewhere, and rows of destinations instead of card grids. Motion is GSAP: legends rise out of line masks, plates unroll from their top edge, arrows step forward on hover, figures count once. Under reduced motion nothing moves and nothing is hidden.
 
 **Key Characteristics:**
-- Two editions of one sheet: day (paper #e8ece9) and night (navy #13212f with contour lines).
-- Square corners everywhere; hairline 1px rules carry all structure.
-- Orange only for LOG's plans, the active state, and the title block's top rule.
-- Ploni Tzar for display, labels and figures; Ploni for running text; tabular numerals for every number.
-- Grid references and ITM coordinates read left to right inside RTL Hebrew.
-- One authored motion per sheet: the neatline draws in, the title block settles.
+- The plate (navy, 2px white keyline inset 5px, 10px corners) is the one container, drawn with two inset shadows and no extra element.
+- Works orange marks LOG's work and every active state, and nothing decorative.
+- Route shields number the pages: a small orange shield at the start of each page title and menu row.
+- One authored guide-sign arrow (broad head, square shaft), pointing forward, which is left in RTL.
+- Ploni Tzar for every legend and figure, Ploni for running text, tabular numerals for every number.
+- Night is a token swap, never a repaint of individual components.
 
 ## Colors
 
-A narrow survey palette: paper, ink and slate for the day edition, navy and pale slate for the night edition, one brand orange used sparingly.
+A signage palette: two navies and a retroreflective white for the plates, a cool road paper for reading, one orange that means "active" or "LOG".
 
 ### Primary
-- **LOG Survey Orange** (orange): LOG's own plans (map plates, sheet-index dots, map-key swatch), the 3D city, and every active or hover state (nav underline, active tab, filter cell focus, button underline wipe, focus ring, pin hover). Also the 4px top rule on title blocks and floating sheets (cartouche, project card, list drawer, apply dialog, cookie banner, map popup).
-- **Burnt Orange** (orange-deep): the orange used where it has to read as small marks on paper; arrow hover in legend rows and job rows, map-link hover on tiles.
+- **Works-Zone Orange** (`works`): LOG's projects and the 3D city on the map, the route shield, the destination plate's "go" button, the sheet label on title bands, hover and focus keylines, focus rings (3px outline, 3px offset), selection, caret, the active lane underline, the lane line and the stage dashes.
+- **Deep Works Orange** (`works-deep`): orange that has to read as small text or an arrow on paper (link-arrow hover, ghost-button hover keyline). On night grounds it swaps back to `works`.
 
-### Neutral (day edition)
-- **Survey Paper** (paper): page ground; also the ground of every title block that sits on the night edition.
-- **Field Paper** (paper-2): inputs, hover fill of legend rows, image placeholders, search drawer.
-- **Drafting Ink** (ink): text, primary buttons, the heavy rule that opens a fact list or job list.
-- **Slate Note** (slate): secondary text, labels, sheet labels, legend captions.
-- **Slate Rule** (rule): the neatline and every structural hairline.
-- **Faint Rule** (rule-soft): row separators inside tables and lists.
+### Neutral
+- **Guide-Sign Navy** (`plate`): the plate ground. Home map backdrop, title bands, header strip, gantry menu, distance signs, markers, the footer and the control company's page.
+- **Raised Navy** (`plate-2`): media fallbacks, the menu's search input, offices on the footer, the ring-wipe band.
+- **Plate Rule** (`plate-line`): 2px dividers on navy (menu rows, the distance sign's divider, zoom button seam, footer rules).
+- **Retroreflective White** (`legend`): text and keylines on navy; the ground of the white sign and of input fields.
+- **Faded Legend** (`legend-muted`): secondary text on navy, distances in menu rows, back links, the hero lede.
+- **Road Paper** (`paper`): the day ground of reading pages and the scrollbar track.
+- **Light Paper** (`paper-2`): quiet panels on paper (offices, job sidebar, client logos) with a 2px inset rule.
+- **Road Ink** (`ink`): text on paper, 3px heading rules over lists, field borders.
+- **Slate** (`slate`): secondary text on paper, labels, meta lines.
+- **Rule** / **Soft Rule** (`rule`, `rule-soft`): 2px row dividers and table rules; soft rule for dividers inside white signs.
+- **Sign Ink** (`sign-ink`): the legend and keyline of white signs and of the route shield. It is never swapped by a night world, so a white sign stays a white sign on navy.
+- **Night Soft Rule** (`night-rule-soft`): the `rule-soft` value inside night worlds.
+- **Danger** (`danger`): field errors only.
 
-### Neutral (night edition)
-- **Night Navy** (night): the night sheet ground; the map plate, control page, footer, project cover.
-- **Deep Navy** (night-2): second ground for media wells, control-page field fill, wipe ring band.
-- **Contour Slate** (night-line): the neatline on night sheets.
-- **Night Faint Rule** (night-rule-soft): row separators on the control page.
-- **Night Ink** (night-ink): text on navy, pins at rest.
-- **Night Slate** (night-muted): secondary text, margin ticks and coordinates on the map.
-
-### Signal
-- **Survey Red** (danger): form errors only.
+### Map palette
+The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map-fog`, `map-sea`), four road greys stepping from national to major (`map-road-national` to `map-road-major`), and `works` for buildings and plans. The city is orange because it is LOG's work; the roads are pale so markers and legends stay readable on top.
 
 ### Named Rules
-**The Plans-and-Pointer Rule.** Orange marks LOG's plans, the 3D city, the active state and the title block's top rule. Nothing else turns orange at rest. Body text and large fills are never orange.
+**The Works Zone Rule.** Orange means one of two things: LOG's work, or "this is active". Hover, focus, current page, selected filter, live count. If orange appears on something idle and decorative, it is wrong.
 
-**The One-Edition Rule.** A sheet is day or night, never both. The night edition is applied by swapping tokens (the control page redefines paper, ink, slate and rule to their night values), not by painting individual components.
-
-**The Pinned City Rule.** The 3D city stays flat brand orange because PRODUCT.md binds "navy plate, orange buildings". On the map, LOG's plans are distinguished by their paper-edged plates and the trig-point pins, and the cartouche's map key explains both.
+**The Token Swap Rule.** Night is made by reassigning tokens on a container (`paper` becomes `plate`, `ink` becomes `legend`, `slate` becomes `legend-muted`, `rule` becomes `plate-line`, `rule-soft` becomes `night-rule-soft`, `works-deep` becomes `works`). Components follow by themselves. Never write a night variant of a component by hand.
 
 ## Typography
 
 **Display Font:** Ploni Tzar (with Ploni, system-ui)
 **Body Font:** Ploni (with system-ui)
 
-**Character:** Ploni Tzar is the lettering of the sheet: titles, labels, legend captions, figures, buttons. Ploni is the running text. Both are licensed and self-hosted.
+**Character:** Ploni Tzar is the sign legend: condensed, bold, tight, set at large sizes with negative tracking so headings read like gantry text. Ploni does the reading in lighter weights. Both are licensed and self-hosted (Ploni 300 to 600, Ploni Tzar 300 to 700).
 
 ### Hierarchy
-- **Display** (700, clamp(2.5rem, 5.4vw, 5.25rem), 1.08, -0.035em): page and sheet titles. Project covers push to clamp(2.75rem, 7vw, 6rem) at 0.98.
-- **Headline** (500, clamp(2rem, 3.6vw, 3.25rem), 1.08): section titles, max 18ch.
-- **Title** (500, 1.375rem): tile titles, process steps, list items.
-- **Figure** (500, clamp(2.25rem, 4.5vw, 3.75rem), 1, tabular): legend numbers in number strips and project facts; the cartouche legend runs at clamp(1.75rem, 2.6vw, 2.5rem).
-- **Body** (400, 1.0625rem, 1.6): default text. Prose runs at 1.1875rem / 1.65, max 62ch; ledes at clamp(1.125rem, 1.6vw, 1.375rem), max 52ch, in slate.
-- **Label** (Ploni Tzar 500, 0.8125rem, tabular): sheet labels, cartouche head, filter captions, tile meta, table heads. Never uppercase, never letterspaced as a kicker.
+- **Display** (700, clamp(2.75rem, 6vw, 6rem), 0.94): page titles in the title band. The home headline runs a little larger and tighter (up to 6rem, 0.9) with its last word in works orange.
+- **Headline** (700, clamp(2.375rem, 4.8vw, 4.5rem), 0.96): section titles on paper, max about 16ch.
+- **Destination** (700, clamp(1.75rem, 3vw, 2.75rem), 1.02): names in destination rows (practice areas, jobs). The menu's rows use the same voice at up to 5.5rem, also scaled by viewport height.
+- **Title** (500 to 700, 1.5rem, 1.1): step titles, card titles (1.625rem, 700), sidebar heads.
+- **Figure** (700, clamp(2.25rem, 3.2vw, 3.25rem), 1, tabular): counts on distance signs.
+- **Sign legend** (700, 1.0625rem): buttons, menu toggle, header links, anything that is the text on a plate.
+- **Body** (400, 1.0625rem, 1.6) and **Prose** (400, 1.1875rem, 1.7, max 62 to 66ch): running text.
+- **Label** (500, 0.8125rem to 0.875rem, Ploni Tzar): filter captions, card meta, table heads, stage labels. Sentence case, no tracking, never uppercase.
 
 ### Named Rules
-**The Tabular Rule.** Every figure, count, year and coordinate is set with tabular numerals.
+**The Tabular Rule.** Every number (counts, units, distances, years, shields, grid references) is set with tabular numerals. Grid references are isolated left-to-right inside RTL text.
 
-**The Surveyor's Direction Rule.** Grid references (easting / northing) and margin coordinates are isolated left to right inside RTL text, as surveyors write them.
+**The Legend Rule.** Text that sits on a plate is Ploni Tzar 700. Ploni regular is for reading, not for signs.
 
 ## Layout
 
-A centred sheet of max 1320px with a fluid gutter (clamp(16px, 4vw, 56px)). Sections are separated by one full-width hairline at their top edge (the neatline), with vertical padding of clamp(44px, 5.6vw, 84px). Inner layouts are asymmetric two-column splits (7fr / 4fr or 7fr / 5fr) that collapse to one column under 860-900px.
+RTL throughout; "start" is the right edge, "forward" is left. The container is 1320px wide inside a fluid gutter of clamp(16px, 4vw, 56px). Sections breathe at clamp(56px, 7vw, 108px) top and bottom. The header is 84px (68px on phones) and every page without a full-screen cover hangs it over a navy strip that the page's title band continues, so the gantry always reads light on navy.
 
-The page header is a title block: title, lede and meta on the start side, the sheet label pinned to the end column, a hairline under the whole block. Legend strips (numbers, values, roles) divide their cells with vertical hairlines at the inline start, not with gaps or cards.
+The home page is the map, full viewport. The headline sits straight on the sea at the start side with no panel behind it; a gradient scrim darkens the start and bottom edges instead. Under it the destination plate and three lane filters hang 8px apart. The distance sign stands at the bottom end corner, the lane-split pair at the bottom start, and map controls as small plates along the end edge.
 
-The home sheet is full-viewport: the navy map inside a neatline frame inset by the gutter, its top edge sitting on the header rule, with margin ticks every 72px. The cartouche anchors bottom start at about 48% width; map controls sit in the bottom end margin. On phones the cartouche spans the bottom edge, filters open as a bottom sheet, and the twin doors move to a fixed bar at the bottom.
+Below the map, content is rows, not grids of boxes: destination rows with a 3px ink rule on top and 2px rules between. Project tiles use an auto-fill grid (min 300px, gaps 3.25rem by 1.75rem). Steps are four columns on one dashed orange lane, turning vertical on phones. Title bands are a two-column grid with the title on the start side and the orange sheet label at the end.
+
+**The Lane Line.** One dashed orange line (4px wide, 30px dash, 24px gap; 3px, 18/16 on phones) runs down the start edge of the main content and draws in as the reader scrolls.
+
+Breakpoints observed: 1180px (lane-split loses its second line), 900px (header collapses, the lane split moves to a fixed bottom bar, menu goes single column), 760px (home becomes legend on top, tools at the bottom; process goes vertical), 700px and 560px (form and footer columns). A short-viewport rule (max-height 760px) drops the hero lede.
 
 ## Elevation & Depth
 
-Day sheets are flat: structure is hairlines and tonal paper steps. Elevation exists only for paper sheets lying over the night map or over the page: the cartouche, the project card, the list drawer, the apply dialog, the cookie banner and the map popup. All of them use one deep soft shadow cast downward by a single light above. Pins carry a small drop shadow onto the map plate.
+Depth comes from the plate's keyline and from the navy against paper, not from shadow stacks. The keyline itself is two inset box-shadows: the ground colour for the inset (5px), then the line colour for 2px more. Plates that stand on the map also cast one soft drop shadow, always the same cool near-black, offset straight down as if lit from above.
 
 ### Shadow Vocabulary
-- **Sheet lift** (`box-shadow: 0 30px 60px -20px rgba(5,10,16,.65)`): paper sheets over the map (cartouche, drawer). The project card adds a contact shadow `0 4px 12px rgba(5,10,16,.3)`; the dialog runs at 0 40px 80px -20px.
-- **Pin drop** (`filter: drop-shadow(0 4px 6px rgba(5,10,16,.55))`): trig-point pins on the map.
-- **Active underline** (`box-shadow: inset 0 -3px 0 #f7931d`): focus and active state on fields, view toggles and twin doors. This is a state mark, not elevation.
+- **Keyline** (`box-shadow: inset 0 0 0 5px <ground>, inset 0 0 0 7px <line>`): every plate. Small plates scale it down (3px/5px on markers and map controls, 4px/6px on filters and sheet labels, 6px/8px on figure signs, 10px/13px on the menu).
+- **Map plate drop** (`0 24px 50px -20px rgba(5,10,16,.7)`): plates over the map (destination plate, distance sign, lane split).
+- **White sign drop** (`0 30px 60px -18px rgba(5,10,16,.7), 0 4px 12px rgba(5,10,16,.3)`): the project card, list drawer and dialog over the map or page.
+- **Control drop** (`0 10px 24px -10px rgba(5,10,16,.7)`): small map controls.
+- **Focus ring** (`outline: 3px solid works; outline-offset: 3px`; fields use `0 0 0 3px works`).
 
 ### Named Rules
-**The Paper-Over-Night Rule.** Only paper sheets that float over the night map or the page cast a shadow, and always downward. Day-edition content never lifts.
+**The Keyline Rule.** State changes the keyline, not the shadow. Hover and focus recolour the keyline to orange; a plate does not lift, grow a glow, or change its drop.
 
 ## Shapes
 
-Square corners throughout (radius 0, also forced on MapLibre controls and popups). Circles are reserved for survey marks: the stage row's "now" dot, the numbered survey station, cluster pins, edge counters, timeline dots, and the placeholder logo ring. Triangles are the trig-point mark: map pins, the map key, the "show on map" link on tiles, and partner bullets. Image wells are framed by a 1px rule outline offset 5-6px, a plate inside its border, which turns orange on hover.
-
-Icons are one authored hairline set (1.4 stroke) used as CSS masks so they take the current color: the forward arrow (points left in RTL) and the caret. Swatches in legend rows are hatched with ink line patterns (diagonal, horizontal, dotted, cross-hatch, vertical, heavy diagonal) in rotation.
+Rounded rectangles only, with corners that grow with the sign: 6px for small controls, markers, fields and the hero card's inner image; 8px for chips, steps and the twin-nav items; 10px for the standard plate; 12px for white signs and large figure signs; 14px for the orientation board and phone sheets; 20px for the full-screen gantry. The route shield's corner is relative (0.35em) so it scales with the heading it sits in. Lines are 2px (row rules, keylines, field borders) or 3px (rules above lists and figure groups). The one arrow is a filled silhouette, masked from a CSS variable and coloured with `currentColor`.
 
 ## Components
 
 ### Buttons
-Squared, ruled, quiet until touched.
-- **Shape:** square corners (0), 1px border in currentColor.
-- **Primary:** ink fill, paper text, Ploni Tzar 500 1rem, padding 0.85em 1.5em. On the night edition the fill inverts to night ink with navy text.
-- **Ghost:** transparent with a faint rule border.
-- **Hover / Focus:** a 3px orange bar wipes in along the bottom edge from the start side (0.45s, the ease-out curve). Focus ring is 2px orange, offset 3px.
-- **Text links with arrow:** display face, an orange 2px underline grows from the start side on hover, and the masked arrow nudges 4px forward.
+Signs you can press.
+- **Shape:** the plate (10px corners, 2px keyline inset 5px).
+- **Primary:** navy plate, white legend and keyline, Ploni Tzar 700 at 1.0625rem, 1.05em by 1.6em padding.
+- **Hover / Focus:** the keyline turns orange; background and size stay put. Arrows inside step 6px forward.
+- **Day:** white plate with a sign-ink keyline; hover keyline turns deep orange.
+- **Works:** orange plate with a navy keyline, used where the action is the page's main way forward on navy (control company section). Hover swaps the ground to white.
+- **Text links that go somewhere:** Ploni Tzar 700 followed by the arrow; the arrow steps forward and turns deep orange on hover.
 
-### Tabs and filter chips
-- **Style:** display face 1rem, slate text, no box; a 3px bottom border sits on the row's hairline.
-- **State:** active is ink text with an orange 3px bottom border.
+### Destination plate (signature)
+The "לאן?" search on the home map: a 78px navy plate, orange "לאן?" legend at 1.5rem, white input, and a 68px orange "go" block with the arrow, inset 9px. Focus anywhere inside turns the keyline orange. Suggestions drop below as a white sign; the highlighted row turns into a navy plate.
+
+### Lane filters
+Three equal plates under the destination plate with a dimmed white keyline (55%) and a small label over a bold value. Hover or focus turns the keyline orange; a set filter turns its value orange. On phones they fold into a toggle and open as a bottom sheet.
+
+### Distance sign
+A navy plate holding live figures as label and tabular number pairs, with a 2px plate-line rule above an orange "all projects" link. The same sign shape carries project figures and page figures elsewhere.
+
+### Route shield
+A small orange shield with a sign-ink keyline holding the page's two-digit number, set inline at the start of the page title and of its menu row (`00` on home). Size is relative to the heading, never below 0.8125rem.
+
+### Markers
+Every project on the map is the same 26px navy plate with an orange centre. Hover, focus or active: it scales 1.3x and inverts (orange plate, navy keyline and centre). Clusters are 40px plates with a white count. Edge counters are 32px plates pointing at what lies past the screen edge.
+
+### White sign
+The project card, list drawer, apply dialog and cookie banner: retroreflective white ground, ink keyline, 12px corners, 8px padding around content. The card's "go" bar inside is a navy plate that turns orange on hover.
+
+### Destination rows
+Practice areas and jobs: name, one line, a count and the arrow in a three-column row between 2px rules. Hover turns the whole row into a navy sign (padding opens 1.5rem, 10px corners), the count and arrow go orange and the arrow steps 8px forward.
+
+### Chips
+- **Style:** transparent with a 2px rule keyline, slate Ploni Tzar 700 text, 8px corners.
+- **State:** hover darkens the keyline to ink; active becomes a navy plate with an orange keyline.
 
 ### Inputs / Fields
-- **Style:** field paper fill, 1px slate rule border, square, label above in display face.
-- **Focus:** border goes to ink and an inset 3px orange underline appears; no glow.
-- **Error:** border and underline in survey red, hint text below.
+- **Style:** white ground, 2px ink border, 6px corners, 0.8em by 0.95em padding; selects carry a small triangle at the left.
+- **Focus:** border stays ink, an orange 3px ring appears outside.
+- **Error:** border turns danger red with a 25% red ring; hint text in danger red.
 
 ### Navigation
-Header on the paper ground with a hairline under it, display-face links with a 2px orange underline that wipes in on hover and stays on the current page. Over a cover (home map, project) the header is transparent with night-ink text and a translucent rule. The twin doors (project management / control company) are a two-cell strip divided by a hairline; the active door gets the orange inset underline. On phones the links scroll in a row under the logo and the doors sit fixed at the bottom.
+- **Gantry header:** fixed, transparent over the map, solid navy once the page scrolls. Wordmark at the start, "talk to us" and the menu plate at the end.
+- **Lane split:** the two worlds (project management, control company) as two plates that part ways, each with a 45-degree lane arrow. On the home map they stand as large plates at the bottom start; on other pages they sit in the header with a 4px orange underline for the current world; on phones they become a fixed two-cell bar at the bottom edge.
+- **Menu:** a full-screen gantry plate (20px corners, 13px keyline inset) of destination rows with live counts and the shield number; the current page shows an orange "אתה כאן" tag. It unrolls from the top edge and names rise in line masks.
 
-### Neatline
-The sheet's border rule. On day pages and night sections it is a plain 1px hairline at the top of each section and under each page header; it draws in once from the start side as the sheet enters. Ticks every 72px and live ITM values appear only on the home map frame, where the top margin reads easting and the side margin reads northing at the camera's ground point, and the corner readout gives the centre's grid reference.
+### Stage row and steps
+Project stage is four lane dashes lit in orange up to "now"; a finished project's dashes go ink. Numbered steps are route shields (2.75rem navy plates) sitting on one dashed orange lane.
 
-### Cartouche
-The title block of the home sheet: paper ground with a 4px orange top rule, a head line in label type (sheet number and name, plus the map key), the display title, the search field, three filters as hairline-divided cells, the live legend of counts, and a full-width "all projects" link row. It settles upward from an already-visible state on load.
+### Title band and sheet label
+Every inner page opens on a navy band that continues the header strip, with a display title, an optional meta line and lede, and an orange sheet label at the end giving how much lies down this road. Hero images hang from the band into the paper.
 
-### Map key and legend rows
-The map key reads the sheet's marks: an ink triangle for a project pin, a translucent orange plate with an ink edge for a LOG plan. Legend rows (practice areas) are full-width rows divided by rules: a hatched ink swatch, the name in display face, one line in slate, and a live count with an arrow. Hover fills the row with field paper, indents it 1rem, and turns the swatch border orange.
+### Motion
+GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger). Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Reduced motion turns all of it off and shows everything.
 
-### Sheet label
-The sheet's number in the title block's end column: a large light numeral (Ploni Tzar 300, 2.25rem, two digits, "—" when unnumbered) over "גיליון · name" in label type, with an optional extra line (a project count, a job number). Home is sheet 00.
+## Swap points for TwoPointFour
 
-### Stage row
-Stage shown as one unbroken line of four equal steps with tick marks at each boundary. A 3px orange fill runs to the current step and ends in an 11px orange "now" dot ringed in the ground color; the text label sits below. Completed projects fill the whole line in ink. On the project cover the track turns pale and the done fill goes night ink.
+When TwoPointFour's visual language lands, the world changes in three places and nowhere else:
+1. `wp-content/themes/log/src/styles/tokens.css`: every colour, font, radius, keyline and icon token.
+2. The night token swap in `src/styles/pages.css` on `.sheet--night, .section--control, .section--night, .site-footer` and on `body.page-template-page-control` (the only place `night-rule-soft` is written).
+3. The `C` palette at the top of `src/hero/scene.js` for the 3D map.
 
-### Survey station
-Process steps are numbered survey stations: a 2.25rem circle with a 1px rule and a tabular numeral, sitting on one horizontal rule that runs across the four steps (vertical on phones).
-
-### Trig-point pins
-All pins are identical: a night-ink triangle with a navy centre dot and a soft drop shadow. Hover, focus and the active pin scale to 1.25 and turn orange. Clusters are navy circles with a night-ink ring and a tabular count; edge counters are small navy circles with an arrowhead pointing off the sheet.
-
-### Project tile
-A plate image in a ruled outline offset 5px (orange on hover, image scales 1.04 over 1s). Above the title, a meta line in label type carries the practice area at the start and the grid reference at the end. Then the title, place, the stage row and a figure in tabular display numerals. Tiles without photography print a night plate.
-
-### Sheet index
-An SVG of the national ITM grid at 20km spacing in faint rule, with northing and easting labels, a few reference cities in ink, and every LOG project as an orange dot with an ink edge. Hovering enlarges the dots and turns the frame orange.
-
-### Night sheet
-The night edition material: navy ground, the contour-line SVG laid over it, contour-slate neatline, night-ink and night-slate text. Used by the home map, the control section on the home page, the control company's whole page, and the footer.
+The legacy aliases in tokens.css (`--orange`, `--night`, `--night-ink`, `--grey`, `--line` and the rest) point at the new tokens; new code uses the new names.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** build structure from 1px hairlines (rule for neatlines, rule-soft for row separators) and keep every corner square.
-- **Do** set every figure, count and coordinate in tabular numerals, and isolate grid references left to right.
-- **Do** switch a whole world to the night edition by redefining paper, ink, slate and rule, as the control page does.
-- **Do** mark active and hover states with orange: an underline, bottom bar, or inset 3px rule.
-- **Do** give every project its grid reference on its tile, card and cover.
-- **Do** use GSAP with an exponential ease-out (expo.out; CSS cubic-bezier(.16, 1, .3, 1)): neatlines draw in once per sheet, title blocks settle upward 12-28px from an already-visible 0.25-0.35 opacity, figures count up once from 70% of their value. Reduced motion removes movement and never hides content.
-- **Do** swap tokens in one place when TwoPointFour's visual language lands: the :root block of src/styles/main.css, the night redefinition on body.page-template-page-control, the C palette in src/hero/scene.js, and the stroke color inside assets/img/contours-night.svg.
+- **Do** build every new container as a plate: navy ground, white 2px keyline inset 5px, 10px corners, drawn with the two inset shadows.
+- **Do** reserve works orange for LOG's work and active state, and use `works-deep` when orange has to be read as small text on paper.
+- **Do** make night by swapping tokens on the container (The Token Swap Rule).
+- **Do** use the one guide-sign arrow for every link that goes somewhere, pointing forward (left), and move it forward on hover.
+- **Do** set every number in tabular numerals and isolate grid references left to right.
+- **Do** put a route shield at the start of every page title and its menu row.
+- **Do** show state by recolouring the keyline orange, not by lifting or glowing.
 
 ### Don't:
-- **Don't** use orange for body text, large fills or decoration at rest; it belongs to LOG's plans, the city, the active state and the title block's top rule.
-- **Don't** mix the editions inside one sheet, or put the control company's content on the day edition.
-- **Don't** add rounded cards, pill buttons or boxed feature grids; legend rows and hairline-divided strips do that job.
-- **Don't** put ticks or coordinate values on day-page neatlines; live ticks belong to the home map frame.
-- **Don't** add glow to the orange city or the pins; the city is printed flat in brand orange.
-- **Don't** cast shadows from day-edition content; only paper sheets over the map or page lift.
-- **Don't** add icons outside the authored arrow and caret masks, and don't use text glyphs as icons.
+- **Don't** put a panel behind the home headline or anything that hides the map; the headline sits on the sea.
+- **Don't** fall back to a centred headline with two buttons, or a three-card service grid; lists of things are destination rows.
+- **Don't** use a second icon family, emoji or glyph characters as icons; the authored arrow, close, plus, minus and caret masks are the whole set.
+- **Don't** add small uppercase kickers above headings; the route shield and the title band already say where you are.
+- **Don't** paint night variants of single components or hard-code navy into a component.
+- **Don't** let a white sign's keyline swap with the night world; it stays `sign-ink`.

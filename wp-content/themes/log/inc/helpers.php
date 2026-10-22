@@ -42,34 +42,30 @@ function log_stage_row( array $stage, string $class = '' ): string {
 }
 
 /**
- * Where the current page sits in the sheet series: [number, name], from the header's page order.
- * Item pages take their area's sheet. Home is sheet 0 (the index map).
+ * The route number of the current page: its place in the header's order (01 פרויקטים … 06 צור קשר), the same
+ * number its row carries in the menu. Item pages take their area's number; home is 00; anything else has none.
  */
-function log_sheet(): array {
+function log_route_number(): ?int {
 	if ( is_front_page() ) {
-		return [ 0, 'מפת הפרויקטים' ];
+		return 0;
 	}
-	foreach ( log_nav_items() as $i => [ $label, , $current ] ) {
+	foreach ( log_nav_items() as $i => [ , , $current ] ) {
 		if ( $current ) {
-			return [ $i + 1, $label ];
+			return $i + 1;
 		}
 	}
-	if ( is_search() ) {
-		return [ 0, 'חיפוש' ];
-	}
-	return [ 0, wp_strip_all_tags( get_the_title() ) ];
+	return null;
 }
 
-/** The sheet label for a title block: "גיליון 3 · אודות". */
+/** A route shield (works orange, navy keyline) for a heading; the current page's number by default. */
+function log_route_shield( ?int $n = -1 ): string {
+	$n = $n === -1 ? log_route_number() : $n;
+	return $n === null ? '' : sprintf( '<span class="shield" aria-hidden="true">%02d</span>', $n );
+}
+
+/** The distance plate at the end of a title band ("94 פרויקטים"); nothing when there is nothing to count. */
 function log_sheet_label( string $extra = '' ): string {
-	[ $n, $name ] = log_sheet();
-	$num = $n ? sprintf( '%02d', $n ) : '—';
-	return sprintf(
-		'<p class="sheet-label"><b>%1$s</b>גיליון · %2$s%3$s</p>',
-		esc_html( $num ),
-		esc_html( $name ),
-		$extra !== '' ? '<br>' . esc_html( $extra ) : ''
-	);
+	return $extra !== '' ? sprintf( '<p class="sheet-label">%s</p>', esc_html( $extra ) ) : '';
 }
 
 /**
@@ -222,6 +218,27 @@ function log_nav_items(): array {
 		[ 'מרכז ידע', get_post_type_archive_link( 'log_knowledge' ), is_post_type_archive( 'log_knowledge' ) || is_singular( 'log_knowledge' ) ],
 		[ 'קריירה', get_post_type_archive_link( 'log_job' ), is_post_type_archive( 'log_job' ) || is_singular( 'log_job' ) ],
 		[ 'צור קשר', $page( 'contact' ), is_page( 'contact' ) ],
+	];
+}
+
+/**
+ * The menu's distance column: what lies down each road, in the same order as log_nav_items().
+ * Counts are live; a road with nothing to count gets a short line instead.
+ *
+ * @return array<int, string>
+ */
+function log_nav_distances(): array {
+	$plural = static fn( int $n, string $one, string $many ) => $n === 1 ? $one : sprintf( $many, number_format_i18n( $n ) );
+	$jobs   = count( get_posts( [ 'post_type' => 'log_job', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => 'is_open', 'meta_value' => '1', 'no_found_rows' => true ] ) );
+	$items  = (int) ( wp_count_posts( 'log_knowledge' )->publish ?? 0 );
+	$phone  = log_offices()[0]['phone'] ?? '';
+	return [
+		$plural( count( log_public_projects() ), 'פרויקט אחד', '%s פרויקטים' ),
+		'הבקרה הלאומית בהתחדשות עירונית',
+		'האנשים, הערכים, המשרדים',
+		$items ? $plural( $items, 'פריט אחד', '%s פריטים' ) : 'מאמרים, ניירות עמדה, חדשות',
+		$jobs ? $plural( $jobs, 'משרה פתוחה אחת', '%s משרות פתוחות' ) : 'אין משרות פתוחות כרגע',
+		$phone ?: 'תל אביב · ירושלים',
 	];
 }
 

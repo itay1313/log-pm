@@ -14,6 +14,7 @@ $legal = array_filter( [
 ?>
 <footer class="site-footer">
 	<div class="site-footer__inner">
+		<?php if ( ! is_page( 'contact' ) ) : ?><a class="site-footer__cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php echo esc_html( log_text( 'header_cta', 'בואו נדבר', 'option' ) ); ?><i class="arrow" aria-hidden="true"></i></a><?php endif; ?>
 		<div class="site-footer__brand">
 			<?php get_template_part( 'template-parts/logo' ); ?>
 			<p class="site-footer__line"><?php echo esc_html( log_text( 'footer_line', 'מתכננים. מחברים. מובילים.', 'option' ) ); ?></p>

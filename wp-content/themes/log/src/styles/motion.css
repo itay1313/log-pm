@@ -1,0 +1,28 @@
+/* ------------------------------------------------------------------ motion (motion.js) */
+
+/*
+ * What motion.js animates in is held back from the first paint, so nothing flashes before it rises.
+ * html.motion is set in the head only when reduced motion is off; if the script never arrives,
+ * the safety animation shows everything after 2.4s.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.motion :is(.hero__title, .hero__lede, .hero-search, .hero-filters .filters__group, .hero-filter-toggle, .hero-dist, .hero-bar > *,
+    .page-header > *, .about-hero__copy > *, .careers-hero__copy > *, .control-hero__strip h1, .control-hero__strip p, .project__hero-copy > *) {
+    opacity: 0; animation: motion-safety .01s 2.4s forwards;
+  }
+}
+@keyframes motion-safety { to { opacity: 1; } }
+
+/* The lane line: one orange works marking down the start edge, drawn as far as the reader has come. */
+.site-main { position: relative; }
+.lane-line {
+  position: absolute; z-index: 4; inset-inline-start: calc(var(--gutter) / 2 - 2px); bottom: 0; width: 4px; pointer-events: none;
+  background: repeating-linear-gradient(180deg, var(--works) 0 30px, transparent 30px 54px); transform-origin: top center;
+}
+@media (max-width: 760px) { .lane-line { inset-inline-start: 4px; width: 3px; background: repeating-linear-gradient(180deg, var(--works) 0 18px, transparent 18px 34px); } }
+
+/* Page change: a navy plate covers the page before it leaves and lifts after it arrives. */
+.page-cover { position: fixed; inset: 0; z-index: 9998; visibility: hidden; display: grid; place-items: center; background: var(--plate); pointer-events: none; }
+.page-cover__mark .logo__ring { display: block; width: 46px; height: 46px; border-width: 9px; }
+html.is-covered body::after { content: ''; position: fixed; inset: 0; z-index: 9998; background: var(--plate); animation: cover-safety .01s 1.6s forwards; }
+@keyframes cover-safety { to { visibility: hidden; } }

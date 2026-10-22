@@ -31,16 +31,61 @@ import('./motion.js').then((m) => m.initMotion()).catch(() => document.documentE
  * mount it never pay for it.
  */
 
-// Header: search and mobile menu toggles
-for (const btn of document.querySelectorAll('.site-header [aria-controls]')) {
-  const target = document.getElementById(btn.getAttribute('aria-controls'));
-  if (!target) continue;
-  btn.addEventListener('click', () => {
-    const open = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!open));
-    target.hidden = open;
-    if (!open) target.querySelector('input')?.focus();
+// The gantry: the header turns into a solid navy bar once the page moves.
+const header = document.querySelector('.site-header');
+if (header) {
+  const solid = () => header.classList.toggle('is-solid', scrollY > 8);
+  addEventListener('scroll', solid, { passive: true });
+  solid();
+}
+
+// The menu: a modal dialog (focus stays inside, Esc closes, the page behind is inert). The map pauses under it.
+const menu = document.getElementById('site-menu');
+const menuBtn = document.querySelector('.menu-toggle');
+if (menu?.showModal && menuBtn) {
+  const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let closing = false;
+  const open = () => {
+    menu.showModal();
+    menuBtn.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('menu-open');
+    window.LOGhero?.pause();
+    if (!still()) import('./motion.js').then((m) => m.menuIn(menu)).catch(() => {});
+  };
+  const close = async () => {
+    if (closing || !menu.open) return;
+    closing = true;
+    if (!still()) await import('./motion.js').then((m) => m.menuOut(menu)).catch(() => {});
+    menu.close();
+    closing = false;
+  };
+  menuBtn.addEventListener('click', open);
+  menu.querySelector('.gantry__close')?.addEventListener('click', close);
+  menu.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
+  menu.addEventListener('click', (e) => { if (e.target === menu) close(); });
+  menu.addEventListener('close', () => {
+    menuBtn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('menu-open');
+    window.LOGhero?.resume();
+    menuBtn.focus();
   });
+}
+
+// The lane line: one orange works marking down the start edge of every long page, from the end of its opening
+// band to the footer. It stands for everyone; motion.js draws it with the scroll when motion is allowed.
+{
+  const main = document.querySelector('.site-main');
+  const first = document.getElementById('hero') || main?.querySelector('.page-header, .about-hero, .careers-hero, .control-hero, .project__hero');
+  if (main && main.offsetHeight > innerHeight * 1.5) {
+    const line = document.createElement('div');
+    line.className = 'lane-line';
+    line.setAttribute('aria-hidden', 'true');
+    main.appendChild(line);
+    const place = () => { line.style.top = `${first ? first.offsetTop + first.offsetHeight : 0}px`; };
+    place();
+    addEventListener('resize', place, { passive: true });
+    addEventListener('load', place);
+  }
 }
 
 // Back links on level-3 pages (spec v6 §5): when the visitor came from the area page (or, for projects,
@@ -71,6 +116,18 @@ if (applyDialog?.showModal) {
   applyDialog.addEventListener('click', (e) => { if (e.target === applyDialog) applyDialog.close(); });
   applyDialog.addEventListener('close', () => opener?.focus());
   if (location.hash === '#apply') open();
+}
+
+// Contact: a topic on the side sign picks it in the form and moves on to the first field.
+for (const b of document.querySelectorAll('[data-topic]')) {
+  b.addEventListener('click', () => {
+    const select = document.querySelector('.form--contact select[name=topic]');
+    if (!select) return;
+    select.value = b.dataset.topic;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    document.querySelectorAll('[data-topic]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelector('.form--contact input[name=name]')?.focus();
+  });
 }
 
 // Copy link buttons (job, knowledge item)
@@ -170,12 +227,12 @@ if (document.querySelector('.project')) {
 
 // Home map: interface first, then the 3D layer (reduced motion gets the map without animation).
 const hero = document.getElementById('hero');
-// Header and twin buttons sit on the cover picture (light) until it scrolls away.
-const cover = document.body.classList.contains('has-cover') && (hero || document.querySelector('.project__hero'));
-if (cover) {
-  document.body.classList.add('over-hero');
-  new IntersectionObserver(([e]) => document.body.classList.toggle('over-hero', e.intersectionRatio > 0.12), { threshold: [0, 0.12, 0.5] }).observe(cover);
-}
 if (hero) {
+  // While the map fills the screen, phones park the lane bar (the search sits on that edge); off screen the map stops drawing.
+  new IntersectionObserver(([e]) => {
+    document.body.classList.toggle('at-map', e.intersectionRatio > 0.35);
+    if (document.body.classList.contains('menu-open')) return;
+    if (e.isIntersecting) window.LOGhero?.resume(); else window.LOGhero?.pause();
+  }, { threshold: [0, 0.35, 0.6] }).observe(hero);
   import('./hero.js').then((m) => m.initHero(hero)).catch((err) => { console.error(err); hero.classList.add('no-webgl'); });
 }

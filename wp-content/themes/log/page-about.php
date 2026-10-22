@@ -32,7 +32,7 @@ $galleries = array_filter( [
 		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת צוות גדולה (רק עורכים רואים את זה)</span><?php endif; ?>
 	</figure>
 	<div class="container about-hero__copy">
-		<h1 class="page-header__title"><?php echo esc_html( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ) ); ?></h1>
+		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ) ); ?></h1>
 		<div class="page-header__prose">
 			<?php if ( get_the_content() ) : the_content(); else : ?>
 				<p>הצוות של לוג רב-תחומי: אדריכלות, תכנון עיר ואזור, מדיניות ציבורית, הנדסה, גיאוגרפיה וחברה.</p>
@@ -64,8 +64,7 @@ $galleries = array_filter( [
 
 <section class="section section--vision" data-section="vision">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'vision_title', 'החזון' ) ); ?></h2>
-		<p class="vision__short"><?php echo esc_html( log_text( 'vision_short', 'מתכננים. מחברים. מובילים.' ) ); ?></p>
+		<h2 class="vision__short"><span class="screen-reader-text"><?php echo esc_html( log_text( 'vision_title', 'החזון' ) ); ?>: </span><?php echo esc_html( log_text( 'vision_short', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'vision_long', 'להוביל תכנון עירוני שמחבר בין צרכי העיר, האנשים שגרים בה והכלים לממש אותו.' ) ); ?></p>
 	</div>
 </section>

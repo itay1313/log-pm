@@ -13,6 +13,7 @@
  */
 import { FILTERS, matches, matchesQuery, mergeQuery, recordFromProps, readState, stateQuery, setOptionCounts } from './filter.js';
 import { track } from './consent.js';
+import { gsap } from 'gsap';
 
 const fmt = new Intl.NumberFormat('he-IL');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -45,6 +46,7 @@ export async function initHero(hero) {
   }
 
   const pred = (p, skip) => matches(state, recordFromProps(p), skip);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let map = null;
 
   /* ---------------------------------------------------------------- interface */
@@ -80,7 +82,16 @@ export async function initHero(hero) {
     const el = statsEl.querySelector(`[data-stat=${key}]`);
     if (!el) return;
     el.hidden = !show;
-    el.querySelector('dd').textContent = fmt.format(value);
+    roll(el.querySelector('dd'), value);
+  }
+  /** The distance sign rolls to a new figure; the first figure counts up from 70% as the page opens. */
+  function roll(dd, value) {
+    const from = dd.dataset.v === undefined ? value * 0.7 : Number(dd.dataset.v);
+    dd.dataset.v = value;
+    dd._roll?.kill();
+    if (still || from === value) { dd.textContent = fmt.format(value); return; }
+    const o = { v: from };
+    dd._roll = gsap.to(o, { v: value, duration: 1.1, ease: 'expo.out', onUpdate: () => (dd.textContent = fmt.format(Math.round(o.v))) });
   }
   function writeUrl() {
     const qs = mergeQuery(location.search, state, { p: locked });
@@ -153,11 +164,16 @@ export async function initHero(hero) {
     input.removeAttribute('aria-activedescendant');
   }
 
-  /** A chosen suggestion: fly to it on the map, or open its page, or the list it lives in. */
+  /** A chosen suggestion: fly to it on the map, or open its page, or the list it lives in. The plate answers like an overhead sign. */
+  const destLabel = form.querySelector('.hero-search__label');
+  const askLabel = destLabel?.textContent;
+  input.addEventListener('input', () => { if (destLabel) destLabel.textContent = askLabel; });
   function choose(slug) {
     closeSuggest();
     const f = features.find((x) => slugOf(x.properties) === slug);
     if (!f) return;
+    input.value = f.properties.title;
+    if (destLabel) destLabel.textContent = 'יעד';
     if (map && f.geometry && !f.properties.national && map.focusSlug(slug)) return;
     if (f.properties.page) { location.href = f.properties.url; return; }
     openList(f.properties.national || !f.geometry ? 'national' : 'all');
