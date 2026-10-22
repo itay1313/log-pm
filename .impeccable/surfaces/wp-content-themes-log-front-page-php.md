@@ -2,27 +2,26 @@
 version: 1
 slug: "wp-content-themes-log-front-page-php"
 primary_target: "wp-content/themes/log/front-page.php"
-related_targets: ["wp-content/themes/log/src/styles/main.css","wp-content/themes/log/archive-log_project.php","wp-content/themes/log/single-log_project.php"]
+related_targets: ["wp-content/themes/log/src/styles/main.css","wp-content/themes/log/header.php","wp-content/themes/log/archive-log_project.php","wp-content/themes/log/single-log_project.php"]
 ---
 
 # Surface brief: LOG site (home first, then every template)
 
 Scope: the whole public site, home first. Mode: Persuade on home, projects, control, about, careers; Read on knowledge items and project stories; Operate on search, forms and filters.
-Audience: five audiences at equal weight (PRODUCT.md). Action on home: find a project on the map (search, filters, open a project) or step into one of the two worlds.
-Constraints: binding Ploni / Ploni Tzar, orange #F7931D, navy 3D map opening, final logo pending (slot). Avoid: consultancy template, SaaS dark-mode glow, flashy motion over credibility, cold empty minimalism. Tokens must stay easy to swap when TwoPointFour's visual language lands.
+Audience: five audiences at equal weight (PRODUCT.md). Action on home: find a project on the map (search, filters, open a project) or take one of the two lanes (project management, the control company).
+Constraints: binding Ploni / Ploni Tzar, orange #F7931D, navy 3D map opening, final logo pending (slot). Itay rejected the boxed cartouche over the map (2026-10-22): the map leads, controls sit on it as small plates. Tokens stay swappable for TwoPointFour.
 Unresolved: logo file; real photography; texts file.
 
 ## Direction contract
 
-THESIS: The site is one survey-sheet series of Israel. Every page is a sheet in the series, framed by a neatline whose margin carries real ITM grid references, and every project carries its own grid reference. It refuses the category default of a full-bleed render, centred headline and three service cards.
+THESIS: The site is Israel's guide-sign system for planning work: every page answers where, how far and which way. It refuses the consultancy default (render, centred headline, three service cards) and any panel that hides the map.
 
-OWN-WORLD: Two editions of one sheet. Night edition (navy #13212f ground, contour lines in cold slate) for the map and the control company; day edition (survey paper #e8ece9, ink #1b1f25, slate rule #8a9590) for everything else. Orange #F7931D only for LOG's plans and the active state in the interface. Translation of a pinned commitment: the 3D map keeps its orange city (PRODUCT.md binds "navy plate, orange buildings"), printed flat in the brand orange with no glow; on the map LOG's plans read by their paper-edged plates and the trig-point pins, and the cartouche carries the key. Hairline neatlines, coordinate ticks, legend tables, scale bars, cartouche title blocks. Ploni Tzar display, Ploni text, tabular numerals for every figure and coordinate.
+OWN-WORLD: Navy guide plates (#13212f) with a 2px white keyline inset 5px and 10px corners; retroreflective white legend; works-zone orange #F7931D for LOG's active work and every active state; road-paper day ground for reading pages. One authored guide-sign arrow. Route shields carry page and section numbers. Ploni Tzar legends, tabular distances.
 
-STORY: The visitor sees LOG's real projects across the country, understands two separate worlds (management and national control), believes the scale because every figure and coordinate is live data, and acts: searches, filters, opens a project, or steps into the control company.
+STORY: The visitor sees LOG's real projects standing on the map, reads how many and where, picks a destination or one of the two lanes, and every later page keeps saying where they are and which way is forward.
 
-FIRST VIEWPORT: The navy 3D map fills the sheet inside a neatline inset ~24px; the top and side margins carry ITM ticks that track the camera centre. Header sits on the top neatline. The cartouche, a survey-paper title block with an orange top rule, anchors the bottom start at ~44% width: sheet title line, H1 at display size, the search field, the three filters as cells, and the legend of live numbers with "לכל הפרויקטים". Scale bar, zoom, "כל הארץ" and the two list buttons sit in the bottom end margin.
+FIRST VIEWPORT: Camera looks south over Tel Aviv: the sea fills the start half, the orange city stands at the end. Headline straight on the sea, display scale, last word orange, shield 00 above. Under it the "לאן?" destination plate (primary action) and three lane filters. Distance sign bottom end, lane-split doors bottom start, controls as small plates on the end edge.
 
-FORM: Survey sheet series (Survey of Israel topographic sheets), position 4 on the ordered list; seed:da965731c5f12b42. Raises: stage as one unbroken four-step row with a "now" marker (drum machine); orange reserved for plans and active state (film); one long horizontal neatline per sheet (indoor sun); each world its own edition, never mixed (arcade); page changes as one orchestrated sheet transition (shader portal).
-Signature interaction: live margin coordinates that follow the map camera, and every project's grid reference. Motion grammar: GSAP, exponential ease-out, neatlines draw in once per sheet, cartouche settles from an already-visible state; reduced motion removes movement, never content.
+FORM: Israeli road and wayfinding signage, position 4; seed:798fb4f1c8f05bd4. Raises: one continuous lane line through every section (daylight section); state reads as light (signboard alley); every page and section carries a route number (teletext). Signature interaction: choosing a destination flies the camera there and the plate answers like an overhead sign. Menu: a full-screen gantry of destination rows with live counts. Motion grammar: GSAP; legends rise in line masks (expo/power4 out), plates mount from their post, arrows advance on hover, the lane line draws with scroll, figures count once. Reduced motion: nothing moves, nothing hides.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
