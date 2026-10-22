@@ -60,6 +60,13 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
 .plate--day { --k-ground: var(--legend); --k-line: var(--sign-ink); }
 .plate--works { --k-ground: var(--works); --k-line: var(--plate); }
 
+/* The route shield: a page's number in the header order, set inline at the start of its heading and its menu row. */
+.shield {
+  display: inline-block; vertical-align: .5em; margin-inline-end: .45em; padding: .3em .5em .24em; border-radius: .35em;
+  font: 700 max(.8125rem, .26em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
+  background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 .17em var(--works), inset 0 0 0 .3em var(--sign-ink);
+}
+
 /* The guide-sign arrow, used for every link that goes somewhere. It travels on hover. */
 .arrow {
   display: inline-block; flex: none; width: 1.3em; height: .9em; background: currentColor; vertical-align: middle;

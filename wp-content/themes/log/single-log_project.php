@@ -43,7 +43,7 @@ while ( have_posts() ) : the_post();
 			<?php endif; ?>
 			<div class="project__hero-copy">
 				<a class="back-link back-link--light" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>" data-back data-back-home="חזרה למפה">חזרה לפרויקטים</a>
-				<h1 class="project__title"><?php the_title(); ?></h1>
+				<h1 class="project__title"><?php echo log_route_shield(); ?><?php the_title(); ?></h1>
 				<p class="project__meta"><?php echo log_project_meta_line( $pid ); ?></p>
 				<?php echo log_stage_row( $stage, 'project__stage' ); ?>
 				<?php if ( $grid = log_project_grid_ref( $pid ) ) : ?>

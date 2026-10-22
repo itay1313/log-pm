@@ -19,7 +19,7 @@
   position: absolute; z-index: 4; inset-inline-start: calc(var(--gutter) / 2 - 2px); bottom: 0; width: 4px; pointer-events: none;
   background: repeating-linear-gradient(180deg, var(--works) 0 30px, transparent 30px 54px); transform-origin: top center;
 }
-@media (max-width: 760px) { .lane-line { display: none; } }
+@media (max-width: 760px) { .lane-line { inset-inline-start: 4px; width: 3px; background: repeating-linear-gradient(180deg, var(--works) 0 18px, transparent 18px 34px); } }
 
 /* Page change: a navy plate covers the page before it leaves and lifts after it arrives. */
 .page-cover { position: fixed; inset: 0; z-index: 9998; visibility: hidden; display: grid; place-items: center; background: var(--plate); pointer-events: none; }

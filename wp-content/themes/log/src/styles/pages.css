@@ -6,7 +6,7 @@
  * A night section swaps the tokens, never paints components one by one.
  */
 
-.section { position: relative; padding-block: clamp(72px, 9vw, 136px); }
+.section { position: relative; padding-block: clamp(56px, 7vw, 108px); }
 .section__title { max-width: 16ch; margin-bottom: .45em; font-size: clamp(2.375rem, 4.8vw, 4.5rem); line-height: .96; letter-spacing: -0.035em; }
 .section__lede { font-size: clamp(1.1875rem, 1.6vw, 1.4375rem); line-height: 1.5; max-width: 50ch; color: var(--slate); }
 .section__prose { max-width: 62ch; font-size: 1.1875rem; line-height: 1.7; }
@@ -346,6 +346,8 @@ label.filters__group { display: grid; gap: .4rem; font: 500 .875rem var(--font-d
 .person__photo { margin: 0 0 1rem; position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--r-plate); background: var(--plate); }
 .person__photo img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; filter: grayscale(1) contrast(1.05); transition: filter .6s var(--ease-out); }
 .person:hover .person__photo img { filter: none; }
+body.page-template-page-control .person__photo, .section--night .person__photo { background: var(--plate-2); box-shadow: inset 0 0 0 5px var(--plate-2), inset 0 0 0 7px var(--legend-muted); }
+body.page-template-page-control .person__placeholder, .section--night .person__placeholder { background: transparent; }
 .person__placeholder { display: grid; place-items: center; width: 100%; height: 100%; background: var(--plate); font: 700 clamp(3rem, 6vw, 4.5rem)/1 var(--font-display); color: var(--legend-muted); letter-spacing: -0.04em; }
 .person__name { font-size: 1.3125rem; font-weight: 700; margin-bottom: .15rem; }
 .person__role { color: var(--slate); font-size: 1rem; margin: 0; }
@@ -355,12 +357,15 @@ label.filters__group { display: grid; gap: .4rem; font: 500 .875rem var(--font-d
 .expertise h3 { font-size: 1.375rem; font-weight: 700; margin: 0 0 .4rem; }
 .expertise p { margin: 0; color: var(--slate); }
 .vision__short { font: 700 clamp(3rem, 6.6vw, 6rem)/.94 var(--font-display); letter-spacing: -0.04em; margin: 0 0 1.5rem; max-width: 14ch; }
-.values, .roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 1rem; margin-top: 2.25rem; }
-.values__item, .roles__item { padding: 1.6rem 1.6rem 1.75rem; border-radius: 12px; background: var(--paper-2); box-shadow: inset 0 0 0 2px var(--rule); }
+/* Values and roles: legend rows, the name at display size, its line and its practice beside it */
+.values, .roles { margin-top: 2.25rem; border-top: 3px solid var(--ink); }
+.values__item, .roles__item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1.2fr); column-gap: clamp(1.25rem, 3vw, 3rem); align-items: baseline; padding: clamp(1.25rem, 2.2vw, 1.8rem) 0; border-bottom: 2px solid var(--rule); }
+.roles__item { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
 .values__n { display: none; }
-.values__item h3, .roles__item h3 { margin: 0 0 .55rem; font-size: 1.625rem; font-weight: 700; }
-.values__item p, .roles__item p { color: var(--slate); margin: 0 0 .8rem; }
-.values__practice { color: var(--ink) !important; font-size: 1rem; padding-top: .8rem; margin: 0 !important; border-top: 2px solid var(--rule); }
+.values__item h3, .roles__item h3 { margin: 0; font-size: clamp(1.75rem, 2.8vw, 2.5rem); font-weight: 700; letter-spacing: -0.025em; }
+.values__item p, .roles__item p { color: var(--slate); margin: 0; font-size: 1.0625rem; }
+.values__practice { color: var(--ink) !important; font-size: 1rem; padding-inline-start: 1.1rem; box-shadow: inset -3px 0 0 var(--works); }
+@media (max-width: 760px) { .values__item, .roles__item { grid-template-columns: 1fr; row-gap: .5rem; } .values__practice { margin-top: .25rem !important; } }
 .roles__item .stage { display: none; }
 .offices { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 2rem; margin-top: 2.25rem; }
 .offices__item { margin: 0; }
@@ -481,7 +486,15 @@ label.filters__group { display: grid; gap: .4rem; font: 500 .875rem var(--font-d
 @media (max-width: 900px) { .site-footer__inner { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .site-footer__inner { grid-template-columns: 1fr; } }
 .site-footer .logo { font-size: 2.25rem; }
-.site-footer__line { margin: 1.75rem 0 0; font: 700 clamp(2.5rem, 4.6vw, 4.5rem)/.95 var(--font-display); letter-spacing: -0.035em; color: var(--legend); max-width: 9ch; }
+.site-footer__line { margin: 1rem 0 0; font: 500 1.125rem var(--font-display); color: var(--legend-muted); max-width: 22ch; }
+/* The last sign on the road: a way to talk */
+.site-footer__cta {
+  grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 2rem; padding-bottom: clamp(2rem, 4vw, 3.5rem); margin-bottom: .5rem;
+  border-bottom: 2px solid var(--plate-line); font: 700 clamp(3.25rem, 9vw, 9rem)/.9 var(--font-display); letter-spacing: -0.045em; text-decoration: none; color: var(--legend);
+}
+.site-footer__cta .arrow { width: .9em; height: .62em; color: var(--works); }
+.site-footer__cta:hover { color: var(--works); }
+.site-footer__cta:hover .arrow { translate: -.2em 0; }
 .site-footer__pages ul, .site-footer__list { display: grid; gap: .6rem; }
 .site-footer__pages a { display: inline-flex; align-items: center; gap: .55em; font: 700 1.25rem var(--font-display); text-decoration: none; }
 .site-footer__pages a::after { content: ''; width: 1.1em; height: .75em; background: var(--works); opacity: 0; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; translate: 8px 0; transition: opacity .3s, translate .45s var(--ease-out); }

@@ -8,7 +8,7 @@ $lede  = $args['lede'] ?? '';
 $meta  = $args['meta'] ?? ( $args['eyebrow'] ?? '' );
 ?>
 <header class="page-header">
-	<h1 class="page-header__title"><?php echo esc_html( $title ); ?></h1>
+	<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( $title ); ?></h1>
 	<?php if ( $meta ) : ?><p class="page-header__meta"><?php echo esc_html( $meta ); ?></p><?php endif; ?>
 	<?php if ( $lede ) : ?><p class="page-header__lede"><?php echo esc_html( $lede ); ?></p><?php endif; ?>
 	<?php echo log_sheet_label(); ?>

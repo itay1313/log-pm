@@ -45,7 +45,7 @@ $items = new WP_Query( [
 	</figure>
 	<div class="control-hero__strip">
 		<div class="container">
-			<h1 class="control-hero__title"><?php echo esc_html( log_text( 'hero_title', 'חברת הבקרה' ) ); ?></h1>
+			<h1 class="control-hero__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'hero_title', 'חברת הבקרה' ) ); ?></h1>
 			<p class="control-hero__line"><?php echo esc_html( log_text( 'hero_eyebrow', 'לוג היא חברת הבקרה של הרשות הממשלתית להתחדשות עירונית.' ) ); ?></p>
 		</div>
 	</div>

@@ -49,7 +49,7 @@ $distances = log_nav_distances();
 				<?php foreach ( $nav as $i => [ $label, $url, $current ] ) : ?>
 					<li class="dest__item<?php echo $current ? ' is-current' : ''; ?>">
 						<a class="dest__row" href="<?php echo esc_url( $url ); ?>"<?php echo $current ? ' aria-current="page"' : ''; ?>>
-							<span class="dest__name"><span><?php echo esc_html( $label ); ?></span></span>
+							<span class="dest__name"><span><?php echo log_route_shield( $i + 1 ); ?><?php echo esc_html( $label ); ?></span></span>
 							<span class="dest__dist"><?php echo esc_html( $distances[ $i ] ?? '' ); ?></span>
 							<i class="arrow" aria-hidden="true"></i>
 						</a>
@@ -59,6 +59,7 @@ $distances = log_nav_distances();
 		</nav>
 
 		<div class="gantry__side">
+			<?php get_template_part( 'template-parts/twin-nav', null, [ 'sign' => true ] ); ?>
 			<?php get_search_form(); ?>
 			<div class="gantry__contact">
 				<?php foreach ( log_offices() as $office ) : ?>

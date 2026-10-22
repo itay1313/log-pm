@@ -52,9 +52,10 @@ function heroIntro() {
   rise(hero.querySelector('.hero__title'), { delay: 0.15 });
   const lede = hero.querySelector('.hero__lede');
   if (lede) gsap.fromTo(lede, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: 0.55, clearProps: 'transform' });
-  const plates = [...hero.querySelectorAll('.hero-search, .hero-filters .filters__group, .hero-filter-toggle')].filter((el) => el.offsetParent);
-  gsap.set(plates, { opacity: 1 });
-  mount(plates, { delay: 0.7 });
+  // Plates hidden at load (the phone filter sheet) are released too, so they show when opened.
+  const all = hero.querySelectorAll('.hero-search, .hero-filters .filters__group, .hero-filter-toggle');
+  gsap.set(all, { opacity: 1 });
+  mount([...all].filter((el) => el.offsetParent), { delay: 0.7 });
   const dist = hero.querySelector('.hero-dist');
   if (dist) { gsap.set(dist, { opacity: 1 }); mount(dist, { delay: 1.05 }); }
   const bar = hero.querySelectorAll('.hero-bar > *');
@@ -129,18 +130,10 @@ function rowsIn(selector) {
   });
 }
 
-/** One orange works marking down the start edge of the page, drawn as far as the reader has come. */
+/** The lane line (main.js puts it down) is drawn as far as the reader has come. */
 function laneLine() {
-  const main = document.querySelector('.site-main');
-  if (!main || main.offsetHeight < innerHeight * 1.5) return;
-  const line = document.createElement('div');
-  line.className = 'lane-line';
-  line.setAttribute('aria-hidden', 'true');
-  const first = document.getElementById('hero') || main.querySelector('.page-header, .about-hero, .careers-hero, .control-hero, .project__hero');
-  const place = () => { line.style.top = `${first ? first.offsetTop + first.offsetHeight : 0}px`; };
-  main.appendChild(line);
-  place();
-  ScrollTrigger.addEventListener('refreshInit', place);
+  const line = document.querySelector('.lane-line');
+  if (!line) return;
   gsap.fromTo(line, { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: line, start: 'top 75%', end: 'bottom 75%', scrub: 0.6 } });
 }
 

@@ -164,11 +164,16 @@ export async function initHero(hero) {
     input.removeAttribute('aria-activedescendant');
   }
 
-  /** A chosen suggestion: fly to it on the map, or open its page, or the list it lives in. */
+  /** A chosen suggestion: fly to it on the map, or open its page, or the list it lives in. The plate answers like an overhead sign. */
+  const destLabel = form.querySelector('.hero-search__label');
+  const askLabel = destLabel?.textContent;
+  input.addEventListener('input', () => { if (destLabel) destLabel.textContent = askLabel; });
   function choose(slug) {
     closeSuggest();
     const f = features.find((x) => slugOf(x.properties) === slug);
     if (!f) return;
+    input.value = f.properties.title;
+    if (destLabel) destLabel.textContent = 'יעד';
     if (map && f.geometry && !f.properties.national && map.focusSlug(slug)) return;
     if (f.properties.page) { location.href = f.properties.url; return; }
     openList(f.properties.national || !f.geometry ? 'national' : 'all');

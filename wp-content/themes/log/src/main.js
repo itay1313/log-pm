@@ -71,6 +71,23 @@ if (menu?.showModal && menuBtn) {
   });
 }
 
+// The lane line: one orange works marking down the start edge of every long page, from the end of its opening
+// band to the footer. It stands for everyone; motion.js draws it with the scroll when motion is allowed.
+{
+  const main = document.querySelector('.site-main');
+  const first = document.getElementById('hero') || main?.querySelector('.page-header, .about-hero, .careers-hero, .control-hero, .project__hero');
+  if (main && main.offsetHeight > innerHeight * 1.5) {
+    const line = document.createElement('div');
+    line.className = 'lane-line';
+    line.setAttribute('aria-hidden', 'true');
+    main.appendChild(line);
+    const place = () => { line.style.top = `${first ? first.offsetTop + first.offsetHeight : 0}px`; };
+    place();
+    addEventListener('resize', place, { passive: true });
+    addEventListener('load', place);
+  }
+}
+
 // Back links on level-3 pages (spec v6 §5): when the visitor came from the area page (or, for projects,
 // from the home map), go back in history so search, filters, view, open popup and scroll are as they left them.
 // From outside the site, the link simply leads to the area page.

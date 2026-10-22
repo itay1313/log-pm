@@ -41,6 +41,28 @@ function log_stage_row( array $stage, string $class = '' ): string {
 	);
 }
 
+/**
+ * The route number of the current page: its place in the header's order (01 פרויקטים … 06 צור קשר), the same
+ * number its row carries in the menu. Item pages take their area's number; home is 00; anything else has none.
+ */
+function log_route_number(): ?int {
+	if ( is_front_page() ) {
+		return 0;
+	}
+	foreach ( log_nav_items() as $i => [ , , $current ] ) {
+		if ( $current ) {
+			return $i + 1;
+		}
+	}
+	return null;
+}
+
+/** A route shield (works orange, navy keyline) for a heading; the current page's number by default. */
+function log_route_shield( ?int $n = -1 ): string {
+	$n = $n === -1 ? log_route_number() : $n;
+	return $n === null ? '' : sprintf( '<span class="shield" aria-hidden="true">%02d</span>', $n );
+}
+
 /** The distance plate at the end of a title band ("94 פרויקטים"); nothing when there is nothing to count. */
 function log_sheet_label( string $extra = '' ): string {
 	return $extra !== '' ? sprintf( '<p class="sheet-label">%s</p>', esc_html( $extra ) ) : '';

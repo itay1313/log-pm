@@ -25,6 +25,7 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 
 	<div class="hero-lead">
 		<h1 class="hero__title" id="hero-title"><?php
+			echo log_route_shield();
 			$title = log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' );
 			// The last word is the destination: it prints in works orange.
 			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' <em>' . esc_html( $m[2] ) . '</em>' : esc_html( $title );
@@ -72,7 +73,7 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 <section class="section section--who" data-section="who">
 	<div class="container">
 		<div class="who__text">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_route_shield( 3 ); ?><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
 			<div class="section__prose">
 				<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
 			</div>
@@ -101,7 +102,7 @@ $domains = array_filter( log_ordered_terms( 'log_domain' ), static fn( $t ) => !
 if ( $domains ) : ?>
 	<section class="section section--domains" data-section="domains">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_route_shield( 1 ); ?><?php echo esc_html( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
 			<ul class="domains">
 				<?php foreach ( $domains as $d ) : ?>
 					<li class="domain">
@@ -131,7 +132,7 @@ if ( $domains ) : ?>
 
 <section class="section section--control" data-section="control">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_route_shield( 2 ); ?><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
 		<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
 	</div>

@@ -39,7 +39,7 @@ while ( have_posts() ) : the_post();
 	<article class="job" data-job="<?php echo (int) $jid; ?>">
 		<header class="page-header job__header">
 			<a class="back-link" href="<?php echo esc_url( $jobs_url ); ?>">לכל המשרות</a>
-			<h1 class="page-header__title"><?php the_title(); ?></h1>
+			<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php the_title(); ?></h1>
 			<?php if ( $team ) : ?><p class="page-header__meta"><?php echo esc_html( $team ); ?></p><?php endif; ?>
 			<ul class="job__tags"><?php foreach ( array_filter( [ $loc, $scope ] ) as $tag ) : ?><li><?php echo esc_html( $tag ); ?></li><?php endforeach; ?></ul>
 			<?php echo log_sheet_label( log_field( 'job_number', $jid ) ? 'משרה ' . log_field( 'job_number', $jid ) : '' ); ?>
