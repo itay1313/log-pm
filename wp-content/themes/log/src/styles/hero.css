@@ -32,7 +32,8 @@
 .hero.is-exploring .hero__lede { opacity: 0; visibility: hidden; transition: opacity .4s, visibility 0s .4s; }
 
 /* "לאן?": the destination plate, the page's primary action */
-.hero-search { --k-ground: var(--plate); --k-line: var(--legend); position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; width: min(100%, 620px); min-height: 78px; border-radius: var(--r-plate); background: var(--k-ground); box-shadow: inset 0 0 0 var(--keyline-inset) var(--k-ground), inset 0 0 0 calc(var(--keyline-inset) + var(--keyline)) var(--k-line), 0 24px 50px -20px rgba(5,10,16,.7); transition: box-shadow .3s var(--ease-out); }
+/* z-index lifts the plate, and the suggestions hanging from it, over the lane filters below it. */
+.hero-search { --k-ground: var(--plate); --k-line: var(--legend); position: relative; z-index: 3; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; width: min(100%, 620px); min-height: 78px; border-radius: var(--r-plate); background: var(--k-ground); box-shadow: inset 0 0 0 var(--keyline-inset) var(--k-ground), inset 0 0 0 calc(var(--keyline-inset) + var(--keyline)) var(--k-line), 0 24px 50px -20px rgba(5,10,16,.7); transition: box-shadow .3s var(--ease-out); }
 .hero-search:focus-within { --k-line: var(--works); }
 .hero-search__label { padding-inline: 1.6rem .9rem; font: 700 1.5rem var(--font-display); color: var(--works); cursor: text; }
 .hero-search input { min-width: 0; height: 100%; padding: 0 .25rem; border: 0; background: transparent; color: var(--legend); font: 500 1.3125rem var(--font-display); }
