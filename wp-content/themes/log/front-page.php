@@ -1,7 +1,7 @@
 <?php
 /**
- * Home (spec v6 §7). Blocks in order: projects map, who we are, practice areas, how we work,
- * the control company, clients and partners. The twin buttons hang in the header (bottom bar on phones).
+ * Home (spec v6 §7). Blocks in order: projects map, who we are, how we work (these three are the drive),
+ * practice areas, the control company, clients and partners. The twin buttons hang in the header (bottom bar on phones).
  * Every text is an ACF field with fallback copy until LOG's texts file arrives.
  * The 3D map mounts into .hero-stage and is loaded lazily by main.js, never on other pages.
  */
@@ -15,6 +15,11 @@ $process = log_rows( 'process', [
 ] );
 $projects_url = get_post_type_archive_link( 'log_project' );
 ?>
+<?php
+// The drive: the map stays pinned behind the first chapter and the scroll moves its camera (src/home/drive.js).
+// Without WebGL, or with reduced motion, the chapters are ordinary sections under the map.
+?>
+<div class="drive" id="drive">
 <section class="hero" id="hero" data-section="map" aria-labelledby="hero-title">
 	<div class="hero-stage" role="region" aria-label="מפת הפרויקטים של לוג בתלת-ממד. גרירה מזיזה, Ctrl וגלילה מקרבים. כל סימן הוא כפתור עם שם הפרויקט; Enter פותח חלונית ו-Esc סוגר."></div>
 	<div class="hero-labels" aria-hidden="true"></div>
@@ -70,10 +75,10 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 	<p class="hero__hint" aria-hidden="true">כדי להתקרב: Ctrl וגלילה</p>
 </section>
 
-<section class="section section--who" data-section="who">
-	<div class="container">
+<section class="section section--who section--night drive-country" data-section="who" aria-labelledby="who-title">
+	<div class="drive-country__inner container">
 		<div class="who__text">
-			<h2 class="section__title"><?php echo log_route_shield( 3 ); ?><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
+			<h2 class="section__title" id="who-title"><?php echo log_route_shield( 3 ); ?><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
 			<div class="section__prose">
 				<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
 			</div>
@@ -83,13 +88,41 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 				<li><a href="<?php echo esc_url( $projects_url ); ?>">הפרויקטים</a></li>
 			</ul>
 		</div>
-		<figure class="sheet-index">
-			<a href="<?php echo esc_url( add_query_arg( 'view', 'map', $projects_url ) ); ?>" class="sheet-index__link"><?php echo log_sheet_index_svg(); ?></a>
-			<figcaption>מפתח גיליונות · כל פרויקט של לוג כנקודה על רשת ישראל</figcaption>
-		</figure>
+		<dl class="drive-figures">
+			<?php foreach ( [ 'projects' => 'פרויקטים', 'units' => 'יחידות דיור' ] as $key => $label ) : if ( empty( $stats[ $key ] ) ) { continue; } ?>
+				<div><dt><?php echo esc_html( $label ); ?></dt><dd data-count="<?php echo (int) $stats[ $key ]; ?>"><?php echo log_number( $stats[ $key ] ); ?></dd></div>
+			<?php endforeach; ?>
+		</dl>
 	</div>
 </section>
 
+<?php
+// Chapter 2, the build: the camera dives into one real plan and LOG's four steps happen on it (drive.js).
+// The plan is the editor's choice, or drive.js picks the one with the most housing units on up to 3 km².
+$drive_project = (int) log_field( 'drive_project' );
+?>
+<section class="section section--process drive-build" data-section="process" aria-labelledby="process-title"<?php echo $drive_project ? ' data-project="' . $drive_project . '"' : ''; ?>>
+	<div class="drive-build__inner container">
+		<div class="build-head">
+			<h2 class="section__title" id="process-title"><?php echo esc_html( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
+			<p class="build-project" hidden></p>
+		</div>
+		<ol class="process">
+			<?php foreach ( array_slice( $process, 0, 4 ) as $i => $step ) : ?>
+				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $step['name'] ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
+			<?php endforeach; ?>
+		</ol>
+		<p class="section__lede"><?php echo esc_html( log_text( 'process_tagline', 'נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע הם חלק מהעבודה, לא תוספת לה.' ) ); ?></p>
+	</div>
+</section>
+</div>
+
+<?php
+// The road (src/home/road.js): the practice areas pass overhead as gantry signs, then an exit sign opens into
+// the control company. Without motion both are ordinary sections; the scene is decoration only.
+?>
+<div class="road" id="road">
+<div class="road__scene" aria-hidden="true"><div class="road__plane"></div></div>
 <?php
 // Practice areas: one card per domain with published projects, counted live.
 $domain_counts = [];
@@ -100,9 +133,9 @@ foreach ( log_public_projects() as $p ) {
 }
 $domains = array_filter( log_ordered_terms( 'log_domain' ), static fn( $t ) => ! empty( $domain_counts[ $t->slug ] ) );
 if ( $domains ) : ?>
-	<section class="section section--domains" data-section="domains">
-		<div class="container">
-			<h2 class="section__title"><?php echo log_route_shield( 1 ); ?><?php echo esc_html( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
+	<section class="section section--domains gantries" data-section="domains" aria-labelledby="domains-title">
+		<div class="container gantries__inner">
+			<h2 class="section__title" id="domains-title"><?php echo log_route_shield( 1 ); ?><?php echo esc_html( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
 			<ul class="domains">
 				<?php foreach ( $domains as $d ) : ?>
 					<li class="domain">
@@ -118,25 +151,19 @@ if ( $domains ) : ?>
 	</section>
 <?php endif; ?>
 
-<section class="section section--process" data-section="process">
-	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
-		<ol class="process">
-			<?php foreach ( array_slice( $process, 0, 4 ) as $i => $step ) : ?>
-				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $step['name'] ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
-			<?php endforeach; ?>
-		</ol>
-		<p class="section__lede"><?php echo esc_html( log_text( 'process_tagline', 'נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע הם חלק מהעבודה, לא תוספת לה.' ) ); ?></p>
+<section class="section section--control exit" data-section="control" aria-labelledby="control-title">
+	<div class="container exit__inner">
+		<p class="exit-sign" aria-hidden="true"><span class="exit-sign__tag">יציאה</span><span class="exit-sign__name"><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></span><i class="exit-sign__arrow"></i></p>
+		<div class="exit-world">
+			<div class="exit-world__body">
+				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
+				<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
+				<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
+			</div>
+		</div>
 	</div>
 </section>
-
-<section class="section section--control" data-section="control">
-	<div class="container">
-		<h2 class="section__title"><?php echo log_route_shield( 2 ); ?><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
-		<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
-		<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
-	</div>
-</section>
+</div>
 
 <?php if ( log_has_clients() || log_show_empty() ) : ?>
 <section class="section section--clients" data-section="clients">

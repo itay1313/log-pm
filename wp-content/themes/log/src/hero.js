@@ -253,6 +253,8 @@ export async function initHero(hero) {
     return fallback(err);
   }
   apply();
+  // The drive: the scroll takes the camera from here on down the page (reduced motion keeps the map still).
+  if (!still) import('./home/drive.js').then((m) => m.initDrive(hero, map.scene, map.points, features)).catch((err) => console.error(err));
   await map.intro();
   if (locked) map.focusSlug(locked);
 }

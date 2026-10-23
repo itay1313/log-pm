@@ -1,0 +1,234 @@
+/* ------------------------------------------------------------------ home: the drive */
+
+/*
+ * The map stays pinned behind the first chapter and the scroll moves its camera (src/home/drive.js).
+ * Everything here starts as an ordinary night section under the map; html.drive-on, set once the 3D map is up
+ * and motion is allowed, turns the map sticky and lays the chapter over it as a sticky legend on the sea.
+ */
+.drive { position: relative; }
+/* Grain over the map and the road (a token in tokens.css). It never takes a pointer. */
+.hero-stage::after, html.road-on .road__scene::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: var(--grain) 0 0 / 180px 180px; opacity: var(--grain-strength); mix-blend-mode: overlay;
+}
+html.drive-on .drive { overflow-x: clip; } /* the overlays span the viewport; clip, so sticky still works */
+
+/* The figures: big tabular numbers under an orange 3px rule, no plate. */
+.drive-figures { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin: 0; align-self: end; }
+.drive-figures > div { display: flex; flex-direction: column-reverse; gap: .4rem; padding-top: .85rem; border-top: 3px solid var(--works); }
+.drive-figures dt { font: 500 .9375rem var(--font-display); color: var(--legend-muted); }
+.drive-figures dd { margin: 0; font: 700 clamp(3.25rem, 6.4vw, 6.25rem)/.9 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+html.drive-on .hero { position: sticky; top: 0; }
+html.drive-on .drive-country { --drive-len: 300vh; height: var(--drive-len); padding: 0; z-index: 6; background: transparent; pointer-events: none; }
+html.drive-on .drive-country a { pointer-events: auto; }
+html.drive-on .drive-country__inner {
+  position: sticky; top: 0; height: 100vh; height: 100svh; align-items: end; align-content: end;
+  padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(28px, 8vh, 96px);
+}
+/* A scrim on the start side and the bottom keeps the legend readable over the country; no panel. */
+html.drive-on .drive-country__inner::before {
+  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; opacity: var(--scrim, 0);
+  background:
+    linear-gradient(270deg, rgba(11,20,30,.86) 0%, rgba(11,20,30,.6) 34%, rgba(11,20,30,0) 66%),
+    linear-gradient(0deg, rgba(11,20,30,.82) 0%, rgba(11,20,30,0) 46%);
+}
+html.drive-on .drive-country .section__title { text-shadow: 0 2px 30px rgba(11,20,30,.5); }
+html.drive-on .drive-figures dd { text-shadow: 0 2px 24px rgba(11,20,30,.6); }
+
+/* The sheet margin while driving: grid reference and scale under the gantry, on the end side. */
+.drive-coord { position: absolute; z-index: 5; inset-inline-end: var(--gutter); top: calc(var(--header-h) + 1.25rem); margin: 0; display: grid; justify-items: end; gap: .1rem; font: 500 .8125rem var(--font-display); color: var(--legend-muted); opacity: 0; pointer-events: none; text-shadow: 0 1px 10px rgba(11,20,30,.9); }
+.drive-coord b { font: 700 1.0625rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+@media (max-width: 760px) { .drive-coord { display: none; } }
+
+/* While the scroll holds the camera, the map's own tools step back (drive.js also makes them inert). */
+.hero.is-driving :is(.hero-pins, .hero-edges, .hero-card, .hero-drawer, .hero__hint) { opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+.hero.is-driving :is(.hero-lead, .hero-bar) { pointer-events: none; }
+
+@media (max-width: 900px) {
+  .drive-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-row: 1; align-self: start; }
+  html.drive-on .drive-country { --drive-len: 240vh; }
+  html.drive-on .drive-country__inner { align-content: space-between; row-gap: 0; padding-top: calc(var(--header-h) + 1.25rem); padding-bottom: calc(58px + 1.25rem + env(safe-area-inset-bottom)); } /* clear of the lane bar */
+  html.drive-on .drive-country .section__title { font-size: clamp(2.5rem, 12vw, 3.5rem); }
+  html.drive-on .drive-country .section__prose p { margin-bottom: .6em; }
+  html.drive-on .drive-figures dd { font-size: clamp(2.5rem, 12vw, 3.5rem); }
+  html.drive-on .drive-country .section__prose { font-size: 1.0625rem; }
+  html.drive-on .drive-country__inner::before { background: linear-gradient(0deg, rgba(11,20,30,.9) 0%, rgba(11,20,30,.55) 55%, rgba(11,20,30,.75) 100%); }
+}
+
+/* ------------------------------------------------------------------ chapter 2: the build */
+
+/*
+ * Without the drive this is the "how we work" section on paper. Live (drive.js found a plan with a boundary),
+ * it turns night over the map: the title and the real plan's name at the top, one step at a time below them,
+ * dimension lines and the grid reference drawn over the site, and a white sign that hangs from it at the end.
+ */
+.build-project { margin: 0; font: 500 1.0625rem var(--font-display); color: var(--slate); }
+.build-project strong { color: var(--works); font-weight: 700; }
+
+html.drive-on .drive > .section { z-index: 6; }
+html.drive-on .drive-build.is-live {
+  --paper: var(--plate); --ink: var(--legend); --slate: var(--legend-muted); --rule: var(--plate-line); --works-deep: var(--works);
+  --drive-len: 460vh; height: var(--drive-len); padding: 0; background: transparent; color: var(--legend); pointer-events: none;
+}
+html.drive-on .drive-build.is-live a { pointer-events: auto; }
+html.drive-on .drive-build.is-live .drive-build__inner {
+  position: sticky; top: 0; height: 100vh; height: 100svh; grid-template-rows: auto 1fr auto; justify-items: start;
+  padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 3.5rem)); padding-bottom: clamp(28px, 7vh, 80px);
+}
+html.drive-on .drive-build.is-live .drive-build__inner::before {
+  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; opacity: var(--scrim, 0);
+  background:
+    linear-gradient(270deg, rgba(11,20,30,.84) 0%, rgba(11,20,30,.5) 30%, rgba(11,20,30,0) 56%),
+    linear-gradient(180deg, rgba(11,20,30,.6) 0%, rgba(11,20,30,0) 30%);
+}
+html.drive-on .drive-build.is-live .section__title { max-width: 12ch; margin-bottom: .3em; font-size: clamp(2.5rem, 4.6vw, 4.5rem); text-shadow: 0 2px 30px rgba(11,20,30,.5); }
+
+/* One step at a time, all four in the same place; drive.js moves them in and out. */
+html.drive-on .drive-build.is-live .process { display: grid; grid-template-columns: minmax(0, 1fr); align-self: end; width: min(100%, 31rem); margin: 0 0 1.5rem; }
+html.drive-on .drive-build.is-live .process::before { display: none; }
+html.drive-on .drive-build.is-live .process li { grid-area: 1 / 1; align-self: end; padding: 0; visibility: hidden; }
+html.drive-on .drive-build.is-live .process li .stage { width: 3.25rem; height: 3.25rem; margin-bottom: 1.1rem; font-size: 1.3125rem; background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 4px var(--works), inset 0 0 0 6px var(--sign-ink); }
+html.drive-on .drive-build.is-live .process li h3 { margin-bottom: .5rem; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1; letter-spacing: -0.025em; }
+html.drive-on .drive-build.is-live .process li p { max-width: 34ch; font-size: clamp(1.125rem, 1.4vw, 1.3125rem); line-height: 1.5; }
+html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; font-size: 1.0625rem; opacity: 0; }
+
+/* Drawn over the site: dimension lines, the area, the grid reference, the white sign and its leader. */
+.build-overlay { position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); overflow: visible; pointer-events: none; }
+.build-overlay .dim { stroke: var(--legend); stroke-width: 1.5; fill: none; }
+.build-overlay .leader { stroke: var(--sign-ink); stroke-width: 2; }
+.build-overlay .leader-dot { fill: var(--works); stroke: var(--sign-ink); stroke-width: 2; }
+.build-label { position: absolute; top: 0; left: 0; font: 700 .9375rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 1px 10px rgba(11,20,30,.95); translate: -50% -50%; }
+.build-label--area { font-size: clamp(1.5rem, 2.4vw, 2.25rem); letter-spacing: -0.02em; }
+.build-label--area small { display: block; font: 500 .875rem var(--font-display); color: var(--legend-muted); text-align: center; }
+
+/* The white sign: the plan's facts and its real stage. It never swaps with the night (sign ink stays). */
+.build-sign {
+  --ink: var(--sign-ink); --slate: #53606a; --rule: #b8c0c2;
+  position: absolute; top: 0; left: 0; width: min(330px, calc(100vw - 32px)); padding: 1.15rem 1.3rem 1.2rem; border-radius: 12px;
+  background: var(--legend); color: var(--sign-ink); opacity: 0; visibility: hidden;
+  box-shadow: inset 0 0 0 5px var(--legend), inset 0 0 0 7px var(--sign-ink), 0 30px 60px -18px rgba(5,10,16,.7), 0 4px 12px rgba(5,10,16,.3);
+}
+.build-sign__meta { margin: 0 0 .3rem; font: 500 .8125rem var(--font-display); color: var(--slate); }
+.build-sign__title { margin: 0 0 .8rem; font: 700 1.625rem/1.05 var(--font-display); letter-spacing: -0.02em; }
+.build-sign__facts { display: flex; gap: 1.5rem; margin: 0 0 1rem; }
+.build-sign__facts div { display: flex; flex-direction: column-reverse; gap: .1rem; }
+.build-sign__facts dd { margin: 0; font: 700 1.75rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.build-sign__facts dt { font-size: .75rem; color: var(--slate); }
+.build-sign .stage-row { margin-bottom: 1rem; }
+.build-sign__go { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.1rem; border-radius: 6px; background: var(--plate); color: var(--legend); font: 700 1.0625rem var(--font-display); text-decoration: none; transition: background-color .25s, color .25s; }
+.build-sign__go i { width: 1.3em; height: .9em; background: currentColor; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; transition: translate .4s var(--ease-out); }
+.build-sign__go:hover, .build-sign__go:focus-visible { background: var(--works); color: var(--plate); }
+.build-sign__go:hover i { translate: -6px 0; }
+
+@media (max-width: 760px) {
+  html.drive-on .drive-build.is-live { --drive-len: 380vh; }
+  html.drive-on .drive-build.is-live .drive-build__inner { padding-top: calc(var(--header-h) + 1rem); padding-bottom: calc(58px + 1rem + env(safe-area-inset-bottom)); }
+  html.drive-on .drive-build.is-live .drive-build__inner::before { background: linear-gradient(180deg, rgba(11,20,30,.8) 0%, rgba(11,20,30,0) 30%, rgba(11,20,30,0) 55%, rgba(11,20,30,.9) 100%); }
+  html.drive-on .drive-build.is-live .section__title { font-size: 2.25rem; }
+  html.drive-on .drive-build.is-live .process { margin-bottom: .5rem; }
+  html.drive-on .drive-build.is-live .process li .stage { width: 2.5rem; height: 2.5rem; margin-bottom: .6rem; font-size: 1.0625rem; }
+  html.drive-on .drive-build.is-live .process li h3 { font-size: 1.75rem; }
+  html.drive-on .drive-build.is-live .process li p { font-size: 1.0625rem; }
+  html.drive-on .drive-build.is-live .section__lede { display: none; }
+  .build-sign { width: min(290px, calc(100vw - 24px)); padding: .9rem 1rem 1rem; }
+  .build-sign__title { font-size: 1.375rem; }
+  .build-sign__facts dd { font-size: 1.375rem; }
+}
+
+/* ------------------------------------------------------------------ the road: gantries, then the exit */
+
+/*
+ * html.road-on (src/home/road.js, motion allowed) turns the practice areas and the control company into one
+ * drive along a night road. A sticky scene holds the road plane; the practice areas stand over it as gantry
+ * signs in the same perspective, so their legs meet the asphalt, and pass overhead one by one; then an exit
+ * sign on the start shoulder opens into the control company's world. Without it both are the usual sections.
+ */
+.road { position: relative; }
+.road__scene { display: none; }
+/* Gantries passing overhead project far past the screen, and 3D boxes count as page overflow: clip (sticky still works). */
+html.road-on .road { overflow: clip; }
+
+html.road-on .road__scene {
+  display: block; position: sticky; top: 0; z-index: 0; height: 100vh; height: 100svh; overflow: hidden;
+  perspective: 800px; perspective-origin: 50% 40%;
+  background: linear-gradient(180deg, #0a131c 0%, var(--plate) 40%, #0f1a26 100%);
+}
+/* The asphalt, seen from the driver's seat. Element y is depth, so --travel moves the markings towards us. */
+html.road-on .road__plane {
+  position: absolute; left: 50%; top: 40%; width: 1500px; height: 5200px; margin-left: -750px;
+  transform-origin: 50% 0; transform: translate3d(0, 380px, 420px) rotateX(-90deg);
+  background:
+    linear-gradient(180deg, var(--works) 0 130px, transparent 130px) calc(50% - 0px) var(--travel, 0) / 12px 230px repeat-y,
+    linear-gradient(180deg, rgba(242,244,241,.45) 0 90px, transparent 90px) 25% var(--travel, 0) / 8px 230px repeat-y,
+    linear-gradient(180deg, rgba(242,244,241,.45) 0 90px, transparent 90px) 75% var(--travel, 0) / 8px 230px repeat-y,
+    linear-gradient(90deg, rgba(242,244,241,.6) 0 10px, transparent 10px calc(100% - 10px), rgba(242,244,241,.6) calc(100% - 10px)),
+    #16222f;
+  -webkit-mask-image: linear-gradient(180deg, #000 0 55%, transparent 98%); mask-image: linear-gradient(180deg, #000 0 55%, transparent 98%);
+}
+
+/* Chapter 3: gantry signs over the road */
+html.road-on .gantries {
+  --ink: var(--legend); --slate: var(--legend-muted); --rule: var(--plate-line); --works-deep: var(--works);
+  position: relative; z-index: 1; height: calc(var(--n, 2) * 95vh + 100vh); margin-top: -100vh; margin-top: -100svh; padding: 0;
+  background: transparent; color: var(--legend); pointer-events: none;
+}
+html.road-on .gantries__inner { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 3.5rem)); }
+html.road-on .gantries .section__title { font-size: clamp(2.5rem, 4.6vw, 4.5rem); }
+/* The list is the 3D stage: same perspective and eye as the road scene, so the legs stand on the asphalt. */
+html.road-on .gantries .domains { position: absolute; inset: 0; margin: 0; border: 0; perspective: 800px; perspective-origin: 50% 40%; }
+html.road-on .gantries .domain {
+  --steel: #2f4357; --gantry-w: min(1300px, 130vw);
+  position: absolute; left: 50%; top: 40%; width: var(--gantry-w); height: 640px; margin-left: calc(var(--gantry-w) / -2);
+  border: 0; transform: translate3d(0, -260px, -4000px); opacity: 0; will-change: transform, opacity;
+  background:
+    linear-gradient(180deg, #4a6177 0 3px, var(--steel) 3px) 0 0 / 100% 22px no-repeat,
+    linear-gradient(90deg, #4a6177 0 3px, var(--steel) 3px) 0 0 / 24px 100% no-repeat,
+    linear-gradient(90deg, #4a6177 0 3px, var(--steel) 3px) 100% 0 / 24px 100% no-repeat;
+}
+/* The sign hangs from the beam on two rods: a plate, keyline and all, with the count where the distance goes. */
+html.road-on .gantries .domain__link {
+  position: absolute; top: 46px; left: 50%; width: min(780px, 92vw); translate: -50% 0; pointer-events: none;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 2rem; row-gap: .6rem;
+  padding: 2rem 2.4rem 1.9rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend);
+  box-shadow: inset 0 0 0 7px var(--plate), inset 0 0 0 10px var(--legend), 0 40px 80px -30px rgba(0,0,0,.8);
+  transition: box-shadow .3s var(--ease-out);
+}
+html.road-on .gantries .domain__link::before { content: ''; position: absolute; top: -24px; inset-inline: 22%; height: 24px; border-inline: 7px solid var(--steel); }
+html.road-on .gantries .domain__link:hover, html.road-on .gantries .domain__link:focus-visible {
+  padding-inline: 2.4rem; background: var(--plate); outline: none;
+  box-shadow: inset 0 0 0 7px var(--plate), inset 0 0 0 10px var(--works), 0 40px 80px -30px rgba(0,0,0,.8);
+}
+html.road-on .gantries .domain__name { grid-column: 1; font-size: clamp(2.5rem, 5.4vw, 5rem); line-height: .95; letter-spacing: -0.03em; }
+html.road-on .gantries .domain__line { grid-column: 1; font-size: clamp(1.0625rem, 1.5vw, 1.375rem); }
+html.road-on .gantries .domain__count { grid-column: 2; grid-row: 1 / span 2; align-self: end; font-size: clamp(1.25rem, 2vw, 1.75rem); color: var(--legend); }
+
+/* Chapter 4: the exit. The sign stands on the start shoulder; its face fades and the window it leaves opens over the screen. */
+html.road-on .exit { position: relative; z-index: 1; height: 300vh; padding: 0; background: transparent; }
+html.road-on .exit__inner { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; }
+html.road-on .exit-sign {
+  position: absolute; z-index: 2; inset-inline-start: 0; top: 44%; display: grid; justify-items: start; gap: .5rem; width: min(360px, 78vw); margin: 0;
+  padding: 1.5rem 1.7rem 1.6rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend);
+  box-shadow: inset 0 0 0 7px var(--plate), inset 0 0 0 10px var(--legend), 0 40px 80px -30px rgba(0,0,0,.8);
+  transform-origin: 100% 50%;
+}
+.exit-sign__tag { padding: .3rem .7rem .25rem; border-radius: 6px; background: var(--legend); color: var(--sign-ink); font: 700 1rem var(--font-display); }
+.exit-sign__name { font: 700 clamp(2rem, 3.4vw, 2.75rem)/1 var(--font-display); letter-spacing: -0.02em; }
+.exit-sign__arrow { justify-self: end; width: 3rem; height: 2.1rem; background: var(--works); rotate: 135deg; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; }
+html.road-on .exit-frame { position: absolute; z-index: 2; top: 0; left: 0; border: 3px solid var(--legend); border-radius: var(--r-plate); pointer-events: none; opacity: 0; }
+html.road-on .exit-world {
+  position: absolute; z-index: 1; inset: 0 calc(50% - 50vw); display: grid; clip-path: inset(50% 50% 50% 50%);
+  background:
+    linear-gradient(90deg, rgba(58,78,98,.5) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(180deg, rgba(58,78,98,.5) 1px, transparent 1px) 0 0 / 64px 64px,
+    var(--plate-2);
+}
+html.road-on .exit-world__body { width: min(100% - 2 * var(--gutter), var(--container)); margin-inline: auto; align-self: end; padding-bottom: clamp(48px, 14vh, 140px); }
+
+@media (max-width: 760px) {
+  html.road-on .gantries .domain { height: 600px; }
+  html.road-on .gantries .domain__link { grid-template-columns: 1fr; padding: 1.4rem 1.5rem; }
+  html.road-on .gantries .domain__count { grid-column: 1; grid-row: auto; }
+  html.road-on .exit-sign { top: 40%; }
+  html.road-on .exit-world__body { padding-bottom: calc(58px + 2rem + env(safe-area-inset-bottom)); }
+}

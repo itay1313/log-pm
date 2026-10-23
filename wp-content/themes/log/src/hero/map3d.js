@@ -396,5 +396,8 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
     },
     closeCard,
     home: () => scene.country(),
+    scene,
+    /** Every project on the map as local x/z, for the drive's beacons. */
+    points: all.map((it) => [it.x, it.z]),
   };
 }

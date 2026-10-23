@@ -10,6 +10,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
+import { initSmooth } from './smooth.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -18,11 +19,28 @@ const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 export function initMotion() {
   if (reduced()) return;
   document.documentElement.classList.add('js-motion');
+  initSmooth();
+  remeasure();
   pageCover();
   heroIntro();
   titleBands();
   sections();
   laneLine();
+  footer();
+}
+
+/**
+ * Scroll scenes measure where they start and end once; when the page grows after load (the map falling back to
+ * its list, a late image, the drive's chapters switching on), they measure again.
+ */
+function remeasure() {
+  let h = document.body.scrollHeight, t = 0;
+  new ResizeObserver(() => {
+    if (Math.abs(document.body.scrollHeight - h) < 2) return;
+    h = document.body.scrollHeight;
+    clearTimeout(t);
+    t = setTimeout(() => ScrollTrigger.refresh(), 150);
+  }).observe(document.body);
 }
 
 /** Display headings rise line by line inside masks. Re-splits when fonts land or the width changes. */
@@ -61,10 +79,7 @@ function heroIntro() {
   const bar = hero.querySelectorAll('.hero-bar > *');
   gsap.set(bar, { opacity: 1 });
   gsap.from(bar, { x: -16, opacity: 0, duration: 0.8, stagger: 0.06, ease: 'expo.out', delay: 1.2, clearProps: 'transform' });
-
-  // Leaving the map, the legend drifts up and lets the map go first. (Never transform .hero-lead itself:
-  // it would become the containing block of the distance sign.)
-  gsap.to(hero.querySelectorAll('.hero__title, .hero__lede'), { y: -90, opacity: 0.1, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom 30%', scrub: 0.5 } });
+  // Leaving the map is the drive's business (home/drive.js): it fades the map's tools as the camera is taken.
 }
 
 /* ---------------------------------------------------------------- inner pages */
@@ -82,7 +97,7 @@ function titleBands() {
 function sections() {
   // Section legends
   for (const h of document.querySelectorAll('.site-main .section__title, .site-main .section h2:not(.section__title), .featured__title, .national__title')) {
-    if (h.closest('.hero, .page-header')) continue;
+    if (h.closest('.hero, .page-header, .drive-country, .drive-build')) continue; // the drive moves its own legends
     SplitText.create(h, {
       type: 'lines', mask: 'lines', autoSplit: true,
       onSplit: (self) => gsap.from(self.lines, { yPercent: 112, duration: 1.05, stagger: 0.08, ease: 'power4.out', scrollTrigger: { trigger: h, start: 'top 88%', once: true } }),
@@ -94,14 +109,15 @@ function sections() {
   rowsIn(rows);
 
   // Pictures and plates unroll from the top as they come near.
-  const media = gsap.utils.toArray('.card__media, .person__photo, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .sheet-index, .minimap, .gallery__grid figure');
+  const media = gsap.utils.toArray('.card__media, .person__photo, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .minimap, .gallery__grid figure');
   ScrollTrigger.batch(media, {
     start: 'top 92%', once: true,
     onEnter: (batch) => gsap.fromTo(batch, { clipPath: 'inset(0% 0% 100% 0% round 10px)' }, { clipPath: 'inset(0% 0% 0% 0% round 10px)', duration: 1.2, stagger: 0.08, ease: 'expo.out', clearProps: 'clipPath' }),
   });
 
   // Prose and ledes settle from an already-visible state.
-  ScrollTrigger.batch('.site-main .section__lede, .site-main .section__prose, .story-block, .link-row, .section > .container > .btn, .card__body', {
+  const settle = gsap.utils.toArray('.site-main .section__lede, .site-main .section__prose, .story-block, .link-row, .section > .container > .btn, .card__body').filter((el) => !el.closest('.drive-country, .drive-build'));
+  ScrollTrigger.batch(settle, {
     start: 'top 92%', once: true,
     onEnter: (batch) => gsap.fromTo(batch, { opacity: 0.2, y: 22 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.07, ease: 'expo.out', clearProps: 'transform,opacity' }),
   });
@@ -121,7 +137,7 @@ function sections() {
 }
 
 function rowsIn(selector) {
-  const items = gsap.utils.toArray(selector).filter((el) => !el.closest('.hero, .gantry'));
+  const items = gsap.utils.toArray(selector).filter((el) => !el.closest('.hero, .gantry, .drive-build, .road'));
   if (!items.length) return;
   gsap.set(items, { opacity: 0, y: 26 });
   ScrollTrigger.batch(items, {
@@ -135,6 +151,26 @@ function laneLine() {
   const line = document.querySelector('.lane-line');
   if (!line) return;
   gsap.fromTo(line, { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: line, start: 'top 75%', end: 'bottom 75%', scrub: 0.6 } });
+}
+
+/** The end of the road: the last legend rises, the board unrolls from its top edge, the stop line draws across. */
+function footer() {
+  const f = document.querySelector('.site-footer');
+  if (!f) return;
+  const cta = f.querySelector('.site-footer__cta-text');
+  if (cta) SplitText.create(cta, {
+    type: 'lines', mask: 'lines', autoSplit: true,
+    onSplit: (self) => gsap.from(self.lines, { yPercent: 112, duration: 1.15, ease: 'power4.out', scrollTrigger: { trigger: f, start: 'top 80%', once: true } }),
+  });
+  const go = f.querySelector('.site-footer__go');
+  if (go) gsap.from(go, { scale: 0.6, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: f, start: 'top 80%', once: true }, clearProps: 'transform,opacity' });
+  const board = f.querySelector('.site-footer__board');
+  if (board) {
+    gsap.fromTo(board, { clipPath: 'inset(0% 0% 100% 0% round 14px)' }, { clipPath: 'inset(-10% -2% -2% -2% round 14px)', duration: 1.2, ease: 'expo.out', clearProps: 'clipPath', scrollTrigger: { trigger: board, start: 'top 88%', once: true } });
+    gsap.from(board.querySelectorAll('li'), { opacity: 0, y: 18, duration: 0.8, stagger: 0.06, ease: 'expo.out', delay: 0.25, clearProps: 'transform,opacity', scrollTrigger: { trigger: board, start: 'top 88%', once: true } });
+  }
+  const end = f.querySelector('.site-footer__end');
+  if (end) gsap.fromTo(end, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: end, start: 'top bottom', end: 'top 70%', scrub: 0.6 } });
 }
 
 /* ---------------------------------------------------------------- menu */

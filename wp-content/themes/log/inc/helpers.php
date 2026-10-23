@@ -228,11 +228,15 @@ function log_nav_items(): array {
  * @return array<int, string>
  */
 function log_nav_distances(): array {
+	static $out = null; // the menu and the footer both read it
+	if ( $out !== null ) {
+		return $out;
+	}
 	$plural = static fn( int $n, string $one, string $many ) => $n === 1 ? $one : sprintf( $many, number_format_i18n( $n ) );
 	$jobs   = count( get_posts( [ 'post_type' => 'log_job', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => 'is_open', 'meta_value' => '1', 'no_found_rows' => true ] ) );
 	$items  = (int) ( wp_count_posts( 'log_knowledge' )->publish ?? 0 );
 	$phone  = log_offices()[0]['phone'] ?? '';
-	return [
+	return $out = [
 		$plural( count( log_public_projects() ), 'פרויקט אחד', '%s פרויקטים' ),
 		'הבקרה הלאומית בהתחדשות עירונית',
 		'האנשים, הערכים, המשרדים',
@@ -240,56 +244,6 @@ function log_nav_distances(): array {
 		$jobs ? $plural( $jobs, 'משרה פתוחה אחת', '%s משרות פתוחות' ) : 'אין משרות פתוחות כרגע',
 		$phone ?: 'תל אביב · ירושלים',
 	];
-}
-
-/**
- * The sheet index (מפתח גיליונות): Israel's national grid with every public project as a point,
- * drawn from the projects' real coordinates. Five reference cities give the eye a hold.
- * One unit = 1 km of ITM; the frame spans E 130–270 km, N 380–800 km.
- */
-function log_sheet_index_svg(): string {
-	$e0 = 130; $e1 = 270; $n0 = 380; $n1 = 800; $w = $e1 - $e0; $h = $n1 - $n0;
-	$x  = static fn( float $e ) => round( $e / 1000 - $e0, 2 );
-	$y  = static fn( float $n ) => round( $n1 - $n / 1000, 2 );
-
-	$grid = '';
-	for ( $e = $e0; $e <= $e1; $e += 20 ) {
-		$grid .= sprintf( '<line x1="%1$d" y1="0" x2="%1$d" y2="%2$d"/>', $e - $e0, $h );
-	}
-	for ( $n = $n0; $n <= $n1; $n += 20 ) {
-		$grid .= sprintf( '<line x1="0" y1="%1$d" x2="%2$d" y2="%1$d"/>', $n1 - $n, $w );
-	}
-	$labels = '';
-	for ( $n = 400; $n < $n1; $n += 100 ) {
-		$labels .= sprintf( '<text x="-3" y="%d" text-anchor="end" dominant-baseline="middle">%d</text>', $n1 - $n, $n );
-	}
-	for ( $e = 150; $e < $e1; $e += 50 ) {
-		$labels .= sprintf( '<text x="%d" y="%d" text-anchor="middle">%d</text>', $e - $e0, $h + 9, $e );
-	}
-
-	$cities = '';
-	foreach ( [ 'חיפה' => [ 32.794, 34.989 ], 'תל אביב' => [ 32.08, 34.78 ], 'ירושלים' => [ 31.778, 35.235 ], 'באר שבע' => [ 31.252, 34.791 ], 'אילת' => [ 29.557, 34.951 ] ] as $name => [ $lat, $lng ] ) {
-		[ $e, $n ] = log_itm( $lat, $lng );
-		$cities .= sprintf( '<g class="sheet-index__city"><circle cx="%1$s" cy="%2$s" r="1.1"/><text x="%3$s" y="%2$s" dominant-baseline="middle">%4$s</text></g>', $x( $e ), $y( $n ), $x( $e ) - 3, esc_html( $name ) );
-	}
-
-	$dots = '';
-	$count = 0;
-	foreach ( log_public_projects() as $p ) {
-		$itm = log_itm( log_field( 'lat', $p->ID ), log_field( 'lng', $p->ID ) );
-		if ( ! $itm || log_field( 'is_national', $p->ID ) ) {
-			continue;
-		}
-		$dots .= sprintf( '<circle cx="%s" cy="%s" r="1.9"/>', $x( $itm[0] ), $y( $itm[1] ) );
-		$count++;
-	}
-
-	return sprintf(
-		'<svg class="sheet-index__svg" viewBox="-14 -6 %1$d %2$d" role="img" aria-label="%3$s"><g class="sheet-index__grid">%4$s</g><rect class="sheet-index__frame" x="0" y="0" width="%5$d" height="%6$d"/><g class="sheet-index__labels">%7$s</g>%8$s<g class="sheet-index__dots">%9$s</g></svg>',
-		$w + 20, $h + 20,
-		esc_attr( sprintf( 'מפתח גיליונות: %d פרויקטים של לוג על רשת ישראל, מהגליל ועד אילת', $count ) ),
-		$grid, $w, $h, $labels, $cities, $dots
-	);
 }
 
 /** Whether any client logo is approved for the site (the clients block hides for visitors when none is). */
