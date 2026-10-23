@@ -6,6 +6,11 @@
  * and motion is allowed, turns the map sticky and lays the chapter over it as a sticky legend on the sea.
  */
 .drive { position: relative; }
+/* Grain over the map and the road (a token in tokens.css). It never takes a pointer. */
+.hero-stage::after, html.road-on .road__scene::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: var(--grain) 0 0 / 180px 180px; opacity: var(--grain-strength); mix-blend-mode: overlay;
+}
 html.drive-on .drive { overflow-x: clip; } /* the overlays span the viewport; clip, so sticky still works */
 
 /* The figures: big tabular numbers under an orange 3px rule, no plate. */
@@ -30,6 +35,11 @@ html.drive-on .drive-country__inner::before {
 }
 html.drive-on .drive-country .section__title { text-shadow: 0 2px 30px rgba(11,20,30,.5); }
 html.drive-on .drive-figures dd { text-shadow: 0 2px 24px rgba(11,20,30,.6); }
+
+/* The sheet margin while driving: grid reference and scale under the gantry, on the end side. */
+.drive-coord { position: absolute; z-index: 5; inset-inline-end: var(--gutter); top: calc(var(--header-h) + 1.25rem); margin: 0; display: grid; justify-items: end; gap: .1rem; font: 500 .8125rem var(--font-display); color: var(--legend-muted); opacity: 0; pointer-events: none; text-shadow: 0 1px 10px rgba(11,20,30,.9); }
+.drive-coord b { font: 700 1.0625rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+@media (max-width: 760px) { .drive-coord { display: none; } }
 
 /* While the scroll holds the camera, the map's own tools step back (drive.js also makes them inert). */
 .hero.is-driving :is(.hero-pins, .hero-edges, .hero-card, .hero-drawer, .hero__hint) { opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
@@ -91,8 +101,6 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 .build-label { position: absolute; top: 0; left: 0; font: 700 .9375rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 1px 10px rgba(11,20,30,.95); translate: -50% -50%; }
 .build-label--area { font-size: clamp(1.5rem, 2.4vw, 2.25rem); letter-spacing: -0.02em; }
 .build-label--area small { display: block; font: 500 .875rem var(--font-display); color: var(--legend-muted); text-align: center; }
-.build-coord { position: absolute; inset-inline-end: 0; bottom: clamp(28px, 7vh, 80px); margin: 0; display: grid; gap: .15rem; font: 500 .8125rem var(--font-display); color: var(--legend-muted); text-align: end; opacity: 0; }
-.build-coord span { font: 700 1.0625rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
 
 /* The white sign: the plan's facts and its real stage. It never swaps with the night (sign ink stays). */
 .build-sign {
@@ -123,7 +131,6 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
   html.drive-on .drive-build.is-live .process li h3 { font-size: 1.75rem; }
   html.drive-on .drive-build.is-live .process li p { font-size: 1.0625rem; }
   html.drive-on .drive-build.is-live .section__lede { display: none; }
-  .build-coord { display: none; }
   .build-sign { width: min(290px, calc(100vw - 24px)); padding: .9rem 1rem 1rem; }
   .build-sign__title { font-size: 1.375rem; }
   .build-sign__facts dd { font-size: 1.375rem; }

@@ -359,12 +359,12 @@ Project stage is four lane dashes lit in orange up to "now"; a finished project'
 Every inner page opens on a navy band that continues the header strip, with a display title, an optional meta line and lede, and an orange sheet label at the end giving how much lies down this road. Hero images hang from the band into the paper.
 
 ### Motion
-GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger). Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. On the home page Lenis smooths the wheel and ScrollTrigger drives the camera (the drive, see Layout); Ctrl/⌘ + wheel stays the map's zoom. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
+GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger). Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Lenis smooths the wheel on every page (`src/smooth.js`, started by motion.js) and hands ScrollTrigger the same time base; on the home page ScrollTrigger drives the camera (the drive, see Layout). Ctrl/⌘ + wheel stays the map's zoom, an armed projects map keeps its wheel, anything with its own scroll keeps it, touch stays native, and the page stands still under the menu and phone sheets. While driving, a sheet-margin readout under the header gives the camera's grid reference and the scale. The map and the road carry a light print grain (`--grain`, overlay blend), so the sheet reads printed, not lit. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
 
 ## Swap points for TwoPointFour
 
 When TwoPointFour's visual language lands, the world changes in three places and nowhere else:
-1. `wp-content/themes/log/src/styles/tokens.css`: every colour, font, radius, keyline and icon token.
+1. `wp-content/themes/log/src/styles/tokens.css`: every colour, font, radius, keyline and icon token, and the print grain.
 2. The night token swap in `src/styles/pages.css` on `.sheet--night, .section--control, .section--night, .site-footer` and on `body.page-template-page-control` (the only place `night-rule-soft` is written).
 3. The `C` palette at the top of `src/hero/scene.js` for the 3D map.
 

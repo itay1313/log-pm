@@ -15,13 +15,12 @@
  *
  * Only loaded with WebGL and with motion allowed (hero.js). Without it both chapters are ordinary sections.
  */
-import Lenis from 'lenis';
-import 'lenis/dist/lenis.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { toLocal, toLngLat } from '../hero/geo.js';
 import { itmLabel } from '../itm.js';
+import { initSmooth } from '../smooth.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -82,7 +81,7 @@ export function initDrive(hero, scene, points, features) {
 
   const root = document.documentElement;
   root.classList.add('drive-on');
-  smoothScroll();
+  initSmooth(); // motion.js has usually started it already
 
   const tools = [hero.querySelector('.hero-lead'), hero.querySelector('.hero-bar')].filter(Boolean);
   const inner = chapter.querySelector('.drive-country__inner');
@@ -101,6 +100,14 @@ export function initDrive(hero, scene, points, features) {
   const dim = 0.16;
 
   const build = buildChapter(drive.querySelector('.drive-build'), scene, features, hero);
+
+  // The sheet margin for the whole drive: the grid reference under the camera and the scale, live.
+  const coord = document.createElement('p');
+  coord.className = 'drive-coord';
+  coord.setAttribute('aria-hidden', 'true');
+  coord.innerHTML = '<span>רשת ישראל</span><b></b><span></span>';
+  hero.append(coord);
+  const [, coordValue, coordScale] = coord.children;
   dispatchEvent(new Event('resize')); // the chapters just grew: the lane line and the triggers measure again
 
   let from = null; // the view the visitor left, while the scroll holds the camera
@@ -135,10 +142,16 @@ export function initDrive(hero, scene, points, features) {
     else if (p1 <= 0.001 && from) giveBack();
 
     gsap.set(tools, { opacity: 1 - span(AT.ui, p1) });
+    coord.style.opacity = from ? span([0.06, 0.14], p1).toFixed(3) : 0;
 
     if (from) {
       const v = build && p2 > 0 ? build.view(countryView(1), p2) : countryView(p1);
       scene.setView(v);
+      const [lng, lat] = toLngLat(v.tx, v.tz);
+      coordValue.textContent = itmLabel(lat, lng);
+      const denom = scene.metresPerPixel() / 0.0002645833; // CSS px at 96 dpi
+      const mag = 10 ** Math.floor(Math.log10(denom));
+      coordScale.textContent = `קנ״מ 1:${fmt.format(Math.round(denom / mag) * mag)}`;
     }
     build?.render(p2, p1);
 
@@ -237,12 +250,6 @@ function buildChapter(el, scene, features, hero) {
       <a class="build-sign__go" href="${esc(href)}"><span>${p.page ? 'לעמוד הפרויקט' : 'התכנית במפת הפרויקטים'}</span><i aria-hidden="true"></i></a>
     </div>`;
   innerEl.prepend(overlay);
-  const coord = document.createElement('p');
-  coord.className = 'build-coord';
-  coord.setAttribute('aria-hidden', 'true');
-  coord.innerHTML = 'רשת ישראל<span></span>';
-  innerEl.append(coord);
-  const coordValue = coord.querySelector('span');
 
   const paths = [...overlay.querySelectorAll('.dim')];
   const labels = [...overlay.querySelectorAll('.build-label:not(.build-label--area)')];
@@ -306,13 +313,6 @@ function buildChapter(el, scene, features, hero) {
     });
     if (lede) lede.style.opacity = span(BUILD.lede, q).toFixed(3);
     if (head) head.style.opacity = phone.matches ? (1 - span(BUILD.sign, q)).toFixed(3) : '';
-
-    // The grid reference under the camera, while the site is the subject.
-    coord.style.opacity = span([0.18, 0.24], q).toFixed(3);
-    if (live) {
-      const [lng, lat] = toLngLat(site.cx, site.cz);
-      coordValue.textContent = itmLabel(lat, lng);
-    }
 
     // Dimension lines stretch from their middles; they leave as the buildings rise.
     const dShow = span(BUILD.dims, q) * (1 - span([BUILD.rise[0], BUILD.rise[0] + 0.05], q));
@@ -380,24 +380,4 @@ function pickPlan(features, id) {
   return usable
     .filter((f) => area(f.properties.boundary) <= MAX_SITE)
     .sort((a, b) => (Number(b.properties.units) || 0) - (Number(a.properties.units) || 0))[0] || null;
-}
-
-/**
- * Lenis smooths the wheel and hands ScrollTrigger the same time base. Overlays with their own scroll keep it,
- * Ctrl/⌘ + wheel stays the map's zoom, and the page stands still under the menu and the phone sheets.
- */
-function smoothScroll() {
-  const lenis = new Lenis({
-    prevent: (node) => !!node.closest?.('dialog, .hero-drawer, .hero-suggest, .hero-card, .hero-filters, [data-lenis-prevent]'),
-    virtualScroll: ({ event }) => !(event.ctrlKey || event.metaKey),
-  });
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
-  gsap.ticker.lagSmoothing(0);
-  const body = document.body;
-  new MutationObserver(() => {
-    if (body.classList.contains('menu-open') || body.classList.contains('sheet-open')) lenis.stop();
-    else lenis.start();
-  }).observe(body, { attributes: true, attributeFilter: ['class'] });
-  window.LOGlenis = lenis;
 }

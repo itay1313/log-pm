@@ -38,15 +38,17 @@ const SWAY = 0.1; // the resting camera breathes this far and back instead of or
 const MID_AT = 9000; // below this the full-detail z14 city takes over from the z13 one
 const REGIONAL_AT = 170000;
 const DETAIL_AT = 42000;
-const MAX_DETAIL_TILES = 30;
-const MAX_MID_TILES = 12;
+// Phones and touch screens get a lighter map: fewer tiles held, a lower pixel ratio, no glow pass.
+const LIGHT = matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+const MAX_DETAIL_TILES = LIGHT ? 18 : 30;
+const MAX_MID_TILES = LIGHT ? 9 : 12;
 const MAX_REGIONAL_TILES = 16;
 
 export async function createScene(container, { reduced = false } = {}) {
   const tpl = await tileTemplate();
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, LIGHT ? 1.5 : 1.75));
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -57,6 +59,7 @@ export async function createScene(container, { reduced = false } = {}) {
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.14, 0.35, 0.78);
+  bloom.enabled = !LIGHT;
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 

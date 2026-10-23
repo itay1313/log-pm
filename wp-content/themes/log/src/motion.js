@@ -10,6 +10,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
+import { initSmooth } from './smooth.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -18,12 +19,28 @@ const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 export function initMotion() {
   if (reduced()) return;
   document.documentElement.classList.add('js-motion');
+  initSmooth();
+  remeasure();
   pageCover();
   heroIntro();
   titleBands();
   sections();
   laneLine();
   footer();
+}
+
+/**
+ * Scroll scenes measure where they start and end once; when the page grows after load (the map falling back to
+ * its list, a late image, the drive's chapters switching on), they measure again.
+ */
+function remeasure() {
+  let h = document.body.scrollHeight, t = 0;
+  new ResizeObserver(() => {
+    if (Math.abs(document.body.scrollHeight - h) < 2) return;
+    h = document.body.scrollHeight;
+    clearTimeout(t);
+    t = setTimeout(() => ScrollTrigger.refresh(), 150);
+  }).observe(document.body);
 }
 
 /** Display headings rise line by line inside masks. Re-splits when fonts land or the width changes. */
