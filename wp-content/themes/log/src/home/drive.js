@@ -207,6 +207,11 @@ function buildChapter(el, scene, features, hero) {
   projectLine.innerHTML = `על תכנית אמיתית: <a href="${esc(href)}"><strong>${esc(p.title)}</strong></a>${p.city ? `, ${esc(p.city)}` : ''}`;
   projectLine.hidden = false;
   const steps = [...el.querySelectorAll('.process li')];
+  // Step 3 raises the buildings standing in the plan area today (OpenStreetMap's), not the plan's own massing.
+  const note = document.createElement('p');
+  note.className = 'build-note';
+  note.textContent = 'המחשה: הבניינים שעומדים היום בתחום התכנית, לא הבינוי שהיא מציעה.';
+  steps[2]?.append(note);
   const lede = el.querySelector('.section__lede');
 
   // Dimension lines on the plan's own axes (its principal direction), set off from the site.
