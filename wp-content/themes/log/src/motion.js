@@ -23,6 +23,7 @@ export function initMotion() {
   titleBands();
   sections();
   laneLine();
+  footer();
 }
 
 /** Display headings rise line by line inside masks. Re-splits when fonts land or the width changes. */
@@ -119,7 +120,7 @@ function sections() {
 }
 
 function rowsIn(selector) {
-  const items = gsap.utils.toArray(selector).filter((el) => !el.closest('.hero, .gantry, .drive-build'));
+  const items = gsap.utils.toArray(selector).filter((el) => !el.closest('.hero, .gantry, .drive-build, .road'));
   if (!items.length) return;
   gsap.set(items, { opacity: 0, y: 26 });
   ScrollTrigger.batch(items, {
@@ -133,6 +134,26 @@ function laneLine() {
   const line = document.querySelector('.lane-line');
   if (!line) return;
   gsap.fromTo(line, { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: line, start: 'top 75%', end: 'bottom 75%', scrub: 0.6 } });
+}
+
+/** The end of the road: the last legend rises, the board unrolls from its top edge, the stop line draws across. */
+function footer() {
+  const f = document.querySelector('.site-footer');
+  if (!f) return;
+  const cta = f.querySelector('.site-footer__cta-text');
+  if (cta) SplitText.create(cta, {
+    type: 'lines', mask: 'lines', autoSplit: true,
+    onSplit: (self) => gsap.from(self.lines, { yPercent: 112, duration: 1.15, ease: 'power4.out', scrollTrigger: { trigger: f, start: 'top 80%', once: true } }),
+  });
+  const go = f.querySelector('.site-footer__go');
+  if (go) gsap.from(go, { scale: 0.6, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: f, start: 'top 80%', once: true }, clearProps: 'transform,opacity' });
+  const board = f.querySelector('.site-footer__board');
+  if (board) {
+    gsap.fromTo(board, { clipPath: 'inset(0% 0% 100% 0% round 14px)' }, { clipPath: 'inset(-10% -2% -2% -2% round 14px)', duration: 1.2, ease: 'expo.out', clearProps: 'clipPath', scrollTrigger: { trigger: board, start: 'top 88%', once: true } });
+    gsap.from(board.querySelectorAll('li'), { opacity: 0, y: 18, duration: 0.8, stagger: 0.06, ease: 'expo.out', delay: 0.25, clearProps: 'transform,opacity', scrollTrigger: { trigger: board, start: 'top 88%', once: true } });
+  }
+  const end = f.querySelector('.site-footer__end');
+  if (end) gsap.fromTo(end, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: end, start: 'top bottom', end: 'top 70%', scrub: 0.6 } });
 }
 
 /* ---------------------------------------------------------------- menu */

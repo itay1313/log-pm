@@ -118,6 +118,12 @@ $drive_project = (int) log_field( 'drive_project' );
 </div>
 
 <?php
+// The road (src/home/road.js): the practice areas pass overhead as gantry signs, then an exit sign opens into
+// the control company. Without motion both are ordinary sections; the scene is decoration only.
+?>
+<div class="road" id="road">
+<div class="road__scene" aria-hidden="true"><div class="road__plane"></div></div>
+<?php
 // Practice areas: one card per domain with published projects, counted live.
 $domain_counts = [];
 foreach ( log_public_projects() as $p ) {
@@ -127,9 +133,9 @@ foreach ( log_public_projects() as $p ) {
 }
 $domains = array_filter( log_ordered_terms( 'log_domain' ), static fn( $t ) => ! empty( $domain_counts[ $t->slug ] ) );
 if ( $domains ) : ?>
-	<section class="section section--domains" data-section="domains">
-		<div class="container">
-			<h2 class="section__title"><?php echo log_route_shield( 1 ); ?><?php echo esc_html( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
+	<section class="section section--domains gantries" data-section="domains" aria-labelledby="domains-title">
+		<div class="container gantries__inner">
+			<h2 class="section__title" id="domains-title"><?php echo log_route_shield( 1 ); ?><?php echo esc_html( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
 			<ul class="domains">
 				<?php foreach ( $domains as $d ) : ?>
 					<li class="domain">
@@ -145,13 +151,19 @@ if ( $domains ) : ?>
 	</section>
 <?php endif; ?>
 
-<section class="section section--control" data-section="control">
-	<div class="container">
-		<h2 class="section__title"><?php echo log_route_shield( 2 ); ?><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
-		<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
-		<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
+<section class="section section--control exit" data-section="control" aria-labelledby="control-title">
+	<div class="container exit__inner">
+		<p class="exit-sign" aria-hidden="true"><span class="exit-sign__tag">יציאה</span><span class="exit-sign__name"><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></span><i class="exit-sign__arrow"></i></p>
+		<div class="exit-world">
+			<div class="exit-world__body">
+				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
+				<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
+				<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
+			</div>
+		</div>
 	</div>
 </section>
+</div>
 
 <?php if ( log_has_clients() || log_show_empty() ) : ?>
 <section class="section section--clients" data-section="clients">

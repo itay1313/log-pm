@@ -236,3 +236,10 @@ if (hero) {
   }, { threshold: [0, 0.35, 0.6] }).observe(hero);
   import('./hero.js').then((m) => m.initHero(hero)).catch((err) => { console.error(err); hero.classList.add('no-webgl'); });
 }
+
+// The road below the map: the practice areas as gantries, then the exit into the control company.
+// CSS 3D only, so it needs motion allowed, not WebGL.
+const road = document.getElementById('road');
+if (road && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  import('./home/road.js').then((m) => m.initRoad(road)).catch((err) => console.error(err));
+}

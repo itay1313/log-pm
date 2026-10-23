@@ -228,11 +228,15 @@ function log_nav_items(): array {
  * @return array<int, string>
  */
 function log_nav_distances(): array {
+	static $out = null; // the menu and the footer both read it
+	if ( $out !== null ) {
+		return $out;
+	}
 	$plural = static fn( int $n, string $one, string $many ) => $n === 1 ? $one : sprintf( $many, number_format_i18n( $n ) );
 	$jobs   = count( get_posts( [ 'post_type' => 'log_job', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => 'is_open', 'meta_value' => '1', 'no_found_rows' => true ] ) );
 	$items  = (int) ( wp_count_posts( 'log_knowledge' )->publish ?? 0 );
 	$phone  = log_offices()[0]['phone'] ?? '';
-	return [
+	return $out = [
 		$plural( count( log_public_projects() ), 'פרויקט אחד', '%s פרויקטים' ),
 		'הבקרה הלאומית בהתחדשות עירונית',
 		'האנשים, הערכים, המשרדים',
