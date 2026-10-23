@@ -24,6 +24,7 @@
       { "key": "field_lh_process_text", "label": "משפט", "name": "text", "type": "text", "wrapper": { "width": "65" } }
     ] },
     { "key": "field_lh_process_tagline", "label": "שורה מתחת", "name": "process_tagline", "type": "text", "default_value": "נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע הם חלק מהעבודה, לא תוספת לה." },
+    { "key": "field_lh_drive_project", "label": "הפרויקט שנבנה בגלילה", "name": "drive_project", "type": "post_object", "post_type": ["log_project"], "allow_null": 1, "return_format": "id", "instructions": "הפרויקט שהמצלמה צוללת אליו בעמוד הבית, ועליו קורים ארבעת השלבים. צריך גבול תכנית במפה. ריק: התכנית עם הכי הרבה יחידות דיור מבין אלה ששטחן עד 3 קמ\"ר." },
 
     { "key": "field_lh_tab_sections", "label": "לקוחות ושותפים", "name": "", "type": "tab" },
     { "key": "field_lh_clients_title", "label": "לקוחות · כותרת", "name": "clients_title", "type": "text", "default_value": "לקוחות ושותפים" }

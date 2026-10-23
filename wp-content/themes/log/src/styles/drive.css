@@ -6,6 +6,7 @@
  * and motion is allowed, turns the map sticky and lays the chapter over it as a sticky legend on the sea.
  */
 .drive { position: relative; }
+html.drive-on .drive { overflow-x: clip; } /* the overlays span the viewport; clip, so sticky still works */
 
 /* The figures: big tabular numbers under an orange 3px rule, no plate. */
 .drive-figures { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin: 0; align-self: end; }
@@ -43,4 +44,87 @@ html.drive-on .drive-figures dd { text-shadow: 0 2px 24px rgba(11,20,30,.6); }
   html.drive-on .drive-figures dd { font-size: clamp(2.5rem, 12vw, 3.5rem); }
   html.drive-on .drive-country .section__prose { font-size: 1.0625rem; }
   html.drive-on .drive-country__inner::before { background: linear-gradient(0deg, rgba(11,20,30,.9) 0%, rgba(11,20,30,.55) 55%, rgba(11,20,30,.75) 100%); }
+}
+
+/* ------------------------------------------------------------------ chapter 2: the build */
+
+/*
+ * Without the drive this is the "how we work" section on paper. Live (drive.js found a plan with a boundary),
+ * it turns night over the map: the title and the real plan's name at the top, one step at a time below them,
+ * dimension lines and the grid reference drawn over the site, and a white sign that hangs from it at the end.
+ */
+.build-project { margin: 0; font: 500 1.0625rem var(--font-display); color: var(--slate); }
+.build-project strong { color: var(--works); font-weight: 700; }
+
+html.drive-on .drive > .section { z-index: 6; }
+html.drive-on .drive-build.is-live {
+  --paper: var(--plate); --ink: var(--legend); --slate: var(--legend-muted); --rule: var(--plate-line); --works-deep: var(--works);
+  --drive-len: 460vh; height: var(--drive-len); padding: 0; background: transparent; color: var(--legend); pointer-events: none;
+}
+html.drive-on .drive-build.is-live a { pointer-events: auto; }
+html.drive-on .drive-build.is-live .drive-build__inner {
+  position: sticky; top: 0; height: 100vh; height: 100svh; grid-template-rows: auto 1fr auto; justify-items: start;
+  padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 3.5rem)); padding-bottom: clamp(28px, 7vh, 80px);
+}
+html.drive-on .drive-build.is-live .drive-build__inner::before {
+  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; opacity: var(--scrim, 0);
+  background:
+    linear-gradient(270deg, rgba(11,20,30,.84) 0%, rgba(11,20,30,.5) 30%, rgba(11,20,30,0) 56%),
+    linear-gradient(180deg, rgba(11,20,30,.6) 0%, rgba(11,20,30,0) 30%);
+}
+html.drive-on .drive-build.is-live .section__title { max-width: 12ch; margin-bottom: .3em; font-size: clamp(2.5rem, 4.6vw, 4.5rem); text-shadow: 0 2px 30px rgba(11,20,30,.5); }
+
+/* One step at a time, all four in the same place; drive.js moves them in and out. */
+html.drive-on .drive-build.is-live .process { display: grid; grid-template-columns: minmax(0, 1fr); align-self: end; width: min(100%, 31rem); margin: 0 0 1.5rem; }
+html.drive-on .drive-build.is-live .process::before { display: none; }
+html.drive-on .drive-build.is-live .process li { grid-area: 1 / 1; align-self: end; padding: 0; visibility: hidden; }
+html.drive-on .drive-build.is-live .process li .stage { width: 3.25rem; height: 3.25rem; margin-bottom: 1.1rem; font-size: 1.3125rem; background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 4px var(--works), inset 0 0 0 6px var(--sign-ink); }
+html.drive-on .drive-build.is-live .process li h3 { margin-bottom: .5rem; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1; letter-spacing: -0.025em; }
+html.drive-on .drive-build.is-live .process li p { max-width: 34ch; font-size: clamp(1.125rem, 1.4vw, 1.3125rem); line-height: 1.5; }
+html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; font-size: 1.0625rem; opacity: 0; }
+
+/* Drawn over the site: dimension lines, the area, the grid reference, the white sign and its leader. */
+.build-overlay { position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); overflow: visible; pointer-events: none; }
+.build-overlay .dim { stroke: var(--legend); stroke-width: 1.5; fill: none; }
+.build-overlay .leader { stroke: var(--sign-ink); stroke-width: 2; }
+.build-overlay .leader-dot { fill: var(--works); stroke: var(--sign-ink); stroke-width: 2; }
+.build-label { position: absolute; top: 0; left: 0; font: 700 .9375rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 1px 10px rgba(11,20,30,.95); translate: -50% -50%; }
+.build-label--area { font-size: clamp(1.5rem, 2.4vw, 2.25rem); letter-spacing: -0.02em; }
+.build-label--area small { display: block; font: 500 .875rem var(--font-display); color: var(--legend-muted); text-align: center; }
+.build-coord { position: absolute; inset-inline-end: 0; bottom: clamp(28px, 7vh, 80px); margin: 0; display: grid; gap: .15rem; font: 500 .8125rem var(--font-display); color: var(--legend-muted); text-align: end; opacity: 0; }
+.build-coord span { font: 700 1.0625rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+/* The white sign: the plan's facts and its real stage. It never swaps with the night (sign ink stays). */
+.build-sign {
+  --ink: var(--sign-ink); --slate: #53606a; --rule: #b8c0c2;
+  position: absolute; top: 0; left: 0; width: min(330px, calc(100vw - 32px)); padding: 1.15rem 1.3rem 1.2rem; border-radius: 12px;
+  background: var(--legend); color: var(--sign-ink); opacity: 0; visibility: hidden;
+  box-shadow: inset 0 0 0 5px var(--legend), inset 0 0 0 7px var(--sign-ink), 0 30px 60px -18px rgba(5,10,16,.7), 0 4px 12px rgba(5,10,16,.3);
+}
+.build-sign__meta { margin: 0 0 .3rem; font: 500 .8125rem var(--font-display); color: var(--slate); }
+.build-sign__title { margin: 0 0 .8rem; font: 700 1.625rem/1.05 var(--font-display); letter-spacing: -0.02em; }
+.build-sign__facts { display: flex; gap: 1.5rem; margin: 0 0 1rem; }
+.build-sign__facts div { display: flex; flex-direction: column-reverse; gap: .1rem; }
+.build-sign__facts dd { margin: 0; font: 700 1.75rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.build-sign__facts dt { font-size: .75rem; color: var(--slate); }
+.build-sign .stage-row { margin-bottom: 1rem; }
+.build-sign__go { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.1rem; border-radius: 6px; background: var(--plate); color: var(--legend); font: 700 1.0625rem var(--font-display); text-decoration: none; transition: background-color .25s, color .25s; }
+.build-sign__go i { width: 1.3em; height: .9em; background: currentColor; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; transition: translate .4s var(--ease-out); }
+.build-sign__go:hover, .build-sign__go:focus-visible { background: var(--works); color: var(--plate); }
+.build-sign__go:hover i { translate: -6px 0; }
+
+@media (max-width: 760px) {
+  html.drive-on .drive-build.is-live { --drive-len: 380vh; }
+  html.drive-on .drive-build.is-live .drive-build__inner { padding-top: calc(var(--header-h) + 1rem); padding-bottom: calc(58px + 1rem + env(safe-area-inset-bottom)); }
+  html.drive-on .drive-build.is-live .drive-build__inner::before { background: linear-gradient(180deg, rgba(11,20,30,.8) 0%, rgba(11,20,30,0) 30%, rgba(11,20,30,0) 55%, rgba(11,20,30,.9) 100%); }
+  html.drive-on .drive-build.is-live .section__title { font-size: 2.25rem; }
+  html.drive-on .drive-build.is-live .process { margin-bottom: .5rem; }
+  html.drive-on .drive-build.is-live .process li .stage { width: 2.5rem; height: 2.5rem; margin-bottom: .6rem; font-size: 1.0625rem; }
+  html.drive-on .drive-build.is-live .process li h3 { font-size: 1.75rem; }
+  html.drive-on .drive-build.is-live .process li p { font-size: 1.0625rem; }
+  html.drive-on .drive-build.is-live .section__lede { display: none; }
+  .build-coord { display: none; }
+  .build-sign { width: min(290px, calc(100vw - 24px)); padding: .9rem 1rem 1rem; }
+  .build-sign__title { font-size: 1.375rem; }
+  .build-sign__facts dd { font-size: 1.375rem; }
 }

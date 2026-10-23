@@ -1,7 +1,7 @@
 <?php
 /**
- * Home (spec v6 §7). Blocks in order: projects map, who we are, practice areas, how we work,
- * the control company, clients and partners. The twin buttons hang in the header (bottom bar on phones).
+ * Home (spec v6 §7). Blocks in order: projects map, who we are, how we work (these three are the drive),
+ * practice areas, the control company, clients and partners. The twin buttons hang in the header (bottom bar on phones).
  * Every text is an ACF field with fallback copy until LOG's texts file arrives.
  * The 3D map mounts into .hero-stage and is loaded lazily by main.js, never on other pages.
  */
@@ -17,7 +17,7 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 ?>
 <?php
 // The drive: the map stays pinned behind the first chapter and the scroll moves its camera (src/home/drive.js).
-// Without WebGL, or with reduced motion, the chapter is an ordinary night section under the map.
+// Without WebGL, or with reduced motion, the chapters are ordinary sections under the map.
 ?>
 <div class="drive" id="drive">
 <section class="hero" id="hero" data-section="map" aria-labelledby="hero-title">
@@ -95,6 +95,26 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 		</dl>
 	</div>
 </section>
+
+<?php
+// Chapter 2, the build: the camera dives into one real plan and LOG's four steps happen on it (drive.js).
+// The plan is the editor's choice, or drive.js picks the one with the most housing units on up to 3 km².
+$drive_project = (int) log_field( 'drive_project' );
+?>
+<section class="section section--process drive-build" data-section="process" aria-labelledby="process-title"<?php echo $drive_project ? ' data-project="' . $drive_project . '"' : ''; ?>>
+	<div class="drive-build__inner container">
+		<div class="build-head">
+			<h2 class="section__title" id="process-title"><?php echo esc_html( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
+			<p class="build-project" hidden></p>
+		</div>
+		<ol class="process">
+			<?php foreach ( array_slice( $process, 0, 4 ) as $i => $step ) : ?>
+				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $step['name'] ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
+			<?php endforeach; ?>
+		</ol>
+		<p class="section__lede"><?php echo esc_html( log_text( 'process_tagline', 'נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע הם חלק מהעבודה, לא תוספת לה.' ) ); ?></p>
+	</div>
+</section>
 </div>
 
 <?php
@@ -124,18 +144,6 @@ if ( $domains ) : ?>
 		</div>
 	</section>
 <?php endif; ?>
-
-<section class="section section--process" data-section="process">
-	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
-		<ol class="process">
-			<?php foreach ( array_slice( $process, 0, 4 ) as $i => $step ) : ?>
-				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $step['name'] ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
-			<?php endforeach; ?>
-		</ol>
-		<p class="section__lede"><?php echo esc_html( log_text( 'process_tagline', 'נתונים, GIS, כלי עבודה ושיתוף בין אנשי מקצוע הם חלק מהעבודה, לא תוספת לה.' ) ); ?></p>
-	</div>
-</section>
 
 <section class="section section--control" data-section="control">
 	<div class="container">

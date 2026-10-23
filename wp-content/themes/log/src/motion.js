@@ -79,7 +79,7 @@ function titleBands() {
 function sections() {
   // Section legends
   for (const h of document.querySelectorAll('.site-main .section__title, .site-main .section h2:not(.section__title), .featured__title, .national__title')) {
-    if (h.closest('.hero, .page-header, .drive-country')) continue; // the drive lights its own legend
+    if (h.closest('.hero, .page-header, .drive-country, .drive-build')) continue; // the drive moves its own legends
     SplitText.create(h, {
       type: 'lines', mask: 'lines', autoSplit: true,
       onSplit: (self) => gsap.from(self.lines, { yPercent: 112, duration: 1.05, stagger: 0.08, ease: 'power4.out', scrollTrigger: { trigger: h, start: 'top 88%', once: true } }),
@@ -98,7 +98,7 @@ function sections() {
   });
 
   // Prose and ledes settle from an already-visible state.
-  const settle = gsap.utils.toArray('.site-main .section__lede, .site-main .section__prose, .story-block, .link-row, .section > .container > .btn, .card__body').filter((el) => !el.closest('.drive-country'));
+  const settle = gsap.utils.toArray('.site-main .section__lede, .site-main .section__prose, .story-block, .link-row, .section > .container > .btn, .card__body').filter((el) => !el.closest('.drive-country, .drive-build'));
   ScrollTrigger.batch(settle, {
     start: 'top 92%', once: true,
     onEnter: (batch) => gsap.fromTo(batch, { opacity: 0.2, y: 22 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.07, ease: 'expo.out', clearProps: 'transform,opacity' }),
@@ -119,7 +119,7 @@ function sections() {
 }
 
 function rowsIn(selector) {
-  const items = gsap.utils.toArray(selector).filter((el) => !el.closest('.hero, .gantry'));
+  const items = gsap.utils.toArray(selector).filter((el) => !el.closest('.hero, .gantry, .drive-build'));
   if (!items.length) return;
   gsap.set(items, { opacity: 0, y: 26 });
   ScrollTrigger.batch(items, {

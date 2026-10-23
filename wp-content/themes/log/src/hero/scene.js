@@ -91,7 +91,7 @@ export async function createScene(container, { reduced = false } = {}) {
     roadMajor: lineMaterial(C.roadMajor, 0.0, fogUniforms),
     rail: lineMaterial(C.road, 0.0, fogUniforms),
     sea: seaMaterial(C.sea, reduced ? 1 : 0, revealUniforms),
-    building: new THREE.MeshLambertMaterial({ color: C.building, emissive: '#241000', side: THREE.FrontSide }),
+    building: siteBuildings(new THREE.MeshLambertMaterial({ color: C.building, emissive: '#241000', side: THREE.FrontSide })),
     planFill: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide }),
     planFillLarge: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide }),
     planEdge: lineMaterial('#fff6ec', 1.0, fogUniforms),
@@ -256,6 +256,108 @@ export async function createScene(container, { reduced = false } = {}) {
     beacons.geometry.setAttribute('aOrder', new THREE.BufferAttribute(order, 1));
   }
 
+  // The build site (home/drive.js, chapter 2) --------------------------------
+  // One plan drawn on its own: a dashed boundary that draws itself, its own fill, and a mask that lets
+  // the building shader flatten what stands inside and raise it again floor by floor.
+  const site = { group: new THREE.Group(), ribbon: null, fill: null, mask: null };
+  site.group.renderOrder = 11;
+  site.group.visible = false;
+  scene.add(site.group);
+  const ribbonMat = new THREE.ShaderMaterial({
+    transparent: true, depthTest: false, depthWrite: false, side: THREE.DoubleSide,
+    uniforms: { uDraw: { value: 0 }, uTotal: { value: 1 }, uWidth: { value: 6 }, uDash: { value: 60 }, uColor: { value: new THREE.Color(C.plan) } },
+    vertexShader: /* glsl */ `
+      attribute float aSide, aDist;
+      attribute vec2 aDir;
+      uniform float uWidth;
+      varying float vDist;
+      void main() {
+        vDist = aDist;
+        vec3 p = position + vec3(-aDir.y, 0.0, aDir.x) * aSide * uWidth * 0.5;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+      }`,
+    fragmentShader: /* glsl */ `
+      uniform float uDraw, uTotal, uDash;
+      uniform vec3 uColor;
+      varying float vDist;
+      void main() {
+        if (vDist > uDraw * uTotal || fract(vDist / uDash) > 0.56) discard; // the lane line's 30 on, 24 off
+        gl_FragColor = vec4(uColor, 1.0);
+      }`,
+  });
+  const siteFillMat = new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide });
+
+  /** Rings of one plan (local x/z, outer first) become the site. Returns its centre, size and rings. */
+  function setSite(boundary) {
+    site.group.clear();
+    const polys = boundary.type === 'Polygon' ? [boundary.coordinates] : boundary.type === 'MultiPolygon' ? boundary.coordinates : [];
+    const local = polys.map((poly) => poly.map((r) => r.map(([lng, lat]) => toLocal(lng, lat))));
+    const outer = local.flatMap((poly) => poly[0]);
+    if (!outer.length) return null;
+    let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+    for (const [x, z] of outer) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z); }
+    const pad = Math.max(maxX - minX, maxZ - minZ) * 0.04 + 10;
+    minX -= pad; minZ -= pad; maxX += pad; maxZ += pad;
+
+    // Mask: the plan painted white on black over its bounding box (even-odd keeps the holes).
+    const N = 1024, cv = document.createElement('canvas');
+    cv.width = cv.height = N;
+    const g = cv.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, N, N); g.fillStyle = '#fff';
+    const toPx = ([x, z]) => [((x - minX) / (maxX - minX)) * N, ((z - minZ) / (maxZ - minZ)) * N];
+    for (const poly of local) {
+      g.beginPath();
+      for (const ring of poly) ring.forEach((pt, i) => { const [px, py] = toPx(pt); i ? g.lineTo(px, py) : g.moveTo(px, py); });
+      g.fill('evenodd');
+    }
+    site.mask?.dispose();
+    site.mask = new THREE.CanvasTexture(cv);
+    site.mask.flipY = false;
+    Object.assign(mat.building.userData.site, { mask: site.mask, min: [minX, minZ], size: [maxX - minX, maxZ - minZ] });
+    mat.building.userData.apply?.();
+
+    // Fill
+    const pos = [];
+    for (const poly of local) {
+      const flat = [], holes = [];
+      let n = 0;
+      poly.forEach((r, i) => { if (i) holes.push(n); for (const [x, z] of r) { flat.push(x, z); n++; } });
+      for (const k of earcut(flat, holes, 2)) pos.push(flat[k * 2], 5, flat[k * 2 + 1]);
+    }
+    site.fill = mesh(new Float32Array(pos), null, siteFillMat, 11);
+    site.group.add(site.fill);
+
+    // Boundary ribbon along every outer ring, one quad per segment, distance carried for the dash and the draw.
+    const P = [], side = [], dir = [], dist = [], idx = [];
+    let total = 0;
+    for (const poly of local) {
+      const r = poly[0];
+      for (let i = 0; i < r.length - 1; i++) {
+        const [ax, az] = r[i], [bx, bz] = r[i + 1];
+        const len = Math.hypot(bx - ax, bz - az);
+        if (!len) continue;
+        const dx = (bx - ax) / len, dz = (bz - az) / len, b = P.length / 3;
+        for (const [x, z, d] of [[ax, az, total], [bx, bz, total + len]]) for (const sd of [-1, 1]) { P.push(x, 8, z); side.push(sd); dir.push(dx, dz); dist.push(d); }
+        idx.push(b, b + 1, b + 2, b + 1, b + 3, b + 2);
+        total += len;
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3));
+    geo.setAttribute('aSide', new THREE.Float32BufferAttribute(side, 1));
+    geo.setAttribute('aDir', new THREE.Float32BufferAttribute(dir, 2));
+    geo.setAttribute('aDist', new THREE.Float32BufferAttribute(dist, 1));
+    geo.setIndex(idx);
+    site.ribbon = new THREE.Mesh(geo, ribbonMat);
+    site.ribbon.renderOrder = 12;
+    site.ribbon.frustumCulled = false;
+    site.group.add(site.ribbon);
+    ribbonMat.uniforms.uTotal.value = total;
+
+    const cx = outer.reduce((a, [x]) => a + x, 0) / outer.length, cz = outer.reduce((a, [, z]) => a + z, 0) / outer.length;
+    return { cx, cz, span: Math.max(maxX - minX, maxZ - minZ) - 2 * pad, rings: local.map((poly) => poly[0]) };
+  }
+
   // Camera ------------------------------------------------------------------
   const view = { ...NATIONAL };
   function applyView() {
@@ -263,6 +365,7 @@ export async function createScene(container, { reduced = false } = {}) {
     camera.position.copy(t).add(new THREE.Vector3().setFromSpherical(new THREE.Spherical(view.radius, view.phi, view.theta)));
     controls.target.copy(t);
     camera.lookAt(t);
+    camera.updateMatrixWorld(); // toScreen() reads it before the next render (the drive's overlay)
   }
   function readView() {
     const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
@@ -325,6 +428,11 @@ export async function createScene(container, { reduced = false } = {}) {
     mat.national.uniforms.uOpacity.value = 0.42 * (1 - 0.6 * smooth(DETAIL_AT * 1.5, DETAIL_AT * 0.4, r));
     mat.planFill.opacity = 0.7 - 0.42 * smooth(60000, 14000, r); // city level: the plan stays readable under the orange city, its paper edge marks it
     mat.planFillLarge.opacity = 0.14 * (1 - smooth(80000, 30000, r)); // regional plans: gone by city level
+    if (site.ribbon) {
+      const mpp = (2 * r * Math.tan((camera.fov * Math.PI) / 360)) / container.clientHeight;
+      ribbonMat.uniforms.uWidth.value = 6 * mpp;
+      ribbonMat.uniforms.uDash.value = 54 * mpp;
+    }
     groups.regional.visible = r < REGIONAL_AT;
     groups.mid.visible = r < DETAIL_AT * 1.2 && r >= MID_AT;
     groups.detail.visible = r < MID_AT;
@@ -341,12 +449,14 @@ export async function createScene(container, { reduced = false } = {}) {
     frameCallbacks.forEach((cb) => { try { cb(r); } catch (err) { console.error(err); } });
   }
 
+  let shift = 0; // fraction of the width the picture slides towards the end side, clear of a legend
   function resize() {
     const w = container.clientWidth, h = container.clientHeight;
     renderer.setSize(w, h, false);
     composer.setPixelRatio(renderer.getPixelRatio());
     composer.setSize(w, h);
     camera.aspect = w / h;
+    if (shift) camera.setViewOffset(w, h, shift * w, 0, w, h); else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     beaconMat.uniforms.uSize.value = (w < 700 ? 8 : 11) * renderer.getPixelRatio();
   }
@@ -464,6 +574,31 @@ export async function createScene(container, { reduced = false } = {}) {
     lightBeacons(v) { beaconMat.uniforms.uLit.value = v; beacons.visible = v > 0; },
     homeView: () => ({ ...HOME }),
 
+    setSite,
+    /** The site's state: on (flatten inside), draw (boundary 0 → 1), fill, rise (metres), dim (the city around), tint. */
+    site({ on = false, draw = 0, fill = 0, rise = 0, dim = 0, tint = 0 } = {}) {
+      const u = mat.building.userData.site;
+      Object.assign(u, { on: on ? 1 : 0, rise, dim, tint });
+      mat.building.userData.apply?.();
+      site.group.visible = on;
+      ribbonMat.uniforms.uDraw.value = draw;
+      siteFillMat.opacity = fill;
+    },
+    /** All the other plans on or off (the build site draws its own). */
+    showPlans(v) { groups.plans.visible = v; },
+    /** Load the city around a point ahead of the camera. */
+    preload(x, z) {
+      const [lng, lat] = toLngLat(x, z);
+      ensureAround(lng, lat, 'mid');
+      ensureAround(lng, lat, 'detail');
+    },
+    /** Slide the picture by a fraction of its width (positive: towards the end side, the left in RTL). */
+    setShift(f) {
+      if (Math.abs(f - shift) < 1e-4) return;
+      shift = f;
+      resize();
+    },
+
     stopDrift() { controls.autoRotate = false; sway?.kill(); },
 
     dispose() {
@@ -475,6 +610,55 @@ export async function createScene(container, { reduced = false } = {}) {
       renderer.dispose();
     },
   };
+}
+
+/**
+ * The building material, taught about the build site: inside the site's mask the buildings are cut down to
+ * uRise (metres, risen floor by floor by the drive) and tinted towards white; the city around can be dimmed.
+ * Values live in material.userData.site and are pushed to the shader by userData.apply().
+ */
+function siteBuildings(material) {
+  const u = {
+    uSiteMask: { value: null }, uSiteMin: { value: new THREE.Vector2() }, uSiteSize: { value: new THREE.Vector2(1, 1) },
+    uSiteOn: { value: 0 }, uRise: { value: 0 }, uDim: { value: 0 }, uTint: { value: 0 },
+    uSiteColor: { value: new THREE.Color('#f2f4f1') }, uDimColor: { value: new THREE.Color('#1b2c3d') },
+  };
+  material.userData.site = { mask: null, min: [0, 0], size: [1, 1], on: 0, rise: 0, dim: 0, tint: 0 };
+  material.userData.apply = () => {
+    const s = material.userData.site;
+    u.uSiteMask.value = s.mask;
+    u.uSiteMin.value.set(...s.min);
+    u.uSiteSize.value.set(...s.size);
+    u.uSiteOn.value = s.mask ? s.on : 0;
+    u.uRise.value = s.rise;
+    u.uDim.value = s.dim;
+    u.uTint.value = s.tint;
+  };
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, u);
+    shader.vertexShader = shader.vertexShader
+      .replace('void main() {', `uniform sampler2D uSiteMask;
+        uniform vec2 uSiteMin, uSiteSize;
+        uniform float uSiteOn, uRise;
+        varying float vSite;
+        void main() {`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        vSite = 0.0;
+        if (uSiteOn > 0.5) {
+          vec2 siteUv = ((modelMatrix * vec4(transformed, 1.0)).xz - uSiteMin) / uSiteSize;
+          if (siteUv.x >= 0.0 && siteUv.y >= 0.0 && siteUv.x <= 1.0 && siteUv.y <= 1.0) vSite = step(0.5, texture2D(uSiteMask, siteUv).r);
+          if (vSite > 0.5) transformed.y = min(transformed.y, uRise);
+        }`);
+    shader.fragmentShader = shader.fragmentShader
+      .replace('void main() {', `uniform float uDim, uTint, uSiteOn;
+        uniform vec3 uSiteColor, uDimColor;
+        varying float vSite;
+        void main() {`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        diffuseColor.rgb = mix(diffuseColor.rgb, uSiteColor, vSite * uTint);
+        diffuseColor.rgb = mix(diffuseColor.rgb, uDimColor, (1.0 - vSite) * uDim * uSiteOn);`);
+  };
+  return material;
 }
 
 /** The navy sky behind everything (was CSS; now in-scene so the glow pass has a background). */
