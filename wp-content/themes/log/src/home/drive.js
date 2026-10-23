@@ -210,7 +210,7 @@ function buildChapter(el, scene, features, hero) {
   // Step 3 raises the buildings standing in the plan area today (OpenStreetMap's), not the plan's own massing.
   const note = document.createElement('p');
   note.className = 'build-note';
-  note.textContent = 'המחשה: הבניינים שעומדים היום בתחום התכנית, לא הבינוי שהיא מציעה.';
+  note.innerHTML = '<b>המחשה:</b> הבניינים שעומדים היום בתחום התכנית, לא הבינוי שהיא מציעה.';
   steps[2]?.append(note);
   const lede = el.querySelector('.section__lede');
 
