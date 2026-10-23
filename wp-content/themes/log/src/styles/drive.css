@@ -91,7 +91,8 @@ html.drive-on .drive-build.is-live .process li { grid-area: 1 / 1; align-self: e
 html.drive-on .drive-build.is-live .process li .stage { width: 3.25rem; height: 3.25rem; margin-bottom: 1.1rem; font-size: 1.3125rem; background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 4px var(--works), inset 0 0 0 6px var(--sign-ink); }
 html.drive-on .drive-build.is-live .process li h3 { margin-bottom: .5rem; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1; letter-spacing: -0.025em; }
 html.drive-on .drive-build.is-live .process li p { max-width: 34ch; font-size: clamp(1.125rem, 1.4vw, 1.3125rem); line-height: 1.5; }
-html.drive-on .drive-build.is-live .process li p.build-note { grid-column: 1 / -1; margin-top: 1rem; padding-inline-start: .75rem; border-inline-start: 3px solid var(--works); font: 500 .9375rem/1.4 var(--font-display); color: var(--legend-muted); }
+html.drive-on .drive-build.is-live .process li p.build-note { grid-column: 1 / -1; margin-top: 1rem; font: 500 .9375rem/1.4 var(--font-display); color: var(--legend-muted); }
+html.drive-on .drive-build.is-live .process li p.build-note b { font-weight: 700; color: var(--legend); }
 html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; font-size: 1.0625rem; opacity: 0; }
 
 /* Drawn over the site: dimension lines, the area, the grid reference, the white sign and its leader. */
