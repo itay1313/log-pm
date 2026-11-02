@@ -38,6 +38,19 @@
 
   --font-display: 'Ploni Tzar', 'Ploni', system-ui, sans-serif;
   --font-text: 'Ploni', system-ui, sans-serif;
+  /* Headlines: Ploni Light, set huge and tight. The condensed Ploni Tzar stays for the small legends on signs. */
+  --font-headline: 'Ploni', system-ui, sans-serif;
+  --track-headline: -0.05em;
+
+  /* Hairlines: the line a plate is drawn with, on navy and on paper */
+  --hair: rgba(242, 244, 241, .16);
+  --hair-strong: rgba(242, 244, 241, .38);
+  --hair-ink: rgba(21, 32, 43, .16);
+  --r-pill: 999px;
+  /* The home map stands in a frame, inset from the window; the frame opens as the drive begins. */
+  --frame: 12px;
+  --r-frame: 26px;
+  --plate-deep: #0b131b;
 
   /* The plate: a guide sign's rounded corner and its white keyline, inset from the edge */
   --r-plate: 10px;

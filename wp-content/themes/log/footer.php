@@ -15,7 +15,11 @@ $legal = array_filter( [
 <footer class="site-footer">
 	<div class="site-footer__inner">
 		<?php if ( ! is_page( 'contact' ) ) : ?>
-			<a class="site-footer__cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><span class="site-footer__cta-text"><?php echo esc_html( log_text( 'header_cta', 'בואו נדבר', 'option' ) ); ?></span><span class="site-footer__go" aria-hidden="true"><i class="arrow"></i></span></a>
+			<a class="site-footer__cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><span class="site-footer__cta-text"><?php
+				// The ring turns between the words here too, the way it does in the home headline.
+				$cta = log_text( 'header_cta', 'בואו נדבר', 'option' );
+				echo preg_match( '/^(.+)\s(\S+)$/u', $cta, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . esc_html( $m[2] ) : esc_html( $cta );
+			?></span><span class="site-footer__go" aria-hidden="true"><i class="arrow"></i></span></a>
 		<?php endif; ?>
 
 		<?php // The destination board: every level-2 page as a row of the last guide sign, with what lies down each road. ?>

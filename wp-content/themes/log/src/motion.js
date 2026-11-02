@@ -21,6 +21,7 @@ export function initMotion() {
   document.documentElement.classList.add('js-motion');
   initSmooth();
   remeasure();
+  rollLabels();
   pageCover();
   heroIntro();
   titleBands();
@@ -41,6 +42,24 @@ function remeasure() {
     clearTimeout(t);
     t = setTimeout(() => ScrollTrigger.refresh(), 150);
   }).observe(document.body);
+}
+
+/**
+ * Pills roll their label on hover: the words slide up out of the pill and the same words follow from below.
+ * Only the first run of text is doubled; arrows and counts stay put. The copy is hidden from assistive tech.
+ */
+function rollLabels() {
+  for (const el of document.querySelectorAll('.btn, .site-header__talk, .menu-toggle__label, .gantry__close > span, .hero-all-link, .twin-nav__name')) {
+    const text = [...el.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
+    if (!text || el.querySelector('.roll')) continue;
+    const roll = document.createElement('span');
+    roll.className = 'roll';
+    const label = text.textContent.trim();
+    roll.innerHTML = '<span></span><span aria-hidden="true"></span>';
+    roll.firstChild.textContent = label;
+    roll.lastChild.textContent = label;
+    text.replaceWith(roll);
+  }
 }
 
 /** Display headings rise line by line inside masks. Re-splits when fonts land or the width changes. */
@@ -67,7 +86,8 @@ const mount = (targets, vars = {}) => gsap.fromTo(targets,
 function heroIntro() {
   const hero = document.getElementById('hero');
   if (!hero) return;
-  rise(hero.querySelector('.hero__title'), { delay: 0.15 });
+  // The headline comes up out of a blur, line by line, as if the lens found it.
+  rise(hero.querySelector('.hero__title'), { delay: 0.15, duration: 1.5, stagger: 0.12, filter: 'blur(14px)', ease: 'expo.out' });
   const lede = hero.querySelector('.hero__lede');
   if (lede) gsap.fromTo(lede, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: 0.55, clearProps: 'transform' });
   // Plates hidden at load (the phone filter sheet) are released too, so they show when opened.

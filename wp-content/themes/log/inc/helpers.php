@@ -63,6 +63,14 @@ function log_route_shield( ?int $n = -1 ): string {
 	return $n === null ? '' : sprintf( '<span class="shield" aria-hidden="true">%02d</span>', $n );
 }
 
+/**
+ * The brand's ring (the O of the wordmark) set inside a headline: an orange arc that draws itself in and turns.
+ * Decoration only; the words around it carry the meaning.
+ */
+function log_ring_glyph(): string {
+	return '<span class="ring-glyph" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="ring-glyph__track" cx="20" cy="20" r="15"/><circle class="ring-glyph__arc" cx="20" cy="20" r="15" pathLength="100"/></svg></span>';
+}
+
 /** The distance plate at the end of a title band ("94 פרויקטים"); nothing when there is nothing to count. */
 function log_sheet_label( string $extra = '' ): string {
 	return $extra !== '' ? sprintf( '<p class="sheet-label">%s</p>', esc_html( $extra ) ) : '';

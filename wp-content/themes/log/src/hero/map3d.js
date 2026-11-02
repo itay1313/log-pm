@@ -118,6 +118,7 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'hero-pin';
+      b.style.setProperty('--i', i); // staggers the breathing, so the markers never pulse in step
       b.innerHTML = '<span class="hero-pin__shape" aria-hidden="true"></span><span class="hero-pin__count" aria-hidden="true"></span>';
       pinsEl.appendChild(b);
       b.addEventListener('mouseenter', () => { if (b._item && !locked && lastPointer === 'mouse') openCard(b._item); });
