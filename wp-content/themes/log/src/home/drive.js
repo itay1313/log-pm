@@ -116,7 +116,7 @@ export function initDrive(hero, scene, points, features) {
   function take() {
     from = scene.hold();
     hero.classList.add('is-driving');
-    document.body.classList.remove('at-map'); // the lane-split plates go back up to the header
+    document.body.classList.remove('at-map'); // the phones' lane-split bar comes back
     tools.forEach((el) => (el.inert = true));
     document.activeElement?.closest?.('.hero') && document.activeElement.blur();
   }

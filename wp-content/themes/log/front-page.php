@@ -29,8 +29,11 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 	<p class="hero__loading" role="status">טוענים את המפה…</p>
 
 	<div class="hero-lead">
-		<h1 class="hero__title" id="hero-title"><?php
-			$title = log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' );
+		<?php
+		$title = log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' );
+		$short = count( preg_split( '/\s+/u', trim( $title ) ) ) <= 3; // two or three words stand larger
+		?>
+		<h1 class="hero__title<?php echo $short ? ' hero__title--short' : ''; ?>" id="hero-title"><?php
 			// The brand's ring turns inside the line, just before the last word.
 			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . esc_html( $m[2] ) . '</em>' : esc_html( $title );
 		?></h1>
