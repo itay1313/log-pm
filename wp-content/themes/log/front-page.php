@@ -26,7 +26,7 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 	<div class="hero-pins"></div>
 	<div class="hero-edges"></div>
 	<div class="hero-card" role="dialog" aria-live="polite" hidden></div>
-	<p class="hero__loading" role="status">טוענים את המפה…</p>
+	<p class="hero__loading" role="status"><?php echo log_ring_glyph(); ?><span>טוענים את המפה…</span></p>
 
 	<div class="hero-lead">
 		<?php

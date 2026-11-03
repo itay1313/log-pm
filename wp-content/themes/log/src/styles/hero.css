@@ -17,8 +17,18 @@
     linear-gradient(180deg, rgba(11,20,30,.62) 0%, rgba(11,20,30,0) 20%);
 }
 
-.hero__loading { position: absolute; z-index: 2; inset: 0; display: grid; place-items: center; margin: 0; font: 500 1rem var(--font-display); color: var(--legend-muted); pointer-events: none; transition: opacity .5s ease; }
-.hero.is-ready .hero__loading, .hero.no-webgl .hero__loading { opacity: 0; }
+/* While the map loads: the brand's ring draws itself over the map's side of the screen, clear of the headline. */
+.hero__loading {
+  position: absolute; z-index: 2; inset-block: 0; inset-inline-end: 0; width: 52%; display: grid; place-content: center; justify-items: center; gap: 1.1rem;
+  margin: 0; font: 500 .9375rem var(--font-display); color: var(--legend-muted); pointer-events: none; transition: opacity .6s ease, scale .9s var(--ease-out);
+}
+.hero__loading .ring-glyph { width: 56px; height: 56px; margin: 0; }
+.hero__loading .ring-glyph svg { animation-duration: 1.6s; }
+.hero__loading .ring-glyph__arc { animation: ring-load 1.6s var(--ease-in-out) infinite alternate; }
+@keyframes ring-load { from { stroke-dasharray: 8 100; } to { stroke-dasharray: 78 100; } }
+.hero.is-ready .hero__loading, .hero.no-webgl .hero__loading { opacity: 0; scale: .8; }
+@media (max-width: 760px) { .hero__loading { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .hero__loading .ring-glyph svg, .hero__loading .ring-glyph__arc { animation: none; } }
 
 /* The legend on the sea: Ploni Light at a reading size, the brand's ring turning inside the line. The whole first
    screen fits above the fold: headline, lede, the destination bar and its filters, nothing hung over them. */

@@ -410,7 +410,7 @@ export async function createScene(container, { reduced = false } = {}) {
     });
   }
 
-  let introBeacons = null;
+  let introBeacons = null, introGrow = null;
   const beaconSize = () => (container.clientWidth < 700 ? 8 : 11) * renderer.getPixelRatio();
   const easeZoom = gsap.parseEase('power2.inOut'), easeTilt = gsap.parseEase('sine.inOut');
   /** The opening's flight to a view: radius in log space, the pan tied to the zoom, the tilt held back. */
@@ -573,8 +573,13 @@ export async function createScene(container, { reduced = false } = {}) {
         shift = sh.v; applyShift();
         introShift = gsap.to(sh, { v: 0, duration: DUR * 0.42, delay: DUR * 0.3, ease: 'sine.inOut', onUpdate: () => { shift = sh.v; applyShift(); }, onComplete: () => { introShift = null; } });
       }
-      // The city arrives as a wireframe and its volumes dissolve in as the camera settles over it.
-      gsap.to(mat.building.userData.face, { value: 1, duration: 2.6, delay: DUR * 0.55, ease: 'power1.inOut' });
+      // The city rises out of the ground in a wave from central Tel Aviv, floor by floor, as a wireframe; its volumes
+      // dissolve in as the camera settles over it.
+      const ud = mat.building.userData;
+      ud.growAt.value.set(HX, HZ);
+      ud.grow.value = 0;
+      introGrow = gsap.to(ud.grow, { value: 24000, duration: 3.6, delay: DUR * 0.44, ease: 'power2.out', onComplete: () => { ud.grow.value = 1e9; introGrow = null; } });
+      gsap.to(ud.face, { value: 1, duration: 2.6, delay: DUR * 0.58, ease: 'power1.inOut' });
       const landing = gsap.delayedCall(DUR * 0.7, () => onLand?.());
       await flight(HOME, DUR);
       landing.progress(1);
@@ -621,6 +626,7 @@ export async function createScene(container, { reduced = false } = {}) {
     /** The page's scroll takes the camera: any move stops where it is, and the view it left is returned. */
     hold() {
       if (held) return { ...view };
+      if (introGrow) { introGrow.kill(); introGrow = null; mat.building.userData.grow.value = 1e9; } // the drive gets the whole city
       readView();
       heldSwaying = !!sway?.isActive();
       tween?.kill();
@@ -698,6 +704,7 @@ export async function createScene(container, { reduced = false } = {}) {
  * corners, along the roof line and at every floor (object-space height, one floor = 3.1 m before HEIGHT_SCALE).
  * Floors show only close up: they fade out before they pack tight enough to tint the walls or shimmer.
  * uFace 0 → 1 fills the volumes in through a pixel dissolve (the opening shows the wireframe first).
+ * uGrow is the radius (metres) of the risen city around uGrowAt: the opening raises it floor by floor in a wave.
  *
  * Taught about the build site too: inside the site's mask the buildings are cut down to uRise (metres, risen
  * floor by floor by the drive) and tinted towards white; the city around can be dimmed.
@@ -709,8 +716,11 @@ function siteBuildings(material, line, face = 1) {
     uSiteOn: { value: 0 }, uRise: { value: 0 }, uDim: { value: 0 }, uTint: { value: 0 },
     uSiteColor: { value: new THREE.Color('#f2f4f1') }, uDimColor: { value: new THREE.Color('#1b2c3d') },
     uLine: { value: new THREE.Color(line) }, uFace: { value: face },
+    uGrow: { value: 1e9 }, uGrowAt: { value: new THREE.Vector2() },
   };
   material.userData.face = u.uFace;
+  material.userData.grow = u.uGrow;
+  material.userData.growAt = u.uGrowAt;
   material.userData.site = { mask: null, min: [0, 0], size: [1, 1], on: 0, rise: 0, dim: 0, tint: 0 };
   material.userData.apply = () => {
     const s = material.userData.site;
@@ -727,12 +737,16 @@ function siteBuildings(material, line, face = 1) {
     shader.vertexShader = shader.vertexShader
       .replace('void main() {', `uniform sampler2D uSiteMask;
         uniform vec2 uSiteMin, uSiteSize;
-        uniform float uSiteOn, uRise;
+        uniform float uSiteOn, uRise, uGrow;
+        uniform vec2 uGrowAt;
         attribute vec2 aEdge;
         varying float vSite, vY;
         varying vec2 vEdge;
         void main() {`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
+        // The opening's wave: the city rises out of the ground from uGrowAt outward, over a 1.8 km front.
+        float grow = clamp((uGrow - distance((modelMatrix * vec4(transformed, 1.0)).xz, uGrowAt)) / 1800.0, 0.0, 1.0);
+        transformed.y *= grow * grow * (3.0 - 2.0 * grow);
         vSite = 0.0;
         if (uSiteOn > 0.5) {
           vec2 siteUv = ((modelMatrix * vec4(transformed, 1.0)).xz - uSiteMin) / uSiteSize;
