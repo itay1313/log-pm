@@ -15,9 +15,9 @@ html.drive-on .drive { overflow-x: clip; } /* the overlays span the viewport; cl
 
 /* The figures: big tabular numbers under an orange 3px rule, no plate. */
 .drive-figures { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin: 0; align-self: end; }
-.drive-figures > div { display: flex; flex-direction: column-reverse; gap: .4rem; padding-top: .85rem; border-top: 3px solid var(--works); }
+.drive-figures > div { display: flex; flex-direction: column-reverse; gap: .4rem; padding-top: .85rem; border-top: 1px solid var(--works); }
 .drive-figures dt { font: 500 .9375rem var(--font-display); color: var(--legend-muted); }
-.drive-figures dd { margin: 0; font: 700 clamp(3.25rem, 6.4vw, 6.25rem)/.9 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.drive-figures dd { margin: 0; font: 300 clamp(3.5rem, 7vw, 7.25rem)/.88 var(--font-headline); letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
 
 html.drive-on .hero { position: sticky; top: 0; }
 html.drive-on .drive-country { --drive-len: 300vh; height: var(--drive-len); padding: 0; z-index: 6; background: transparent; pointer-events: none; }
@@ -88,8 +88,8 @@ html.drive-on .drive-build.is-live .section__title { max-width: 12ch; margin-bot
 html.drive-on .drive-build.is-live .process { display: grid; grid-template-columns: minmax(0, 1fr); align-self: end; width: min(100%, 31rem); margin: 0 0 1.5rem; }
 html.drive-on .drive-build.is-live .process::before { display: none; }
 html.drive-on .drive-build.is-live .process li { grid-area: 1 / 1; align-self: end; padding: 0; visibility: hidden; }
-html.drive-on .drive-build.is-live .process li .stage { width: 3.25rem; height: 3.25rem; margin-bottom: 1.1rem; font-size: 1.3125rem; background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 4px var(--works), inset 0 0 0 6px var(--sign-ink); }
-html.drive-on .drive-build.is-live .process li h3 { margin-bottom: .5rem; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1; letter-spacing: -0.025em; }
+html.drive-on .drive-build.is-live .process li .stage { width: 3.25rem; height: 3.25rem; margin-bottom: 1.1rem; font-size: 1.125rem; background: var(--works); color: var(--sign-ink); box-shadow: none; }
+html.drive-on .drive-build.is-live .process li h3 { margin-bottom: .55rem; font-size: clamp(2.25rem, 3.8vw, 3.75rem); line-height: .95; letter-spacing: -0.045em; }
 html.drive-on .drive-build.is-live .process li p { max-width: 34ch; font-size: clamp(1.125rem, 1.4vw, 1.3125rem); line-height: 1.5; }
 html.drive-on .drive-build.is-live .process li p.build-note { grid-column: 1 / -1; margin-top: 1rem; font: 500 .9375rem/1.4 var(--font-display); color: var(--legend-muted); }
 html.drive-on .drive-build.is-live .process li p.build-note b { font-weight: 700; color: var(--legend); }
@@ -101,24 +101,24 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 .build-overlay .leader { stroke: var(--sign-ink); stroke-width: 2; }
 .build-overlay .leader-dot { fill: var(--works); stroke: var(--sign-ink); stroke-width: 2; }
 .build-label { position: absolute; top: 0; left: 0; font: 700 .9375rem var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 1px 10px rgba(11,20,30,.95); translate: -50% -50%; }
-.build-label--area { font-size: clamp(1.5rem, 2.4vw, 2.25rem); letter-spacing: -0.02em; }
+.build-label--area { font: 300 clamp(1.75rem, 2.8vw, 2.75rem) var(--font-headline); letter-spacing: -0.04em; }
 .build-label--area small { display: block; font: 500 .875rem var(--font-display); color: var(--legend-muted); text-align: center; }
 
 /* The white sign: the plan's facts and its real stage. It never swaps with the night (sign ink stays). */
 .build-sign {
   --ink: var(--sign-ink); --slate: #53606a; --rule: #b8c0c2;
-  position: absolute; top: 0; left: 0; width: min(330px, calc(100vw - 32px)); padding: 1.15rem 1.3rem 1.2rem; border-radius: 12px;
+  position: absolute; top: 0; left: 0; width: min(330px, calc(100vw - 32px)); padding: 1.25rem 1.4rem 1.3rem; border-radius: 22px;
   background: var(--legend); color: var(--sign-ink); opacity: 0; visibility: hidden;
-  box-shadow: inset 0 0 0 5px var(--legend), inset 0 0 0 7px var(--sign-ink), 0 30px 60px -18px rgba(5,10,16,.7), 0 4px 12px rgba(5,10,16,.3);
+  box-shadow: 0 30px 60px -18px rgba(5,10,16,.7), 0 4px 12px rgba(5,10,16,.3);
 }
 .build-sign__meta { margin: 0 0 .3rem; font: 500 .8125rem var(--font-display); color: var(--slate); }
-.build-sign__title { margin: 0 0 .8rem; font: 700 1.625rem/1.05 var(--font-display); letter-spacing: -0.02em; }
+.build-sign__title { margin: 0 0 .8rem; font: 300 1.875rem/1 var(--font-headline); letter-spacing: -0.04em; }
 .build-sign__facts { display: flex; gap: 1.5rem; margin: 0 0 1rem; }
 .build-sign__facts div { display: flex; flex-direction: column-reverse; gap: .1rem; }
-.build-sign__facts dd { margin: 0; font: 700 1.75rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.build-sign__facts dd { margin: 0; font: 300 2rem/1 var(--font-headline); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
 .build-sign__facts dt { font-size: .75rem; color: var(--slate); }
 .build-sign .stage-row { margin-bottom: 1rem; }
-.build-sign__go { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.1rem; border-radius: 6px; background: var(--plate); color: var(--legend); font: 700 1.0625rem var(--font-display); text-decoration: none; transition: background-color .25s, color .25s; }
+.build-sign__go { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.35rem; border-radius: var(--r-pill); background: var(--plate); color: var(--legend); font: 500 1.0625rem var(--font-display); text-decoration: none; transition: background-color .25s, color .25s; }
 .build-sign__go i { width: 1.3em; height: .9em; background: currentColor; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; transition: translate .4s var(--ease-out); }
 .build-sign__go:hover, .build-sign__go:focus-visible { background: var(--works); color: var(--plate); }
 .build-sign__go:hover i { translate: -6px 0; }

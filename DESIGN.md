@@ -207,12 +207,15 @@ There are two grounds. Navy plate carries the home map, every page's title band,
 
 Density follows signage: big legends in Ploni Tzar, tabular figures, one arrow shape for every link that goes somewhere, and rows of destinations instead of card grids. Motion is GSAP: legends rise out of line masks, plates unroll from their top edge, arrows step forward on hover, figures count once. Under reduced motion nothing moves and nothing is hidden.
 
+**The model pass (2026-11-02).** A pass after Marcelo Design X's "fixing AI websites" work: one big idea, everything else quiet. Headlines went from bold condensed to Ploni Light set huge and tight; the double keyline became one hairline; buttons, filters and controls became pills; the 3D city became an architect's line model (navy volumes drawn in orange at their corners, roof line and floors) that arrives as a wireframe and fills in through a pixel dissolve; the home map stands in a rounded frame that opens as the drive begins; the brand's ring turns inside the home headline and the footer's last legend. The road's gantry and exit signs keep their full keylines: they are the one place the site is literally a road sign.
+
 **Key Characteristics:**
-- The plate (navy, 2px white keyline inset 5px, 10px corners) is the one container, drawn with two inset shadows and no extra element.
+- The plate (navy, one 1px hairline, rounded corners) is the one container, drawn with one inset shadow and no extra element. Pressable things are pills.
 - Works orange marks LOG's work and every active state, and nothing decorative.
 - Route shields number the pages: a small orange shield at the start of each page title and menu row.
 - One authored guide-sign arrow (broad head, square shaft), pointing forward, which is left in RTL.
-- Ploni Tzar for every legend and figure, Ploni for running text, tabular numerals for every number.
+- Ploni Light for headlines and figures, set huge with tight tracking; Ploni Tzar 500 for the small legends on pills and labels; Ploni for running text; tabular numerals for every number.
+- The ring glyph: the wordmark's O, an orange arc that draws itself in and turns, set inside a headline before its last word (home, footer).
 - Night is a token swap, never a repaint of individual components.
 
 ## Colors
@@ -239,7 +242,7 @@ A signage palette: two navies and a retroreflective white for the plates, a cool
 - **Danger** (`danger`): field errors only.
 
 ### Map palette
-The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map-fog`, `map-sea`), four road greys stepping from national to major (`map-road-national` to `map-road-major`), and `works` for buildings and plans. The city is orange because it is LOG's work; the roads are pale so markers and legends stay readable on top.
+The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map-fog`, `map-sea`), four road greys stepping from national to major (`map-road-national` to `map-road-major`), and `works` for plans. The city is an architect's line model: navy volumes (`buildingFace`) lit by the sun and drawn in orange (`buildingLine`) at every wall corner and along the roof line, with floor lines (one per 3.1 m) that show only close up and fade before they crowd. The city is orange because it is LOG's work; the roads are faint so the model, the plans and the markers carry the picture. Markers are orange cores in a navy ring with a white hairline, breathing out of step; the drive's beacons are the same mark in miniature.
 
 ### Named Rules
 **The Works Zone Rule.** Orange means one of two things: LOG's work, or "this is active". Hover, focus, current page, selected filter, live count. If orange appears on something idle and decorative, it is wrong.
@@ -251,7 +254,7 @@ The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map
 **Display Font:** Ploni Tzar (with Ploni, system-ui)
 **Body Font:** Ploni (with system-ui)
 
-**Character:** Ploni Tzar is the sign legend: condensed, bold, tight, set at large sizes with negative tracking so headings read like gantry text. Ploni does the reading in lighter weights. Both are licensed and self-hosted (Ploni 300 to 600, Ploni Tzar 300 to 700).
+**Character:** Headlines are Ploni Light (`--font-headline`, weight 300, tracking `--track-headline` -0.05em, leading .88 to .95): size carries the hierarchy, never weight. Ploni Tzar (`--font-display`) stays for the small legends: pill labels, captions, counts, the route shield. Ploni does the reading. Both are licensed and self-hosted (Ploni 300 to 600, Ploni Tzar 300 to 700).
 
 ### Hierarchy
 - **Display** (700, clamp(2.75rem, 6vw, 6rem), 0.94): page titles in the title band. The home headline runs a little larger and tighter (up to 6rem, 0.9) with its last word in works orange.
@@ -266,7 +269,7 @@ The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map
 ### Named Rules
 **The Tabular Rule.** Every number (counts, units, distances, years, shields, grid references) is set with tabular numerals. Grid references are isolated left-to-right inside RTL text.
 
-**The Legend Rule.** Text that sits on a plate is Ploni Tzar 700. Ploni regular is for reading, not for signs.
+**The Legend Rule.** Text on a pill or a small label is Ploni Tzar 500. Anything set big (titles, destinations, figures, menu rows) is Ploni Light. Bold appears only on the road's gantry signs.
 
 ## Layout
 
@@ -293,14 +296,14 @@ Breakpoints observed: 1180px (lane-split loses its second line), 900px (header c
 Depth comes from the plate's keyline and from the navy against paper, not from shadow stacks. The keyline itself is two inset box-shadows: the ground colour for the inset (5px), then the line colour for 2px more. Plates that stand on the map also cast one soft drop shadow, always the same cool near-black, offset straight down as if lit from above.
 
 ### Shadow Vocabulary
-- **Keyline** (`box-shadow: inset 0 0 0 5px <ground>, inset 0 0 0 7px <line>`): every plate. Small plates scale it down (3px/5px on markers and map controls, 4px/6px on filters and sheet labels, 6px/8px on figure signs, 10px/13px on the menu).
+- **Hairline** (`box-shadow: inset 0 0 0 1px <line>`): every plate and pill. On navy the line is `--hair` (16% white) or `--hair-strong` (38%); on paper `--hair-ink`. The road's gantry and exit signs keep the old double keyline (7px/10px).
 - **Map plate drop** (`0 24px 50px -20px rgba(5,10,16,.7)`): plates over the map (destination plate, distance sign, lane split).
 - **White sign drop** (`0 30px 60px -18px rgba(5,10,16,.7), 0 4px 12px rgba(5,10,16,.3)`): the project card, list drawer and dialog over the map or page.
 - **Control drop** (`0 10px 24px -10px rgba(5,10,16,.7)`): small map controls.
 - **Focus ring** (`outline: 3px solid works; outline-offset: 3px`; fields use `0 0 0 3px works`).
 
 ### Named Rules
-**The Keyline Rule.** State changes the keyline, not the shadow. Hover and focus recolour the keyline to orange; a plate does not lift, grow a glow, or change its drop.
+**The Hairline Rule.** State changes the line or the fill, not the shadow. Hover and focus turn a hairline orange; a primary pill fills white (the white menu pill fills orange). Pill labels roll: the words slide up and out and the same words follow from below (motion.js `rollLabels`). Nothing lifts or glows.
 
 ## Shapes
 
@@ -359,7 +362,7 @@ Project stage is four lane dashes lit in orange up to "now"; a finished project'
 Every inner page opens on a navy band that continues the header strip, with a display title, an optional meta line and lede, and an orange sheet label at the end giving how much lies down this road. Hero images hang from the band into the paper.
 
 ### Motion
-GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger). Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Lenis smooths the wheel on every page (`src/smooth.js`, started by motion.js) and hands ScrollTrigger the same time base; on the home page ScrollTrigger drives the camera (the drive, see Layout). Ctrl/⌘ + wheel stays the map's zoom, an armed projects map keeps its wheel, anything with its own scroll keeps it, touch stays native, and the page stands still under the menu and phone sheets. While driving, a sheet-margin readout under the header gives the camera's grid reference and the scale. The map and the road carry a light print grain (`--grain`, overlay blend), so the sheet reads printed, not lit. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
+GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger); the home headline also comes up out of a 14px blur (1.5s, expo.out) while the ring glyph draws its arc. The city arrives as a wireframe and its volumes dissolve in through 4px blocks as the camera settles (`uFace` 0 → 1). The home map's frame (`--frame` 12px, `--r-frame` 26px, `clip-path`) opens to the full window over the first 80vh of scroll, through a scroll-driven CSS animation where the browser supports one. Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Lenis smooths the wheel on every page (`src/smooth.js`, started by motion.js) and hands ScrollTrigger the same time base; on the home page ScrollTrigger drives the camera (the drive, see Layout). Ctrl/⌘ + wheel stays the map's zoom, an armed projects map keeps its wheel, anything with its own scroll keeps it, touch stays native, and the page stands still under the menu and phone sheets. While driving, a sheet-margin readout under the header gives the camera's grid reference and the scale. The map and the road carry a light print grain (`--grain`, overlay blend), so the sheet reads printed, not lit. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
 
 ## Swap points for TwoPointFour
 

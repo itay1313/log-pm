@@ -24,7 +24,7 @@ self.onmessage = async (e) => {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const tile = new VectorTile(new Pbf(new Uint8Array(await res.arrayBuffer())));
-    const water = [], major = [], roads = [], rail = [], bPos = [], bNor = [], places = [];
+    const water = [], major = [], roads = [], rail = [], bPos = [], bNor = [], bEdge = [], places = [];
 
     const wl = tile.layers.water;
     if (wl) for (let i = 0; i < wl.length; i++) {
@@ -67,7 +67,7 @@ self.onmessage = async (e) => {
         const top = (known ? rh : DEFAULT_HEIGHT + jitter * 10) * HEIGHT_SCALE;
         const base = (Number(f.properties.render_min_height) || 0) * HEIGHT_SCALE;
         if (top <= base) continue;
-        eachPolygon(f.toGeoJSON(x, y, z).geometry, (rings) => extrude(rings, base, top, bPos, bNor));
+        eachPolygon(f.toGeoJSON(x, y, z).geometry, (rings) => extrude(rings, base, top, bPos, bNor, bEdge));
       }
     }
 
@@ -83,8 +83,8 @@ self.onmessage = async (e) => {
     }
 
     const pack = (a) => (a.length ? new Float32Array(a) : null);
-    const out = { id, water: pack(water), major: pack(major), roads: pack(roads), rail: pack(rail), bPos: pack(bPos), bNor: pack(bNor), places };
-    const transfer = ['water', 'major', 'roads', 'rail', 'bPos', 'bNor'].map((k) => out[k]?.buffer).filter(Boolean);
+    const out = { id, water: pack(water), major: pack(major), roads: pack(roads), rail: pack(rail), bPos: pack(bPos), bNor: pack(bNor), bEdge: pack(bEdge), places };
+    const transfer = ['water', 'major', 'roads', 'rail', 'bPos', 'bNor', 'bEdge'].map((k) => out[k]?.buffer).filter(Boolean);
     self.postMessage(out, transfer);
   } catch (err) {
     self.postMessage({ id, error: String(err) });
@@ -123,7 +123,12 @@ function lines(geom, y, out) {
   }
 }
 
-function extrude(rings, base, top, pos, nor) {
+/*
+ * Each vertex also carries where it sits on its wall (edge: u across the wall 0 → 1, v up it 0 → 1), so the
+ * building shader can draw the model's corners, roof line and floor lines at a steady pixel width.
+ * Roofs carry v = -1: no wall lines on them.
+ */
+function extrude(rings, base, top, pos, nor, edge) {
   const flat = [], holes = [];
   let n = 0;
   rings.forEach((r, i) => { if (i) holes.push(n); for (const [x, z] of r) { flat.push(x, z); n++; } });
@@ -133,7 +138,7 @@ function extrude(rings, base, top, pos, nor) {
     const a = tri[i] * 2, b = tri[i + 1] * 2, c = tri[i + 2] * 2;
     const up = (flat[b + 1] - flat[a + 1]) * (flat[c] - flat[a]) - (flat[b] - flat[a]) * (flat[c + 1] - flat[a + 1]);
     const order = up >= 0 ? [a, b, c] : [a, c, b];
-    for (const k of order) { pos.push(flat[k], top, flat[k + 1]); nor.push(0, 1, 0); }
+    for (const k of order) { pos.push(flat[k], top, flat[k + 1]); nor.push(0, 1, 0); edge.push(0.5, -1); }
   }
 
   rings.forEach((r, ri) => {
@@ -150,8 +155,13 @@ function extrude(rings, base, top, pos, nor) {
       if (ri > 0) outward = -outward; // holes face inward
       if (outward < 0) { nx = -nx; nz = -nz; }
       // The quad below winds towards (-dz, dx); reverse it when the outward normal points the other way.
-      if (nx * -dz + nz * dx >= 0) pos.push(x1, base, z1, x2, base, z2, x2, top, z2, x1, base, z1, x2, top, z2, x1, top, z1);
-      else pos.push(x1, base, z1, x2, top, z2, x2, base, z2, x1, base, z1, x1, top, z1, x2, top, z2);
+      if (nx * -dz + nz * dx >= 0) {
+        pos.push(x1, base, z1, x2, base, z2, x2, top, z2, x1, base, z1, x2, top, z2, x1, top, z1);
+        edge.push(0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1);
+      } else {
+        pos.push(x1, base, z1, x2, top, z2, x2, base, z2, x1, base, z1, x1, top, z1, x2, top, z2);
+        edge.push(0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1);
+      }
       for (let k = 0; k < 6; k++) nor.push(nx, 0, nz);
     }
   });

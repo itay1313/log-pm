@@ -30,10 +30,9 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 
 	<div class="hero-lead">
 		<h1 class="hero__title" id="hero-title"><?php
-			echo log_route_shield();
 			$title = log_text( 'hero_title', 'מובילים את התכנון וההתחדשות העירונית בישראל' );
-			// The last word is the destination: it prints in works orange.
-			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' <em>' . esc_html( $m[2] ) . '</em>' : esc_html( $title );
+			// The brand's ring turns inside the line, just before the last word.
+			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . esc_html( $m[2] ) . '</em>' : esc_html( $title );
 		?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
 

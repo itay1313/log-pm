@@ -23,6 +23,9 @@ const C = {
   fog: '#1d2a3a',
   sea: '#2f4a63',
   building: '#f7931d', // the pinned orange city (PRODUCT.md brand commitments), in the brand orange itself
+  // The city is an architect's line model: navy volumes, drawn in the brand orange (corners, roof line, floors).
+  buildingFace: '#3a4858',
+  buildingLine: '#f7931d',
   roadNational: '#9db1c6',
   roadRegional: '#b4c4d4',
   road: '#e3ebf2',
@@ -30,10 +33,10 @@ const C = {
   plan: '#f7931d',
 };
 const NATIONAL = { tx: 70000, tz: -20000, radius: 430000, phi: 0.62, theta: -0.18 };
-// Home: Gush Dan from the north, looking south. The sea fills the start (right) side, where the
-// headline sits; the orange city stands on the end side.
+// Home: Gush Dan from the north, looking south, low enough to read the city as a line model. The sea fills
+// the start (right) side, where the headline sits; the orange city stands on the end side.
 const [HX, HZ] = toLocal(34.795, 32.05);
-const HOME = { tx: HX - 4400, tz: HZ + 300, radius: 11500, phi: 0.98, theta: Math.PI - 0.47 };
+const HOME = { tx: HX - 4300, tz: HZ - 300, radius: 6200, phi: 1.1, theta: Math.PI - 0.42 };
 const SWAY = 0.1; // the resting camera breathes this far and back instead of orbiting the sea away
 const MID_AT = 9000; // below this the full-detail z14 city takes over from the z13 one
 const REGIONAL_AT = 170000;
@@ -94,7 +97,7 @@ export async function createScene(container, { reduced = false } = {}) {
     roadMajor: lineMaterial(C.roadMajor, 0.0, fogUniforms),
     rail: lineMaterial(C.road, 0.0, fogUniforms),
     sea: seaMaterial(C.sea, reduced ? 1 : 0, revealUniforms),
-    building: siteBuildings(new THREE.MeshLambertMaterial({ color: C.building, emissive: '#241000', side: THREE.FrontSide })),
+    building: siteBuildings(new THREE.MeshLambertMaterial({ color: C.buildingFace, emissive: '#0b1118', side: THREE.FrontSide }), C.buildingLine, reduced ? 1 : 0),
     planFill: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide }),
     planFillLarge: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide }),
     planEdge: lineMaterial('#fff6ec', 1.0, fogUniforms),
@@ -133,6 +136,7 @@ export async function createScene(container, { reduced = false } = {}) {
       if (data.rail) holder.add(segments(data.rail, mat.rail));
       if (data.bPos) {
         const b = mesh(data.bPos, data.bNor, mat.building, 2);
+        if (data.bEdge) b.geometry.setAttribute('aEdge', new THREE.BufferAttribute(data.bEdge, 2));
         // Rise out of the ground, nearest tiles first.
         b.scale.y = 0.001;
         const centre = tileCentre(key);
@@ -238,11 +242,11 @@ export async function createScene(container, { reduced = false } = {}) {
       uniform vec3 uWorks, uPlate;
       varying float vOn;
       void main() {
-        vec2 c = abs(gl_PointCoord - 0.5);
-        float d = max(c.x, c.y);
+        float d = length(gl_PointCoord - 0.5);
         if (d > 0.5 || vOn < 0.01) discard;
-        // The marker in miniature: works orange at the heart, a navy keyline round it.
-        gl_FragColor = vec4(d > 0.32 ? uPlate : uWorks, vOn);
+        // The marker in miniature: an orange core in a navy ring, edges softened by a pixel.
+        float edge = 1.0 - smoothstep(0.44, 0.5, d);
+        gl_FragColor = vec4(mix(uWorks, uPlate, smoothstep(0.27, 0.31, d)), vOn * edge);
       }`,
   });
   const beacons = new THREE.Points(new THREE.BufferGeometry(), beaconMat);
@@ -425,9 +429,9 @@ export async function createScene(container, { reduced = false } = {}) {
 
     // Level of detail: fade layers in as the camera comes down.
     mat.regional.uniforms.uOpacity.value = 0.34 * smooth(REGIONAL_AT, REGIONAL_AT * 0.55, r);
-    mat.road.uniforms.uOpacity.value = 0.42 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
-    mat.rail.uniforms.uOpacity.value = 0.25 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
-    mat.roadMajor.uniforms.uOpacity.value = 0.55 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
+    mat.road.uniforms.uOpacity.value = 0.26 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
+    mat.rail.uniforms.uOpacity.value = 0.16 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
+    mat.roadMajor.uniforms.uOpacity.value = 0.36 * smooth(DETAIL_AT, DETAIL_AT * 0.45, r);
     mat.national.uniforms.uOpacity.value = 0.42 * (1 - 0.6 * smooth(DETAIL_AT * 1.5, DETAIL_AT * 0.4, r));
     mat.planFill.opacity = 0.7 - 0.42 * smooth(60000, 14000, r); // city level: the plan stays readable under the orange city, its paper edge marks it
     mat.planFillLarge.opacity = 0.14 * (1 - smooth(80000, 30000, r)); // regional plans: gone by city level
@@ -508,6 +512,8 @@ export async function createScene(container, { reduced = false } = {}) {
       gsap.to(mat.sea.uniforms.uOpacity, { value: 1, duration: 2.6, ease: 'power2.out', delay: 0.3 });
       gsap.to(revealUniforms.uReveal, { value: 750000, duration: 3.4, ease: 'power2.inOut', delay: 0.1 });
       await moveTo({ ...NATIONAL, radius: 520000 }, { duration: 2.2, ease: 'power2.inOut' });
+      // The city arrives as a wireframe and its volumes dissolve in as the camera settles over it.
+      gsap.to(mat.building.userData.face, { value: 1, duration: 2.4, delay: 2.6, ease: 'power1.inOut' });
       await moveTo(HOME, { duration: 4.2, ease: 'power3.inOut' });
       if (!held) introDone = true;
       startSway();
@@ -616,16 +622,23 @@ export async function createScene(container, { reduced = false } = {}) {
 }
 
 /**
- * The building material, taught about the build site: inside the site's mask the buildings are cut down to
- * uRise (metres, risen floor by floor by the drive) and tinted towards white; the city around can be dimmed.
+ * The building material: an architect's line model. Navy volumes lit by the sun, drawn in orange at their
+ * corners, along the roof line and at every floor (object-space height, one floor = 3.1 m before HEIGHT_SCALE).
+ * Floors show only close up: they fade out before they pack tight enough to tint the walls or shimmer.
+ * uFace 0 → 1 fills the volumes in through a pixel dissolve (the opening shows the wireframe first).
+ *
+ * Taught about the build site too: inside the site's mask the buildings are cut down to uRise (metres, risen
+ * floor by floor by the drive) and tinted towards white; the city around can be dimmed.
  * Values live in material.userData.site and are pushed to the shader by userData.apply().
  */
-function siteBuildings(material) {
+function siteBuildings(material, line, face = 1) {
   const u = {
     uSiteMask: { value: null }, uSiteMin: { value: new THREE.Vector2() }, uSiteSize: { value: new THREE.Vector2(1, 1) },
     uSiteOn: { value: 0 }, uRise: { value: 0 }, uDim: { value: 0 }, uTint: { value: 0 },
     uSiteColor: { value: new THREE.Color('#f2f4f1') }, uDimColor: { value: new THREE.Color('#1b2c3d') },
+    uLine: { value: new THREE.Color(line) }, uFace: { value: face },
   };
+  material.userData.face = u.uFace;
   material.userData.site = { mask: null, min: [0, 0], size: [1, 1], on: 0, rise: 0, dim: 0, tint: 0 };
   material.userData.apply = () => {
     const s = material.userData.site;
@@ -643,7 +656,9 @@ function siteBuildings(material) {
       .replace('void main() {', `uniform sampler2D uSiteMask;
         uniform vec2 uSiteMin, uSiteSize;
         uniform float uSiteOn, uRise;
-        varying float vSite;
+        attribute vec2 aEdge;
+        varying float vSite, vY;
+        varying vec2 vEdge;
         void main() {`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
         vSite = 0.0;
@@ -651,15 +666,33 @@ function siteBuildings(material) {
           vec2 siteUv = ((modelMatrix * vec4(transformed, 1.0)).xz - uSiteMin) / uSiteSize;
           if (siteUv.x >= 0.0 && siteUv.y >= 0.0 && siteUv.x <= 1.0 && siteUv.y <= 1.0) vSite = step(0.5, texture2D(uSiteMask, siteUv).r);
           if (vSite > 0.5) transformed.y = min(transformed.y, uRise);
-        }`);
+        }
+        vEdge = aEdge;
+        vY = transformed.y;`);
     shader.fragmentShader = shader.fragmentShader
-      .replace('void main() {', `uniform float uDim, uTint, uSiteOn;
-        uniform vec3 uSiteColor, uDimColor;
-        varying float vSite;
-        void main() {`)
+      .replace('void main() {', `uniform float uDim, uTint, uSiteOn, uFace;
+        uniform vec3 uSiteColor, uDimColor, uLine;
+        varying float vSite, vY;
+        varying vec2 vEdge;
+        void main() {
+          float wall = step(-0.5, vEdge.y);
+          vec2 fe = max(fwidth(vEdge), vec2(1e-5));
+          float corner = 1.0 - clamp(min(vEdge.x, 1.0 - vEdge.x) / (fe.x * 1.3), 0.0, 1.0);
+          float roofLine = 1.0 - clamp((1.0 - vEdge.y) / (fe.y * 1.3), 0.0, 1.0);
+          float fy = vY / 5.9;
+          float ff = max(fwidth(fy), 1e-5);
+          float floors = 1.0 - clamp(abs(fract(fy - 0.5) - 0.5) / ff, 0.0, 1.0);
+          floors *= 0.5 * (1.0 - smoothstep(0.07, 0.15, ff));
+          float lines = wall * max(max(corner, roofLine) * 0.95, floors);
+          float grain = fract(sin(dot(floor(gl_FragCoord.xy / 4.0), vec2(12.9898, 78.233))) * 43758.5453);
+          if (lines < 0.3 && grain >= uFace) discard;`)
       .replace('#include <color_fragment>', `#include <color_fragment>
-        diffuseColor.rgb = mix(diffuseColor.rgb, uSiteColor, vSite * uTint);
-        diffuseColor.rgb = mix(diffuseColor.rgb, uDimColor, (1.0 - vSite) * uDim * uSiteOn);`);
+        diffuseColor.rgb = mix(diffuseColor.rgb, uSiteColor * 0.55, vSite * uTint);
+        diffuseColor.rgb = mix(diffuseColor.rgb, uDimColor, (1.0 - vSite) * uDim * uSiteOn);`)
+      .replace('#include <opaque_fragment>', `#include <opaque_fragment>
+        vec3 lineColor = mix(uLine, uSiteColor, vSite * uTint);
+        float lineOn = lines * (1.0 - (1.0 - vSite) * uDim * uSiteOn * 0.8);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, lineColor, lineOn);`);
   };
   return material;
 }

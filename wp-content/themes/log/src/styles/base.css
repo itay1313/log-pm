@@ -24,8 +24,10 @@ input, textarea { caret-color: var(--works); }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink); }
 
 h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1; margin: 0 0 .5em; letter-spacing: -0.025em; text-wrap: balance; }
-h1 { font-size: clamp(2.75rem, 6vw, 6rem); font-weight: 700; letter-spacing: -0.035em; line-height: .94; }
-h2 { font-size: clamp(2.125rem, 4.2vw, 4rem); font-weight: 700; }
+/* Headlines are light and huge, tracked tight; weight never carries the hierarchy, size does. */
+h1, h2 { font-family: var(--font-headline); font-weight: 300; letter-spacing: var(--track-headline); }
+h1 { font-size: clamp(3rem, 7vw, 7.5rem); line-height: .9; }
+h2 { font-size: clamp(2.375rem, 4.8vw, 4.75rem); line-height: .95; }
 h3 { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.01em; line-height: 1.1; }
 p { margin: 0 0 1em; text-wrap: pretty; }
 a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: .24em; }
@@ -46,8 +48,8 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
 /* ------------------------------------------------------------------ the plate */
 
 /*
- * A guide sign: navy ground, a white keyline inset from the edge, rounded corners. Two inset shadows draw
- * the keyline so the plate needs no extra element. .plate--day is the white sign with an ink keyline.
+ * A plate: navy ground drawn with one hairline, rounded corners; buttons are pills. The inset shadow draws the
+ * line so the plate needs no extra element. .plate--day is the white sign with an ink line.
  */
 .plate, .btn, .menu-toggle {
   --k-ground: var(--plate);
@@ -55,16 +57,18 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
   background-color: var(--k-ground);
   color: var(--k-line);
   border-radius: var(--r-plate);
-  box-shadow: inset 0 0 0 var(--keyline-inset) var(--k-ground), inset 0 0 0 calc(var(--keyline-inset) + var(--keyline)) var(--k-line);
+  box-shadow: inset 0 0 0 1px var(--k-line);
+  transition: box-shadow .35s var(--ease-out), background-color .35s var(--ease-out), color .35s var(--ease-out);
 }
+.btn, .menu-toggle { border-radius: var(--r-pill); }
 .plate--day { --k-ground: var(--legend); --k-line: var(--sign-ink); }
 .plate--works { --k-ground: var(--works); --k-line: var(--plate); }
 
 /* The route shield: a page's number in the header order, set inline at the start of its heading and its menu row. */
 .shield {
-  display: inline-block; vertical-align: .5em; margin-inline-end: .45em; padding: .3em .5em .24em; border-radius: .35em;
-  font: 700 max(.8125rem, .26em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
-  background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 .17em var(--works), inset 0 0 0 .3em var(--sign-ink);
+  display: inline-block; vertical-align: top; margin: .32em 0 0; margin-inline-end: .5em; padding: .38em .7em .32em; border-radius: var(--r-pill);
+  font: 700 max(.75rem, .19em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
+  background: var(--works); color: var(--sign-ink); font-weight: 500;
 }
 
 /* The guide-sign arrow, used for every link that goes somewhere. It travels on hover. */
@@ -85,14 +89,13 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 
 .btn {
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .75em;
-  font-family: var(--font-display); font-weight: 700; font-size: 1.0625rem; line-height: 1.2;
-  padding: 1.05em 1.6em; border: 0; text-decoration: none; cursor: pointer;
-  transition: background-color .3s var(--ease-out), color .3s var(--ease-out), box-shadow .3s var(--ease-out);
+  font-family: var(--font-display); font-weight: 500; font-size: 1.0625rem; line-height: 1.2;
+  padding: .95em 1.7em; border: 0; text-decoration: none; cursor: pointer;
 }
-.btn:hover, .btn:focus-visible { --k-line: var(--works); color: var(--legend); }
+.btn:hover, .btn:focus-visible { --k-ground: var(--legend); --k-line: var(--legend); color: var(--plate); }
 .btn--primary { /* the navy plate is the primary sign */ }
 .btn--ghost, .btn--day { --k-ground: var(--legend); --k-line: var(--sign-ink); }
-.btn--ghost:hover, .btn--day:hover { --k-line: var(--works-deep); color: var(--sign-ink); }
+.btn--ghost:hover, .btn--day:hover { --k-ground: var(--plate); --k-line: var(--plate); color: var(--legend); }
 .btn--works { --k-ground: var(--works); --k-line: var(--plate); }
 .btn--works:hover, .btn--works:focus-visible { --k-ground: var(--legend); --k-line: var(--plate); color: var(--plate); }
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
@@ -129,7 +132,7 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 .field small { color: var(--slate); font-weight: 400; }
 .field input, .field select, .field textarea, .filters select, .filters__search input, .search-form input {
   font: inherit; font-size: 1.0625rem; color: var(--ink); background-color: var(--legend); width: 100%;
-  border: 2px solid var(--ink); border-radius: var(--r-small); padding: .8em .95em; transition: border-color .25s, box-shadow .25s;
+  border: 1px solid var(--ink); border-radius: 14px; padding: .85em 1.1em; transition: border-color .25s, box-shadow .25s;
 }
 .field input:focus, .field select:focus, .field textarea:focus, .filters select:focus, .filters__search input:focus, .search-form input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--works); }
 .field input[type=file] { padding: .6em; }
@@ -146,11 +149,14 @@ select { appearance: none; cursor: pointer; padding-left: 2.6rem !important; }
 @media (max-width: 560px) { .form__grid { grid-template-columns: 1fr; } }
 .form__error { color: var(--danger); margin: .75rem 0; }
 .form__success { font: 700 1.5rem/1.3 var(--font-display); padding: 1.5rem 1.75rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend); }
-.form__context { color: var(--slate); margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 2px solid var(--rule-soft); }
+.form__context { color: var(--slate); margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--rule-soft); }
 .form__context-clear { font: inherit; font-size: .875rem; color: var(--slate); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; margin-inline-start: .5rem; }
 .form button[type=submit] { margin-top: .75rem; }
 .notice { padding: 1.1rem 1.4rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend); font: 700 1.25rem var(--font-display); }
 
 .search-form { display: flex; gap: .5rem; max-width: 680px; }
-.search-form button { font: 700 1rem var(--font-display); padding: .8em 1.4em; border: 0; border-radius: var(--r-small); background: var(--works); color: var(--plate); cursor: pointer; }
+.search-form button { font: 500 1rem var(--font-display); padding: .8em 1.5em; border: 0; border-radius: var(--r-pill); background: var(--works); color: var(--plate); cursor: pointer; }
 .search-form button:hover { background: var(--legend); }
+
+/* Filters and search read as pills, like every other control */
+.filters select, .filters__search input, .search-form input { border-radius: var(--r-pill); padding-inline: 1.35em; }

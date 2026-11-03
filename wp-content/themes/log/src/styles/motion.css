@@ -16,13 +16,20 @@
 /* The lane line: one orange works marking down the start edge, drawn as far as the reader has come. */
 .site-main { position: relative; }
 .lane-line {
-  position: absolute; z-index: 4; inset-inline-start: calc(var(--gutter) / 2 - 2px); bottom: 0; width: 4px; pointer-events: none;
-  background: repeating-linear-gradient(180deg, var(--works) 0 30px, transparent 30px 54px); transform-origin: top center;
+  position: absolute; z-index: 4; inset-inline-start: calc(var(--gutter) / 2 - 1px); bottom: 0; width: 2px; pointer-events: none;
+  background: repeating-linear-gradient(180deg, var(--works) 0 18px, transparent 18px 34px); transform-origin: top center;
 }
-@media (max-width: 760px) { .lane-line { inset-inline-start: 4px; width: 3px; background: repeating-linear-gradient(180deg, var(--works) 0 18px, transparent 18px 34px); } }
+@media (max-width: 760px) { .lane-line { inset-inline-start: 4px; width: 2px; background: repeating-linear-gradient(180deg, var(--works) 0 12px, transparent 12px 24px); } }
 
 /* Page change: a navy plate covers the page before it leaves and lifts after it arrives. */
 .page-cover { position: fixed; inset: 0; z-index: 9998; visibility: hidden; display: grid; place-items: center; background: var(--plate); pointer-events: none; }
 .page-cover__mark .logo__ring { display: block; width: 46px; height: 46px; border-width: 9px; }
 html.is-covered body::after { content: ''; position: fixed; inset: 0; z-index: 9998; background: var(--plate); animation: cover-safety .01s 1.6s forwards; }
 @keyframes cover-safety { to { visibility: hidden; } }
+
+/* Rolling labels (motion.js): the label slides up out of its pill and its copy follows from below. */
+.roll { display: inline-grid; overflow: hidden; vertical-align: top; padding-bottom: .12em; margin-bottom: -.12em; }
+.roll > span { grid-area: 1 / 1; transition: translate .6s var(--ease-out); }
+.roll > span + span { translate: 0 110%; }
+:is(a, button):is(:hover, :focus-visible) .roll > span:first-child { translate: 0 -110%; }
+:is(a, button):is(:hover, :focus-visible) .roll > span + span { translate: 0 0; }
