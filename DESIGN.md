@@ -209,6 +209,8 @@ Density follows signage: big legends in Ploni Tzar, tabular figures, one arrow s
 
 **The model pass (2026-11-02).** A pass after Marcelo Design X's "fixing AI websites" work: one big idea, everything else quiet. Headlines went from bold condensed to Ploni Light set huge and tight; the double keyline became one hairline; buttons, filters and controls became pills; the 3D city became an architect's line model (navy volumes drawn in orange at their corners, roof line and floors) that arrives as a wireframe and fills in through a pixel dissolve; the home map stands in a rounded frame that opens as the drive begins; the brand's ring turns inside the home headline and the footer's last legend. The road's gantry and exit signs keep their full keylines: they are the one place the site is literally a road sign.
 
+**The first-screen pass (2026-11-03).** After the client preview: the home headline came down to a reading size so the destination plate sits whole on the first screen, and the lane-split plates went back up to the header. The opening is now one unbroken flight from above the country to Tel Aviv (distance eased in log space, the pan tied to it, the tilt held back), with every project lit as a beacon across the country on the way and the picture slid clear of the headline; the markers take over as the camera lands. Edge counters are quieter than the markers (a hairline, muted figures) and keep clear of the header, the controls and the figures.
+
 **Key Characteristics:**
 - The plate (navy, one 1px hairline, rounded corners) is the one container, drawn with one inset shadow and no extra element. Pressable things are pills.
 - Works orange marks LOG's work and every active state, and nothing decorative.
@@ -275,7 +277,7 @@ The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map
 
 RTL throughout; "start" is the right edge, "forward" is left. The container is 1320px wide inside a fluid gutter of clamp(16px, 4vw, 56px). Sections breathe at clamp(56px, 7vw, 108px) top and bottom. The header is 84px (68px on phones) and every page without a full-screen cover hangs it over a navy strip that the page's title band continues, so the gantry always reads light on navy.
 
-The home page is the map, full viewport. The headline sits straight on the sea at the start side with no panel behind it; a gradient scrim darkens the start and bottom edges instead. Under it the destination plate and three lane filters hang 8px apart. The distance sign stands at the bottom end corner, the lane-split pair at the bottom start, and map controls as small plates along the end edge.
+The home page is the map, full viewport. The headline sits straight on the sea at the start side with no panel behind it; a gradient scrim darkens the start and bottom edges instead. Under it the destination plate and three lane filters hang 8px apart, and the whole set fits the first screen: the headline is Ploni Light at clamp(2.5rem, 4.1vw, 4.5rem) on a 9.6em measure, so the default text always breaks into three lines; a headline of two or three words (`hero__title--short`) stands larger on one line. Nothing hangs over it: the lane-split pair stays in the header, as on every page. The distance sign stands at the bottom end corner and map controls as small plates along the end edge.
 
 **The drive.** The map does not end at the first screen. It stays pinned behind the first chapter, and the scroll moves its camera (`src/home/drive.js`): from Gush Dan up to the whole country seen from over the sea, every project lighting as a small orange beacon rippling out from where the camera stood. The chapter's legend sits straight on the sea under a start-and-bottom scrim, lights word by word, and its figures count with the beacons. On phones the country stands upright, north up, between the figures and the legend. Scrolling back to the top hands the camera back exactly where the visitor left it.
 
@@ -352,7 +354,7 @@ Practice areas and jobs: name, one line, a count and the arrow in a three-column
 
 ### Navigation
 - **Gantry header:** fixed, transparent over the map, solid navy once the page scrolls. Wordmark at the start, "talk to us" and the menu plate at the end.
-- **Lane split:** the two worlds (project management, control company) as two plates that part ways, each with a 45-degree lane arrow. On the home map they stand as large plates at the bottom start; on other pages they sit in the header with a 4px orange underline for the current world; on phones they become a fixed two-cell bar at the bottom edge.
+- **Lane split:** the two worlds (project management, control company) as two plates that part ways, each with a 45-degree lane arrow. On desktop they sit in the header on every page, the home map included (they used to stand as large plates at the bottom start, over the destination plate), with an orange underline for the current world; on phones they become a fixed two-cell bar at the bottom edge.
 - **Menu:** a full-screen gantry plate (20px corners, 13px keyline inset) of destination rows with live counts and the shield number; the current page shows an orange "אתה כאן" tag. It unrolls from the top edge and names rise in line masks.
 
 ### Stage row and steps
