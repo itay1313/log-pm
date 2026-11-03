@@ -133,8 +133,9 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
 .gantry__contact { display: grid; gap: .5rem; font: 500 1.0625rem var(--font-display); }
 .gantry__contact p { margin: 0; color: var(--legend-muted); }
 .gantry__contact b { color: var(--legend); font-weight: 700; margin-inline-end: .4em; }
-.gantry__contact a { color: var(--legend); text-decoration: none; }
-.gantry__contact a:hover { color: var(--works); }
+/* Plain links only: the button keeps its own ink on orange. */
+.gantry__contact a:not(.btn) { color: var(--legend); text-decoration: none; }
+.gantry__contact a:not(.btn):hover { color: var(--works); }
 .gantry__contact .btn { justify-self: start; margin-top: 1rem; }
 @media (max-width: 900px) {
   .gantry { padding: 6px; }

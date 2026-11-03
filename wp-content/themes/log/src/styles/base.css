@@ -17,7 +17,10 @@ body {
 }
 ::selection { background: var(--works); color: var(--plate); }
 input, textarea { caret-color: var(--works); }
-:focus-visible { outline: 3px solid var(--works); outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+/* The focus ring: deep orange holds 3.5:1 on paper and on navy; navy grounds get the bright orange. */
+:root { --focus: var(--works-deep); }
+:is(.site-header, .gantry, .hero, .drive, .road, .section--night, .section--control, .site-footer) { --focus: var(--works); }
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: var(--paper); }
 ::-webkit-scrollbar-thumb { background: var(--slate); border: 3px solid var(--paper); border-radius: 6px; }
@@ -87,17 +90,24 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 
 /* ------------------------------------------------------------------ buttons, links */
 
+/*
+ * One button family: a pill at least 52px tall, Ploni Tzar 500 at 17px, the same padding everywhere.
+ *   .btn            navy plate, white legend: the everyday button
+ *   .btn--primary   the page's action, works orange with an ink legend (ink on orange is 7:1; white on it is 2:1)
+ *   .btn--works     the same orange action (the menu's "talk to us")
+ *   .btn--ghost     white sign, ink legend
+ * Hover and focus turn the navy and orange buttons into the white sign with ink, and the white one into navy.
+ */
 .btn {
-  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .75em;
-  font-family: var(--font-display); font-weight: 500; font-size: 1.0625rem; line-height: 1.2;
-  padding: .95em 1.7em; border: 0; text-decoration: none; cursor: pointer;
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .7em;
+  min-height: 3.25rem; padding: .8em 1.65em; border: 0; text-decoration: none; cursor: pointer;
+  font: 500 1.0625rem/1.2 var(--font-display);
 }
-.btn:hover, .btn:focus-visible { --k-ground: var(--legend); --k-line: var(--legend); color: var(--plate); }
-.btn--primary { /* the navy plate is the primary sign */ }
+.btn .arrow { width: 1.15em; height: .8em; }
+.btn:hover, .btn:focus-visible { --k-ground: var(--legend); --k-line: var(--sign-ink); color: var(--sign-ink); }
+.btn--primary, .btn--works { --k-ground: var(--works); --k-line: var(--works); color: var(--sign-ink); }
 .btn--ghost, .btn--day { --k-ground: var(--legend); --k-line: var(--sign-ink); }
-.btn--ghost:hover, .btn--day:hover { --k-ground: var(--plate); --k-line: var(--plate); color: var(--legend); }
-.btn--works { --k-ground: var(--works); --k-line: var(--plate); }
-.btn--works:hover, .btn--works:focus-visible { --k-ground: var(--legend); --k-line: var(--plate); color: var(--plate); }
+.btn--ghost:hover, .btn--day:hover, .btn--ghost:focus-visible, .btn--day:focus-visible { --k-ground: var(--plate); --k-line: var(--plate); color: var(--legend); }
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
 .link-more, .link-row a, .back-link {
@@ -134,7 +144,7 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
   font: inherit; font-size: 1.0625rem; color: var(--ink); background-color: var(--legend); width: 100%;
   border: 1px solid var(--ink); border-radius: 14px; padding: .85em 1.1em; transition: border-color .25s, box-shadow .25s;
 }
-.field input:focus, .field select:focus, .field textarea:focus, .filters select:focus, .filters__search input:focus, .search-form input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--works); }
+.field input:focus, .field select:focus, .field textarea:focus, .filters select:focus, .filters__search input:focus, .search-form input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--focus); }
 .field input[type=file] { padding: .6em; }
 .field .is-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(179,38,30,.25); }
 .field__hint { font-size: .875rem; color: var(--danger); }
@@ -155,8 +165,14 @@ select { appearance: none; cursor: pointer; padding-left: 2.6rem !important; }
 .notice { padding: 1.1rem 1.4rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend); font: 700 1.25rem var(--font-display); }
 
 .search-form { display: flex; gap: .5rem; max-width: 680px; }
-.search-form button { font: 500 1rem var(--font-display); padding: .8em 1.5em; border: 0; border-radius: var(--r-pill); background: var(--works); color: var(--plate); cursor: pointer; }
-.search-form button:hover { background: var(--legend); }
+.search-form input { height: 3.25rem; padding-block: 0; }
+/* The search button is a primary button: same pill, same size, ink on orange. */
+.search-form button {
+  flex: none; min-height: 3.25rem; padding: 0 1.65em; border: 0; border-radius: var(--r-pill);
+  font: 500 1.0625rem/1 var(--font-display); background: var(--works); color: var(--sign-ink); cursor: pointer;
+  transition: background-color .35s var(--ease-out), box-shadow .35s var(--ease-out);
+}
+.search-form button:hover, .search-form button:focus-visible { background: var(--legend); box-shadow: inset 0 0 0 1px var(--sign-ink); }
 
 /* Filters and search read as pills, like every other control */
 .filters select, .filters__search input, .search-form input { border-radius: var(--r-pill); padding-inline: 1.35em; }

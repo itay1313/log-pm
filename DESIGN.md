@@ -209,7 +209,7 @@ Density follows signage: big legends in Ploni Tzar, tabular figures, one arrow s
 
 **The model pass (2026-11-02).** A pass after Marcelo Design X's "fixing AI websites" work: one big idea, everything else quiet. Headlines went from bold condensed to Ploni Light set huge and tight; the double keyline became one hairline; buttons, filters and controls became pills; the 3D city became an architect's line model (navy volumes drawn in orange at their corners, roof line and floors) that arrives as a wireframe and fills in through a pixel dissolve; the home map stands in a rounded frame that opens as the drive begins; the brand's ring turns inside the home headline and the footer's last legend. The road's gantry and exit signs keep their full keylines: they are the one place the site is literally a road sign.
 
-**The first-screen pass (2026-11-03).** After the client preview: the home headline came down to a reading size so the destination plate sits whole on the first screen, and the lane-split plates went back up to the header. The opening is now one unbroken flight from above the country to Tel Aviv (distance eased in log space, the pan tied to it, the tilt held back), with every project lit as a beacon across the country on the way and the picture slid clear of the headline; the markers take over as the camera lands. Edge counters are quieter than the markers (a hairline, muted figures) and keep clear of the header, the controls and the figures.
+**The first-screen pass (2026-11-03).** After the client preview: the home headline came down to a reading size so the destination plate sits whole on the first screen, and the lane-split plates went back up to the header. The opening is now one unbroken flight from above the country to Tel Aviv (distance eased in log space, the pan tied to it, the tilt held back), with every project lit as a beacon across the country on the way and the picture slid clear of the headline; the markers take over as the camera lands. The city rises out of the ground in a wave from central Tel Aviv (a 1.8 km front, floor lines appearing as it grows) while it fills in, and the loading state is the brand's ring drawing itself over the map's side. Edge counters are quieter than the markers (a hairline, muted figures) and keep clear of the header, the controls and the figures.
 
 **Key Characteristics:**
 - The plate (navy, one 1px hairline, rounded corners) is the one container, drawn with one inset shadow and no extra element. Pressable things are pills.
@@ -314,12 +314,13 @@ Rounded rectangles only, with corners that grow with the sign: 6px for small con
 ## Components
 
 ### Buttons
-Signs you can press.
-- **Shape:** the plate (10px corners, 2px keyline inset 5px).
-- **Primary:** navy plate, white legend and keyline, Ploni Tzar 700 at 1.0625rem, 1.05em by 1.6em padding.
-- **Hover / Focus:** the keyline turns orange; background and size stay put. Arrows inside step 6px forward.
-- **Day:** white plate with a sign-ink keyline; hover keyline turns deep orange.
-- **Works:** orange plate with a navy keyline, used where the action is the page's main way forward on navy (control company section). Hover swaps the ground to white.
+Signs you can press. One family (2026-11-03): every button is a pill at least 52px tall, Ploni Tzar 500 at 1.0625rem, 0.8em by 1.65em padding, a 1.15em arrow in the text colour.
+- **Everyday (`.btn`):** navy plate, white legend, one hairline.
+- **Primary (`.btn--primary`, `.btn--works`, the menu's search button):** works orange with an ink legend and an ink arrow. Never white on orange: that is about 2:1, ink on orange is about 7:1. One per context: the page's way forward.
+- **Ghost (`.btn--ghost`):** white sign, ink legend and hairline.
+- **Hover / Focus:** navy and orange turn into the white sign with ink; the white one turns navy. Arrows step 6px forward.
+- **Focus ring:** 3px outline, 3px offset, `--focus`: deep orange by default (3.5:1 on paper, 3.8:1 on navy), bright orange on navy grounds. Fields show the same ring around an ink border.
+- **Link colours stop at buttons:** container rules for plain links (`.gantry__contact a`, `.site-footer a`) are written `a:not(.btn)` so a button keeps its own legend.
 - **Text links that go somewhere:** Ploni Tzar 700 followed by the arrow; the arrow steps forward and turns deep orange on hover.
 
 ### Destination plate (signature)
