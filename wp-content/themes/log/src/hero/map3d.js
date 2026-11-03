@@ -273,9 +273,18 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
 
   function layoutEdges(offscreen, r) {
     if (r > EDGES_FROM_RADIUS || !explored) { if (edgesEl.innerHTML) edgesEl.innerHTML = ''; return; }
-    // Counters sit just inside the sheet's neatline frame, never under the header.
+    // Counters sit just inside the sheet's neatline frame, or the map's own edge: never under the header,
+    // clear of the controls on the end side and above the figures at the bottom.
     const f = frame?.getBoundingClientRect(), st = stage.getBoundingClientRect();
-    const box = f ? { l: f.left - st.left + 22, r: f.right - st.left - 22, t: f.top - st.top + 44, b: f.bottom - st.top - 112 } : { l: 30, r: stage.clientWidth - 30, t: 30, b: stage.clientHeight - 30 };
+    const head = document.querySelector('.site-header')?.getBoundingClientRect();
+    const bar = hero.querySelector('.hero-bar')?.getBoundingClientRect();
+    const dist = hero.querySelector('.hero-dist')?.getBoundingClientRect();
+    const box = f ? { l: f.left - st.left + 22, r: f.right - st.left - 22, t: f.top - st.top + 44, b: f.bottom - st.top - 112 } : {
+      l: bar?.width ? bar.right - st.left + 26 : 36,
+      r: stage.clientWidth - 36,
+      t: (head ? head.bottom - st.top : 0) + 30,
+      b: (dist?.height ? dist.top - st.top : stage.clientHeight) - 26,
+    };
     const cx = (box.l + box.r) / 2, cy = (box.t + box.b) / 2;
     const buckets = new Map();
     for (const { it, s } of offscreen) {
@@ -379,8 +388,9 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   return {
     async intro() {
       hero.classList.add('is-intro');
-      await scene.intro();
-      hero.classList.remove('is-intro');
+      const home = scene.homeView();
+      scene.setBeacons(all.map((it) => [it.x, it.z]), home.tx, home.tz);
+      await scene.intro({ onLand: () => hero.classList.remove('is-intro') });
     },
     /** Search or filters changed: swap the plans, close a card that no longer matches, optionally frame the group. */
     refilter({ fit = false } = {}) {

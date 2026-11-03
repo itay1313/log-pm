@@ -62,10 +62,13 @@ function rollLabels() {
   }
 }
 
-/** Display headings rise line by line inside masks. Re-splits when fonts land or the width changes. */
+/**
+ * Display headings rise line by line inside masks. Re-splits when the width changes. The first split waits for
+ * the webfonts: lines measured in the wider fallback face break in the wrong places.
+ */
 function rise(el, vars = {}) {
   if (!el) return null;
-  return SplitText.create(el, {
+  return document.fonts.ready.then(() => SplitText.create(el, {
     type: 'lines',
     mask: 'lines',
     autoSplit: true,
@@ -73,7 +76,7 @@ function rise(el, vars = {}) {
       gsap.set(el, { opacity: 1 });
       return gsap.from(self.lines, { yPercent: 112, duration: 1.15, stagger: 0.09, ease: 'power4.out', ...vars });
     },
-  });
+  }));
 }
 
 /** A plate mounts from the gantry: it opens downwards from its top edge. */
@@ -86,8 +89,16 @@ const mount = (targets, vars = {}) => gsap.fromTo(targets,
 function heroIntro() {
   const hero = document.getElementById('hero');
   if (!hero) return;
-  // The headline comes up out of a blur, line by line, as if the lens found it.
-  rise(hero.querySelector('.hero__title'), { delay: 0.15, duration: 1.5, stagger: 0.12, filter: 'blur(14px)', ease: 'expo.out' });
+  // The headline comes up out of a blur, word by word, as if the lens found it. Words, not lines: the browser keeps
+  // the wrapping (SplitText's line detection breaks Hebrew headlines in the wrong places).
+  const title = hero.querySelector('.hero__title');
+  if (title) document.fonts.ready.then(() => SplitText.create(title, {
+    type: 'words',
+    onSplit(self) {
+      gsap.set(title, { opacity: 1 });
+      return gsap.from(self.words, { yPercent: 38, opacity: 0, filter: 'blur(14px)', duration: 1.4, stagger: 0.07, delay: 0.15, ease: 'expo.out' });
+    },
+  }));
   const lede = hero.querySelector('.hero__lede');
   if (lede) gsap.fromTo(lede, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: 0.55, clearProps: 'transform' });
   // Plates hidden at load (the phone filter sheet) are released too, so they show when opened.

@@ -132,8 +132,8 @@ body.page-template-page-control .stage { box-shadow: inset 0 0 0 1px var(--works
 .exit-sign { display: none; } /* only the road (drive.css) puts it up */
 .section--control .section__title { font-size: clamp(3rem, 6vw, 6rem); margin-bottom: .3em; }
 .section--control .section__lede { color: var(--legend-muted); }
-.section--control .btn { justify-self: start; --k-ground: var(--works); --k-line: var(--plate); color: var(--plate); }
-.section--control .btn:hover { --k-ground: var(--legend); color: var(--plate); }
+.section--control .btn { justify-self: start; --k-ground: var(--works); --k-line: var(--works); color: var(--sign-ink); }
+.section--control .btn:hover, .section--control .btn:focus-visible { --k-ground: var(--legend); --k-line: var(--sign-ink); color: var(--sign-ink); }
 @media (max-width: 900px) { .section--control .exit-world__body { grid-template-columns: 1fr; } }
 
 /* ------------------------------------------------------------------ project tiles */
@@ -482,7 +482,7 @@ body.page-template-page-control .person__placeholder, .section--night .person__p
  * the way the home map asks "לאן?"; the offices beside it; and the lane line turned across as a stop line.
  */
 .site-footer { position: relative; overflow: clip; padding-block: clamp(80px, 10vw, 160px) 2.25rem; }
-.site-footer a { color: var(--legend); }
+.site-footer a:not(.btn) { color: var(--legend); }
 .site-footer__inner {
   width: min(100% - 2 * var(--gutter), var(--container)); margin-inline: auto;
   display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: clamp(2rem, 6vw, 6rem); row-gap: clamp(3rem, 6vw, 5rem);

@@ -227,7 +227,7 @@ export async function createScene(container, { reduced = false } = {}) {
   // Beacons: one point per project for the drive's national chapter, lit in turn as uLit runs 0 → 1.
   const beaconMat = new THREE.ShaderMaterial({
     transparent: true, depthTest: false, depthWrite: false,
-    uniforms: { uLit: { value: 0 }, uSize: { value: 11 }, uWorks: { value: new THREE.Color(C.plan) }, uPlate: { value: new THREE.Color(C.fog) } },
+    uniforms: { uLit: { value: 0 }, uAlpha: { value: 1 }, uSize: { value: 11 }, uWorks: { value: new THREE.Color(C.plan) }, uPlate: { value: new THREE.Color(C.fog) } },
     vertexShader: /* glsl */ `
       attribute float aOrder;
       uniform float uLit, uSize;
@@ -240,13 +240,14 @@ export async function createScene(container, { reduced = false } = {}) {
       }`,
     fragmentShader: /* glsl */ `
       uniform vec3 uWorks, uPlate;
+      uniform float uAlpha;
       varying float vOn;
       void main() {
         float d = length(gl_PointCoord - 0.5);
         if (d > 0.5 || vOn < 0.01) discard;
         // The marker in miniature: an orange core in a navy ring, edges softened by a pixel.
         float edge = 1.0 - smoothstep(0.44, 0.5, d);
-        gl_FragColor = vec4(mix(uWorks, uPlate, smoothstep(0.27, 0.31, d)), vOn * edge);
+        gl_FragColor = vec4(mix(uWorks, uPlate, smoothstep(0.27, 0.31, d)), vOn * edge * uAlpha);
       }`,
   });
   const beacons = new THREE.Points(new THREE.BufferGeometry(), beaconMat);
@@ -409,6 +410,43 @@ export async function createScene(container, { reduced = false } = {}) {
     });
   }
 
+  let introBeacons = null, introGrow = null;
+  const beaconSize = () => (container.clientWidth < 700 ? 8 : 11) * renderer.getPixelRatio();
+  const easeZoom = gsap.parseEase('power2.inOut'), easeTilt = gsap.parseEase('sine.inOut');
+  /** The opening's flight to a view: radius in log space, the pan tied to the zoom, the tilt held back. */
+  function flight(to, duration) {
+    if (held) return Promise.resolve();
+    readView();
+    tween?.kill();
+    sway?.kill();
+    controls.enabled = false;
+    const from = { ...view };
+    let dTheta = to.theta - from.theta;
+    dTheta = Math.atan2(Math.sin(dTheta), Math.cos(dTheta));
+    const l0 = Math.log(from.radius), l1 = Math.log(to.radius);
+    const p = { t: 0 };
+    return new Promise((resolve) => {
+      settle = resolve;
+      tween = gsap.to(p, {
+        t: 1, duration, ease: 'none',
+        onUpdate() {
+          const z = easeZoom(p.t);
+          const radius = Math.exp(l0 + (l1 - l0) * z);
+          const pan = (from.radius - radius) / (from.radius - to.radius); // the pan lands as the distance does
+          const tilt = easeTilt(Math.min(1, Math.max(0, (p.t - 0.18) / 0.82)));
+          Object.assign(view, {
+            radius,
+            tx: from.tx + (to.tx - from.tx) * pan, tz: from.tz + (to.tz - from.tz) * pan,
+            phi: from.phi + (to.phi - from.phi) * tilt,
+            theta: from.theta + dTheta * easeTilt(p.t),
+          });
+          applyView();
+        },
+        onComplete: () => { settle = null; controls.enabled = true; controls.update(); resolve(); },
+      });
+    });
+  }
+
   // Frame loop --------------------------------------------------------------
   let running = true, raf = 0, lastLod = 0;
   const frameCallbacks = new Set();
@@ -456,16 +494,20 @@ export async function createScene(container, { reduced = false } = {}) {
     frameCallbacks.forEach((cb) => { try { cb(r); } catch (err) { console.error(err); } });
   }
 
-  let shift = 0; // fraction of the width the picture slides towards the end side, clear of a legend
+  let shift = 0, introShift = null; // fraction of the width the picture slides towards the end side, clear of a legend
+  function applyShift() {
+    const w = container.clientWidth, h = container.clientHeight;
+    if (shift) camera.setViewOffset(w, h, shift * w, 0, w, h); else camera.clearViewOffset();
+    camera.updateProjectionMatrix();
+  }
   function resize() {
     const w = container.clientWidth, h = container.clientHeight;
     renderer.setSize(w, h, false);
     composer.setPixelRatio(renderer.getPixelRatio());
     composer.setSize(w, h);
     camera.aspect = w / h;
-    if (shift) camera.setViewOffset(w, h, shift * w, 0, w, h); else camera.clearViewOffset();
-    camera.updateProjectionMatrix();
-    beaconMat.uniforms.uSize.value = (w < 700 ? 8 : 11) * renderer.getPixelRatio();
+    applyShift();
+    beaconMat.uniforms.uSize.value = beaconSize() * (introBeacons ? 1.6 : 1);
   }
   const ro = new ResizeObserver(resize);
   ro.observe(container);
@@ -499,22 +541,48 @@ export async function createScene(container, { reduced = false } = {}) {
       return (2 * r * Math.tan((camera.fov * Math.PI) / 360)) / container.clientHeight;
     },
 
-    /** Opening move: from straight above, far out, swing down into the national view while the map draws itself. */
-    async intro() {
-      // Preload Gush Dan so the city is rising as the camera arrives.
+    /**
+     * Opening move: one unbroken flight from high above the country down into Tel Aviv while the map draws itself.
+     * The distance is eased in log space and the pan follows it, so the dive never stalls high or rushes the end.
+     * On the way every project lights up as a beacon, rippling out from Tel Aviv; onLand fires as the camera
+     * settles, when the markers take over from the beacons.
+     */
+    async intro({ onLand } = {}) {
+      // Preload Gush Dan, down to the full-detail city, so it is standing when the camera arrives.
       const [hlng, hlat] = toLngLat(HOME.tx, HOME.tz);
       ensureAround(hlng, hlat, 'regional');
       ensureAround(hlng, hlat, 'mid');
-      if (reduced) { Object.assign(view, HOME); applyView(); introDone = true; return; }
-      // From high above the whole country, the map drawing itself in, down into Tel Aviv.
+      ensureAround(hlng, hlat, 'detail');
+      if (reduced) { Object.assign(view, HOME); applyView(); introDone = true; onLand?.(); return; }
       Object.assign(view, { ...NATIONAL, radius: 1300000, phi: 0.02, theta: NATIONAL.theta - 1.1 });
       applyView();
+      const DUR = 6.8;
       gsap.to(mat.sea.uniforms.uOpacity, { value: 1, duration: 2.6, ease: 'power2.out', delay: 0.3 });
       gsap.to(revealUniforms.uReveal, { value: 750000, duration: 3.4, ease: 'power2.inOut', delay: 0.1 });
-      await moveTo({ ...NATIONAL, radius: 520000 }, { duration: 2.2, ease: 'power2.inOut' });
-      // The city arrives as a wireframe and its volumes dissolve in as the camera settles over it.
-      gsap.to(mat.building.userData.face, { value: 1, duration: 2.4, delay: 2.6, ease: 'power1.inOut' });
-      await moveTo(HOME, { duration: 4.2, ease: 'power3.inOut' });
+      const bu = beaconMat.uniforms;
+      if (beacons.geometry.getAttribute('position')) {
+        bu.uLit.value = 0; bu.uAlpha.value = 1; bu.uSize.value = beaconSize() * 1.6; beacons.visible = true; // larger over the whole country
+        introBeacons = gsap.timeline()
+          .to(bu.uLit, { value: 1, duration: 2, ease: 'power1.inOut', delay: 0.3 }) // while the whole country is in view
+          .to(bu.uAlpha, { value: 0, duration: 1.4, ease: 'power1.in' }, DUR * 0.62)
+          .add(() => { introBeacons = null; beacons.visible = false; bu.uLit.value = 0; bu.uAlpha.value = 1; bu.uSize.value = beaconSize(); });
+      }
+      // On wide screens the country stands clear of the headline, then the picture slides home under it.
+      if (container.clientWidth > 900) {
+        const sh = { v: 0.17 };
+        shift = sh.v; applyShift();
+        introShift = gsap.to(sh, { v: 0, duration: DUR * 0.42, delay: DUR * 0.3, ease: 'sine.inOut', onUpdate: () => { shift = sh.v; applyShift(); }, onComplete: () => { introShift = null; } });
+      }
+      // The city rises out of the ground in a wave from central Tel Aviv, floor by floor, as a wireframe; its volumes
+      // dissolve in as the camera settles over it.
+      const ud = mat.building.userData;
+      ud.growAt.value.set(HX, HZ);
+      ud.grow.value = 0;
+      introGrow = gsap.to(ud.grow, { value: 24000, duration: 3.6, delay: DUR * 0.44, ease: 'power2.out', onComplete: () => { ud.grow.value = 1e9; introGrow = null; } });
+      gsap.to(ud.face, { value: 1, duration: 2.6, delay: DUR * 0.58, ease: 'power1.inOut' });
+      const landing = gsap.delayedCall(DUR * 0.7, () => onLand?.());
+      await flight(HOME, DUR);
+      landing.progress(1);
       if (!held) introDone = true;
       startSway();
     },
@@ -558,6 +626,7 @@ export async function createScene(container, { reduced = false } = {}) {
     /** The page's scroll takes the camera: any move stops where it is, and the view it left is returned. */
     hold() {
       if (held) return { ...view };
+      if (introGrow) { introGrow.kill(); introGrow = null; mat.building.userData.grow.value = 1e9; } // the drive gets the whole city
       readView();
       heldSwaying = !!sway?.isActive();
       tween?.kill();
@@ -580,7 +649,14 @@ export async function createScene(container, { reduced = false } = {}) {
     },
     setBeacons,
     /** 0 → 1 lights the beacons in turn; 0 hides them. */
-    lightBeacons(v) { beaconMat.uniforms.uLit.value = v; beacons.visible = v > 0; },
+    lightBeacons(v) {
+      // The opening owns the beacons until the scroll takes the camera.
+      if (introBeacons) {
+        if (!held) return;
+        introBeacons.kill(); introBeacons = null; beaconMat.uniforms.uAlpha.value = 1; beaconMat.uniforms.uSize.value = beaconSize();
+      }
+      beaconMat.uniforms.uLit.value = v; beacons.visible = v > 0;
+    },
     homeView: () => ({ ...HOME }),
 
     setSite,
@@ -603,9 +679,11 @@ export async function createScene(container, { reduced = false } = {}) {
     },
     /** Slide the picture by a fraction of its width (positive: towards the end side, the left in RTL). */
     setShift(f) {
+      // The opening slides the country clear of the headline; the scroll takes over only once it holds the camera.
+      if (introShift) { if (!held) return; introShift.kill(); introShift = null; }
       if (Math.abs(f - shift) < 1e-4) return;
       shift = f;
-      resize();
+      applyShift();
     },
 
     stopDrift() { controls.autoRotate = false; sway?.kill(); },
@@ -626,6 +704,7 @@ export async function createScene(container, { reduced = false } = {}) {
  * corners, along the roof line and at every floor (object-space height, one floor = 3.1 m before HEIGHT_SCALE).
  * Floors show only close up: they fade out before they pack tight enough to tint the walls or shimmer.
  * uFace 0 → 1 fills the volumes in through a pixel dissolve (the opening shows the wireframe first).
+ * uGrow is the radius (metres) of the risen city around uGrowAt: the opening raises it floor by floor in a wave.
  *
  * Taught about the build site too: inside the site's mask the buildings are cut down to uRise (metres, risen
  * floor by floor by the drive) and tinted towards white; the city around can be dimmed.
@@ -637,8 +716,11 @@ function siteBuildings(material, line, face = 1) {
     uSiteOn: { value: 0 }, uRise: { value: 0 }, uDim: { value: 0 }, uTint: { value: 0 },
     uSiteColor: { value: new THREE.Color('#f2f4f1') }, uDimColor: { value: new THREE.Color('#1b2c3d') },
     uLine: { value: new THREE.Color(line) }, uFace: { value: face },
+    uGrow: { value: 1e9 }, uGrowAt: { value: new THREE.Vector2() },
   };
   material.userData.face = u.uFace;
+  material.userData.grow = u.uGrow;
+  material.userData.growAt = u.uGrowAt;
   material.userData.site = { mask: null, min: [0, 0], size: [1, 1], on: 0, rise: 0, dim: 0, tint: 0 };
   material.userData.apply = () => {
     const s = material.userData.site;
@@ -655,12 +737,16 @@ function siteBuildings(material, line, face = 1) {
     shader.vertexShader = shader.vertexShader
       .replace('void main() {', `uniform sampler2D uSiteMask;
         uniform vec2 uSiteMin, uSiteSize;
-        uniform float uSiteOn, uRise;
+        uniform float uSiteOn, uRise, uGrow;
+        uniform vec2 uGrowAt;
         attribute vec2 aEdge;
         varying float vSite, vY;
         varying vec2 vEdge;
         void main() {`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
+        // The opening's wave: the city rises out of the ground from uGrowAt outward, over a 1.8 km front.
+        float grow = clamp((uGrow - distance((modelMatrix * vec4(transformed, 1.0)).xz, uGrowAt)) / 1800.0, 0.0, 1.0);
+        transformed.y *= grow * grow * (3.0 - 2.0 * grow);
         vSite = 0.0;
         if (uSiteOn > 0.5) {
           vec2 siteUv = ((modelMatrix * vec4(transformed, 1.0)).xz - uSiteMin) / uSiteSize;
