@@ -82,6 +82,7 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
     .map((f) => { const [x, z] = toLocal(...f.geometry.coordinates); return { id: f.id, p: f.properties, x, z }; });
   const shown = () => all.filter((it) => pred(it.p));
   scene.setPlans(features.filter((f) => pred(f.properties)));
+  if (!reduced) await scene.warm(); // shaders compile behind the loader, not during the opening
 
   hero.classList.add('is-ready');
   window.LOGhero = scene;
@@ -233,12 +234,19 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   // Touch: a tap anywhere else on the map closes the card.
   stage.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse' && !card.hidden) closeCard(); });
 
+  // The card's size from a ResizeObserver: reading offsetWidth every frame, after the markers moved, forced a layout.
+  const cardBox = { w: 350, h: 420 };
+  new ResizeObserver(([e]) => {
+    const b = e.borderBoxSize?.[0];
+    cardBox.w = b ? b.inlineSize : card.offsetWidth;
+    cardBox.h = b ? b.blockSize : card.offsetHeight;
+  }).observe(card);
   function placeCard() {
     if (!cardItem || card.hidden) return;
     if (card.classList.contains('is-sheet')) { card.style.transform = ''; return; }
     const s = scene.toScreen(cardItem.x, cardItem.z);
     if (!s) return closeCard();
-    const W = stage.clientWidth, H = stage.clientHeight, cw = card.offsetWidth, ch = card.offsetHeight;
+    const { w: W, h: H } = scene.size(), cw = cardBox.w, ch = cardBox.h;
     const left = s.x > W / 2 ? s.x - cw - 34 : s.x + 34;
     const top = Math.min(H - ch - 16, Math.max(84, s.y - ch / 2));
     card.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
@@ -271,20 +279,30 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
     });
   }
 
-  function layoutEdges(offscreen, r) {
-    if (r > EDGES_FROM_RADIUS || !explored) { if (edgesEl.innerHTML) edgesEl.innerHTML = ''; return; }
-    // Counters sit just inside the sheet's neatline frame, or the map's own edge: never under the header,
-    // clear of the controls on the end side and above the figures at the bottom.
+  /**
+   * Counters sit just inside the sheet's neatline frame, or the map's own edge: never under the header,
+   * clear of the controls on the end side and above the figures at the bottom.
+   */
+  function measureEdgeBox() {
     const f = frame?.getBoundingClientRect(), st = stage.getBoundingClientRect();
+    if (f) return { l: f.left - st.left + 22, r: f.right - st.left - 22, t: f.top - st.top + 44, b: f.bottom - st.top - 112 };
     const head = document.querySelector('.site-header')?.getBoundingClientRect();
     const bar = hero.querySelector('.hero-bar')?.getBoundingClientRect();
     const dist = hero.querySelector('.hero-dist')?.getBoundingClientRect();
-    const box = f ? { l: f.left - st.left + 22, r: f.right - st.left - 22, t: f.top - st.top + 44, b: f.bottom - st.top - 112 } : {
+    return {
       l: bar?.width ? bar.right - st.left + 26 : 36,
-      r: stage.clientWidth - 36,
+      r: st.width - 36,
       t: (head ? head.bottom - st.top : 0) + 30,
-      b: (dist?.height ? dist.top - st.top : stage.clientHeight) - 26,
+      b: (dist?.height ? dist.top - st.top : st.height) - 26,
     };
+  }
+  // The box the edge counters stand on, measured once per resize or scroll rather than every few frames.
+  let edgeBox = null;
+  new ResizeObserver(() => (edgeBox = null)).observe(stage);
+  addEventListener('scroll', () => (edgeBox = null), { passive: true });
+  function layoutEdges(offscreen, r) {
+    if (r > EDGES_FROM_RADIUS || !explored) { if (edgesEl._html) edgesEl.innerHTML = edgesEl._html = ''; return; }
+    const box = edgeBox || (edgeBox = measureEdgeBox());
     const cx = (box.l + box.r) / 2, cy = (box.t + box.b) / 2;
     const buckets = new Map();
     for (const { it, s } of offscreen) {
@@ -298,11 +316,12 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
       buckets.set(key, b);
     }
     const list = [...buckets.values()];
-    edgesEl.innerHTML = list.map((b, i) => {
+    const html = list.map((b, i) => {
       const x = b.x / b.items.length, y = b.y / b.items.length;
       const ang = Math.atan2(y - cy, x - cx) * 180 / Math.PI + 90;
       return `<button type="button" class="hero-edge" data-i="${i}" style="transform:translate(${x.toFixed(0)}px,${y.toFixed(0)}px)" aria-label="${b.items.length} פרויקטים בכיוון הזה. מעבר לקרוב ביותר."><i style="transform:rotate(${ang.toFixed(0)}deg)"></i><span>${b.items.length}</span></button>`;
     }).join('');
+    if (html !== edgesEl._html) edgesEl.innerHTML = edgesEl._html = html; // rebuild only when a counter moved
     edgesEl._buckets = list;
   }
   edgesEl.addEventListener('click', (e) => {
@@ -319,10 +338,12 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   /* ---------------------------------------------------------------- frame */
 
   let edgeTick = 0;
+  let flying = false; // the opening: the markers are hidden, so they aren't laid out either
   scene.onFrame((r) => {
-    const W = stage.clientWidth, H = stage.clientHeight;
+    if (flying) { layoutLabels(r); return; }
+    const { w: W, h: H } = scene.size(); // no layout reads in the frame: the markers move right after
     const vis = [], off = [];
-    const fr = frame?.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    const fr = frame?.getBoundingClientRect(), sr = fr && stage.getBoundingClientRect();
     const inner = fr ? { l: fr.left - sr.left + 6, r: fr.right - sr.left - 6, t: fr.top - sr.top + 30, b: fr.bottom - sr.top - 6 } : { l: -10, r: W + 10, t: -10, b: H + 10 };
     for (const it of shown()) {
       const s = scene.toScreen(it.x, it.z);
@@ -388,9 +409,10 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
   return {
     async intro() {
       hero.classList.add('is-intro');
+      flying = true;
       const home = scene.homeView();
       scene.setBeacons(all.map((it) => [it.x, it.z]), home.tx, home.tz);
-      await scene.intro({ onLand: () => hero.classList.remove('is-intro') });
+      await scene.intro({ onLand: () => { flying = false; hero.classList.remove('is-intro'); } });
     },
     /** Search or filters changed: swap the plans, close a card that no longer matches, optionally frame the group. */
     refilter({ fit = false } = {}) {

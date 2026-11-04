@@ -96,7 +96,9 @@ function heroIntro() {
     type: 'words',
     onSplit(self) {
       gsap.set(title, { opacity: 1 });
-      return gsap.from(self.words, { yPercent: 38, opacity: 0, filter: 'blur(14px)', duration: 1.4, stagger: 0.07, delay: 0.15, ease: 'expo.out' });
+      // The blur paints every word every frame: touch screens get the rise alone.
+      const lens = matchMedia('(pointer: coarse)').matches ? {} : { filter: 'blur(14px)' };
+      return gsap.from(self.words, { yPercent: 38, opacity: 0, ...lens, duration: 1.4, stagger: 0.07, delay: 0.15, ease: 'expo.out' });
     },
   }));
   const lede = hero.querySelector('.hero__lede');

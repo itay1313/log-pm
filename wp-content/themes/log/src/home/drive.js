@@ -263,6 +263,11 @@ function buildChapter(el, scene, features, hero) {
   const sign = overlay.querySelector('.build-sign');
   const track = sign.querySelector('.stage-row__track');
   const now = p.completed ? 4 : Math.min(4, Math.max(1, Number(p.stageNumber) || 1));
+  // Sizes the scroll frame needs, kept by ResizeObservers: reading them inside the frame, after its writes,
+  // forced a layout on every step of the scroll.
+  const box = { left: 0, w: innerWidth, sw: 0, sh: 0 };
+  new ResizeObserver(() => { box.left = overlay.getBoundingClientRect().left; box.w = overlay.clientWidth; }).observe(overlay);
+  new ResizeObserver(([e]) => { const b = e.borderBoxSize?.[0]; box.sw = b ? b.inlineSize : sign.offsetWidth; box.sh = b ? b.blockSize : sign.offsetHeight; }).observe(sign);
 
   let preloaded = false;
   const preload = () => { if (!preloaded) { preloaded = true; scene.preload(site.cx, site.cz); } };
@@ -288,7 +293,7 @@ function buildChapter(el, scene, features, hero) {
 
   function render(q) {
     const live = q > 0;
-    const ox = live ? overlay.getBoundingClientRect().left : 0; // screen x → overlay x (a scrollbar shifts it)
+    const ox = live ? box.left : 0; // screen x → overlay x (a scrollbar shifts it)
     if (live) preload();
     // Slide the picture off the steps' side on wide screens.
     scene.setShift(phone.matches ? 0 : 0.13 * ease(span(BUILD.fly, q)));
@@ -346,7 +351,7 @@ function buildChapter(el, scene, features, hero) {
     track.style.setProperty('--now', Math.max(0.01, now * ease(span([BUILD.sign[0] + 0.02, BUILD.sign[1] + 0.04], q))).toFixed(3));
     const anchor = s > 0 ? shifted(scene.toScreen(site.cx, site.cz, 40), ox) : null;
     if (anchor) {
-      const W = overlay.clientWidth, H = innerHeight, sw = sign.offsetWidth, sh = sign.offsetHeight;
+      const W = box.w, H = innerHeight, sw = box.sw, sh = box.sh;
       const x = phone.matches ? (W - sw) / 2 : Math.max(16, Math.min(anchor.x - sw - 120, W * 0.06));
       const y = phone.matches ? Math.max(84, H * 0.12) : Math.min(H - sh - 40, Math.max(110, anchor.y - sh * 0.75));
       sign.style.transform = `translate(${Math.round(x)}px, ${Math.round(y + (1 - s) * 16)}px)`;
