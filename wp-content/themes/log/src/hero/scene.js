@@ -72,6 +72,9 @@ export async function createScene(container, { reduced = false } = {}) {
   scene.add(sun);
 
   const controls = new MapControls(camera, renderer.domElement);
+  // MapControls sets touch-action: none on the canvas, which kept a phone from scrolling the page off the map
+  // (the map fills the first screen). One finger scrolls the page; two fingers still move and pinch the map.
+  renderer.domElement.style.touchAction = 'pan-y';
   controls.enableDamping = true;
   controls.dampingFactor = 0.075;
   controls.screenSpacePanning = false;
