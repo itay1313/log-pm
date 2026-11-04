@@ -364,15 +364,21 @@ body.page-template-page-control .person__placeholder, .section--night .person__p
 .partners-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
 .partners-row li { display: inline-flex; align-items: center; gap: .6em; padding: .7rem 1.1rem; border-radius: 8px; background: var(--plate); color: var(--legend); font: 700 1.125rem var(--font-display); box-shadow: inset 0 0 0 1px var(--legend); }
 
-.clients-tabs__list { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem; }
-.clients-tabs__list [role=tab] { font: 700 1rem var(--font-display); padding: .6rem 1.1rem; border: 0; border-radius: 8px; background: transparent; color: var(--slate); box-shadow: inset 0 0 0 2px var(--rule); cursor: pointer; }
-.clients-tabs__list [role=tab][aria-selected=true] { background: var(--plate); color: var(--legend); box-shadow: inset 0 0 0 1px var(--works); }
-.clients__label { font: 500 .9375rem var(--font-display); color: var(--slate); margin-bottom: 1rem; }
-.clients { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .75rem; }
-.clients__item { display: grid; place-items: center; min-height: 120px; padding: 1.5rem; border-radius: 10px; background: var(--paper-2); box-shadow: inset 0 0 0 2px var(--rule-soft); }
-.clients__item img { height: 64px; width: auto; max-width: 100%; object-fit: contain; filter: grayscale(1) contrast(1.1) opacity(.7); transition: filter .35s cubic-bezier(.2, .7, .2, 1); }
-.clients__item:hover img { filter: none; }
-.clients__item span { color: var(--slate); font: 700 1rem var(--font-display); text-align: center; }
+/* Client logos: one strip that runs right to left, edges fading into the page. */
+.logo-run { overflow: hidden; direction: ltr; margin-inline: calc(var(--gutter, 1.5rem) * -1); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.logo-run__track { display: flex; width: max-content; animation: logo-run calc(var(--count) * 3.2s) linear infinite; }
+.logo-run:hover .logo-run__track { animation-play-state: paused; }
+.logo-run__list { display: flex; align-items: center; gap: clamp(2.5rem, 6vw, 5rem); padding-inline-end: clamp(2.5rem, 6vw, 5rem); }
+.logo-run__list li { flex: none; display: grid; place-items: center; height: 88px; }
+.logo-run__list img { height: 72px; width: auto; max-width: 180px; object-fit: contain; filter: grayscale(1) contrast(1.1) opacity(.65); transition: filter .35s cubic-bezier(.2, .7, .2, 1); }
+.logo-run__list li:hover img { filter: none; }
+@keyframes logo-run { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+	.logo-run { -webkit-mask-image: none; mask-image: none; margin-inline: 0; }
+	.logo-run__track { width: auto; }
+	.logo-run__list { flex-wrap: wrap; justify-content: center; row-gap: 1.5rem; }
+	.logo-run__list[aria-hidden] { display: none; }
+}
 
 /* ------------------------------------------------------------------ careers, jobs */
 
