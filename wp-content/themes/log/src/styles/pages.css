@@ -370,7 +370,7 @@ body.page-template-page-control .person__placeholder, .section--night .person__p
 .clients__label { font: 500 .9375rem var(--font-display); color: var(--slate); margin-bottom: 1rem; }
 .clients { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .75rem; }
 .clients__item { display: grid; place-items: center; min-height: 120px; padding: 1.5rem; border-radius: 10px; background: var(--paper-2); box-shadow: inset 0 0 0 2px var(--rule-soft); }
-.clients__item img { max-height: 48px; width: auto; filter: grayscale(1) opacity(.75); transition: filter .4s; }
+.clients__item img { height: 64px; width: auto; max-width: 100%; object-fit: contain; filter: grayscale(1) contrast(1.1) opacity(.7); transition: filter .35s cubic-bezier(.2, .7, .2, 1); }
 .clients__item:hover img { filter: none; }
 .clients__item span { color: var(--slate); font: 700 1rem var(--font-display); text-align: center; }
 
