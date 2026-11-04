@@ -1,7 +1,8 @@
 <?php
 /**
  * Project page (spec v6 §10). One template; blocks without content don't render, headings included.
- * Who gets here is decided in log-core (projects.php): only public projects with a full page.
+ * Who gets here is decided in log-core (projects.php): every public project. A project without a story yet
+ * still reads as a page: the hero, its numbers, the details and the minimap.
  */
 get_header();
 while ( have_posts() ) : the_post();
@@ -135,11 +136,10 @@ while ( have_posts() ) : the_post();
 		</div>
 
 		<?php
-		// Up to three projects from the same domain that have a page of their own.
+		// Up to three more public projects from the same domain.
 		$domain  = log_first_term_slug( $pid, 'log_domain' );
 		$related = $domain ? log_approved_projects_query( [
 			'post__not_in' => [ $pid ],
-			'meta_query'   => [ [ 'key' => 'approved', 'value' => '1' ], [ 'key' => 'full_page', 'value' => '1' ] ],
 			'tax_query'    => [ [ 'taxonomy' => 'log_domain', 'field' => 'slug', 'terms' => $domain ] ],
 		] ) : null;
 		if ( $related ) {

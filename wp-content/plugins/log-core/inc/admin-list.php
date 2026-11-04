@@ -27,10 +27,10 @@ add_action( 'manage_log_project_posts_custom_column', function ( string $col, in
 	echo log_field( 'approved', $id )
 		? '<span style="color:#1e7e34;font-weight:600" aria-label="מאושר">✓</span>'
 		: '<span style="color:#8c8f94" aria-label="לא מאושר">—</span>';
-	if ( log_field( 'full_page', $id ) ) {
+	if ( log_project_has_page( $id ) ) {
 		$missing = log_project_page_missing( $id );
 		echo $missing
-			? '<br><span class="description" title="' . esc_attr( 'חסר: ' . implode( ', ', $missing ) ) . '">עמוד מלא: חסר תוכן</span>'
+			? '<br><span class="description" title="' . esc_attr( 'חסר: ' . implode( ', ', $missing ) ) . '">עמוד בלי סיפור</span>'
 			: '<br><span class="description">עמוד מלא</span>';
 	}
 }, 10, 2 );

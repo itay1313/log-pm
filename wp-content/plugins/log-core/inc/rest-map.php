@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const LOG_MAP_TRANSIENT = 'log_map_geojson_v6';
+const LOG_MAP_TRANSIENT = 'log_map_geojson_v7'; // v7: every public project has a page
 
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'log/v1', '/map', [

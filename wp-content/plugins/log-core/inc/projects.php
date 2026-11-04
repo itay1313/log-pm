@@ -2,11 +2,11 @@
 /**
  * Project publishing rules and addresses (spec v6 §8–10, §18).
  *
- * Two separate switches:
- * - "מאושר לפרסום" (approved, Kobi's call): the project exists on the public site at all, on the map and in the list.
- * - "עמוד מלא" (full_page): it also gets /projects/{slug}. A full page needs a name, a domain, a stage
- *   and a professional story (at least "האתגר" or "העבודה של לוג"). Without one, the project lives only
- *   as a map popup and a card without a link.
+ * One switch: "מאושר לפרסום" (approved, Kobi's call). An approved project is on the map, in the list, and has
+ * its own page at /projects/{slug}, built from whatever it has: the numbers, the stage, the place and the map
+ * from ArcGIS, plus the professional story once someone writes it. (Spec v6 gated the page on a "עמוד מלא"
+ * flag and a story; Itay dropped the gate on 2026-11-04 so every project opens. The flag stays in the data,
+ * unused, and the editor still sees what a page is missing.)
  *
  * A project's map address is /?p={slug}: the home map opens on it with its popup open.
  */
@@ -43,9 +43,7 @@ function log_project_page_missing( int $post_id ): array {
 }
 
 function log_project_has_page( int $post_id ): bool {
-	return log_project_is_public( $post_id )
-		&& (bool) log_field( 'full_page', $post_id )
-		&& ! log_project_page_missing( $post_id );
+	return log_project_is_public( $post_id ) && trim( get_the_title( $post_id ) ) !== '';
 }
 
 /** /?p={slug}. Re-encoded upper-case, as WordPress's canonical redirect wants it (stored slugs are lower-case %d7…). */
@@ -82,10 +80,10 @@ add_filter( 'request', function ( array $vars ): array {
 } );
 
 /**
- * /projects/{slug} only exists for projects with a full page.
+ * /projects/{slug} exists for every public project.
  * - Not public (unapproved, stopped, draft): 404.
- * - Public, no full page: the project on the map, so an old or shared link still lands somewhere useful.
- * Logged-in editors still see the page, to preview it before switching "עמוד מלא" on.
+ * - Public but nameless: the project on the map, so an old or shared link still lands somewhere useful.
+ * Logged-in editors still see the page, to preview it before approving.
  */
 add_action( 'template_redirect', function () {
 	if ( ! is_singular( 'log_project' ) || current_user_can( 'edit_posts' ) ) {
@@ -105,13 +103,10 @@ add_action( 'template_redirect', function () {
 	}
 } );
 
-/** Projects without a full page stay out of the sitemap. */
+/** Only approved projects reach the sitemap. */
 add_filter( 'wp_sitemaps_posts_query_args', function ( array $args, string $type ): array {
 	if ( $type === 'log_project' ) {
-		$args['meta_query'] = [
-			[ 'key' => 'approved', 'value' => '1' ],
-			[ 'key' => 'full_page', 'value' => '1' ],
-		];
+		$args['meta_query'] = [ [ 'key' => 'approved', 'value' => '1' ] ];
 	}
 	return $args;
 }, 10, 2 );
@@ -128,7 +123,7 @@ add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $ids ) {
 } );
 
 /**
- * Editor feedback: "עמוד מלא" is on but the page can't be published yet.
+ * Editor feedback: what the project's page shows now, and what would complete it.
  */
 add_action( 'admin_notices', function () {
 	$screen = get_current_screen();
@@ -136,17 +131,17 @@ add_action( 'admin_notices', function () {
 		return;
 	}
 	$id = (int) ( $_GET['post'] ?? 0 );
-	if ( ! $id || ! log_field( 'full_page', $id ) ) {
+	if ( ! $id ) {
 		return;
 	}
 	$missing = log_project_page_missing( $id );
-	if ( $missing ) {
+	if ( ! log_project_is_public( $id ) ) {
+		echo '<div class="notice notice-info"><p>לפרויקט יהיה עמוד באתר אחרי אישור לפרסום.</p></div>';
+	} elseif ( $missing ) {
 		printf(
-			'<div class="notice notice-warning"><p><strong>העמוד המלא לא יוצג עדיין.</strong> חסר: %s.</p></div>',
+			'<div class="notice notice-info"><p><strong>העמוד באתר מציג את מה שיש.</strong> כדי שיהיה שלם, חסר: %s.</p></div>',
 			esc_html( implode( ', ', $missing ) )
 		);
-	} elseif ( ! log_project_is_public( $id ) ) {
-		echo '<div class="notice notice-info"><p>העמוד המלא מוכן, ויוצג אחרי אישור הפרויקט לפרסום.</p></div>';
 	}
 } );
 
