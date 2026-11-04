@@ -5,7 +5,7 @@
     { "key": "field_lt_tab_projects", "label": "פרויקטים", "name": "", "type": "tab" },
     { "key": "field_lt_projects_title", "label": "כותרת", "name": "projects_title", "type": "text", "default_value": "הפרויקטים שלנו" },
     { "key": "field_lt_projects_lede", "label": "שתי פסקאות פתיחה", "name": "projects_lede", "type": "textarea", "rows": 6, "instructions": "על הפעילות של לוג והניהול המקצועי. שורה ריקה בין הפסקאות.", "default_value": "לוג מנהלת ומקדמת תכניות בכל קנה מידה: התחדשות עירונית, תכניות מתאר ותכניות מפורטות, ברשויות בכל הארץ.\n\nבכל פרויקט אנחנו מחזיקים את התהליך מקצה לקצה: מהאיתור וההיתכנות, דרך מוסדות התכנון, ועד המעקב אחרי מה שקורה בשטח." },
-    { "key": "field_lt_featured_title", "label": "פרויקטים נבחרים · כותרת", "name": "featured_title", "type": "text", "instructions": "הפרויקטים עצמם: \"פרויקט נבחר\" בעריכת הפרויקט (4 עד 6, רק עם עמוד מלא). מוצגים רק כשאין חיפוש או סינון.", "default_value": "פרויקטים נבחרים" },
+    { "key": "field_lt_featured_title", "label": "פרויקטים נבחרים · כותרת", "name": "featured_title", "type": "text", "instructions": "הפרויקטים עצמם: \"פרויקט נבחר\" בעריכת הפרויקט (4 עד 6). מוצגים רק כשאין חיפוש או סינון.", "default_value": "פרויקטים נבחרים" },
 
     { "key": "field_lt_tab_careers", "label": "קריירה", "name": "", "type": "tab" },
     { "key": "field_lt_careers_title", "label": "כותרת", "name": "careers_title", "type": "text", "default_value": "בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה." },

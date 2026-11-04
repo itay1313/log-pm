@@ -48,8 +48,8 @@
 
     { "key": "field_lp_tab_publish", "label": "פרסום", "name": "", "type": "tab", "placement": "top" },
     { "key": "field_lp_approved", "label": "מאושר לפרסום", "name": "approved", "type": "true_false", "instructions": "רק פרויקט מאושר נשלח לאתר: מפה, רשימה וחיפוש. ההחלטה של קובי.", "ui": 1, "wrapper": { "width": "33" } },
-    { "key": "field_lp_full_page", "label": "עמוד מלא", "name": "full_page", "type": "true_false", "instructions": "בלי עמוד מלא הפרויקט מופיע רק כחלונית במפה וככרטיס בלי קישור. עמוד מלא דורש שם, תחום, שלב וסיפור מקצועי (לפחות האתגר או העבודה של לוג).", "ui": 1, "wrapper": { "width": "33" } },
-    { "key": "field_lp_featured", "label": "פרויקט נבחר", "name": "featured", "type": "true_false", "instructions": "מופיע בראש רשימת הפרויקטים (4 עד 6). רק פרויקט עם עמוד מלא.", "ui": 1, "wrapper": { "width": "33" } }
+    { "key": "field_lp_full_page", "label": "עמוד מלא (לא בשימוש)", "name": "full_page", "type": "true_false", "instructions": "לא משפיע כרגע: לכל פרויקט מאושר יש עמוד באתר. העמוד מציג את מה שיש, ונהיה שלם עם תחום, שלב וסיפור מקצועי (לפחות האתגר או העבודה של לוג).", "ui": 1, "wrapper": { "width": "33" } },
+    { "key": "field_lp_featured", "label": "פרויקט נבחר", "name": "featured", "type": "true_false", "instructions": "מופיע בראש רשימת הפרויקטים (4 עד 6).", "ui": 1, "wrapper": { "width": "33" } }
   ],
   "location": [[{ "param": "post_type", "operator": "==", "value": "log_project" }]],
   "position": "normal",
