@@ -1,7 +1,8 @@
 <?php
 /**
- * Client and partner logos (spec v6 §7, §12): only those with written approval, grouped by body type
- * in tabs. A logo links nowhere. Tabs work without JS too: every panel is visible until main.js runs.
+ * Client and partner logos (spec v6 §7, §12): only those with written approval. One running strip,
+ * like the old site: grayscale, full color on hover, paused while hovered. The list is printed twice
+ * so the loop is seamless; the copy is hidden from screen readers. Reduced motion gets a still, wrapped row.
  */
 $clients = new WP_Query( [
 	'post_type'      => 'log_client',
@@ -12,40 +13,29 @@ $clients = new WP_Query( [
 	'meta_value'     => '1',
 	'no_found_rows'  => true,
 ] );
-$groups = [ 'authority' => 'רשויות מקומיות', 'government' => 'גופי ממשלה', 'developer' => 'יזמים', 'other' => 'שותפים' ];
-$by = [];
+$logos = [];
 while ( $clients->have_posts() ) {
 	$clients->the_post();
-	$by[ log_field( 'body_type', get_the_ID(), 'other' ) ][] = get_post();
+	$svg = log_field( 'logo_svg', get_the_ID() );
+	$src = $svg['url'] ?? get_the_post_thumbnail_url( get_the_ID(), 'medium' );
+	if ( $src ) {
+		$logos[] = [ 'src' => $src, 'name' => get_the_title() ];
+	}
 }
 wp_reset_postdata();
-if ( ! $by ) : if ( ! log_show_empty() ) { return; } ?>
-	<p class="placeholder">לוגואים בגוון אחד, לפי סוג גוף. מוצגים רק לקוחות שסומנו "אישור שימוש בלוגו".</p>
+if ( ! $logos ) : if ( ! log_show_empty() ) { return; } ?>
+	<p class="placeholder">כאן ירוצו לוגואים של לקוחות. מוצגים רק לקוחות עם לוגו שסומנו "אישור שימוש בלוגו".</p>
 	<?php return;
 endif;
-$groups = array_filter( $groups, static fn( $k ) => ! empty( $by[ $k ] ), ARRAY_FILTER_USE_KEY );
-$uid    = wp_unique_id( 'clients-' );
 ?>
-<div class="clients-tabs" data-tabs>
-	<?php if ( count( $groups ) > 1 ) : ?>
-		<div class="clients-tabs__list" role="tablist" aria-label="לקוחות לפי סוג גוף">
-			<?php $first = true; foreach ( $groups as $key => $label ) : ?>
-				<button type="button" role="tab" id="<?php echo esc_attr( "$uid-tab-$key" ); ?>" aria-controls="<?php echo esc_attr( "$uid-$key" ); ?>" aria-selected="<?php echo $first ? 'true' : 'false'; ?>" tabindex="<?php echo $first ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></button>
-			<?php $first = false; endforeach; ?>
-		</div>
-	<?php endif; ?>
-	<?php foreach ( $groups as $key => $label ) : ?>
-		<div class="clients__group" role="tabpanel" id="<?php echo esc_attr( "$uid-$key" ); ?>" aria-labelledby="<?php echo esc_attr( "$uid-tab-$key" ); ?>">
-			<?php if ( count( $groups ) === 1 ) : ?><h3 class="clients__label"><?php echo esc_html( $label ); ?></h3><?php endif; ?>
-			<ul class="clients">
-				<?php foreach ( $by[ $key ] as $c ) :
-					$svg = log_field( 'logo_svg', $c->ID );
-					$src = $svg['url'] ?? get_the_post_thumbnail_url( $c->ID, 'medium' ); ?>
-					<li class="clients__item">
-						<?php if ( $src ) : ?><img src="<?php echo esc_url( $src ); ?>" alt="<?php echo esc_attr( $c->post_title ); ?>" loading="lazy"><?php else : ?><span><?php echo esc_html( $c->post_title ); ?></span><?php endif; ?>
-					</li>
+<div class="logo-run" style="--count: <?php echo (int) count( $logos ); ?>">
+	<div class="logo-run__track">
+		<?php for ( $copy = 0; $copy < 2; $copy++ ) : ?>
+			<ul class="logo-run__list"<?php echo $copy ? ' aria-hidden="true"' : ''; ?>>
+				<?php foreach ( $logos as $logo ) : ?>
+					<li><img src="<?php echo esc_url( $logo['src'] ); ?>" alt="<?php echo $copy ? '' : esc_attr( $logo['name'] ); ?>" loading="lazy" decoding="async"></li>
 				<?php endforeach; ?>
 			</ul>
-		</div>
-	<?php endforeach; ?>
+		<?php endfor; ?>
+	</div>
 </div>
