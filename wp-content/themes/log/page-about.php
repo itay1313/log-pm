@@ -29,7 +29,7 @@ $galleries = array_filter( [
 ?>
 <section class="about-hero">
 	<figure class="about-hero__media">
-		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת צוות גדולה (רק עורכים רואים את זה)</span><?php endif; ?>
+		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); else : // a stand-in (Unsplash License) until the page gets a featured image of the real team ?><img src="<?php echo esc_url( LOG_THEME_URI . '/assets/img/about-team.jpg' ); ?>" alt="צוות עובד סביב לוח תכנון במשרד מואר" width="2000" height="1334" fetchpriority="high"><?php endif; ?>
 	</figure>
 	<div class="container about-hero__copy">
 		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ) ); ?></h1>
