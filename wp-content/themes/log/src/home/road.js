@@ -65,11 +65,12 @@ export function initRoad(road) {
     exitSign.style.transform = `scale(${lerp(0.82, 1, ease(span([0, 0.34], r))).toFixed(3)})`;
     exitSign.style.opacity = face.toFixed(3);
     exitSign.style.visibility = face > 0.001 ? 'visible' : 'hidden';
-    const w = world.getBoundingClientRect(), s = exitSign.getBoundingClientRect();
     if (r < 0.36) {
       world.style.clipPath = 'inset(50% 50% 50% 50%)';
       frame.style.opacity = 0;
     } else {
+      // Read only while the window opens: these reads come after this frame's writes and force a layout.
+      const w = world.getBoundingClientRect(), s = exitSign.getBoundingClientRect();
       const [t, rt, b, l] = [s.top - w.top, w.right - s.right, w.bottom - s.bottom, s.left - w.left].map((v) => Math.max(0, v * (1 - open)));
       world.style.clipPath = `inset(${t.toFixed(1)}px ${rt.toFixed(1)}px ${b.toFixed(1)}px ${l.toFixed(1)}px round ${(10 * (1 - open)).toFixed(1)}px)`;
       // The frame sits on the same rectangle, inset by the keyline's 8px, and leaves once the world is open.

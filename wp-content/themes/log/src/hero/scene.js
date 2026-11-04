@@ -72,6 +72,9 @@ export async function createScene(container, { reduced = false } = {}) {
   scene.add(sun);
 
   const controls = new MapControls(camera, renderer.domElement);
+  // MapControls sets touch-action: none on the canvas, which kept a phone from scrolling the page off the map
+  // (the map fills the first screen). One finger scrolls the page; two fingers still move and pinch the map.
+  renderer.domElement.style.touchAction = 'pan-y';
   controls.enableDamping = true;
   controls.dampingFactor = 0.075;
   controls.screenSpacePanning = false;
@@ -146,8 +149,23 @@ export async function createScene(container, { reduced = false } = {}) {
       }
     }
     if (data.places?.length) places.push(...data.places);
+    const sphere = tileSphere(key);
+    holder.traverse((o) => { if (o.geometry && !o.geometry.boundingSphere) o.geometry.boundingSphere = sphere; });
     groups[mode].add(holder);
     return holder;
+  }
+
+  /**
+   * A tile's bounding sphere from its address: its square, half again for features drawn past the edge, and
+   * room for the towers. Without it three.js scans every vertex of a new tile on its first frame in view.
+   */
+  function tileSphere(key) {
+    const [z, x, y] = key.split('/').map(Number);
+    const n = 2 ** z;
+    const lng = (t) => (t / n) * 360 - 180;
+    const lat = (t) => (Math.atan(Math.sinh(Math.PI * (1 - (2 * t) / n))) * 180) / Math.PI;
+    const [x0, z0] = toLocal(lng(x), lat(y)), [x1, z1] = toLocal(lng(x + 1), lat(y + 1));
+    return new THREE.Sphere(new THREE.Vector3((x0 + x1) / 2, 150, (z0 + z1) / 2), 0.75 * Math.hypot(x1 - x0, z1 - z0) + 400);
   }
 
   function tileCentre(key) {
@@ -411,7 +429,10 @@ export async function createScene(container, { reduced = false } = {}) {
   }
 
   let introBeacons = null, introGrow = null;
-  const beaconSize = () => (container.clientWidth < 700 ? 8 : 11) * renderer.getPixelRatio();
+  // The canvas size, read once per resize. Reading clientWidth/Height inside a frame, after the markers have
+  // moved, forces a layout every time; this was the biggest cost of the opening.
+  const size = { w: container.clientWidth || 1, h: container.clientHeight || 1 };
+  const beaconSize = () => (size.w < 700 ? 8 : 11) * renderer.getPixelRatio();
   const easeZoom = gsap.parseEase('power2.inOut'), easeTilt = gsap.parseEase('sine.inOut');
   /** The opening's flight to a view: radius in log space, the pan tied to the zoom, the tilt held back. */
   function flight(to, duration) {
@@ -452,9 +473,15 @@ export async function createScene(container, { reduced = false } = {}) {
   const frameCallbacks = new Set();
   const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
+  let halfStep = false, lastInput = 0, warming = false;
+  controls.addEventListener('start', () => (lastInput = performance.now()));
+  controls.addEventListener('end', () => (lastInput = performance.now()));
   function frame(now) {
     raf = requestAnimationFrame(frame);
-    if (!running) return;
+    if (!running || warming) return;
+    // A phone resting on the swaying map draws every other frame: the sway is 0.1 rad over 18 s, the battery
+    // and the heat matter more. Any flight, scroll or touch gets every frame.
+    if (LIGHT && sway?.isActive() && !held && !tween?.isActive() && now - lastInput > 1500 && (halfStep = !halfStep)) return;
     if (!held && !tween?.isActive()) controls.update();
     const r = camera.position.distanceTo(controls.target);
     camera.near = Math.max(1, r * 0.004);
@@ -474,7 +501,7 @@ export async function createScene(container, { reduced = false } = {}) {
     mat.planFill.opacity = 0.7 - 0.42 * smooth(60000, 14000, r); // city level: the plan stays readable under the orange city, its paper edge marks it
     mat.planFillLarge.opacity = 0.14 * (1 - smooth(80000, 30000, r)); // regional plans: gone by city level
     if (site.ribbon) {
-      const mpp = (2 * r * Math.tan((camera.fov * Math.PI) / 360)) / container.clientHeight;
+      const mpp = (2 * r * Math.tan((camera.fov * Math.PI) / 360)) / size.h;
       ribbonMat.uniforms.uWidth.value = 6 * mpp;
       ribbonMat.uniforms.uDash.value = 54 * mpp;
     }
@@ -490,18 +517,18 @@ export async function createScene(container, { reduced = false } = {}) {
       if (r < MID_AT * 1.2) ensureAround(lng, lat, 'detail');
     }
 
-    composer.render();
+    if (bloom.enabled) composer.render(); else renderer.render(scene, camera); // no glow: skip the composer's extra pass
     frameCallbacks.forEach((cb) => { try { cb(r); } catch (err) { console.error(err); } });
   }
 
   let shift = 0, introShift = null; // fraction of the width the picture slides towards the end side, clear of a legend
   function applyShift() {
-    const w = container.clientWidth, h = container.clientHeight;
+    const { w, h } = size;
     if (shift) camera.setViewOffset(w, h, shift * w, 0, w, h); else camera.clearViewOffset();
     camera.updateProjectionMatrix();
   }
   function resize() {
-    const w = container.clientWidth, h = container.clientHeight;
+    const w = (size.w = container.clientWidth || 1), h = (size.h = container.clientHeight || 1);
     renderer.setSize(w, h, false);
     composer.setPixelRatio(renderer.getPixelRatio());
     composer.setSize(w, h);
@@ -532,13 +559,39 @@ export async function createScene(container, { reduced = false } = {}) {
     toScreen(x, z, y = 0) {
       v3.set(x, y, z).project(camera);
       if (v3.z > 1) return null;
-      return { x: (v3.x * 0.5 + 0.5) * container.clientWidth, y: (-v3.y * 0.5 + 0.5) * container.clientHeight };
+      return { x: (v3.x * 0.5 + 0.5) * size.w, y: (-v3.y * 0.5 + 0.5) * size.h };
     },
+
+    /**
+     * Compile every shader the opening and the drive will use while the loader is still up, so none compiles
+     * mid-flight: the materials of tiles not loaded yet (through probes) and hidden objects (beacons, the build
+     * site). Rendering pauses meanwhile; capped at 2.5 s so a slow GPU never holds the loader.
+     */
+    async warm() {
+      if (!renderer.compileAsync) return;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+      geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(9), 3));
+      geo.setAttribute('aEdge', new THREE.BufferAttribute(new Float32Array(6), 2));
+      const probes = Object.values(mat).filter((m) => m?.isMaterial).map((m) => new THREE.Mesh(geo, m));
+      probes.forEach((p) => scene.add(p));
+      const hidden = [];
+      scene.traverse((o) => { if (!o.visible) { hidden.push(o); o.visible = true; } });
+      warming = true;
+      try { await Promise.race([renderer.compileAsync(scene, camera), new Promise((r) => setTimeout(r, 2500))]); } catch { /* compiled on first use instead */ }
+      hidden.forEach((o) => (o.visible = false));
+      probes.forEach((p) => scene.remove(p));
+      geo.dispose();
+      warming = false;
+    },
+
+    /** The canvas size in CSS px, as of the last resize (no layout read). */
+    size: () => size,
 
     /** Metres per CSS pixel at the target, for the scale bar. */
     metresPerPixel() {
       const r = camera.position.distanceTo(controls.target);
-      return (2 * r * Math.tan((camera.fov * Math.PI) / 360)) / container.clientHeight;
+      return (2 * r * Math.tan((camera.fov * Math.PI) / 360)) / size.h;
     },
 
     /**
@@ -568,7 +621,7 @@ export async function createScene(container, { reduced = false } = {}) {
           .add(() => { introBeacons = null; beacons.visible = false; bu.uLit.value = 0; bu.uAlpha.value = 1; bu.uSize.value = beaconSize(); });
       }
       // On wide screens the country stands clear of the headline, then the picture slides home under it.
-      if (container.clientWidth > 900) {
+      if (size.w > 900) {
         const sh = { v: 0.17 };
         shift = sh.v; applyShift();
         introShift = gsap.to(sh, { v: 0, duration: DUR * 0.42, delay: DUR * 0.3, ease: 'sine.inOut', onUpdate: () => { shift = sh.v; applyShift(); }, onComplete: () => { introShift = null; } });

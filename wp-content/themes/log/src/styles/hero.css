@@ -168,6 +168,7 @@
   content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--works); opacity: 0;
   animation: pin-breathe 3.2s calc(var(--i, 0) * -0.37s) var(--ease-out) infinite;
 }
+.hero.is-intro .hero-pin__shape::before { animation: none; } /* hidden markers don't breathe */
 @keyframes pin-breathe { 0% { opacity: .9; scale: 1; } 70%, 100% { opacity: 0; scale: 2.4; } }
 .hero-pin__shape::after { display: none; }
 .hero-pin:hover .hero-pin__shape, .hero-pin:focus-visible .hero-pin__shape, .hero-pin.is-active .hero-pin__shape { transform: scale(1.35); background: var(--legend); box-shadow: 0 0 0 3px var(--works), 0 0 0 4px var(--plate), 0 8px 18px rgba(5,10,16,.6); }

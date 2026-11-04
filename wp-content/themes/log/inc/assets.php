@@ -34,6 +34,22 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'log-main', LOG_THEME_URI . '/assets/dist/' . $entry['file'], [], null, [ 'strategy' => 'defer' ] );
 } );
 
+/**
+ * Preload the two faces the first screen sets: Ploni Light (the headline, whose reveal waits for its font)
+ * and Ploni Tzar Medium (buttons, labels). Without this the browser finds them only after the CSS arrives.
+ */
+add_action( 'wp_head', function () {
+	if ( defined( 'LOG_VITE_DEV' ) && LOG_VITE_DEV ) {
+		return;
+	}
+	$m = log_vite_manifest();
+	foreach ( [ 'assets/fonts/ploni_light.woff2', 'assets/fonts/ploni_tzar_medium.woff2' ] as $font ) {
+		if ( ! empty( $m[ $font ]['file'] ) ) {
+			printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( LOG_THEME_URI . '/assets/dist/' . $m[ $font ]['file'] ) );
+		}
+	}
+}, 2 );
+
 add_filter( 'script_tag_attributes', fn( $attrs ) => $attrs );
 add_filter( 'wp_script_attributes', function ( array $attrs ) {
 	if ( in_array( $attrs['id'] ?? '', [ 'log-main-js', 'vite-client-js' ], true ) ) {
