@@ -243,3 +243,9 @@ const road = document.getElementById('road');
 if (road && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   import('./home/road.js').then((m) => m.initRoad(road)).catch((err) => console.error(err));
 }
+
+// Background videos: a few navy-graded loops behind white-text bands (template-parts/video-bg.php).
+{
+  const vbg = [...document.querySelectorAll('[data-vbg]')];
+  if (vbg.length) import('./video-bg.js').then((m) => m.initVideoBg(vbg)).catch(() => {});
+}

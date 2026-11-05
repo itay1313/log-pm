@@ -7,7 +7,7 @@
  */
 @media (prefers-reduced-motion: no-preference) {
   html.motion :is(.hero__title, .hero__lede, .hero-search, .hero-filters .filters__group, .hero-filter-toggle, .hero-dist, .hero-bar > *,
-    .page-header > *, .about-hero__copy > *, .careers-hero__copy > *, .control-hero__strip h1, .control-hero__strip p, .project__hero-copy > *) {
+    .page-header > *, .about-hero__copy > *, .careers-hero__copy > :not(.vbg), .control-hero__strip h1, .control-hero__strip p, .project__hero-copy > *) {
     opacity: 0; animation: motion-safety .01s 2.4s forwards;
   }
 }

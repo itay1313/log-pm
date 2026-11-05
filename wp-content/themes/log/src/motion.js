@@ -121,7 +121,7 @@ function titleBands() {
   for (const band of document.querySelectorAll('.page-header, .about-hero__copy, .careers-hero__copy, .control-hero__strip, .project__hero-copy')) {
     const title = band.querySelector('h1');
     rise(title, { delay: 0.1 });
-    const rest = [...band.querySelectorAll(':scope > :not(h1), :scope > .container > :not(h1)')].filter((el) => !el.contains(title));
+    const rest = [...band.querySelectorAll(':scope > :not(h1, .vbg), :scope > .container > :not(h1)')].filter((el) => !el.contains(title)); // a background video stays put
     gsap.set(rest, { opacity: 1 });
     gsap.from(rest, { opacity: 0, y: 16, duration: 1, stagger: 0.08, ease: 'expo.out', delay: 0.45, clearProps: 'transform' });
   }
