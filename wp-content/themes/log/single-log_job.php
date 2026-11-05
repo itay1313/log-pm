@@ -32,6 +32,7 @@ while ( have_posts() ) : the_post();
 		'post_type'      => 'log_job',
 		'posts_per_page' => -1,
 		'post__not_in'   => [ $jid ],
+		'orderby'        => [ 'date' => 'DESC', 'ID' => 'DESC' ],
 		'no_found_rows'  => true,
 		'meta_query'     => [ [ 'key' => 'is_open', 'value' => '1' ] ],
 	] );
