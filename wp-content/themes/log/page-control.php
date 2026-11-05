@@ -44,6 +44,7 @@ $items = new WP_Query( [
 		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת פתיחה (רק עורכים רואים את זה)</span><?php endif; ?>
 	</figure>
 	<div class="control-hero__strip">
+		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'control-city' ] ); ?>
 		<div class="container">
 			<h1 class="control-hero__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'hero_title', 'חברת הבקרה' ) ); ?></h1>
 			<p class="control-hero__line"><?php echo esc_html( log_text( 'hero_eyebrow', 'לוג היא חברת הבקרה של הרשות הממשלתית להתחדשות עירונית.' ) ); ?></p>

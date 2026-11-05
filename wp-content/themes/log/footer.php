@@ -13,6 +13,7 @@ $legal = array_filter( [
 ] );
 ?>
 <footer class="site-footer">
+	<?php if ( ! is_page( 'contact' ) ) { get_template_part( 'template-parts/video-bg', null, [ 'name' => 'footer-city', 'focus' => '50% 60%' ] ); } ?>
 	<div class="site-footer__inner">
 		<?php if ( ! is_page( 'contact' ) ) : ?>
 			<a class="site-footer__cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><span class="site-footer__cta-text"><?php

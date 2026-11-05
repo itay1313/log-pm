@@ -36,6 +36,7 @@ $jobs = new WP_Query( [
 		<?php elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת צוות (רק עורכים רואים את זה)</span><?php endif; ?>
 	</figure>
 	<div class="container careers-hero__copy">
+		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'careers-build', 'bleed' => true ] ); ?>
 		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ) ); ?></h1>
 		<p class="page-header__lede"><?php echo esc_html( log_text( 'careers_lede', 'בלוג תעבדו לצד מיטב אנשי המקצוע, תקבלו אחריות אמיתית על תהליכים מהותיים ותהיו חלק מארגון שמאמין בצמיחה מקצועית ואישית.', 'option' ) ); ?></p>
 		<div class="cta-row">

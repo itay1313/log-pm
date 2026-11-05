@@ -1,0 +1,60 @@
+/* ------------------------------------------------------------------ background videos (template-parts/video-bg.php) */
+
+/*
+ * Night footage under white legends. The clip itself is graded so its black is the plate and its highlights
+ * stop near 64% (tools/video-bg.sh); the navy scrim does the rest, and it is not optional: daylight footage
+ * alone gives white text only ~2.6:1. Measured with tools/video-contrast.py on every frame, at the scrim's
+ * lightest point under the text: footer 6.7:1, control 5.2:1, careers 5.5:1 (AA body text is 4.5).
+ * The band paints no z-index of its own, so its pause button can sit above the band's text.
+ */
+.vbg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: var(--plate); }
+.vbg--bleed { left: calc(50% - 50vw); right: calc(50% - 50vw); }
+.vbg__video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--vbg-focus, 50% 50%); }
+.vbg::after {
+  content: ''; position: absolute; inset: 0;
+  background: var(--vbg-scrim, linear-gradient(rgb(19 33 47 / .4), rgb(19 33 47 / .4)));
+}
+
+/* Stop / play: one small round plate in the band's end corner */
+.vbg__toggle {
+  position: absolute; z-index: 2; inset-block-end: clamp(16px, 2.4vw, 28px); inset-inline-end: var(--gutter);
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
+  background: rgb(19 33 47 / .6); color: var(--legend); box-shadow: inset 0 0 0 1.5px var(--hair-strong);
+  pointer-events: auto; cursor: pointer;
+  transition: background-color .3s var(--ease-out), color .3s var(--ease-out), box-shadow .3s var(--ease-out);
+}
+.vbg__toggle::before {
+  content: ''; width: 12px; height: 14px;
+  background: linear-gradient(to right, currentColor 0 4px, transparent 4px 8px, currentColor 8px);
+}
+.vbg__toggle[aria-pressed='true']::before { background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); translate: 1px 0; }
+.vbg__toggle:hover, .vbg__toggle:focus-visible { background: var(--legend); color: var(--plate); box-shadow: none; }
+
+/* Footer: the city under "let's talk", fading out before the destination board */
+.site-footer { isolation: isolate; }
+.site-footer > .vbg {
+  inset: 0 0 auto; height: clamp(520px, 78vh, 940px);
+  --vbg-scrim: linear-gradient(var(--plate) 0, rgb(19 33 47 / .42) 24%, rgb(19 33 47 / .34) 52%, var(--plate) 100%);
+}
+.site-footer > .vbg .vbg__toggle { inset-block: calc(var(--header-h) + 12px) auto; } /* clear of the fixed header when the footer reaches the top */
+.site-footer__inner { position: relative; z-index: 1; }
+
+/* Control company and careers: the opening band becomes a moving picture with the legend low on it */
+.control-hero__strip, .careers-hero__copy { position: relative; isolation: isolate; }
+.control-hero__strip:has(> .vbg), .careers-hero__copy:has(> .vbg) {
+  min-height: clamp(460px, 68vh, 780px); display: flex; flex-direction: column; justify-content: flex-end;
+}
+.control-hero__strip > .container, .careers-hero__copy > :not(.vbg) { position: relative; z-index: 1; }
+.control-hero__strip > .vbg, .careers-hero__copy > .vbg {
+  --vbg-scrim: linear-gradient(to top, rgb(19 33 47 / .82) 0, rgb(19 33 47 / .38) 55%, rgb(19 33 47 / .55) 82%, var(--plate) 100%);
+}
+.careers-hero { overflow-x: clip; }
+/* Muted grey is too faint on footage: the line under the title goes white */
+.control-hero__strip:has(> .vbg) .control-hero__line, .careers-hero__copy:has(> .vbg) .page-header__lede { color: var(--legend); }
+
+@media (max-width: 700px) {
+  .control-hero__strip:has(> .vbg), .careers-hero__copy:has(> .vbg) { min-height: clamp(420px, 74svh, 640px); }
+  .vbg__toggle { width: 40px; height: 40px; }
+  /* Phones: "let's talk" and its arrow fill the width, so the pause button gets its own row above them */
+  .site-footer:has(> .vbg) { padding-top: calc(var(--header-h) + 76px); }
+}
