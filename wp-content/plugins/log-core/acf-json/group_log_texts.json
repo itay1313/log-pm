@@ -9,7 +9,7 @@
 
     { "key": "field_lt_tab_careers", "label": "קריירה", "name": "", "type": "tab" },
     { "key": "field_lt_careers_title", "label": "כותרת", "name": "careers_title", "type": "text", "default_value": "בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה." },
-    { "key": "field_lt_careers_lede", "label": "משפט פתיחה", "name": "careers_lede", "type": "textarea", "rows": 2, "instructions": "על מה שמחכה לעובדים בלוג. מתחת: \"למשרות הפתוחות\" ו\"איך מתקבלים\".", "default_value": "עבודה על תכניות שמשנות ערים, בצוות שמלמד אחד את השני." },
+    { "key": "field_lt_careers_lede", "label": "משפט פתיחה", "name": "careers_lede", "type": "textarea", "rows": 2, "instructions": "על מה שמחכה לעובדים בלוג. מתחת: \"למשרות הפתוחות\" ו\"איך מתקבלים\".", "default_value": "בלוג תעבדו לצד מיטב אנשי המקצוע, תקבלו אחריות אמיתית על תהליכים מהותיים ותהיו חלק מארגון שמאמין בצמיחה מקצועית ואישית." },
     { "key": "field_lt_careers_image", "label": "תמונת צוות", "name": "careers_image", "type": "image", "return_format": "array", "preview_size": "medium" },
     { "key": "field_lt_careers_culture_title", "label": "איך זה נראה · כותרת", "name": "careers_culture_title", "type": "text", "default_value": "איך זה נראה" },
     { "key": "field_lt_careers_gallery", "label": "תמונות: עובדים, משרדים, אווירה", "name": "careers_gallery", "type": "gallery", "return_format": "array", "preview_size": "medium" },
