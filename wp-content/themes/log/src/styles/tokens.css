@@ -40,7 +40,49 @@
   --font-text: 'Ploni', system-ui, sans-serif;
   /* Headlines: Ploni Light, set huge and tight. The condensed Ploni Tzar stays for the small legends on signs. */
   --font-headline: 'Ploni', system-ui, sans-serif;
-  --track-headline: -0.05em;
+
+  /*
+   * The type scale. Four headline steps that grow with the screen, five fixed text steps, four weights.
+   * Every font-size in the theme is one of these; the footer's "בואו נדבר" (--fs-mega) is the one exception.
+   * Sizes at a 375px phone → a 1440px screen.
+   */
+  --fs-h1: clamp(3rem, 1.9rem + 4.6vw, 6.25rem);      /* 48 → 97: page titles, the big figures */
+  --fs-h2: clamp(2.5rem, 1.6rem + 3.2vw, 4.5rem);     /* 40 → 72: section titles, the home headline */
+  --fs-h3: clamp(2rem, 1.45rem + 1.9vw, 3.25rem);     /* 32 → 51: destination rows, lead cards, step titles on the map */
+  --fs-h4: clamp(1.625rem, 1.3rem + 1vw, 2.25rem);    /* 26 → 35: card titles, steps, quotes, small section heads */
+  --fs-title: 1.5rem;                                 /* 24: small titles in Ploni Tzar */
+  --fs-lead: 1.25rem;                                 /* 20: ledes, prose, names in lists */
+  --fs-base: 1.0625rem;                               /* 17: body, buttons, every legend on a plate */
+  --fs-small: .9375rem;                               /* 15: captions, meta, secondary lines */
+  --fs-micro: .8125rem;                               /* 13: map labels, table heads, the smallest legends */
+  --fs-mega: clamp(4.25rem, 14vw, 14.5rem);           /* the footer's last legend */
+
+  --fw-light: 300;     /* headlines: size carries the hierarchy, never weight */
+  --fw-regular: 400;   /* reading text */
+  --fw-medium: 500;    /* legends, labels, names, small titles (Ploni Tzar) */
+  --fw-bold: 700;      /* only on the road's gantry signs and on labels drawn over the map */
+
+  --lh-display: .92;   /* h1, h2 */
+  --lh-heading: 1.02;  /* h3, h4 */
+  --lh-title: 1.15;
+  --lh-text: 1.6;
+  --lh-prose: 1.7;
+
+  --track-headline: -0.045em;  /* h1, h2 */
+  --track-heading: -0.03em;    /* h3, h4 */
+  --track-title: -0.01em;
+
+  /* Type roles: use these with `font:` so a role is one line, everywhere. */
+  --type-h1: var(--fw-light) var(--fs-h1)/var(--lh-display) var(--font-headline);
+  --type-h2: var(--fw-light) var(--fs-h2)/var(--lh-display) var(--font-headline);
+  --type-h3: var(--fw-light) var(--fs-h3)/var(--lh-heading) var(--font-headline);
+  --type-h4: var(--fw-light) var(--fs-h4)/var(--lh-heading) var(--font-headline);
+  --type-title: var(--fw-medium) var(--fs-title)/var(--lh-title) var(--font-display);
+  --type-name: var(--fw-medium) var(--fs-lead) var(--font-display);
+  --type-legend: var(--fw-medium) var(--fs-base) var(--font-display);
+  --type-label: var(--fw-medium) var(--fs-small) var(--font-display);
+  --type-micro: var(--fw-medium) var(--fs-micro) var(--font-display);
+  --type-meta: var(--fw-regular) var(--fs-small) var(--font-text);
 
   /* Hairlines: the line a plate is drawn with, on navy and on paper */
   --hair: rgba(242, 244, 241, .16);

@@ -26,40 +26,46 @@ colors:
   map-road-major: "#ffffff"
 typography:
   display:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.75rem, 6vw, 6rem)"
-    fontWeight: 700
-    lineHeight: 0.94
-    letterSpacing: "-0.035em"
+    fontFamily: "'Ploni', system-ui, sans-serif"
+    fontSize: "clamp(3rem, 1.9rem + 4.6vw, 6.25rem)"
+    fontWeight: 300
+    lineHeight: 0.92
+    letterSpacing: "-0.045em"
   headline:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.375rem, 4.8vw, 4.5rem)"
-    fontWeight: 700
-    lineHeight: 0.96
-    letterSpacing: "-0.035em"
+    fontFamily: "'Ploni', system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 1.6rem + 3.2vw, 4.5rem)"
+    fontWeight: 300
+    lineHeight: 0.92
+    letterSpacing: "-0.045em"
   destination:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(1.75rem, 3vw, 2.75rem)"
-    fontWeight: 700
+    fontFamily: "'Ploni', system-ui, sans-serif"
+    fontSize: "clamp(2rem, 1.45rem + 1.9vw, 3.25rem)"
+    fontWeight: 300
     lineHeight: 1.02
-    letterSpacing: "-0.025em"
+    letterSpacing: "-0.03em"
+  card:
+    fontFamily: "'Ploni', system-ui, sans-serif"
+    fontSize: "clamp(1.625rem, 1.3rem + 1vw, 2.25rem)"
+    fontWeight: 300
+    lineHeight: 1.02
+    letterSpacing: "-0.03em"
+  figure:
+    fontFamily: "'Ploni', system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 1.6rem + 3.2vw, 4.5rem)"
+    fontWeight: 300
+    lineHeight: 1
+    letterSpacing: "-0.045em"
+    fontFeature: "tnum"
   title:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
     fontSize: "1.5rem"
     fontWeight: 500
-    lineHeight: 1.1
+    lineHeight: 1.15
     letterSpacing: "-0.01em"
-  figure:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.25rem, 3.2vw, 3.25rem)"
-    fontWeight: 700
-    lineHeight: 1
-    letterSpacing: "-0.02em"
-    fontFeature: "tnum"
   sign-legend:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
     fontSize: "1.0625rem"
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.2
   body:
     fontFamily: "'Ploni', system-ui, sans-serif"
@@ -68,14 +74,19 @@ typography:
     lineHeight: 1.6
   prose:
     fontFamily: "'Ploni', system-ui, sans-serif"
-    fontSize: "1.1875rem"
+    fontSize: "1.25rem"
     fontWeight: 400
     lineHeight: 1.7
   label:
     fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "0.8125rem"
+    fontSize: "0.9375rem"
     fontWeight: 500
     lineHeight: 1.4
+  micro:
+    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 500
+    lineHeight: 1.3
 rounded:
   small: "6px"
   chip: "8px"
@@ -256,28 +267,38 @@ The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map
 **Display Font:** Ploni Tzar (with Ploni, system-ui)
 **Body Font:** Ploni (with system-ui)
 
-**Character:** Headlines are Ploni Light (`--font-headline`, weight 300, tracking `--track-headline` -0.05em, leading .88 to .95): size carries the hierarchy, never weight. Ploni Tzar (`--font-display`) stays for the small legends: pill labels, captions, counts, the route shield. Ploni does the reading. Both are licensed and self-hosted (Ploni 300 to 600, Ploni Tzar 300 to 700).
+**Character:** Headlines are Ploni Light (`--font-headline`, weight 300, tracking `--track-headline` -0.045em, leading .92): size carries the hierarchy, never weight. Ploni Tzar (`--font-display`) stays for the small legends: pill labels, captions, counts, the route shield. Ploni does the reading. Both are licensed and self-hosted (Ploni 300 to 600, Ploni Tzar 300 to 700).
 
 ### Hierarchy
-- **Display** (700, clamp(2.75rem, 6vw, 6rem), 0.94): page titles in the title band. The home headline runs a little larger and tighter (up to 6rem, 0.9) with its last word in works orange.
-- **Headline** (700, clamp(2.375rem, 4.8vw, 4.5rem), 0.96): section titles on paper, max about 16ch.
-- **Destination** (700, clamp(1.75rem, 3vw, 2.75rem), 1.02): names in destination rows (practice areas, jobs). The menu's rows use the same voice at up to 5.5rem, also scaled by viewport height.
-- **Title** (500 to 700, 1.5rem, 1.1): step titles, card titles (1.625rem, 700), sidebar heads.
-- **Figure** (700, clamp(2.25rem, 3.2vw, 3.25rem), 1, tabular): counts on distance signs.
-- **Sign legend** (700, 1.0625rem): buttons, menu toggle, header links, anything that is the text on a plate.
-- **Body** (400, 1.0625rem, 1.6) and **Prose** (400, 1.1875rem, 1.7, max 62 to 66ch): running text.
-- **Label** (500, 0.8125rem to 0.875rem, Ploni Tzar): filter captions, card meta, table heads, stage labels. Sentence case, no tracking, never uppercase.
+One scale, defined once in `wp-content/themes/log/src/styles/tokens.css`: sizes `--fs-*`, weights `--fw-*`, leading `--lh-*`, tracking `--track-*`, and `--type-*` roles to use with `font:`. No stylesheet sets a size outside it. Sizes below run from a 375px phone to a 1440px screen.
+
+Headlines, Ploni Light 300, grow with the screen:
+- **h1** `--fs-h1` (48 → 97px, leading .92, tracking -0.045em): page titles in the title band, the project title, "who we are", the drive's figures.
+- **h2** `--fs-h2` (40 → 72px, .92, -0.045em): section titles, the home headline (capped at 4.5rem, three lines), the numbers rows.
+- **h3** `--fs-h3` (32 → 51px, 1.02, -0.03em): destination rows (practice areas, jobs), lead cards, the build steps on the map, the hero figures. The menu's rows run between h3 and h1, also scaled by viewport height.
+- **h4** `--fs-h4` (26 → 35px, 1.02, -0.03em): card titles, process steps, values, quotes and blockquotes, small section heads (featured, search groups, article h2).
+
+Text steps are fixed:
+- **Title** `--fs-title` 24px, Ploni Tzar 500: h3 elements, office and popup names, side titles, form success.
+- **Lead** `--fs-lead` 20px: ledes and prose (Ploni 400, leading 1.55 and 1.7, 50 to 66ch), and names in lists (Ploni Tzar 500).
+- **Base** `--fs-base` 17px: body (1.6), and every legend on a plate: buttons, chips, nav, header links, pagination.
+- **Small** `--fs-small` 15px: captions, meta lines, field labels, table cells.
+- **Micro** `--fs-micro` 13px: map labels, table heads, card meta, the hero filters' captions. Nothing is smaller, apart from MapLibre's own attribution.
+
+The footer's "בואו נדבר" (`--fs-mega`, up to 14.5rem) is the one size outside the scale, on purpose.
+
+Weights: 300 for headlines, 400 for reading, 500 for every legend, label and small title. 700 appears only on the road's gantry signs (the exit sign) and on labels drawn straight over the 3D map, where they need the extra stroke against the city.
 
 ### Named Rules
 **The Tabular Rule.** Every number (counts, units, distances, years, shields, grid references) is set with tabular numerals. Grid references are isolated left-to-right inside RTL text.
 
-**The Legend Rule.** Text on a pill or a small label is Ploni Tzar 500. Anything set big (titles, destinations, figures, menu rows) is Ploni Light. Bold appears only on the road's gantry signs.
+**The Legend Rule.** Text on a pill or a small label is Ploni Tzar 500. Anything set big (titles, destinations, figures, menu rows) is Ploni Light. Bold appears only on the road's gantry signs and on labels over the map.
 
 ## Layout
 
 RTL throughout; "start" is the right edge, "forward" is left. The container is 1320px wide inside a fluid gutter of clamp(16px, 4vw, 56px). Sections breathe at clamp(56px, 7vw, 108px) top and bottom. The header is 84px (68px on phones) and every page without a full-screen cover hangs it over a navy strip that the page's title band continues, so the gantry always reads light on navy.
 
-The home page is the map, full viewport. The headline sits straight on the sea at the start side with no panel behind it; a gradient scrim darkens the start and bottom edges instead. Under it the destination plate and three lane filters hang 8px apart, and the whole set fits the first screen: the headline is Ploni Light at clamp(2.5rem, 4.1vw, 4.5rem) on a 9.6em measure, so the default text always breaks into three lines; a headline of two or three words (`hero__title--short`) stands larger on one line. Nothing hangs over it: the lane-split pair stays in the header, as on every page. The distance sign stands at the bottom end corner and map controls as small plates along the end edge.
+The home page is the map, full viewport. The headline sits straight on the sea at the start side with no panel behind it; a gradient scrim darkens the start and bottom edges instead. Under it the destination plate and three lane filters hang 8px apart, and the whole set fits the first screen: the headline is Ploni Light at the h2 step (`--fs-h2`, up to 4.5rem) on a 9.6em measure, so the default text always breaks into three lines; a headline of two or three words (`hero__title--short`) stands larger on one line. Nothing hangs over it: the lane-split pair stays in the header, as on every page. The distance sign stands at the bottom end corner and map controls as small plates along the end edge.
 
 **The drive.** The map does not end at the first screen. It stays pinned behind the first chapter, and the scroll moves its camera (`src/home/drive.js`): from Gush Dan up to the whole country seen from over the sea, every project lighting as a small orange beacon rippling out from where the camera stood. The chapter's legend sits straight on the sea under a start-and-bottom scrim, lights word by word, and its figures count with the beacons. On phones the country stands upright, north up, between the figures and the legend. Scrolling back to the top hands the camera back exactly where the visitor left it.
 
