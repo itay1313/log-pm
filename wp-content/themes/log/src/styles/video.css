@@ -1,9 +1,10 @@
 /* ------------------------------------------------------------------ background videos (template-parts/video-bg.php) */
 
 /*
- * Night footage under white legends. The clip itself is graded so its black is the plate and its brightest
- * pixel stays near 64% (tools/video-bg.sh), and a navy scrim goes on top of that. Measured with
- * tools/video-contrast.py: white text clears 4.5:1 on every frame, not only on the poster.
+ * Night footage under white legends. The clip itself is graded so its black is the plate and its highlights
+ * stop near 64% (tools/video-bg.sh); the navy scrim does the rest, and it is not optional: daylight footage
+ * alone gives white text only ~2.6:1. Measured with tools/video-contrast.py on every frame, at the scrim's
+ * lightest point under the text: footer 6.7:1, control 5.2:1, careers 5.5:1 (AA body text is 4.5).
  * The band paints no z-index of its own, so its pause button can sit above the band's text.
  */
 .vbg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: var(--plate); }
@@ -35,7 +36,7 @@
   inset: 0 0 auto; height: clamp(520px, 78vh, 940px);
   --vbg-scrim: linear-gradient(var(--plate) 0, rgb(19 33 47 / .42) 24%, rgb(19 33 47 / .34) 52%, var(--plate) 100%);
 }
-.site-footer > .vbg .vbg__toggle { inset-block: clamp(20px, 3vw, 36px) auto; }
+.site-footer > .vbg .vbg__toggle { inset-block: calc(var(--header-h) + 12px) auto; } /* clear of the fixed header when the footer reaches the top */
 .site-footer__inner { position: relative; z-index: 1; }
 
 /* Control company and careers: the opening band becomes a moving picture with the legend low on it */
@@ -54,4 +55,6 @@
 @media (max-width: 700px) {
   .control-hero__strip:has(> .vbg), .careers-hero__copy:has(> .vbg) { min-height: clamp(420px, 74svh, 640px); }
   .vbg__toggle { width: 40px; height: 40px; }
+  /* Phones: "let's talk" and its arrow fill the width, so the pause button gets its own row above them */
+  .site-footer:has(> .vbg) { padding-top: calc(var(--header-h) + 76px); }
 }

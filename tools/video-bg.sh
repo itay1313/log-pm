@@ -8,12 +8,13 @@
 #   2. crops to 16:9, <zoom> 0.8 keeps the middle 80% (<crop-y> 0 keeps the top, 1 the bottom: drone shots
 #      usually want less sky),
 #   3. grades it into the site's night: most colour out, black mapped onto the navy plate (#13212f) so the
-#      frame's edges melt into the sections around it, highlights capped at ~64% so white text on top keeps
-#      its contrast even before the CSS scrim, a soft vignette,
+#      frame's edges melt into the sections around it, highlights capped at ~64% so the CSS scrim on top
+#      (src/styles/video.css) can be light and still keep white text above 4.5:1, a soft vignette,
 #   4. crossfades the last second into the first so the loop has no seam,
 #   5. writes <name>-1600.mp4, <name>-960.mp4 and a <name>.jpg poster into the theme's assets/video/.
 #
 # No audio track, faststart, H.264 High so every browser plays it. Check the result with tools/video-contrast.py.
+# SAT=0.6 keeps more of the colour (night footage, where lit windows and the horizon glow are the point).
 set -euo pipefail
 
 src=${1:?source clip}; name=${2:?name}; start=${3:-0}; len=${4:-14}; cropy=${5:-0.5}; speed=${6:-1}; zoom=${7:-1}
@@ -22,7 +23,7 @@ mkdir -p "$out"
 fade=1.2
 
 # The grade. Values are tuned by eye against --plate and checked by video-contrast.py, not by theory.
-grade="hue=s=0.25,eq=contrast=1.25:gamma=0.9,\
+grade="hue=s=${SAT:-0.25},eq=contrast=1.25:gamma=0.9,\
 curves=r='0/0.05 0.5/0.22 1/0.62':g='0/0.1 0.5/0.27 1/0.64':b='0/0.15 0.5/0.33 1/0.66',\
 vignette=angle=PI/4"
 
