@@ -37,7 +37,7 @@ $jobs = new WP_Query( [
 	</figure>
 	<div class="container careers-hero__copy">
 		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ) ); ?></h1>
-		<p class="page-header__lede"><?php echo esc_html( log_text( 'careers_lede', 'עבודה על תכניות שמשנות ערים, בצוות שמלמד אחד את השני.', 'option' ) ); ?></p>
+		<p class="page-header__lede"><?php echo esc_html( log_text( 'careers_lede', 'בלוג תעבדו לצד מיטב אנשי המקצוע, תקבלו אחריות אמיתית על תהליכים מהותיים ותהיו חלק מארגון שמאמין בצמיחה מקצועית ואישית.', 'option' ) ); ?></p>
 		<div class="cta-row">
 			<a class="btn btn--primary" href="#jobs">למשרות הפתוחות</a>
 			<a class="btn" href="#path">איך מתקבלים</a>
