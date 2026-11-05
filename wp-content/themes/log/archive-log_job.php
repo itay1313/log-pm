@@ -24,8 +24,8 @@ $jobs = new WP_Query( [
 	'posts_per_page' => -1,
 	'meta_key'       => 'is_open',
 	'meta_value'     => '1',
-	'orderby'        => 'date',
-	'order'          => 'DESC',
+	// Jobs posted together share a date; ID keeps them in the order they were added, on any database.
+	'orderby'        => [ 'date' => 'DESC', 'ID' => 'DESC' ],
 	'no_found_rows'  => true,
 ] );
 ?>
