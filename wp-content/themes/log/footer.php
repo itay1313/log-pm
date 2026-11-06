@@ -60,7 +60,7 @@ $legal = array_filter( [
 				<?php foreach ( $legal as $label => $p ) : ?><li><a href="<?php echo esc_url( get_permalink( $p ) ); ?>"><?php echo esc_html( $label ); ?></a></li><?php endforeach; ?>
 				<li><button type="button" class="link-button" data-cookie-settings>הגדרות עוגיות</button></li>
 			</ul>
-			<p class="site-footer__copy">© <?php echo esc_html( date_i18n( 'Y' ) ); ?> לוג ניהול פרויקטים בע"מ</p>
+			<p class="site-footer__copy">© <?php echo esc_html( date_i18n( 'Y' ) ); ?> לוג ניהול פרויקטים בע"מ<span class="site-footer__credit" dir="ltr">created by <a href="https://itaycode.com" rel="noopener" target="_blank">com-mando.com</a></span></p>
 		</nav>
 	</div>
 </footer>
