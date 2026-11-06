@@ -553,6 +553,9 @@ body.page-template-page-control .person__placeholder, .section--night .person__p
 .site-footer__list a, .site-footer .link-button { font: var(--type-legend); text-decoration: none; }
 .site-footer__list a:hover, .site-footer .link-button:hover { color: var(--works); }
 .site-footer__copy { margin: 0; font-size: var(--fs-small); }
+.site-footer__credit { display: inline-block; margin-inline-start: 1.5rem; }
+.site-footer__credit a { color: var(--legend); text-decoration: none; }
+.site-footer__credit a:hover, .site-footer__credit a:focus-visible { color: var(--works); }
 .site-footer__nav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 1rem; }
 
 @media (max-width: 900px) {
