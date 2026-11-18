@@ -113,7 +113,8 @@ body {
 .logo { --logo-w: 8.5rem; --logo-a: var(--legend); --logo-b: var(--works); --logo-b-deep: var(--logo-orange-deep); justify-self: start; display: inline-grid; width: var(--logo-w); color: var(--logo-a); }
 .logo__mark { display: block; width: 100%; height: auto; }
 .logo--text { width: auto; font: 700 1.5rem/1 var(--font-display); letter-spacing: -0.02em; }
-.period { color: var(--works); }
+.title-end { white-space: nowrap; }
+.period { display: inline-block; color: var(--works); transform-origin: 50% 80%; }
 
 .legend { align-self: center; padding-block: clamp(2.5rem, 7vh, 5rem); }
 h1 {
@@ -177,6 +178,7 @@ h1 > span { display: inline-block; }
   .logo { animation: arrive .9s cubic-bezier(.19, 1, .22, 1) .4s both; }
   h1 > span { animation: rise 1.15s cubic-bezier(.165, .84, .44, 1) .45s both; }
   .lane i { animation: paint 1s cubic-bezier(.65, 0, .35, 1) .75s both; }
+  .period { animation: land .7s cubic-bezier(.34, 1.8, .64, 1) 1.3s both; } /* the junction lands after its words */
   .works { animation: mount .8s cubic-bezier(.19, 1, .22, 1) 1.5s both; }
   .lede { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) .9s both; }
   .foot { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) 1.05s both; }
@@ -185,6 +187,7 @@ h1 > span { display: inline-block; }
 @keyframes rise { from { transform: translateY(112%); } }
 @keyframes paint { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } } /* forward is left: paint from the start edge */
 @keyframes mount { from { clip-path: inset(0 0 100% 0 round 10px); } to { clip-path: inset(0 0 0 0 round 10px); } }
+@keyframes land { from { transform: scale(0); } }
 @keyframes arrive { from { opacity: 0; transform: translateY(14px); } }
 </style>
 </head>
@@ -196,7 +199,7 @@ h1 > span { display: inline-block; }
 	echo $logo !== '' ? $logo : '<div class="logo logo--text">' . esc_html( $name ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in log_logo()
 	?>
 	<div class="legend">
-		<h1><span><span class="shield" aria-hidden="true">00</span>האתר בבנייה<span class="period">.</span></span></h1>
+		<h1><span><span class="shield" aria-hidden="true">00</span>האתר <span class="title-end">בבנייה<span class="period">.</span></span></span></h1>
 		<div class="lane"><i aria-hidden="true"></i><p class="works">אתר חדש · בתכנון מתקדם</p></div>
 		<p class="lede">אנחנו מתכננים שכונות וערים, ועכשיו גם את הבית החדש שלנו ברשת. נחזור בקרוב עם מפת כל הפרויקטים.</p>
 	</div>

@@ -74,7 +74,11 @@ function log_title( string $text, bool $dot = false ): string {
 	if ( $text === '' || preg_match( '/[?!…:]$/u', $text ) ) {
 		return esc_html( $text );
 	}
-	return esc_html( rtrim( $text, '.' ) ) . '<span class="period' . ( $dot ? ' period--dot' : '' ) . '">.</span>';
+	// The last word and its period are tied (.title-end, nowrap): a period never wraps onto a line of its own.
+	if ( ! preg_match( '/^(.*\s)?(\S+)$/su', rtrim( $text, '.' ), $m ) ) {
+		return esc_html( $text );
+	}
+	return esc_html( $m[1] ?? '' ) . '<span class="title-end">' . esc_html( $m[2] ) . '<span class="period' . ( $dot ? ' period--dot' : '' ) . '">.</span></span>';
 }
 
 /**

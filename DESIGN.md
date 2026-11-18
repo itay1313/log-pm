@@ -29,6 +29,10 @@ colors:
   map-road-regional: "#b4c4d4"
   map-road: "#e3ebf2"
   map-road-major: "#ffffff"
+  map-sky: "#4a6178"
+  map-sky-zenith: "#121922"
+  map-tree: "#3e5a52"
+  map-tree-lit: "#557466"
 typography:
   display:
     fontFamily: "'Ploni', system-ui, sans-serif"
@@ -240,6 +244,8 @@ Density follows signage: big legends in Ploni Tzar, tabular figures, one arrow s
 
 One palette for the site and the brand book (`src/tokens/tokens.json`). Two families, night and day, and one orange. Night is asphalt at night: the brand dark, the ground of the map and the places. Day is road paper: people and reading. The orange is the book's #f89e2d and marks the one thing that matters now. The book's neutral asphalt (#24242B) and its secondary blue-grey (#9DBBC4) are retired: the navy took the asphalt's place, and the blue-grey survives only as the map's national roads.
 
+**No colour outside the tokens.** CSS reads `var(--…)` and makes a shade or a shadow with `color-mix()` between tokens; JS reads `tokens.js` (`color`, `alpha`, `mix`). Shadows and scrims are night-deep at an opacity, never black. The projects map, the 3D map, the road and the drawings all paint from the same two families. `npm run build` runs `src/tokens/lint.mjs` first and fails on any raw #hex, rgb() or 0x colour in `src/`; a mask or a light temperature (a three.js sun) is marked `colour-ok: <reason>`.
+
 ### Primary
 - **Works-Zone Orange** (`works`): LOG's projects and the 3D city on the map, the route shield, the destination plate's "go" button, the sheet label on title bands, hover and focus keylines, focus rings (3px outline, 3px offset), selection, caret, the active lane underline, the lane line and the stage dashes.
 - **Deep Works Orange** (`works-deep`): orange that has to read as small text or an arrow on paper (link-arrow hover, ghost-button hover keyline), 4.7:1 on paper. On night grounds it swaps back to `works`.
@@ -301,7 +307,7 @@ Weights: 700 for headlines (and the road's gantry signs, and labels over the 3D 
 
 **The Legend Rule.** Text on a pill or a small label is Ploni Tzar 500. Titles, destinations and menu rows are Ploni Tzar Bold. Figures and quotes set big are Ploni Light.
 
-**The Period Rule.** A headline ends in a period, set by `log_title()`; one that ends in ? or ! keeps it. Names (a project, a job, a person) are not headlines and take none. Only the page's main headline gets the orange period.
+**The Period Rule.** A headline ends in a period, set by `log_title()`; one that ends in ? or ! keeps it. Names (a project, a job, a person) are not headlines and take none. Only the page's main headline gets the orange period. The last word and its period are tied (`.title-end`, nowrap), so a period never wraps alone. The orange period lands last: after the headline's lines rise, it grows from nothing with a small overshoot (motion.js `rise()`, the coming-soon page in CSS); under reduced motion it is simply there.
 
 ## Layout
 
