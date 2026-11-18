@@ -2,6 +2,8 @@
 /**
  * Token generator. Reads src/tokens/tokens.json (the one source) and writes:
  *   src/styles/tokens.gen.css  custom properties on :root, imported by tokens.css
+ *   assets/brand/tokens.css    the same file, shipped (src/ isn't deployed) for pages that stand outside the
+ *                              build: log-core's coming-soon gate inlines it
  *   src/tokens/tokens.js       the same values for JS (the 3D map, MapLibre, drawings, the /brand book)
  *   DESIGN.md                  the `colors:` block of its frontmatter (the prose stays hand-written)
  *
@@ -17,6 +19,7 @@ const theme = resolve(here, '../..');
 const files = {
   json: resolve(here, 'tokens.json'),
   css: resolve(theme, 'src/styles/tokens.gen.css'),
+  shipped: resolve(theme, 'assets/brand/tokens.css'),
   js: resolve(here, 'tokens.js'),
   design: resolve(theme, '../../../DESIGN.md'),
 };
@@ -65,7 +68,7 @@ if (design) {
   design = design.replace(/^colors:\n(?:  .*\n)+/m, block);
 }
 
-const outputs = [[files.css, css], [files.js, jsText], ...(design ? [[files.design, design]] : [])];
+const outputs = [[files.css, css], [files.shipped, css], [files.js, jsText], ...(design ? [[files.design, design]] : [])];
 let stale = 0;
 for (const [path, text] of outputs) {
   const current = existsSync(path) ? readFileSync(path, 'utf8') : '';

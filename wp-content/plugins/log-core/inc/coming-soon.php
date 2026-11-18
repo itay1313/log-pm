@@ -59,10 +59,16 @@ add_action( 'template_redirect', function () {
  * The page is one full-screen gantry sign, the same plate as the theme's menu: route shield 00 and the
  * legend, then a lane marking that is painted as far as the works plate and stops there.
  * Self-contained (inline CSS, the theme's self-hosted fonts, no script), so it never depends on the build.
+ * Its colours and fonts are the theme's tokens: assets/brand/tokens.css, written from src/tokens/tokens.json.
  */
 function log_coming_soon_page(): void {
-	$fonts = get_template_directory_uri() . '/assets/fonts/';
-	$name  = get_bloginfo( 'name' );
+	$fonts  = get_template_directory_uri() . '/assets/fonts/';
+	$name   = get_bloginfo( 'name' );
+	$file   = get_template_directory() . '/assets/brand/tokens.css';
+	$tokens = is_readable( $file ) ? str_replace( '</', '', (string) file_get_contents( $file ) ) : '';
+	if ( $tokens === '' ) { // another theme is active: the few values this page needs
+		$tokens = ':root { --night: #13212f; --night-line: #3a4e62; --night-deep: #0b131b; --night-ink: #f2f4f1; --night-muted: #a3b3bf; --works: #f89e2d; --logo-orange-deep: #f67b1c; --sign-ink: #15202b; --font-display: \'Ploni Tzar\', \'Ploni\', system-ui, sans-serif; --font-text: \'Ploni\', system-ui, sans-serif; --ease-out: cubic-bezier(.16, 1, .3, 1); }';
+	}
 	?>
 <!doctype html>
 <html lang="he-IL" dir="rtl">
@@ -70,21 +76,18 @@ function log_coming_soon_page(): void {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#091018">
+<meta name="theme-color" content="#0b131b">
 <title><?php echo esc_html( $name ); ?> · בקרוב</title>
 <link rel="preload" href="<?php echo esc_url( $fonts . 'ploni_tzar_bold.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: 'Ploni'; src: url('<?php echo esc_url( $fonts . 'ploni_regular.woff2' ); ?>') format('woff2'); font-weight: 400; font-display: swap; }
 @font-face { font-family: 'Ploni Tzar'; src: url('<?php echo esc_url( $fonts . 'ploni_tzar_medium.woff2' ); ?>') format('woff2'); font-weight: 500; font-display: swap; }
 @font-face { font-family: 'Ploni Tzar'; src: url('<?php echo esc_url( $fonts . 'ploni_tzar_bold.woff2' ); ?>') format('woff2'); font-weight: 700; font-display: swap; }
-/* A copy of the tokens this page uses from the theme's src/styles/tokens.css; swap both together. */
+<?php echo $tokens; // the theme's own generated file ?>
+
 :root {
-  --ground: #091018; /* behind the sign: the menu's backdrop, made solid */
-  --plate: #13212f; --plate-line: #3a4e62; --legend: #f2f4f1; --legend-muted: #a3b3bf;
-  --works: #f7931d; --sign-ink: #15202b;
-  --font-display: 'Ploni Tzar', 'Ploni', system-ui, sans-serif;
-  --font-text: 'Ploni', system-ui, sans-serif;
-  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ground: var(--night-deep); /* behind the sign */
+  --plate: var(--night); --plate-line: var(--night-line); --legend: var(--night-ink); --legend-muted: var(--night-muted);
   --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 18'%3E%3Cpath d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
@@ -106,8 +109,11 @@ body {
   padding: clamp(30px, 3.6vw, 52px) clamp(34px, 5vw, 84px) clamp(30px, 3.2vw, 46px);
 }
 .sign::before { content: ''; position: absolute; inset: 10px; border: 3px solid var(--legend); border-radius: 10px; pointer-events: none; }
-.logo { display: inline-flex; align-items: center; gap: .5rem; font: 700 1.5rem/1 var(--font-display); letter-spacing: -0.02em; }
-.logo i { display: block; width: .8em; height: .8em; border-radius: 50%; border: .18em solid var(--works); }
+/* The logo: the theme's log_logo(), white and orange on night (the same hooks as the theme's header.css). */
+.logo { --logo-w: 8.5rem; --logo-a: var(--legend); --logo-b: var(--works); --logo-b-deep: var(--logo-orange-deep); justify-self: start; display: inline-grid; width: var(--logo-w); color: var(--logo-a); }
+.logo__mark { display: block; width: 100%; height: auto; }
+.logo--text { width: auto; font: 700 1.5rem/1 var(--font-display); letter-spacing: -0.02em; }
+.period { color: var(--works); }
 
 .legend { align-self: center; padding-block: clamp(2.5rem, 7vh, 5rem); }
 h1 {
@@ -159,7 +165,7 @@ h1 > span { display: inline-block; }
   body { padding: 6px; }
   .sign { border-radius: 14px; padding: 24px 24px 22px; }
   .sign::before { inset: 7px; border-width: 2px; border-radius: 7px; }
-  .logo { font-size: 1.25rem; }
+  .logo { --logo-w: 6.5rem; }
   .foot { flex-direction: column-reverse; align-items: stretch; }
   .go { justify-content: space-between; }
 }
@@ -184,9 +190,9 @@ h1 > span { display: inline-block; }
 </head>
 <body>
 <main class="sign">
-	<div class="logo"><i></i>לוג ניהול פרויקטים</div>
+	<?php echo function_exists( 'log_logo' ) ? log_logo( [ 'variant' => 'night', 'label' => $name ] ) : '<div class="logo logo--text">' . esc_html( $name ) . '</div>'; ?>
 	<div class="legend">
-		<h1><span><span class="shield" aria-hidden="true">00</span>האתר בבנייה.</span></h1>
+		<h1><span><span class="shield" aria-hidden="true">00</span>האתר בבנייה<span class="period">.</span></span></h1>
 		<div class="lane"><i aria-hidden="true"></i><p class="works">אתר חדש · בתכנון מתקדם</p></div>
 		<p class="lede">אנחנו מתכננים שכונות וערים, ועכשיו גם את הבית החדש שלנו ברשת. נחזור בקרוב עם מפת כל הפרויקטים.</p>
 	</div>
