@@ -81,7 +81,7 @@ function log_coming_soon_page(): void {
 :root {
   --ground: #091018; /* behind the sign: the menu's backdrop, made solid */
   --plate: #13212f; --plate-line: #3a4e62; --legend: #f2f4f1; --legend-muted: #a3b3bf;
-  --works: #f7931d; --sign-ink: #15202b;
+  --works: #f7931d; --logo-orange-deep: #f67b1c; --sign-ink: #15202b;
   --font-display: 'Ploni Tzar', 'Ploni', system-ui, sans-serif;
   --font-text: 'Ploni', system-ui, sans-serif;
   --ease-out: cubic-bezier(.16, 1, .3, 1);
@@ -108,6 +108,9 @@ body {
 .sign::before { content: ''; position: absolute; inset: 10px; border: 3px solid var(--legend); border-radius: 10px; pointer-events: none; }
 .logo { display: inline-flex; align-items: center; gap: .5rem; font: 700 1.5rem/1 var(--font-display); letter-spacing: -0.02em; }
 .logo i { display: block; width: .8em; height: .8em; border-radius: 50%; border: .18em solid var(--works); }
+/* The theme's wordmark (log_logo(), night variant): white and orange on the plate, as in the site header. */
+.logo--night { display: block; justify-self: start; width: 7.5rem; --logo-a: var(--legend); --logo-b: var(--works); --logo-b-deep: var(--logo-orange-deep); }
+.logo__mark { display: block; width: 100%; height: auto; }
 
 .legend { align-self: center; padding-block: clamp(2.5rem, 7vh, 5rem); }
 h1 {
@@ -160,6 +163,7 @@ h1 > span { display: inline-block; }
   .sign { border-radius: 14px; padding: 24px 24px 22px; }
   .sign::before { inset: 7px; border-width: 2px; border-radius: 7px; }
   .logo { font-size: 1.25rem; }
+  .logo--night { width: 6rem; }
   .foot { flex-direction: column-reverse; align-items: stretch; }
   .go { justify-content: space-between; }
 }
@@ -184,7 +188,11 @@ h1 > span { display: inline-block; }
 </head>
 <body>
 <main class="sign">
-	<div class="logo"><i></i>לוג ניהול פרויקטים</div>
+	<?php
+	// The theme's wordmark; the old ring and name stay as a fallback if the theme isn't active.
+	$logo = function_exists( 'log_logo' ) ? log_logo( [ 'variant' => 'night' ] ) : '';
+	echo $logo !== '' ? $logo : '<div class="logo"><i></i>לוג ניהול פרויקטים</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in log_logo()
+	?>
 	<div class="legend">
 		<h1><span><span class="shield" aria-hidden="true">00</span>האתר בבנייה.</span></h1>
 		<div class="lane"><i aria-hidden="true"></i><p class="works">אתר חדש · בתכנון מתקדם</p></div>
