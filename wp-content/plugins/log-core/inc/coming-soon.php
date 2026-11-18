@@ -190,7 +190,11 @@ h1 > span { display: inline-block; }
 </head>
 <body>
 <main class="sign">
-	<?php echo function_exists( 'log_logo' ) ? log_logo( [ 'variant' => 'night', 'label' => $name ] ) : '<div class="logo logo--text">' . esc_html( $name ) . '</div>'; ?>
+	<?php
+	// The theme's wordmark. log_logo() returns '' if its SVG is missing; the name stands in then, and when another theme is active.
+	$logo = function_exists( 'log_logo' ) ? log_logo( [ 'variant' => 'night', 'label' => $name ] ) : '';
+	echo $logo !== '' ? $logo : '<div class="logo logo--text">' . esc_html( $name ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in log_logo()
+	?>
 	<div class="legend">
 		<h1><span><span class="shield" aria-hidden="true">00</span>האתר בבנייה<span class="period">.</span></span></h1>
 		<div class="lane"><i aria-hidden="true"></i><p class="works">אתר חדש · בתכנון מתקדם</p></div>
