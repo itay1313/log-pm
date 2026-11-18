@@ -16,6 +16,8 @@ export const color = {
   works: "#f7931d",
   worksDeep: "#b9650a",
   signInk: "#15202b",
+  logoGrey: "#77787b",
+  logoOrangeDeep: "#f67b1c",
   danger: "#b3261e",
   mapFog: "#1d2a3a",
   mapSea: "#2f4a63",
