@@ -20,6 +20,10 @@
   --orange-deep: var(--works-deep);
   --grey: var(--slate);
   --line: var(--rule-soft);
+  /* The day values, fixed here on :root. Night worlds swap --slate and --rule (pages.css); a white sign
+     inside one still reads them by day. */
+  --day-slate: var(--slate);
+  --day-rule: var(--rule);
 
   /* Type roles: use these with `font:` so a role is one line, everywhere. */
   /* The book's three weights, no more: heavy headlines, regular text, light figures. */

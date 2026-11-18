@@ -57,8 +57,14 @@ export function alpha(hex, a) {
   const n = parseInt(hex.slice(1), 16);
   return \`rgba(\${n >> 16}, \${(n >> 8) & 255}, \${n & 255}, \${a})\`;
 }
+/** Two token colours mixed in sRGB, t the share of b, as #rrggbb: the shades a drawing needs between two tokens. */
+export function mix(a, b, t = 0.5) {
+  const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16);
+  const c = (s) => Math.round(((x >> s) & 255) * (1 - t) + ((y >> s) & 255) * t);
+  return '#' + ((1 << 24) | (c(16) << 16) | (c(8) << 8) | c(0)).toString(16).slice(1);
+}
 `;
-jsText += `export default { ${Object.keys(js).join(', ')}, alpha };\n`;
+jsText += `export default { ${Object.keys(js).join(', ')}, alpha, mix };\n`;
 
 // DESIGN.md: replace the colors block (from "colors:" to the next top-level key) inside the frontmatter.
 let design = existsSync(files.design) ? readFileSync(files.design, 'utf8') : null;

@@ -26,7 +26,11 @@ export const color = {
   mapRoadNational: "#9db1c6",
   mapRoadRegional: "#b4c4d4",
   mapRoad: "#e3ebf2",
-  mapRoadMajor: "#ffffff"
+  mapRoadMajor: "#ffffff",
+  mapSky: "#4a6178",
+  mapSkyZenith: "#121922",
+  mapTree: "#3e5a52",
+  mapTreeLit: "#557466"
 };
 export const hair = {
   hair: "rgba(242, 244, 241, .16)",
@@ -95,4 +99,10 @@ export function alpha(hex, a) {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 }
-export default { color, hair, font, size, weight, leading, tracking, radius, line, layout, ease, alpha };
+/** Two token colours mixed in sRGB, t the share of b, as #rrggbb: the shades a drawing needs between two tokens. */
+export function mix(a, b, t = 0.5) {
+  const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16);
+  const c = (s) => Math.round(((x >> s) & 255) * (1 - t) + ((y >> s) & 255) * t);
+  return '#' + ((1 << 24) | (c(16) << 16) | (c(8) << 8) | c(0)).toString(16).slice(1);
+}
+export default { color, hair, font, size, weight, leading, tracking, radius, line, layout, ease, alpha, mix };

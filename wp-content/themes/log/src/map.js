@@ -13,14 +13,17 @@ import { color, alpha } from './tokens/tokens.js';
 
 const ISRAEL = { center: [34.95, 31.5], zoom: 6.6 };
 const ORANGE = color.works;
+// Both themes are the brand's own families: the map at night is asphalt at night (night-*), the map by day is
+// road paper (paper, rule, ink). Each step up the ladder is one token lighter: water under the ground, the ground,
+// buildings, minor roads, major roads, labels.
 const THEMES = {
   dark: {
-    bg: '#15161c', land: '#1b1c23', water: '#0f1015', building: '#23242c', road: '#2e2f38', roadMajor: '#3a3b46',
-    boundary: '#2a2b34', label: '#8b8c96', ringFill: '#15161c', ink: '#f4f1ec', planFill: ORANGE, planOpacity: [0.18, 0.4], glow: alpha(ORANGE, 0.35), building3d: '#2a2b34',
+    bg: color.night, land: color.night, water: color.nightDeep, building: color.night2, road: color.nightRuleSoft, roadMajor: color.nightLine,
+    boundary: color.nightRuleSoft, label: color.nightMuted, ringFill: color.night, ink: color.nightInk, planFill: ORANGE, planOpacity: [0.18, 0.4], glow: alpha(ORANGE, 0.35), building3d: color.nightRuleSoft,
   },
   paper: {
-    bg: '#fbfaf8', land: '#f4f1ec', water: '#e9eef1', building: '#ece8e1', road: '#e1ddd7', roadMajor: '#d6d1c9',
-    boundary: '#d6d1c9', label: '#6e6f73', ringFill: '#fbfaf8', ink: '#24242b', planFill: ORANGE, planOpacity: [0.15, 0.35], glow: alpha(ORANGE, 0.25), building3d: '#e1ddd7',
+    bg: color.paper2, land: color.paper2, water: color.ruleSoft, building: color.paper, road: color.ruleSoft, roadMajor: color.rule,
+    boundary: color.rule, label: color.slate, ringFill: color.paper2, ink: color.ink, planFill: ORANGE, planOpacity: [0.15, 0.35], glow: alpha(ORANGE, 0.25), building3d: color.ruleSoft,
   },
 };
 const DOMAIN_LABEL = {
