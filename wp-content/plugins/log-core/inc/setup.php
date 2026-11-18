@@ -44,6 +44,7 @@ function log_system_pages(): array {
 		'accessibility' => [ 'הצהרת נגישות', '' ],
 		'privacy'       => [ 'מדיניות פרטיות', '' ],
 		'cookies'       => [ 'מדיניות עוגיות', '' ],
+		'brand'         => [ 'ספר המותג', 'page-brand.php' ], // password-protected, noindex (brand-book.php)
 	];
 }
 
@@ -65,6 +66,10 @@ function log_run_setup(): array {
 				'post_name'   => $slug,
 			] );
 			$log[] = "נוצר עמוד: $title (/$slug)";
+			if ( $slug === LOG_BRAND_BOOK_SLUG ) {
+				log_brand_book_protect( $ids[ $slug ] );
+				$log[] = 'ספר המותג נעול בסיסמה. אפשר לראות ולשנות אותה בעמוד עצמו, תחת "נראות".';
+			}
 		} else {
 			$ids[ $slug ] = $page->ID;
 		}

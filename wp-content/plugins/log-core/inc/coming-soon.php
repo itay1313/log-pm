@@ -43,6 +43,10 @@ add_action( 'template_redirect', function () {
 	if ( ! $preview && ( ! log_coming_soon_on() || current_user_can( 'edit_posts' ) ) ) {
 		return;
 	}
+	// The brand book has its own lock (a WP page password) and is never indexed: let the client reach it.
+	if ( ! $preview && is_page( LOG_BRAND_BOOK_SLUG ) ) {
+		return;
+	}
 	status_header( 503 );
 	header( 'Retry-After: 86400' );
 	header( 'X-Robots-Tag: noindex, nofollow' );
