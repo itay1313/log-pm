@@ -39,7 +39,10 @@ for (const el of document.querySelectorAll('[data-token-value]')) {
 
 for (const el of document.querySelectorAll('[data-contrast]')) {
   const [fg, bg] = el.dataset.contrast.split(' ').map(rgb);
-  if (fg && bg) el.textContent = `${contrast(fg, bg).toFixed(1)}:1`;
+  if (!fg || !bg) continue;
+  const ratio = contrast(fg, bg);
+  // A pair under 4.5:1 says so in the book itself.
+  el.textContent = `ניגודיות ${ratio.toFixed(1)}:1` + (ratio < 4.5 ? ' · מתחת ל־4.5' : '');
 }
 
 // A size token is a clamp() between a phone and a wide screen; show its two ends in px.

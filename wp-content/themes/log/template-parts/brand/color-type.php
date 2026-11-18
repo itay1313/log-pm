@@ -17,7 +17,7 @@ $weights = [
 // Type roles, largest first: [role token, size token, a line the site really sets in that role].
 $roles = [
 	[ 'type-h1', 'fs-h1', 'פרויקטים' ],
-	[ 'type-h2', 'fs-h2', 'מתכננים את מה שייבנה' ],
+	[ 'type-h2', 'fs-h2', 'מתכננים יחד' ],
 	[ 'type-h3', 'fs-h3', 'פינוי־בינוי בחולון' ],
 	[ 'type-h4', 'fs-h4', 'שלב התכנון הסטטוטורי' ],
 	[ 'type-title', 'fs-title', 'חברת הבקרה' ],
@@ -82,7 +82,7 @@ $roles = [
 		<i class="bk-line" aria-hidden="true"></i>
 		<dl class="bk-works__rules">
 			<div><dt>על הכתום</dt><dd>תמיד דיו כהה, אף פעם לא לבן. <span data-contrast="--sign-ink --works"></span></dd></div>
-			<div><dt>טקסט קטן על נייר</dt><dd>רק בכתום העמוק. <span data-contrast="--works-deep --paper"></span></dd></div>
+			<div><dt>טקסט קטן על נייר</dt><dd>רק בכתום העמוק, וגם הוא עוד צריך להתכהות. <span data-contrast="--works-deep --paper"></span></dd></div>
 			<div><dt>על לילה</dt><dd>הכתום הרגיל מחזיק לבד. <span data-contrast="--works --plate"></span></dd></div>
 		</dl>
 	</div>
