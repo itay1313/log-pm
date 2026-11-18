@@ -39,6 +39,17 @@ if (header) {
   solid();
 }
 
+// The logo assembles on the first page of a visit. The head script set .logo-intro (motion allowed, not seen yet).
+{
+  const html = document.documentElement;
+  const logo = document.querySelector('.site-header .logo[data-animate]');
+  if (logo && html.classList.contains('logo-intro')) {
+    import('./lines/logo.js').then((m) => m.assemble(logo)).catch(() => html.classList.remove('logo-intro'));
+  } else {
+    html.classList.remove('logo-intro');
+  }
+}
+
 // The menu: a modal dialog (focus stays inside, Esc closes, the page behind is inert). The map pauses under it.
 const menu = document.getElementById('site-menu');
 const menuBtn = document.querySelector('.menu-toggle');

@@ -17,6 +17,8 @@
   --works: #f7931d; /* LOG orange: active work, hover, focus */
   --works-deep: #b9650a; /* orange that has to read as small text on paper */
   --sign-ink: #15202b;
+  --logo-grey: #77787b; /* the grey half of the logo, read from the v3 book's logo image until LOG sends the master */
+  --logo-orange-deep: #f67b1c; /* the dark end of the logo's orange gradient; the light end is --works */
   --danger: #b3261e;
   /* map */
   --map-fog: #1d2a3a;

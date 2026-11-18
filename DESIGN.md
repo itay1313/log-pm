@@ -18,6 +18,8 @@ colors:
   works: "#f7931d"
   works-deep: "#b9650a"
   sign-ink: "#15202b"
+  logo-grey: "#77787b"
+  logo-orange-deep: "#f67b1c"
   danger: "#b3261e"
   map-fog: "#1d2a3a"
   map-sea: "#2f4a63"

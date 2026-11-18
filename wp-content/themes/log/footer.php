@@ -35,7 +35,7 @@ $legal = array_filter( [
 
 		<div class="site-footer__side">
 			<div class="site-footer__brand">
-				<?php get_template_part( 'template-parts/logo' ); ?>
+				<?php get_template_part( 'template-parts/logo', null, [ 'variant' => 'night' ] ); ?>
 				<p class="site-footer__line"><?php echo esc_html( log_text( 'footer_line', 'מתכננים. מחברים. מובילים.', 'option' ) ); ?></p>
 			</div>
 			<?php if ( $offices = log_offices() ) : ?>

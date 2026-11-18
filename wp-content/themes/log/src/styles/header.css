@@ -22,9 +22,20 @@ body.admin-bar .site-header { top: var(--wp-admin--admin-bar--height, 0px); }
 body:not(.has-cover) .site-main { padding-top: var(--header-h); background: linear-gradient(var(--plate) 0 var(--header-h), transparent 0); }
 body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)); background: linear-gradient(var(--plate) 0 calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)), transparent 0); }
 
-/* Wordmark slot until the final logo file arrives. */
-.logo { display: inline-flex; align-items: center; gap: .45rem; font-family: var(--font-headline); font-weight: var(--fw-regular); font-size: 1.875rem; letter-spacing: -0.04em; line-height: 1; }
-.logo__ring { width: .72em; height: .72em; border-radius: 50%; border: .16em solid var(--works); }
+/* The logo (inc/brand.php). --logo-w sizes it; --logo-a is the grey half, --logo-b to --logo-b-deep the orange.
+   The book's minimum is 40px wide; the tagline only from 90px. */
+.logo {
+  --logo-w: 6.25rem; --logo-a: var(--logo-grey); --logo-b: var(--works); --logo-b-deep: var(--logo-orange-deep);
+  display: inline-grid; width: var(--logo-w); min-width: 40px; line-height: 1; color: var(--logo-a);
+}
+.logo--night { --logo-a: var(--legend); }
+.logo--mono { --logo-a: currentColor; --logo-b: currentColor; --logo-b-deep: currentColor; color: inherit; }
+.logo__mark { display: block; width: 100%; height: auto; }
+.logo--tagline { container-type: inline-size; }
+.logo__tagline { margin-top: calc(var(--logo-w) * .142); font: var(--fw-bold) calc(var(--logo-w) * .124)/1 var(--font-display); text-align: justify; text-align-last: justify; white-space: nowrap; }
+@container (width < 90px) { .logo__tagline { display: none; } }
+/* Held back until src/lines/logo.js takes it, so the first frame isn't the finished logo. */
+html.logo-intro .logo[data-animate] [data-q] { opacity: 0; }
 
 /* The menu button: a white pill, the label and two dots that part on hover */
 .menu-toggle {
@@ -78,6 +89,7 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
 /* Phones: logo and menu on top; the lane split rides the bottom edge of the screen. */
 @media (max-width: 900px) {
   :root { --header-h: 68px; }
+  .site-header__logo .logo { --logo-w: 5.25rem; }
   .site-header__talk { display: none; }
   .menu-toggle { padding: .75rem 1rem; }
   .twin-nav:not(.twin-nav--sign) {

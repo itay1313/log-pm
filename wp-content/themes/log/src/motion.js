@@ -234,7 +234,7 @@ function pageCover() {
   const cover = document.createElement('div');
   cover.className = 'page-cover';
   cover.setAttribute('aria-hidden', 'true');
-  cover.innerHTML = '<span class="page-cover__mark"><span class="logo__ring"></span></span>';
+  cover.innerHTML = '<span class="page-cover__mark"><span class="page-cover__ring"></span></span>';
   document.body.appendChild(cover);
 
   if (html.classList.contains('is-covered')) {

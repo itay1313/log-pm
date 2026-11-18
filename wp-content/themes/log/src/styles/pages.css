@@ -536,7 +536,7 @@ body.page-template-page-control .person__placeholder, .section--night .person__p
 
 /* Beside the board */
 .site-footer__side { display: grid; align-self: end; align-content: end; gap: 2rem; }
-.site-footer .logo { font-size: 2.25rem; }
+.site-footer .logo { --logo-w: 8.5rem; }
 .site-footer__line { margin: .9rem 0 0; font: var(--type-name); color: var(--legend-muted); max-width: 22ch; }
 .site-footer__offices { display: grid; gap: .75rem; }
 .site-footer .office { background: var(--plate-2); box-shadow: inset 0 0 0 2px var(--plate-line); color: var(--legend); }
