@@ -32,7 +32,7 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
 .logo--mono { --logo-a: currentColor; --logo-b: currentColor; --logo-b-deep: currentColor; color: inherit; }
 .logo__mark { display: block; width: 100%; height: auto; }
 .logo--tagline { container-type: inline-size; }
-.logo__tagline { margin-top: calc(var(--logo-w) * .142); font: var(--fw-bold) calc(var(--logo-w) * .0775)/1 var(--font-display); text-align: justify; text-align-last: justify; }
+.logo__tagline { margin-top: calc(var(--logo-w) * .142); font: var(--fw-bold) calc(var(--logo-w) * .124)/1 var(--font-display); text-align: justify; text-align-last: justify; white-space: nowrap; }
 @container (width < 90px) { .logo__tagline { display: none; } }
 /* Held back until src/lines/logo.js takes it, so the first frame isn't the finished logo. */
 html.logo-intro .logo[data-animate] [data-q] { opacity: 0; }
