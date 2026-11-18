@@ -4,9 +4,9 @@
      Each orange piece has a grey twin. The orange shows through #logo_on, the grey through #logo_off;
      moving both rects sweeps the colour across. At rest the orange covers everything. -->
 <defs>
-<linearGradient id="logo_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--logo-b,#f7931d)"/><stop offset="1" style="stop-color:var(--logo-b-deep,#f67b1c)"/></linearGradient>
-<linearGradient id="logo_d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--logo-b-deep,#f67b1c)"/><stop offset="1" style="stop-color:var(--logo-b,#f7931d)"/></linearGradient>
-<linearGradient id="logo_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" style="stop-color:var(--logo-b-deep,#f67b1c)"/><stop offset="1" style="stop-color:var(--logo-b,#f7931d)"/></linearGradient>
+<linearGradient id="logo_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--logo-b,#f89e2d)"/><stop offset="1" style="stop-color:var(--logo-b-deep,#f67b1c)"/></linearGradient>
+<linearGradient id="logo_d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--logo-b-deep,#f67b1c)"/><stop offset="1" style="stop-color:var(--logo-b,#f89e2d)"/></linearGradient>
+<linearGradient id="logo_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" style="stop-color:var(--logo-b-deep,#f67b1c)"/><stop offset="1" style="stop-color:var(--logo-b,#f89e2d)"/></linearGradient>
 <clipPath id="logo_on"><rect data-sweep="on" x="0" y="0" width="1005.832" height="380"/></clipPath>
 <clipPath id="logo_off"><rect data-sweep="off" x="1005.832" y="0" width="0" height="380"/></clipPath>
 </defs>

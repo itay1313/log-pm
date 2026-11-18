@@ -71,7 +71,7 @@ ORDER = [('q3', 'd'), ('l-bowl', None), ('l-stem', 'v'), ('q2', None), ('g-arm',
          ('q1', 'd'), ('q4', None), ('g-bowl', 'h'), ('g-bar', None)]
 
 GREY = 'fill:var(--logo-a,#77787b)'
-LIGHT = '--logo-b,#f7931d'
+LIGHT = '--logo-b,#f89e2d'
 DEEP = '--logo-b-deep,#f67b1c'
 
 
@@ -113,7 +113,7 @@ def favicon():
     # A favicon can't read the page's CSS, so its colours are literal: --logo-grey and --works.
     pad = 8
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{n(cO - R - pad)} {-pad} {n(2 * R + 2 * pad)} {n(2 * R + 2 * pad)}">',
-           '<style>.a{fill:#77787b}.b{fill:#f7931d}@media (prefers-color-scheme:dark){.a{fill:#c4c6c8}}</style>']
+           '<style>.a{fill:#77787b}.b{fill:#f89e2d}@media (prefers-color-scheme:dark){.a{fill:#c4c6c8}}</style>']
     for q, c in (('q1', 'b'), ('q2', 'a'), ('q3', 'b'), ('q4', 'a')):
         out.append(f'<path class="{c}" d="{paths[q]}"/>')
     out.append('</svg>')
