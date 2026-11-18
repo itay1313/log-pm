@@ -17,11 +17,13 @@
  *
  * 5: the jobs the old site listed under "משרות" (log-pm.co.il, Nov 2026), so the careers page
  *    opens with LOG's real roles. A job whose title already exists is left alone.
+ *
+ * 6: the brand book page (/brand, page-brand.php), created locked with a random password.
  */
 
 defined( 'ABSPATH' ) || exit;
 
-const LOG_SCHEMA_VERSION = 5;
+const LOG_SCHEMA_VERSION = 6;
 
 add_action( 'init', function () {
 	if ( (int) get_option( 'log_schema_version', 1 ) >= LOG_SCHEMA_VERSION || wp_installing() ) {
@@ -44,6 +46,9 @@ add_action( 'init', function () {
 	}
 	if ( $from < 5 ) {
 		log_migrate_v5();
+	}
+	if ( $from < 6 ) {
+		log_migrate_v6();
 	}
 	update_option( 'log_schema_version', LOG_SCHEMA_VERSION, true );
 	delete_transient( 'log_migrating' );
@@ -314,4 +319,20 @@ function log_old_site_jobs(): array {
 			'advantage'    => "תואר בתכנון ערים\nניסיון קודם בתחום התכנון, גם כסטודנט.ית או מתמחה",
 		],
 	];
+}
+
+function log_migrate_v6(): void {
+	$id = log_brand_book_id();
+	if ( ! $id ) {
+		$id = (int) wp_insert_post( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'ספר המותג',
+			'post_name'   => LOG_BRAND_BOOK_SLUG,
+		] );
+		log_brand_book_protect( $id );
+	}
+	if ( $id && get_page_template_slug( $id ) !== 'page-brand.php' ) {
+		update_post_meta( $id, '_wp_page_template', 'page-brand.php' );
+	}
 }
