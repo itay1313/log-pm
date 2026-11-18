@@ -9,17 +9,18 @@
  */
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { color, alpha } from './tokens/tokens.js';
 
 const ISRAEL = { center: [34.95, 31.5], zoom: 6.6 };
-const ORANGE = '#f7931d';
+const ORANGE = color.works;
 const THEMES = {
   dark: {
     bg: '#15161c', land: '#1b1c23', water: '#0f1015', building: '#23242c', road: '#2e2f38', roadMajor: '#3a3b46',
-    boundary: '#2a2b34', label: '#8b8c96', ringFill: '#15161c', ink: '#f4f1ec', planFill: ORANGE, planOpacity: [0.18, 0.4], glow: 'rgba(247,147,29,.35)', building3d: '#2a2b34',
+    boundary: '#2a2b34', label: '#8b8c96', ringFill: '#15161c', ink: '#f4f1ec', planFill: ORANGE, planOpacity: [0.18, 0.4], glow: alpha(ORANGE, 0.35), building3d: '#2a2b34',
   },
   paper: {
     bg: '#fbfaf8', land: '#f4f1ec', water: '#e9eef1', building: '#ece8e1', road: '#e1ddd7', roadMajor: '#d6d1c9',
-    boundary: '#d6d1c9', label: '#6e6f73', ringFill: '#fbfaf8', ink: '#24242b', planFill: ORANGE, planOpacity: [0.15, 0.35], glow: 'rgba(247,147,29,.25)', building3d: '#e1ddd7',
+    boundary: '#d6d1c9', label: '#6e6f73', ringFill: '#fbfaf8', ink: '#24242b', planFill: ORANGE, planOpacity: [0.15, 0.35], glow: alpha(ORANGE, 0.25), building3d: '#e1ddd7',
   },
 };
 const DOMAIN_LABEL = {

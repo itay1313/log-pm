@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "tokens": "node src/tokens/build.mjs",
+    "prebuild": "node src/tokens/build.mjs",
     "dev": "vite",
     "build": "vite build"
   },
