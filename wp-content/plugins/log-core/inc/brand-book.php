@@ -29,6 +29,13 @@ add_filter( 'wp_robots', function ( array $robots ): array {
 	return is_page( LOG_BRAND_BOOK_SLUG ) ? wp_robots_no_robots( $robots ) : $robots;
 } );
 
+// Yoast (on uPress) prints its own robots meta and sitemaps; it gets the same answer.
+add_filter( 'wpseo_robots', fn( $robots ) => is_page( LOG_BRAND_BOOK_SLUG ) ? 'noindex, nofollow' : $robots );
+add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $ids ) {
+	$id = log_brand_book_id();
+	return $id ? array_merge( (array) $ids, [ $id ] ) : $ids;
+} );
+
 add_action( 'template_redirect', function () {
 	if ( is_page( LOG_BRAND_BOOK_SLUG ) ) {
 		header( 'X-Robots-Tag: noindex, nofollow' );
