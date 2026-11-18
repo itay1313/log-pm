@@ -17,20 +17,21 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { gsap } from 'gsap';
 import earcut from 'earcut';
+import { color } from '../tokens/tokens.js';
 import { toLocal, toLngLat, lngLatToTile, tilesInBox, tileBoxLocal, ISRAEL_BOX } from './geo.js';
 
 const C = {
-  fog: '#1d2a3a',
-  sea: '#2f4a63',
-  building: '#f7931d', // the pinned orange city (PRODUCT.md brand commitments), in the brand orange itself
+  fog: color.mapFog,
+  sea: color.mapSea,
+  building: color.works, // the pinned orange city (PRODUCT.md brand commitments), in the brand orange itself
   // The city is an architect's line model: navy volumes, drawn in the brand orange (corners, roof line, floors).
-  buildingFace: '#3a4858',
-  buildingLine: '#f7931d',
-  roadNational: '#9db1c6',
-  roadRegional: '#b4c4d4',
-  road: '#e3ebf2',
-  roadMajor: '#ffffff',
-  plan: '#f7931d',
+  buildingFace: color.mapBuildingFace,
+  buildingLine: color.works,
+  roadNational: color.mapRoadNational,
+  roadRegional: color.mapRoadRegional,
+  road: color.mapRoad,
+  roadMajor: color.mapRoadMajor,
+  plan: color.works,
 };
 const NATIONAL = { tx: 70000, tz: -20000, radius: 430000, phi: 0.62, theta: -0.18 };
 // Home: Gush Dan from the north, looking south, low enough to read the city as a line model. The sea fills

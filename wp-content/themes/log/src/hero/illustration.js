@@ -10,6 +10,8 @@
  * terraces, L-shaped houses, slabs with roof plant. Each part has a shopfront band on the
  * ground floor, floor-slab lines, a parapet and a lit front corner.
  */
+import { color } from '../tokens/tokens.js';
+
 const COS = Math.cos(Math.PI / 6);
 const S = 16; // px per ground unit
 const ZS = 7; // px per floor
@@ -17,7 +19,7 @@ const OX = 200, OY = 92;
 
 const PAL = {
   context: { top: '#40556e', roof: '#33465c', left: '#2d3d51', right: '#223143', win: '#1a2533', lit: '#f6c27c', slab: '#4b6079', shop: '#e9a659', rim: '#5d7590' },
-  project: { top: '#ffc58c', roof: '#f0a456', left: '#f7931d', right: '#c66812', win: '#9c4d08', lit: '#fff0dc', slab: '#ffb46a', shop: '#fff3e2', rim: '#ffd9b0' },
+  project: { top: '#ffc58c', roof: '#f0a456', left: color.works, right: '#c66812', win: '#9c4d08', lit: '#fff0dc', slab: '#ffb46a', shop: '#fff3e2', rim: '#ffd9b0' },
 };
 
 function rng(seed) {
@@ -42,9 +44,9 @@ const faceL = ({ x, y, w, d, z0, h }) => [pt(x, y + d, z0), pt(x + w, y + d, z0)
 const faceT = ({ x, y, w, d, z0, h }, i = 0) => [pt(x + i, y + i, z0 + h), pt(x + w - i, y + i, z0 + h), pt(x + w - i, y + d - i, z0 + h), pt(x + i, y + d - i, z0 + h)];
 
 function ghostPart(b) {
-  const a = 'fill="rgba(247,147,29,.14)" stroke="#f7931d" stroke-width="1.1" stroke-linejoin="round"';
+  const a = `fill="${color.works}" fill-opacity=".14" stroke="${color.works}" stroke-width="1.1" stroke-linejoin="round"`;
   const out = [poly(faceR(b), a), poly(faceL(b), a), poly(faceT(b), 'fill="rgba(255,191,128,.24)" stroke="#ffc58c" stroke-width="1.1" stroke-linejoin="round"')];
-  for (let z = b.z0 + 1; z < b.z0 + b.h; z += 1) out.push(line([pt(b.x, b.y + b.d, z), pt(b.x + b.w, b.y + b.d, z), pt(b.x + b.w, b.y, z)], 'stroke="#f7931d" stroke-opacity=".4" stroke-width=".6"'));
+  for (let z = b.z0 + 1; z < b.z0 + b.h; z += 1) out.push(line([pt(b.x, b.y + b.d, z), pt(b.x + b.w, b.y + b.d, z), pt(b.x + b.w, b.y, z)], `stroke="${color.works}" stroke-opacity=".4" stroke-width=".6"`));
   return out.join('');
 }
 
@@ -240,11 +242,11 @@ export function illustration(p, cls = 'hero-card__art', wide = false) {
   return `<svg class="${cls}" viewBox="${vb.join(' ')}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
     <defs>
       <radialGradient id="${uid}s" cx=".28" cy=".05" r="1.1"><stop offset="0" stop-color="#4a6178"/><stop offset=".45" stop-color="#26364a"/><stop offset="1" stop-color="#121922"/></radialGradient>
-      <radialGradient id="${uid}g" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#f7931d" stop-opacity=".22"/><stop offset="1" stop-color="#f7931d" stop-opacity="0"/></radialGradient>
+      <radialGradient id="${uid}g" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="${color.works}" stop-opacity=".22"/><stop offset="1" stop-color="${color.works}" stop-opacity="0"/></radialGradient>
     </defs>
     <rect x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" fill="url(#${uid}s)"/>
     ${poly(ground, 'fill="#203044" stroke="#33475d" stroke-width="1"')}
-    <g stroke="#9db1c6" stroke-opacity=".28" stroke-width="1.4">${streets.join('')}</g>
+    <g stroke="${color.mapRoadNational}" stroke-opacity=".28" stroke-width="1.4">${streets.join('')}</g>
     <ellipse cx="200" cy="165" rx="150" ry="80" fill="url(#${uid}g)"/>
     ${items.filter((it) => it.type === 'pond').map(pond).join('')}
     ${items.filter((it) => it.type === 'building' && !it.ghost).map(shadow).join('')}

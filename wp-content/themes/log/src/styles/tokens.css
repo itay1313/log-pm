@@ -1,30 +1,15 @@
 /*
  * LOG · visual world: Israel's guide-sign system for planning work (direction contract in .impeccable/surfaces/).
  * Navy guide plates with a white keyline, works-zone orange for LOG's active work and every active state,
- * road paper for reading. Every token lives here: swap this file when TwoPointFour's visual language lands,
- * together with the C palette in src/hero/scene.js.
+ * road paper for reading.
+ *
+ * Every raw value (colour, size, weight, radius, easing) lives in src/tokens/tokens.json and reaches this
+ * file through tokens.gen.css. This file keeps what is built from those values: legacy aliases, type roles,
+ * icons, grain and the font faces.
  */
+@import './tokens.gen.css';
 
 :root {
-  /* Sign plates: the guide-sign ground, the map, the control company, the footer */
-  --plate: #13212f;
-  --plate-2: #1b2c3d;
-  --plate-line: #3a4e62;
-  --legend: #f2f4f1;          /* retroreflective white */
-  --legend-muted: #a3b3bf;
-  /* Road paper: the day ground of reading pages */
-  --paper: #e7eae6;
-  --paper-2: #f4f5f2;
-  --ink: #15202b;
-  --slate: #53606a;
-  --rule: #b8c0c2;
-  --rule-soft: #d3d8d6;
-  /* Works zone: LOG's active work, hover, focus, the current lane */
-  --works: #f7931d;
-  --works-deep: #b9650a;      /* orange that has to read as small text on paper */
-  --sign-ink: #15202b;        /* the white sign's legend and keyline; never swapped by a night world */
-  --danger: #b3261e;
-
   /* Legacy names some markup and the map still read */
   --orange: var(--works);
   --orange-deep: var(--works-deep);
@@ -35,42 +20,6 @@
   --night-muted: var(--legend-muted);
   --grey: var(--slate);
   --line: var(--rule-soft);
-
-  --font-display: 'Ploni Tzar', 'Ploni', system-ui, sans-serif;
-  --font-text: 'Ploni', system-ui, sans-serif;
-  /* Headlines: Ploni Light, set huge and tight. The condensed Ploni Tzar stays for the small legends on signs. */
-  --font-headline: 'Ploni', system-ui, sans-serif;
-
-  /*
-   * The type scale. Four headline steps that grow with the screen, five fixed text steps, four weights.
-   * Every font-size in the theme is one of these; the footer's "בואו נדבר" (--fs-mega) is the one exception.
-   * Sizes at a 375px phone → a 1440px screen.
-   */
-  --fs-h1: clamp(3rem, 1.9rem + 4.6vw, 6.25rem);      /* 48 → 97: page titles, the big figures */
-  --fs-h2: clamp(2.5rem, 1.6rem + 3.2vw, 4.5rem);     /* 40 → 72: section titles, the home headline */
-  --fs-h3: clamp(2rem, 1.45rem + 1.9vw, 3.25rem);     /* 32 → 51: destination rows, lead cards, step titles on the map */
-  --fs-h4: clamp(1.625rem, 1.3rem + 1vw, 2.25rem);    /* 26 → 35: card titles, steps, quotes, small section heads */
-  --fs-title: 1.5rem;                                 /* 24: small titles in Ploni Tzar */
-  --fs-lead: 1.25rem;                                 /* 20: ledes, prose, names in lists */
-  --fs-base: 1.0625rem;                               /* 17: body, buttons, every legend on a plate */
-  --fs-small: .9375rem;                               /* 15: captions, meta, secondary lines */
-  --fs-micro: .8125rem;                               /* 13: map labels, table heads, the smallest legends */
-  --fs-mega: clamp(4.25rem, 14vw, 14.5rem);           /* the footer's last legend */
-
-  --fw-light: 300;     /* headlines: size carries the hierarchy, never weight */
-  --fw-regular: 400;   /* reading text */
-  --fw-medium: 500;    /* legends, labels, names, small titles (Ploni Tzar) */
-  --fw-bold: 700;      /* only on the road's gantry signs and on labels drawn over the map */
-
-  --lh-display: .92;   /* h1, h2 */
-  --lh-heading: 1.02;  /* h3, h4 */
-  --lh-title: 1.15;
-  --lh-text: 1.6;
-  --lh-prose: 1.7;
-
-  --track-headline: -0.045em;  /* h1, h2 */
-  --track-heading: -0.03em;    /* h3, h4 */
-  --track-title: -0.01em;
 
   /* Type roles: use these with `font:` so a role is one line, everywhere. */
   --type-h1: var(--fw-light) var(--fs-h1)/var(--lh-display) var(--font-headline);
@@ -83,28 +32,6 @@
   --type-label: var(--fw-medium) var(--fs-small) var(--font-display);
   --type-micro: var(--fw-medium) var(--fs-micro) var(--font-display);
   --type-meta: var(--fw-regular) var(--fs-small) var(--font-text);
-
-  /* Hairlines: the line a plate is drawn with, on navy and on paper */
-  --hair: rgba(242, 244, 241, .16);
-  --hair-strong: rgba(242, 244, 241, .38);
-  --hair-ink: rgba(21, 32, 43, .16);
-  --r-pill: 999px;
-  /* The home map stands in a frame, inset from the window; the frame opens as the drive begins. */
-  --frame: 12px;
-  --r-frame: 26px;
-  --plate-deep: #0b131b;
-
-  /* The plate: a guide sign's rounded corner and its white keyline, inset from the edge */
-  --r-plate: 10px;
-  --r-small: 6px;
-  --keyline: 2px;
-  --keyline-inset: 5px;
-
-  --container: 1320px;
-  --gutter: clamp(16px, 4vw, 56px);
-  --header-h: 84px;
-  --ease-out: cubic-bezier(.16, 1, .3, 1);
-  --ease-in-out: cubic-bezier(.76, 0, .24, 1);
 
   /* One authored icon set. The guide-sign arrow (broad head, square shaft) points forward: left in RTL. */
   --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 18'%3E%3Cpath d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/%3E%3C/svg%3E");
