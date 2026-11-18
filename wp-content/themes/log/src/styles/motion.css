@@ -23,7 +23,7 @@
 
 /* Page change: a navy plate covers the page before it leaves and lifts after it arrives. */
 .page-cover { position: fixed; inset: 0; z-index: 9998; visibility: hidden; display: grid; place-items: center; background: var(--plate); pointer-events: none; }
-.page-cover__mark .logo__ring { display: block; width: 46px; height: 46px; border-width: 9px; }
+.page-cover__ring { display: block; width: 46px; height: 46px; border-radius: 50%; border: 9px solid var(--works); }
 html.is-covered body::after { content: ''; position: fixed; inset: 0; z-index: 9998; background: var(--plate); animation: cover-safety .01s 1.6s forwards; }
 @keyframes cover-safety { to { visibility: hidden; } }
 
