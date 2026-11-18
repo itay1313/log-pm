@@ -6,16 +6,17 @@
  * laptop the sheet scales down whole; on a phone the sheet lets go of its height and reflows (bottom of file).
  *
  * The rules a page follows: one headline in heavy Ploni Tzar ending in its full stop, which is the page's
- * one orange dot; one thin line that runs to the edge; night (--plate) or day (--paper) ground.
+ * one orange dot; one thin line that runs to the edge; night (--night) or day (--paper) ground.
  */
 @import '../styles/tokens.css';
+@import '../styles/logo.css';
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; background: var(--plate-deep); }
+html { -webkit-text-size-adjust: 100%; background: var(--night-deep); }
 body {
   margin: 0;
-  background: var(--plate-deep);
+  background: var(--night-deep);
   color: var(--ink);
   font-family: var(--font-text);
   font-weight: var(--fw-regular);
@@ -57,10 +58,10 @@ li { list-style: none; }
   color: var(--ink);
 }
 .bk-page--night {
-  --line: var(--legend-muted);
-  --muted: var(--legend-muted);
-  background: var(--plate);
-  color: var(--legend);
+  --line: var(--night-muted);
+  --muted: var(--night-muted);
+  background: var(--night);
+  color: var(--night-ink);
 }
 
 /* The headline: heavy, tight, and closed by the page's one orange dot. */
@@ -146,7 +147,7 @@ li { list-style: none; }
   inset-inline-end: calc(var(--m) - 0.06em);
   font: var(--fw-light) calc(340 * var(--u))/1 var(--font-text);
   letter-spacing: -0.05em; /* proportional figures: Ploni's tabular zero is slashed */
-  color: var(--plate-line);
+  color: var(--night-line);
 }
 .bk-opener__body { margin-top: auto; display: grid; gap: calc(28 * var(--u)); padding-bottom: calc(24 * var(--u)); }
 .bk-opener .bk-title { font-size: max(48px, calc(148 * var(--u))); }
@@ -218,7 +219,7 @@ li { list-style: none; }
   padding: calc(32 * var(--u)) calc(48 * var(--u)) calc(56 * var(--u));
   height: 34%;
   background: var(--works-deep);
-  color: var(--legend);
+  color: var(--night-ink);
 }
 
 /* ------------------------------------------------------------------ type */
@@ -232,7 +233,7 @@ li { list-style: none; }
   top: calc(-60 * var(--u));
   font: var(--fw-bold) calc(400 * var(--u))/1 var(--font-display);
   letter-spacing: -0.04em;
-  color: var(--plate-2);
+  color: var(--night-2);
   pointer-events: none;
   user-select: none;
 }
@@ -257,18 +258,18 @@ li { list-style: none; }
 
 /* ------------------------------------------------------------------ the lock */
 
+.bk-lock .logo { --logo-w: calc(150 * var(--u)); min-width: 96px; }
 .bk-lock .bk-title--cover { margin-top: auto; }
 .bk-lock__form { display: grid; gap: calc(16 * var(--u)); margin-top: calc(40 * var(--u)); max-width: calc(520 * var(--u)); color: var(--muted); font-size: max(15px, calc(18 * var(--u))); }
-.bk-lock__form form > p:first-child { display: none; } /* core's own "this content is protected" line; ours says it */
 .bk-lock__form form p { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
-.bk-lock__form label { display: grid; gap: 6px; flex: 1; font: var(--type-label); color: var(--legend); }
+.bk-lock__form label { display: grid; gap: 6px; flex: 1; font: var(--type-label); color: var(--night-ink); }
 .bk-lock__form input[type="password"] {
   min-height: 48px;
   padding: 8px 0;
   border: 0;
-  border-bottom: 1px solid var(--legend-muted);
+  border-bottom: 1px solid var(--night-muted);
   background: transparent;
-  color: var(--legend);
+  color: var(--night-ink);
   font: inherit;
   font-size: 18px;
 }
@@ -278,7 +279,7 @@ li { list-style: none; }
   padding: 0 24px;
   border: 0;
   border-radius: var(--r-small);
-  background: var(--legend);
+  background: var(--night-ink);
   color: var(--sign-ink);
   font: var(--type-legend);
   cursor: pointer;

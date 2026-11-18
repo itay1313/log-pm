@@ -5,19 +5,18 @@
  * writes each value and contrast ratio from the live CSS. Change a token, and this chapter follows.
  */
 
+// The book's three weights (heavy headline, regular text, light figures) and the one the interface adds for labels.
 $weights = [
-	[ 'Ploni', '--font-text', 'var(--fw-light)', 'Light' ],
-	[ 'Ploni', '--font-text', 'var(--fw-regular)', 'Regular' ],
-	[ 'Ploni', '--font-text', 'var(--fw-medium)', 'Medium' ],
-	[ 'Ploni Tzar', '--font-display', 'var(--fw-regular)', 'Regular' ],
-	[ 'Ploni Tzar', '--font-display', 'var(--fw-medium)', 'Medium' ],
-	[ 'Ploni Tzar', '--font-display', 'var(--fw-bold)', 'Bold' ],
+	[ 'Ploni Tzar', '--font-headline', 'var(--fw-bold)', 'Bold', 'כותרות' ],
+	[ 'Ploni', '--font-text', 'var(--fw-regular)', 'Regular', 'טקסט' ],
+	[ 'Ploni', '--font-figure', 'var(--fw-light)', 'Light', 'מספרים גדולים וציטוטים' ],
+	[ 'Ploni Tzar', '--font-display', 'var(--fw-medium)', 'Medium', 'תוויות ושלטים קטנים' ],
 ];
 
 // Type roles, largest first: [role token, size token, a line the site really sets in that role].
 $roles = [
-	[ 'type-h1', 'fs-h1', 'פרויקטים' ],
-	[ 'type-h2', 'fs-h2', 'מתכננים יחד' ],
+	[ 'type-h1', 'fs-h1', 'פרויקטים.' ],
+	[ 'type-h2', 'fs-h2', 'מתכננים יחד.' ],
 	[ 'type-h3', 'fs-h3', 'פינוי־בינוי בחולון' ],
 	[ 'type-h4', 'fs-h4', 'שלב התכנון הסטטוטורי' ],
 	[ 'type-title', 'fs-title', 'חברת הבקרה' ],
@@ -41,16 +40,16 @@ $roles = [
 	<div class="bk-colors__head">
 		<?php log_bk_title( 'לילה' ); ?>
 		<p class="bk-lede">הנייבי הוא אספלט בלילה. הוא הקרקע של המפה, של חברת הבקרה ושל הפוטר, והעמוד הזה עומד עליו.</p>
-		<p class="bk-ground">הקרקע של העמוד <code class="bk-token">--plate</code> <span data-token-value="--plate"></span></p>
+		<p class="bk-ground">הקרקע של העמוד <code class="bk-token">--night</code> <span data-token-value="--night"></span></p>
 	</div>
 	<i class="bk-line" aria-hidden="true"></i>
 	<div class="bk-colors__row">
 		<?php
-		log_bk_swatch( 'plate-deep', 'מאחורי הדף: הרקע שמאחורי המפה והספר' );
-		log_bk_swatch( 'plate-2', 'משטח אחד מעל הלילה' );
-		log_bk_swatch( 'plate-line', 'קו על לילה' );
-		log_bk_swatch( 'legend-muted', 'טקסט משני על לילה', 'plate' );
-		log_bk_swatch( 'legend', 'טקסט על לילה', 'plate' );
+		log_bk_swatch( 'night-deep', 'מאחורי הדף: הרקע שמאחורי המפה והספר' );
+		log_bk_swatch( 'night-2', 'משטח אחד מעל הלילה' );
+		log_bk_swatch( 'night-line', 'קו על לילה' );
+		log_bk_swatch( 'night-muted', 'טקסט משני על לילה', 'night' );
+		log_bk_swatch( 'night-ink', 'טקסט על לילה', 'night' );
 		?>
 	</div>
 	<?php log_bk_folio( 'צבע' ); ?>
@@ -82,8 +81,9 @@ $roles = [
 		<i class="bk-line" aria-hidden="true"></i>
 		<dl class="bk-works__rules">
 			<div><dt>על הכתום</dt><dd>תמיד דיו כהה, אף פעם לא לבן. <span data-contrast="--sign-ink --works"></span></dd></div>
-			<div><dt>טקסט קטן על נייר</dt><dd>רק בכתום העמוק, וגם הוא עוד צריך להתכהות. <span data-contrast="--works-deep --paper"></span></dd></div>
-			<div><dt>על לילה</dt><dd>הכתום הרגיל מחזיק לבד. <span data-contrast="--works --plate"></span></dd></div>
+			<div><dt>טקסט קטן על נייר</dt><dd>רק בכתום העמוק. הכתום עצמו לא נקרא על נייר. <span data-contrast="--works-deep --paper"></span></dd></div>
+			<div><dt>על לילה</dt><dd>הכתום הרגיל מחזיק לבד. <span data-contrast="--works --night"></span></dd></div>
+			<div><dt>כתום בהיר</dt><dd>תגית שנייה ועמודות בגרף. אף פעם לא טקסט. <span data-token-value="--works-light"></span></dd></div>
 		</dl>
 	</div>
 	<div class="bk-works__plate">
@@ -100,15 +100,15 @@ $roles = [
 <section class="bk-page bk-page--night bk-specimen" aria-label="פלוני">
 	<div class="bk-specimen__head">
 		<?php log_bk_title( 'פלוני' ); ?>
-		<p class="bk-lede">משפחה אחת בכל מקום. Ploni לטקסט, Ploni Tzar הצרה לכותרות, לשלטים ולתוויות. אין פונט שני.</p>
+		<p class="bk-lede">משפחה אחת בכל מקום ושלושה משקלים: כותרת כבדה, טקסט רגיל, מספרים דקים. כותרת היא שתיים עד ארבע מילים ונגמרת בנקודה.</p>
 	</div>
 	<p class="bk-specimen__glyphs" aria-hidden="true">אבג</p>
 	<i class="bk-line" aria-hidden="true"></i>
 	<ul class="bk-specimen__weights">
-		<?php foreach ( $weights as [ $family, $font, $weight, $name ] ) : ?>
+		<?php foreach ( $weights as [ $family, $font, $weight, $name, $use ] ) : ?>
 			<li style="font-family: var(<?php echo esc_attr( $font ); ?>); font-weight: <?php echo esc_attr( $weight ); ?>">
 				<span>מחברים. מובילים. מתכננים.</span>
-				<small><?php echo esc_html( "$family $name" ); ?></small>
+				<small><?php echo esc_html( "$family $name · $use" ); ?></small>
 			</li>
 		<?php endforeach; ?>
 	</ul>
