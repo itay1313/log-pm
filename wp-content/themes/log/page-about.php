@@ -32,7 +32,7 @@ $galleries = array_filter( [
 		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); else : // a stand-in (Unsplash License) until the page gets a featured image of the real team ?><img src="<?php echo esc_url( LOG_THEME_URI . '/assets/img/about-team.jpg' ); ?>" alt="צוות עובד סביב לוח תכנון במשרד מואר" width="2000" height="1334" fetchpriority="high"><?php endif; ?>
 	</figure>
 	<div class="container about-hero__copy">
-		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ) ); ?></h1>
+		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ), true ); ?></h1>
 		<div class="page-header__prose">
 			<?php if ( get_the_content() ) : the_content(); else : ?>
 				<p>הצוות של לוג רב-תחומי: אדריכלות, תכנון עיר ואזור, מדיניות ציבורית, הנדסה, גיאוגרפיה וחברה.</p>
@@ -44,7 +44,7 @@ $galleries = array_filter( [
 
 <section class="section section--story" data-section="story">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'story_title', 'הסיפור שלנו' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'story_title', 'הסיפור שלנו' ) ); ?></h2>
 		<div class="section__prose"><?php echo wpautop( esc_html( log_text( 'story_text', "לוג ניהול פרויקטים מקדמת תכנון עירוני בכל קנה מידה, מתכניות מפורטות ועד תכניות מתאר כוללניות ואסטרטגיות. אנחנו מובילים תכנון של יותר מחצי מיליון יחידות דיור ומאות אלפי מ\"ר למסחר ותעסוקה בכל הארץ: תכניות לאומיות, התחדשות עירונית, שטחים פתוחים, המגזר הכפרי והחברה הערבית.\n\nהצוות רב-תחומי: אדריכלות, תכנון עיר ואזור, מדיניות ציבורית, הנדסה, גיאוגרפיה, חברה ועוד. כל אחד ואחת מביאים ידע מהתחום שלהם, והעבודה המשותפת הופכת כל פרויקט ללמידה של כולנו.\n\nכחברת הבקרה של הרשות הממשלתית להתחדשות עירונית, לוג מלווה את כל פרויקטי ההתחדשות בישראל ונותנת לרשות כלים טכנולוגיים לניתוח, למעקב, לזיהוי חסמים ולהצעת פתרונות בשטח." ) ) ); ?></div>
 	</div>
 </section>
@@ -52,7 +52,7 @@ $galleries = array_filter( [
 <?php if ( $expertise ) : ?>
 	<section class="section section--expertise" id="expertise" data-section="expertise">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'expertise_title', 'המומחיות שלנו' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_title( log_text( 'expertise_title', 'המומחיות שלנו' ) ); ?></h2>
 			<ul class="expertise">
 				<?php foreach ( $expertise as $e ) : if ( empty( $e['name'] ) ) { continue; } ?>
 					<li><h3><?php echo esc_html( $e['name'] ); ?></h3><?php if ( ! empty( $e['text'] ) ) : ?><p><?php echo esc_html( $e['text'] ); ?></p><?php endif; ?></li>
@@ -64,14 +64,14 @@ $galleries = array_filter( [
 
 <section class="section section--vision" data-section="vision">
 	<div class="container">
-		<h2 class="vision__short"><span class="screen-reader-text"><?php echo esc_html( log_text( 'vision_title', 'החזון' ) ); ?>: </span><?php echo esc_html( log_text( 'vision_short', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
+		<h2 class="vision__short"><span class="screen-reader-text"><?php echo esc_html( log_text( 'vision_title', 'החזון' ) ); ?>: </span><?php echo log_title( log_text( 'vision_short', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'vision_long', 'להוביל תכנון עירוני שמחבר בין צרכי העיר, האנשים שגרים בה והכלים לממש אותו.' ) ); ?></p>
 	</div>
 </section>
 
 <section class="section section--values" id="values" data-section="values">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'values_title', 'הערכים שלנו' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'values_title', 'הערכים שלנו' ) ); ?></h2>
 		<ol class="values">
 			<?php foreach ( array_slice( $values, 0, 4 ) as $i => $v ) : ?>
 				<li class="values__item">
@@ -88,7 +88,7 @@ $galleries = array_filter( [
 <?php if ( $team->have_posts() || log_show_empty() ) : ?>
 <section class="section section--team" id="team" data-section="team">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'team_title', 'הצוות' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'team_title', 'הצוות' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'team_lede', 'האנשים שמחזיקים את הפרויקטים, מהנהלה ועד התפעול.' ) ); ?></p>
 		<?php if ( $team->have_posts() ) : ?>
 			<?php if ( count( $units ) > 1 ) : ?>
@@ -110,7 +110,7 @@ $galleries = array_filter( [
 <?php if ( $galleries || log_show_empty() ) : ?>
 <section class="section section--offices" data-section="offices">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'offices_title', 'המשרדים והחיים בחברה' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'offices_title', 'המשרדים והחיים בחברה' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'offices_line', 'ירושלים ותל אביב, אירועים ויום עבודה רגיל.' ) ); ?></p>
 		<?php if ( $galleries ) : ?>
 			<div class="offices">
@@ -133,7 +133,7 @@ $galleries = array_filter( [
 <?php if ( log_has_clients() || log_show_empty() ) : ?>
 <section class="section section--clients" data-section="clients">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
 		<?php get_template_part( 'template-parts/clients' ); ?>
 	</div>
 </section>
@@ -141,7 +141,7 @@ $galleries = array_filter( [
 
 <section class="section section--invite" data-section="careers">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_title', 'רוצים לעבוד איתנו?' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'careers_title', 'רוצים לעבוד איתנו?' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'careers_text', 'אנחנו מחפשים אנשים שאוהבים ערים, נתונים ואנשים, בערך באותה מידה.' ) ); ?></p>
 		<a class="btn btn--primary" href="<?php echo esc_url( get_post_type_archive_link( 'log_job' ) ); ?>"><?php echo esc_html( log_text( 'cta_careers', 'לקריירה בלוג' ) ); ?></a>
 	</div>

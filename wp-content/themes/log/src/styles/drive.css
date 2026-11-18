@@ -17,7 +17,7 @@ html.drive-on .drive { overflow-x: clip; } /* the overlays span the viewport; cl
 .drive-figures { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin: 0; align-self: end; }
 .drive-figures > div { display: flex; flex-direction: column-reverse; gap: .4rem; padding-top: .85rem; border-top: 1px solid var(--works); }
 .drive-figures dt { font: var(--type-label); color: var(--legend-muted); }
-.drive-figures dd { margin: 0; font: var(--fw-light) var(--fs-h1)/.88 var(--font-headline); letter-spacing: var(--track-headline); font-variant-numeric: tabular-nums; }
+.drive-figures dd { margin: 0; font: var(--fw-light) var(--fs-h1)/.88 var(--font-figure); letter-spacing: var(--track-figure); font-variant-numeric: tabular-nums; }
 
 html.drive-on .hero { position: sticky; top: 0; }
 html.drive-on .drive-country { --drive-len: 300vh; height: var(--drive-len); padding: 0; z-index: 6; background: transparent; pointer-events: none; }
@@ -101,7 +101,7 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 .build-overlay .leader { stroke: var(--sign-ink); stroke-width: 2; }
 .build-overlay .leader-dot { fill: var(--works); stroke: var(--sign-ink); stroke-width: 2; }
 .build-label { position: absolute; top: 0; left: 0; font: var(--fw-bold) var(--fs-small) var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 1px 10px rgba(11,20,30,.95); translate: -50% -50%; }
-.build-label--area { font: var(--fw-light) var(--fs-h4) var(--font-headline); letter-spacing: var(--track-heading); }
+.build-label--area { font: var(--fw-light) var(--fs-h4) var(--font-figure); letter-spacing: var(--track-heading); }
 .build-label--area small { display: block; font: var(--type-label); color: var(--legend-muted); text-align: center; }
 
 /* The white sign: the plan's facts and its real stage. It never swaps with the night (sign ink stays). */

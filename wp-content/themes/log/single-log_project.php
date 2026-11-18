@@ -149,7 +149,7 @@ while ( have_posts() ) : the_post();
 		if ( $related && $related->have_posts() ) : ?>
 			<section class="section section--more">
 				<div class="container">
-					<h2 class="section__title">פרויקטים נוספים</h2>
+					<h2 class="section__title"><?php echo log_title( 'פרויקטים נוספים' ); ?></h2>
 					<div class="grid grid--projects">
 						<?php while ( $related->have_posts() ) : $related->the_post(); get_template_part( 'template-parts/card-project' ); endwhile; wp_reset_postdata(); ?>
 					</div>
@@ -160,7 +160,7 @@ while ( have_posts() ) : the_post();
 
 		<section class="section section--cta">
 			<div class="container">
-				<h2 class="section__title">רוצים פרויקט דומה?</h2>
+				<h2 class="section__title"><?php echo log_title( 'רוצים פרויקט דומה?' ); ?></h2>
 				<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/contact/?topic=business&project=' . get_post_field( 'post_name', $pid ) ) ); ?>">בואו נדבר</a>
 			</div>
 		</section>

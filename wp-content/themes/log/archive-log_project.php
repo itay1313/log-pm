@@ -8,7 +8,7 @@
 get_header();
 ?>
 <header class="page-header">
-	<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'projects_title', 'הפרויקטים שלנו', 'option' ) ); ?></h1>
+	<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'projects_title', 'הפרויקטים שלנו', 'option' ), true ); ?></h1>
 	<?php echo log_sheet_label( sprintf( '%s פרויקטים', number_format_i18n( count( log_public_projects() ) ) ) ); ?>
 	<div class="page-header__prose"><?php echo wpautop( esc_html( log_text( 'projects_lede', "לוג מנהלת ומקדמת תכניות בכל קנה מידה: התחדשות עירונית, תכניות מתאר ותכניות מפורטות, ברשויות בכל הארץ.\n\nבכל פרויקט אנחנו מחזיקים את התהליך מקצה לקצה: מהאיתור וההיתכנות, דרך מוסדות התכנון, ועד המעקב אחרי מה שקורה בשטח.", 'option' ) ) ); ?></div>
 </header>
@@ -21,7 +21,7 @@ $national = array_values( array_filter( $public, static fn( $p ) => (bool) log_f
 
 if ( count( $featured ) >= 1 ) : ?>
 	<section class="container featured" id="projects-featured" aria-labelledby="featured-title">
-		<h2 class="featured__title" id="featured-title"><?php echo esc_html( log_text( 'featured_title', 'פרויקטים נבחרים', 'option' ) ); ?></h2>
+		<h2 class="featured__title" id="featured-title"><?php echo log_title( log_text( 'featured_title', 'פרויקטים נבחרים', 'option' ) ); ?></h2>
 		<div class="featured__grid">
 			<?php foreach ( $featured as $post ) : setup_postdata( $post ); // template scope is global scope
 				get_template_part( 'template-parts/card-project', null, [ 'featured' => true ] );
@@ -54,7 +54,7 @@ if ( count( $featured ) >= 1 ) : ?>
 
 		<?php if ( $national ) : ?>
 			<section class="national" id="projects-national" hidden>
-				<h2 class="national__title">פריסה ארצית</h2>
+				<h2 class="national__title"><?php echo log_title( 'פריסה ארצית' ); ?></h2>
 				<p class="national__lede">בלי מיקום אחד על המפה.</p>
 				<ul class="national__list">
 					<?php foreach ( $national as $p ) : ?>

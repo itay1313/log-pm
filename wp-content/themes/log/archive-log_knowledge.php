@@ -63,7 +63,7 @@ $posts_ig = log_instagram_items( 8 );
 if ( $posts_ig ) : ?>
 	<section class="section section--news" data-section="news">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'news_title', 'מה חדש', 'option' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_title( log_text( 'news_title', 'מה חדש', 'option' ) ); ?></h2>
 			<ul class="news">
 				<?php foreach ( $posts_ig as $it ) : ?>
 					<li class="news__item">

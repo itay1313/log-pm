@@ -65,8 +65,9 @@ export const leading = {
   lhProse: "1.7"
 };
 export const tracking = {
-  trackHeadline: "-0.045em",
-  trackHeading: "-0.03em",
+  trackHeadline: "-0.03em",
+  trackHeading: "-0.02em",
+  trackFigure: "-0.045em",
   trackTitle: "-0.01em"
 };
 export const radius = {

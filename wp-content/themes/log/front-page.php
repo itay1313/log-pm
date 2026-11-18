@@ -35,7 +35,7 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 		?>
 		<h1 class="hero__title<?php echo $short ? ' hero__title--short' : ''; ?>" id="hero-title"><?php
 			// The brand's ring turns inside the line, just before the last word.
-			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . esc_html( $m[2] ) . '</em>' : esc_html( $title );
+			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . log_title( $m[2] ) . '</em>' : log_title( $title );
 		?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
 
@@ -80,7 +80,7 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 <section class="section section--who section--night drive-country" data-section="who" aria-labelledby="who-title">
 	<div class="drive-country__inner container">
 		<div class="who__text">
-			<h2 class="section__title" id="who-title"><?php echo log_route_shield( 3 ); ?><?php echo esc_html( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
+			<h2 class="section__title" id="who-title"><?php echo log_route_shield( 3 ); ?><?php echo log_title( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
 			<div class="section__prose">
 				<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
 			</div>
@@ -106,7 +106,7 @@ $drive_project = (int) log_field( 'drive_project' );
 <section class="section section--process drive-build" data-section="process" aria-labelledby="process-title"<?php echo $drive_project ? ' data-project="' . $drive_project . '"' : ''; ?>>
 	<div class="drive-build__inner container">
 		<div class="build-head">
-			<h2 class="section__title" id="process-title"><?php echo esc_html( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
+			<h2 class="section__title" id="process-title"><?php echo log_title( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
 			<p class="build-project" hidden></p>
 		</div>
 		<ol class="process">
@@ -137,7 +137,7 @@ $domains = array_filter( log_ordered_terms( 'log_domain' ), static fn( $t ) => !
 if ( $domains ) : ?>
 	<section class="section section--domains gantries" data-section="domains" aria-labelledby="domains-title">
 		<div class="container gantries__inner">
-			<h2 class="section__title" id="domains-title"><?php echo log_route_shield( 1 ); ?><?php echo esc_html( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
+			<h2 class="section__title" id="domains-title"><?php echo log_route_shield( 1 ); ?><?php echo log_title( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
 			<ul class="domains">
 				<?php foreach ( $domains as $d ) : ?>
 					<li class="domain">
@@ -158,7 +158,7 @@ if ( $domains ) : ?>
 		<p class="exit-sign" aria-hidden="true"><span class="exit-sign__tag">יציאה</span><span class="exit-sign__name"><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></span><i class="exit-sign__arrow"></i></p>
 		<div class="exit-world">
 			<div class="exit-world__body">
-				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
+				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo log_title( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
 				<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
 				<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
 			</div>
@@ -170,7 +170,7 @@ if ( $domains ) : ?>
 <?php if ( log_has_clients() || log_show_empty() ) : ?>
 <section class="section section--clients" data-section="clients">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
 		<?php get_template_part( 'template-parts/clients' ); ?>
 	</div>
 </section>

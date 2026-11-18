@@ -27,8 +27,9 @@ input, textarea { caret-color: var(--works); }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink); }
 
 h1, h2, h3, h4 { font-family: var(--font-display); line-height: var(--lh-heading); margin: 0 0 .5em; letter-spacing: var(--track-heading); text-wrap: balance; }
-/* Headlines are light and huge, tracked tight; weight never carries the hierarchy, size does. */
-h1, h2 { font-family: var(--font-headline); font-weight: var(--fw-light); letter-spacing: var(--track-headline); }
+/* Headlines are heavy Ploni Tzar, short, closed by a period (log_title()). Big figures stay light: --font-figure. */
+h1, h2 { font-family: var(--font-headline); font-weight: var(--fw-bold); letter-spacing: var(--track-headline); }
+.period--dot { color: var(--works); }
 h1 { font-size: var(--fs-h1); line-height: var(--lh-display); }
 h2 { font-size: var(--fs-h2); line-height: var(--lh-display); }
 h3 { font-size: var(--fs-title); font-weight: var(--fw-medium); letter-spacing: var(--track-title); line-height: var(--lh-title); }

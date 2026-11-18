@@ -111,7 +111,7 @@ while ( have_posts() ) : the_post();
 			<?php if ( $others->have_posts() ) : ?>
 				<section class="section section--more">
 					<div class="container">
-						<h2 class="section__title">משרות נוספות</h2>
+						<h2 class="section__title"><?php echo log_title( 'משרות נוספות' ); ?></h2>
 						<?php get_template_part( 'template-parts/jobs-list', null, [ 'query' => $others ] ); ?>
 					</div>
 				</section>

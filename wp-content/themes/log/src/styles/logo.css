@@ -1,0 +1,14 @@
+/* The logo (inc/brand.php). --logo-w sizes it; --logo-a is the grey half, --logo-b to --logo-b-deep the orange.
+   The book's minimum is 40px wide; the tagline only from 90px. */
+.logo {
+  --logo-w: 6.25rem; --logo-a: var(--logo-grey); --logo-b: var(--works); --logo-b-deep: var(--logo-orange-deep);
+  display: inline-grid; width: var(--logo-w); min-width: 40px; line-height: 1; color: var(--logo-a);
+}
+.logo--night { --logo-a: var(--legend); }
+.logo--mono { --logo-a: currentColor; --logo-b: currentColor; --logo-b-deep: currentColor; color: inherit; }
+.logo__mark { display: block; width: 100%; height: auto; }
+.logo--tagline { container-type: inline-size; }
+.logo__tagline { margin-top: calc(var(--logo-w) * .142); font: var(--fw-bold) calc(var(--logo-w) * .124)/1 var(--font-display); text-align: justify; text-align-last: justify; white-space: nowrap; }
+@container (width < 90px) { .logo__tagline { display: none; } }
+/* Held back until src/lines/logo.js takes it, so the first frame isn't the finished logo. */
+html.logo-intro .logo[data-animate] [data-q] { opacity: 0; }

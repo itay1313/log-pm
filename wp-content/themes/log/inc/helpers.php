@@ -64,6 +64,20 @@ function log_route_shield( ?int $n = -1 ): string {
 }
 
 /**
+ * A headline, closed by a period: the brand book's rule is one short line that ends in a period.
+ * A headline that already ends in ? ! … or : keeps its own mark; a trailing period is set again in its span.
+ * With $dot the period is the page's one orange dot: pass it for the page's main headline only.
+ * Returns escaped HTML.
+ */
+function log_title( string $text, bool $dot = false ): string {
+	$text = trim( $text );
+	if ( $text === '' || preg_match( '/[?!…:]$/u', $text ) ) {
+		return esc_html( $text );
+	}
+	return esc_html( rtrim( $text, '.' ) ) . '<span class="period' . ( $dot ? ' period--dot' : '' ) . '">.</span>';
+}
+
+/**
  * The brand's ring (the O of the wordmark) set inside a headline: an orange arc that draws itself in and turns.
  * Decoration only; the words around it carry the meaning.
  */

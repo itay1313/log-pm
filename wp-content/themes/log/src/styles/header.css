@@ -22,21 +22,6 @@ body.admin-bar .site-header { top: var(--wp-admin--admin-bar--height, 0px); }
 body:not(.has-cover) .site-main { padding-top: var(--header-h); background: linear-gradient(var(--plate) 0 var(--header-h), transparent 0); }
 body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)); background: linear-gradient(var(--plate) 0 calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)), transparent 0); }
 
-/* The logo (inc/brand.php). --logo-w sizes it; --logo-a is the grey half, --logo-b to --logo-b-deep the orange.
-   The book's minimum is 40px wide; the tagline only from 90px. */
-.logo {
-  --logo-w: 6.25rem; --logo-a: var(--logo-grey); --logo-b: var(--works); --logo-b-deep: var(--logo-orange-deep);
-  display: inline-grid; width: var(--logo-w); min-width: 40px; line-height: 1; color: var(--logo-a);
-}
-.logo--night { --logo-a: var(--legend); }
-.logo--mono { --logo-a: currentColor; --logo-b: currentColor; --logo-b-deep: currentColor; color: inherit; }
-.logo__mark { display: block; width: 100%; height: auto; }
-.logo--tagline { container-type: inline-size; }
-.logo__tagline { margin-top: calc(var(--logo-w) * .142); font: var(--fw-bold) calc(var(--logo-w) * .124)/1 var(--font-display); text-align: justify; text-align-last: justify; white-space: nowrap; }
-@container (width < 90px) { .logo__tagline { display: none; } }
-/* Held back until src/lines/logo.js takes it, so the first frame isn't the finished logo. */
-html.logo-intro .logo[data-animate] [data-q] { opacity: 0; }
-
 /* The menu button: a white pill, the label and two dots that part on hover */
 .menu-toggle {
   --k-ground: var(--legend); --k-line: var(--legend);
@@ -79,7 +64,7 @@ html.logo-intro .logo[data-animate] [data-q] { opacity: 0; }
 }
 .twin-nav--sign .twin-nav__item .arrow { width: 1.5rem; height: 1.05rem; margin-inline-start: auto; color: var(--works); }
 .twin-nav--sign .twin-nav__item--control .arrow { margin-inline: 0 auto; }
-.twin-nav--sign .twin-nav__name { font: var(--fw-regular) var(--fs-title)/1.1 var(--font-headline); letter-spacing: var(--track-heading); }
+.twin-nav--sign .twin-nav__name { font: var(--fw-regular) var(--fs-title)/1.1 var(--font-display); letter-spacing: var(--track-heading); }
 .twin-nav--sign .twin-nav__line { display: block; font-size: var(--fs-micro); white-space: normal; }
 .twin-nav--sign .twin-nav__item:hover { background: var(--plate); box-shadow: inset 0 0 0 1px var(--works), 0 24px 50px -24px rgba(5,10,16,.8); }
 .twin-nav--sign .twin-nav__item.is-active { box-shadow: inset 0 0 0 1px var(--works); border-radius: 18px; }
@@ -128,7 +113,7 @@ html.logo-intro .logo[data-animate] [data-q] { opacity: 0; }
   display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; column-gap: clamp(1rem, 3vw, 2.5rem);
   padding: clamp(.2rem, .9vh, .55rem) 0; border-bottom: 1px solid var(--hair); color: var(--legend); text-decoration: none;
 }
-.dest__name { display: block; overflow: hidden; font: var(--fw-light) clamp(var(--fs-h3), min(4.8vw + 1.2vh, 10vh), var(--fs-h1))/var(--lh-heading) var(--font-headline); letter-spacing: var(--track-headline); padding-bottom: .06em; }
+.dest__name { display: block; overflow: hidden; font: var(--fw-bold) clamp(var(--fs-h3), min(4.8vw + 1.2vh, 10vh), var(--fs-h1))/var(--lh-heading) var(--font-headline); letter-spacing: var(--track-headline); padding-bottom: .06em; }
 .dest__name > span { display: inline-block; transition: color .3s, translate .5s var(--ease-out); }
 .dest__dist { font: var(--type-legend); color: var(--legend-muted); font-variant-numeric: tabular-nums; text-align: end; }
 .dest__row .arrow { width: clamp(1.75rem, 2.4vw, 2.4rem); height: clamp(1.2rem, 1.6vw, 1.6rem); color: var(--legend-muted); transition: translate .5s var(--ease-out), color .3s; }
