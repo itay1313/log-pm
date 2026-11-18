@@ -30,6 +30,7 @@ require LOG_CORE_DIR . 'inc/forms.php';
 require LOG_CORE_DIR . 'inc/search.php';
 require LOG_CORE_DIR . 'inc/social.php';
 require LOG_CORE_DIR . 'inc/admin-list.php';
+require LOG_CORE_DIR . 'inc/brand-book.php';
 require LOG_CORE_DIR . 'inc/coming-soon.php';
 require LOG_CORE_DIR . 'inc/deploy.php';
 

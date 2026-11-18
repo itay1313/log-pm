@@ -14,3 +14,4 @@ require LOG_THEME_DIR . '/inc/assets.php';
 require LOG_THEME_DIR . '/inc/helpers.php';
 require LOG_THEME_DIR . '/inc/brand.php';
 require LOG_THEME_DIR . '/inc/cleanup.php';
+require LOG_THEME_DIR . '/inc/brand-book.php';
