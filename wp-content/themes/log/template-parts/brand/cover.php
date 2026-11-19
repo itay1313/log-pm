@@ -1,15 +1,31 @@
 <?php
 /**
- * Cover. Night ground, the book's name set heavy, and the line running under it from edge to edge:
- * the first road, with the full stop sitting on it.
+ * The cover and the contents. The cover is the book's one picture of the idea: a roundabout from the air, two thin
+ * lines that run to the edges and cross, and the orange dot where they meet.
  */
+
+$chapters = log_bk_chapters();
 ?>
-<section class="bk-page bk-page--night bk-cover" aria-label="שער">
-	<header class="bk-cover__top">
-		<p class="bk-kicker">לוג ניהול פרויקטים</p>
-		<p class="bk-kicker bk-kicker--muted">גרסה 4 · נובמבר 2026</p>
-	</header>
-	<?php log_bk_title( 'ספר<br>המותג', 'h1', 'bk-title--cover' ); ?>
-	<i class="bk-line" aria-hidden="true"></i>
-	<p class="bk-cover__lede">שפה אחת לאתר, למצגות, לשלטים ולמסמכים. כל ערך בספר הזה נקרא מהקוד שמריץ את האתר, ולכן מה שרואים כאן הוא מה שרץ.</p>
+<section class="bk-page bk-page--night bk-cover" data-chapter="" aria-label="שער">
+	<?php echo log_bk_photo( 'aerial-night.jpg', '', 'bk-photo--bleed', 'dark' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+	<span class="bk-cross" style="--x: 139; --y: 603" aria-hidden="true"><i class="bk-cross__v"></i><i class="bk-cross__h"></i><i class="bk-cross__dot"></i></span>
+	<div class="bk-cover__logo"><?php echo log_logo( [ 'variant' => 'night', 'tagline' => true, 'label' => 'לוג' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+	<div class="bk-cover__body">
+		<p class="bk-kicker bk-kicker--works">השפה העיצובית של לוג</p>
+		<?php log_bk_title( 'ספר המותג', 'h1', 'bk-title--cover' ); ?>
+		<p class="bk-lede">קו דק, כתום אחד ומקום לכל פרויקט.</p>
+	</div>
+	<p class="bk-cover__version">גרסה 4 · נובמבר 2026 · לאתר, לרשתות ולמצגות</p>
 </section>
+
+<?php log_bk_open( '', 'תוכן', 'bk-toc' ); ?>
+	<header class="bk-head">
+		<p class="bk-kicker"><b>ספר המותג</b> · תוכן</p>
+		<?php log_bk_title( 'מה בספר' ); ?>
+	</header>
+	<ol class="bk-toc__list">
+		<?php foreach ( $chapters as $n => $name ) : ?>
+			<li><a href="#ch-<?php echo esc_attr( $n ); ?>" data-toc="<?php echo esc_attr( $n ); ?>"><span class="bk-toc__n" aria-hidden="true"><?php echo esc_html( $n ); ?></span><b><?php echo esc_html( $name ); ?></b><span class="bk-toc__page" data-toc-page></span></a></li>
+		<?php endforeach; ?>
+	</ol>
+<?php log_bk_close(); ?>

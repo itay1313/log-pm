@@ -82,18 +82,17 @@
 /* ------------------------------------------------------------------ circles: a thin line that closes */
 
 /*
- * A circle's size is a plain number of pixels (--circ-n) times a unit (--circ-u, 1px; the book's sheet pixel),
+ * A circle's size is a plain number of pixels (--circ-n) times a unit (--circ-u, inherited: 1px, or the book's sheet pixel),
  * so its stroke can be set in the SVG's own units and still come out at the line's weight: 2px on any size.
  * (non-scaling-stroke would do the same, but it breaks dashes and the drawing.)
  */
 .circ {
   --circ-n: 120;
-  --circ-u: 1px;
   position: relative;
   display: inline-grid;
   place-items: center;
   flex: none;
-  width: calc(var(--circ-n) * var(--circ-u));
+  width: calc(var(--circ-n) * var(--circ-u, 1px));
   aspect-ratio: 1;
   color: var(--ink);
 }
@@ -112,7 +111,7 @@
 /* The middle: a counted number in Ploni Light, or a person's picture inset from the ring. */
 .circ__in {
   position: relative;
-  font: var(--fw-light) calc(var(--circ-n) * var(--circ-u) * .4)/1 var(--font-figure);
+  font: var(--fw-light) calc(var(--circ-n) * var(--circ-u, 1px) * .4)/1 var(--font-figure);
   letter-spacing: var(--track-figure);
 }
 .circ__in:has(> img) {
@@ -122,3 +121,11 @@
   overflow: hidden;
 }
 .circ__in > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ------------------------------------------------------------------ icons (inc/icons.php): the same thin line */
+
+/* One line at the line's weight at any size, round joins, one orange part (.o), dashes only for what isn't built (.d). */
+.ico { display: block; width: var(--ico, 48px); height: auto; overflow: visible; fill: none; stroke: currentColor; stroke-width: var(--ico-w, var(--line-w)); stroke-linecap: round; stroke-linejoin: round; }
+.ico * { vector-effect: non-scaling-stroke; }
+.ico .o { stroke: var(--works); }
+.ico .d { stroke-dasharray: 3 4; }
