@@ -75,7 +75,7 @@ export const tracking = {
   trackTitle: "-0.01em"
 };
 export const radius = {
-  rPill: "999px",
+  rControl: "8px",
   rFrame: "26px",
   rPlate: "10px",
   rSmall: "6px"

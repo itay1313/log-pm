@@ -10,7 +10,7 @@ body.admin-bar .site-header { top: var(--wp-admin--admin-bar--height, 0px); }
 .site-header__logo { text-decoration: none; color: inherit; display: inline-flex; }
 .site-header__tools { margin-inline-start: auto; display: flex; align-items: center; gap: clamp(1rem, 2vw, 1.75rem); }
 .site-header__talk {
-  display: inline-flex; align-items: center; gap: .6em; padding: .72rem 1.35rem; border-radius: var(--r-pill);
+  display: inline-flex; align-items: center; gap: .6em; padding: .72rem 1.35rem; border-radius: var(--r-control);
   font: var(--type-legend); text-decoration: none; box-shadow: inset 0 0 0 1px var(--hair-strong);
   transition: box-shadow .35s var(--ease-out), color .35s var(--ease-out);
 }
@@ -103,7 +103,7 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); grid-template-rows: auto 1fr; column-gap: clamp(2rem, 6vw, 7rem);
 }
 .gantry__top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding-bottom: clamp(1rem, 3vh, 2.5rem); }
-.gantry__close { --k-ground: var(--legend); --k-line: var(--legend); display: inline-flex; align-items: center; gap: .75rem; padding: .72rem 1.3rem; border: 0; border-radius: var(--r-pill); color: var(--plate); font: var(--type-legend); cursor: pointer; }
+.gantry__close { --k-ground: var(--legend); --k-line: var(--legend); display: inline-flex; align-items: center; gap: .75rem; padding: .72rem 1.3rem; border: 0; border-radius: var(--r-control); color: var(--plate); font: var(--type-legend); cursor: pointer; }
 .gantry__close .icon { width: 13px; height: 13px; }
 .gantry__close:hover, .gantry__close:focus-visible { --k-ground: var(--works); --k-line: var(--works); }
 .gantry__nav { align-self: center; }
@@ -121,11 +121,15 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
 .dest__row:hover .arrow, .dest__row:focus-visible .arrow { color: var(--works); translate: -10px 0; }
 .dest__row:focus-visible { outline-offset: -2px; }
 /* You are here */
-.dest__item.is-current .dest__dist::before { content: 'אתה כאן'; display: inline-block; margin-inline-end: .9rem; padding: .2em .75em; border-radius: var(--r-pill); background: var(--works); color: var(--plate); font-weight: var(--fw-medium); }
+/* "You are here" is the junction: the orange dot, then the words. No plate. */
+.dest__item.is-current .dest__dist::before { content: 'אתה כאן'; display: inline-block; margin-inline-end: 1.1rem; padding-inline-start: calc(var(--dot) + .5em); background: radial-gradient(circle closest-side, var(--works) 96%, transparent) right center / var(--dot) var(--dot) no-repeat; color: var(--legend); font-weight: var(--fw-medium); }
 
 .gantry__side { align-self: center; display: grid; align-content: start; gap: 1.75rem; padding-block: 1rem .5rem; }
 .dest__name .shield { font-size: max(var(--fs-micro), .17em); }
-.gantry__side .search-form input { background: var(--plate-2); color: var(--legend); border: 1px solid var(--hair-strong); border-radius: var(--r-pill); padding-inline: 1.25rem; }
+/* In the menu "talk to us" is the one orange action; the search button is the white everyday button. */
+.gantry__side .search-form button { background: var(--legend); }
+.gantry__side .search-form button:hover, .gantry__side .search-form button:focus-visible { background: var(--works); box-shadow: none; }
+.gantry__side .search-form input { background: var(--plate-2); color: var(--legend); border: 1px solid var(--hair-strong); border-radius: var(--r-control); padding-inline: 1.25rem; }
 .gantry__side .search-form input::placeholder { color: var(--legend-muted); }
 .gantry__contact { display: grid; gap: .5rem; font: var(--type-legend); }
 .gantry__contact p { margin: 0; color: var(--legend-muted); }

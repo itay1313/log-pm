@@ -23,12 +23,11 @@
   margin: 0; font: var(--type-label); color: var(--legend-muted); pointer-events: none; transition: opacity .6s ease, scale .9s var(--ease-out);
 }
 .hero__loading .ring-glyph { width: 56px; height: 56px; margin: 0; }
-.hero__loading .ring-glyph svg { animation-duration: 1.6s; }
-.hero__loading .ring-glyph__arc { animation: ring-load 1.6s var(--ease-in-out) infinite alternate; }
-@keyframes ring-load { from { stroke-dasharray: 8 100; } to { stroke-dasharray: 78 100; } }
+.hero__loading .ring-glyph .circ { animation: none; }
+.hero__loading .ring-glyph .circ svg { animation: ring-turn 2.4s var(--ease-in-out) infinite; }
 .hero.is-ready .hero__loading, .hero.no-webgl .hero__loading { opacity: 0; scale: .8; }
 @media (max-width: 760px) { .hero__loading { width: 100%; } }
-@media (prefers-reduced-motion: reduce) { .hero__loading .ring-glyph svg, .hero__loading .ring-glyph__arc { animation: none; } }
+
 
 /* The legend on the sea: heavy Ploni Tzar at a reading size, the brand's ring turning inside the line. The whole first
    screen fits above the fold: headline, lede, the destination bar and its filters, nothing hung over them. */
@@ -48,22 +47,24 @@
 .hero__lede { max-width: 40ch; margin: 0 0 1.75rem; font-size: var(--fs-lead); line-height: 1.55; color: var(--legend-muted); }
 .hero.is-exploring .hero__lede { opacity: 0; visibility: hidden; transition: opacity .4s, visibility 0s .4s; }
 
-/* The ring glyph: the wordmark's O, an orange arc that draws itself in and keeps turning, sized to the letters. */
+/*
+ * The ring glyph: the logo's O as the line system's split circle, sized to the letters and drawn in the line's one
+ * weight (the book: a circle is as thin as a line, however big). It turns slowly, counter-clockwise, like a roundabout.
+ */
 .ring-glyph { display: inline-block; width: .52em; height: .52em; margin-inline: .04em .17em; vertical-align: .01em; }
-.ring-glyph svg { display: block; width: 100%; height: 100%; overflow: visible; animation: ring-turn 9s linear infinite; }
-.ring-glyph circle { fill: none; stroke-width: 7; }
-.ring-glyph__track { stroke: color-mix(in srgb, var(--night-ink) 14%, transparent); }
-.ring-glyph__arc { stroke: var(--works); stroke-linecap: round; stroke-dasharray: 72 100; transform: rotate(-90deg); transform-origin: 20px 20px; animation: ring-draw 1.8s .5s var(--ease-out) both; }
-@keyframes ring-turn { to { rotate: 360deg; } }
-@keyframes ring-draw { from { stroke-dasharray: 0 100; } }
-@media (prefers-reduced-motion: reduce) { .ring-glyph svg, .ring-glyph__arc { animation: none; } }
+.ring-glyph .circ { display: block; width: 100%; animation: ring-in .9s 1s var(--ease-out) both; } /* fades in after the headline's lines rise */
+.ring-glyph .circ svg { animation: ring-turn 14s linear infinite; }
+.ring-glyph .circ path { vector-effect: non-scaling-stroke; stroke-width: var(--line-w); }
+@keyframes ring-turn { to { rotate: -360deg; } }
+@keyframes ring-in { from { opacity: 0; scale: .6; } }
+@media (prefers-reduced-motion: reduce) { .ring-glyph .circ, .ring-glyph .circ svg, .hero__loading .ring-glyph .circ svg { animation: none; } }
 
 /* "לאן?": the destination bar, the page's primary action. A pill drawn with one hairline, an orange go-disc. */
 /* z-index lifts the bar, and the suggestions hanging from it, over the filters below it. */
 .hero-search {
   --k-line: var(--hair-strong);
   position: relative; z-index: 3; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
-  width: min(100%, 600px); min-height: 66px; border-radius: var(--r-pill); background: color-mix(in srgb, var(--night) 92%, transparent);
+  width: min(100%, 600px); min-height: 66px; border-radius: var(--r-control); background: color-mix(in srgb, var(--night) 92%, transparent);
   box-shadow: inset 0 0 0 1px var(--k-line), 0 24px 50px -24px color-mix(in srgb, var(--night-deep) 80%, transparent); transition: box-shadow .35s var(--ease-out);
 }
 .hero-search:hover { --k-line: color-mix(in srgb, var(--night-ink) 60%, transparent); }
@@ -93,7 +94,7 @@
 /* Three filters under the destination: small pills, a caption over the value */
 .hero-filters { display: flex; gap: 8px; width: min(100%, 600px); margin-top: 10px; }
 .hero-filters .filters__group {
-  flex: 1 1 0; min-width: 0; display: grid; gap: 0; padding: .55rem 1.3rem .6rem; border-radius: var(--r-pill);
+  flex: 1 1 0; min-width: 0; display: grid; gap: 0; padding: .55rem 1.3rem .6rem; border-radius: var(--r-control);
   background: color-mix(in srgb, var(--night) 82%, transparent); box-shadow: inset 0 0 0 1px var(--hair);
   font: var(--type-micro); color: var(--legend-muted); cursor: pointer; transition: box-shadow .35s var(--ease-out);
 }
@@ -129,7 +130,7 @@
   border: 0; background: color-mix(in srgb, var(--night) 85%, transparent); color: var(--legend);
   box-shadow: inset 0 0 0 1px var(--hair), 0 10px 24px -12px color-mix(in srgb, var(--night-deep) 70%, transparent); transition: box-shadow .3s var(--ease-out), color .3s;
 }
-.hero-list-btn { display: inline-flex; align-items: center; gap: .5rem; font: inherit; cursor: pointer; padding: .55rem 1.05rem; border-radius: var(--r-pill); }
+.hero-list-btn { display: inline-flex; align-items: center; gap: .5rem; font: inherit; cursor: pointer; padding: .55rem 1.05rem; border-radius: var(--r-control); }
 .hero-list-btn span { font-size: var(--fs-micro); color: var(--legend-muted); font-variant-numeric: tabular-nums; }
 .hero-list-btn:hover, .hero-list-btn:focus-visible, .hero-list-btn[aria-expanded=true] { box-shadow: inset 0 0 0 1px var(--works), 0 10px 24px -12px color-mix(in srgb, var(--night-deep) 70%, transparent); }
 .hero-zoom { display: inline-flex; flex-direction: column; overflow: hidden; border-radius: 23px; }
@@ -145,7 +146,7 @@
 .hero-compass:hover { color: var(--works); }
 .hero-scale { display: inline-grid; gap: 4px; font-size: var(--fs-micro); color: var(--legend-muted); font-variant-numeric: tabular-nums; text-shadow: 0 1px 8px color-mix(in srgb, var(--night-deep) 90%, transparent); }
 .hero-scale i { display: block; width: var(--w, 80px); height: 6px; border: 1px solid currentColor; border-top: 0; transition: width .2s; }
-.hero__hint { position: absolute; z-index: 6; top: 50%; left: 50%; translate: -50% -50%; margin: 0; padding: .75rem 1.4rem; font: var(--type-legend); color: var(--ink); background: var(--legend); border-radius: var(--r-pill); pointer-events: none; opacity: 0; transition: opacity .25s ease; }
+.hero__hint { position: absolute; z-index: 6; top: 50%; left: 50%; translate: -50% -50%; margin: 0; padding: .75rem 1.4rem; font: var(--type-legend); color: var(--ink); background: var(--legend); border-radius: var(--r-control); pointer-events: none; opacity: 0; transition: opacity .25s ease; }
 .hero.show-hint .hero__hint { opacity: 1; }
 
 /* City names at the national level */
@@ -205,7 +206,7 @@
 .hero-card__media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 14px; background: var(--plate-2); }
 .hero-card__media img, .hero-card__art { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 1.2s var(--ease-out); }
 .hero-card.is-in .hero-card__media img, .hero-card.is-in .hero-card__art { transform: none; }
-.hero-card__tag { position: absolute; z-index: 1; bottom: 10px; inset-inline-start: 10px; padding: .3rem .8rem; border-radius: var(--r-pill); font: var(--type-micro); color: var(--plate); background: var(--works); }
+.hero-card__tag { position: absolute; z-index: 1; bottom: 10px; inset-inline-start: 10px; padding: .3rem .8rem; border-radius: var(--r-control); font: var(--type-micro); color: var(--plate); background: var(--works); }
 .hero-card__body { padding: .9rem 1rem 1rem; }
 .hero-card__meta { font: var(--type-micro); color: var(--slate); margin: 0 0 .3rem; display: flex; justify-content: space-between; gap: .75rem; }
 .hero-card__meta .grid-ref { font-variant-numeric: tabular-nums; }
@@ -217,7 +218,7 @@
 .hero-card__facts dt { font-size: var(--fs-micro); color: var(--slate); }
 .hero-card__stage { padding-top: .8rem; border-top: 1px solid var(--hair-ink); font-size: var(--fs-micro); color: var(--slate); display: grid; gap: .5rem; }
 .hero-card__bar { display: none; }
-.hero-card__go { display: flex; align-items: center; justify-content: space-between; padding: .95rem 1.35rem; border-radius: var(--r-pill); background: var(--plate); color: var(--legend); font: var(--type-legend); text-decoration: none; transition: background-color .25s ease, color .25s; }
+.hero-card__go { display: flex; align-items: center; justify-content: space-between; padding: .95rem 1.35rem; border-radius: var(--r-control); background: var(--plate); color: var(--legend); font: var(--type-legend); text-decoration: none; transition: background-color .25s ease, color .25s; }
 .hero-card__go i { width: 1.3em; height: .9em; background: currentColor; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; transition: translate .4s var(--ease-out); }
 .hero-card__go:hover { background: var(--works); color: var(--plate); }
 .hero-card__go:hover i { translate: -6px 0; }
@@ -274,7 +275,7 @@
   .hero-search__label { padding-inline: 1.2rem .6rem; }
   .hero-search__go { width: 46px; height: 46px; margin: 7px; }
   .hero-suggest { top: auto; bottom: calc(100% + 8px); max-height: 50vh; }
-  .hero-filter-toggle { display: inline-flex; align-items: center; gap: .6rem; padding: 0 1.25rem; border: 0; border-radius: var(--r-pill); font: var(--type-legend); cursor: pointer; }
+  .hero-filter-toggle { display: inline-flex; align-items: center; gap: .6rem; padding: 0 1.25rem; border: 0; border-radius: var(--r-control); font: var(--type-legend); cursor: pointer; }
   .hero-filter-toggle::after { content: ''; width: 10px; height: 7px; background: currentColor; -webkit-mask: var(--icon-caret) center / contain no-repeat; mask: var(--icon-caret) center / contain no-repeat; }
   .hero-filter-toggle__more { display: none; }
   .hero-filters { display: none; }
@@ -283,7 +284,7 @@
     max-height: 70vh; overflow: auto; padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom)); border-radius: 22px 22px 0 0; background: var(--plate);
     box-shadow: 0 -24px 48px color-mix(in srgb, var(--night-deep) 55%, transparent);
   }
-  .hero.filters-open .hero-filters__done { display: block; margin-top: .5rem; padding: 1rem; border: 0; border-radius: var(--r-pill); background: var(--works); color: var(--plate); font: var(--type-legend); cursor: pointer; }
+  .hero.filters-open .hero-filters__done { display: block; margin-top: .5rem; padding: 1rem; border: 0; border-radius: var(--r-control); background: var(--works); color: var(--plate); font: var(--type-legend); cursor: pointer; }
   .hero.filters-open .hero-filters .filters__group { border-radius: 18px; padding: .7rem 1.2rem; }
   .hero-dist { position: static; min-width: 0; padding: 0 .35rem .2rem; }
   .hero__stats { gap: 1.25rem; }

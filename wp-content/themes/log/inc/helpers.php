@@ -20,10 +20,11 @@ function log_twin_state(): string {
 }
 
 /**
- * Numbered survey station for process steps, roles and the hiring path. The number carries the order.
+ * A step's number for process steps, roles and the hiring path: a Light figure in a thin full circle, set on the
+ * line that runs through the steps (the brand book's timeline). Hidden from screen readers: the <ol> carries the order.
  */
 function log_stage_ring( int $step ): string {
-	return sprintf( '<span class="stage" aria-hidden="true">%d</span>', max( 1, $step ) );
+	return '<span class="stage" aria-hidden="true">' . log_circle( 'full', (string) max( 1, $step ), [ 'draw' => '' ] ) . '</span>';
 }
 
 /**
@@ -82,11 +83,11 @@ function log_title( string $text, bool $dot = false ): string {
 }
 
 /**
- * The brand's ring (the O of the wordmark) set inside a headline: an orange arc that draws itself in and turns.
- * Decoration only; the words around it carry the meaning.
+ * The logo's O set inside a headline: the split circle (four quarters, orange and grey, cut where the O is cut) in
+ * the line's one weight, turning slowly the way a roundabout turns. The words around it carry the meaning.
  */
 function log_ring_glyph(): string {
-	return '<span class="ring-glyph" aria-hidden="true"><svg viewBox="0 0 40 40"><circle class="ring-glyph__track" cx="20" cy="20" r="15"/><circle class="ring-glyph__arc" cx="20" cy="20" r="15" pathLength="100"/></svg></span>';
+	return '<span class="ring-glyph" aria-hidden="true">' . log_circle( 'split', '', [ 'draw' => '' ] ) . '</span>';
 }
 
 /** The distance plate at the end of a title band ("94 פרויקטים"); nothing when there is nothing to count. */

@@ -232,12 +232,12 @@ Density follows signage: big legends in Ploni Tzar, tabular figures, one arrow s
 **The first-screen pass (2026-11-03).** After the client preview: the home headline came down to a reading size so the destination plate sits whole on the first screen, and the lane-split plates went back up to the header. The opening is now one unbroken flight from above the country to Tel Aviv (distance eased in log space, the pan tied to it, the tilt held back), with every project lit as a beacon across the country on the way and the picture slid clear of the headline; the markers take over as the camera lands. The city rises out of the ground in a wave from central Tel Aviv (a 1.8 km front, floor lines appearing as it grows) while it fills in, and the loading state is the brand's ring drawing itself over the map's side. Edge counters are quieter than the markers (a hairline, muted figures) and keep clear of the header, the controls and the figures.
 
 **Key Characteristics:**
-- The plate (navy, one 1px hairline, rounded corners) is the one container, drawn with one inset shadow and no extra element. Pressable things are pills.
+- The plate (navy, one 1px hairline, rounded corners) is the one container, drawn with one inset shadow and no extra element. Pressable things take the control radius (`--r-control`, 8px): the brand book allows a rounded corner only in a thin line, so no pills.
 - Works orange marks LOG's work and every active state, and nothing decorative.
-- Route shields number the pages: a small orange shield at the start of each page title and menu row.
+- Route numbers number the pages: an orange figure at the start of each page title and menu row, the way the book numbers a chapter, with no plate around it.
 - One authored guide-sign arrow (broad head, square shaft), pointing forward, which is left in RTL.
 - Heavy Ploni Tzar 700 for headlines, each closed by a period; Ploni Light for big figures and quotes; Ploni for running text; Ploni Tzar 500 for the small legends on pills and labels; tabular numerals for every number.
-- The ring glyph: the wordmark's O, an orange arc that draws itself in and turns, set inside a headline before its last word (home, footer).
+- The ring glyph: the logo's O as the line system's split circle, in the line's one weight, set inside a headline before its last word (home, footer). It fades in after the headline rises and turns slowly counter-clockwise.
 - Night is a token swap, never a repaint of individual components.
 
 ## Colors
@@ -247,7 +247,7 @@ One palette for the site and the brand book (`src/tokens/tokens.json`). Two fami
 **No colour outside the tokens.** CSS reads `var(--…)` and makes a shade or a shadow with `color-mix()` between tokens; JS reads `tokens.js` (`color`, `alpha`, `mix`). Shadows and scrims are night-deep at an opacity, never black. The projects map, the 3D map, the road and the drawings all paint from the same two families. `npm run build` runs `src/tokens/lint.mjs` first and fails on any raw #hex, rgb() or 0x colour in `src/`; a mask or a light temperature (a three.js sun) is marked `colour-ok: <reason>`.
 
 ### Primary
-- **Works-Zone Orange** (`works`): LOG's projects and the 3D city on the map, the route shield, the destination plate's "go" button, the sheet label on title bands, hover and focus keylines, focus rings (3px outline, 3px offset), selection, caret, the active lane underline, the road behind the reader on the lane line, and the stages a project has passed.
+- **Works-Zone Orange** (`works`): LOG's projects and the 3D city on the map, the route numbers, the destination plate's "go" button, the dot before "אתה כאן", hover and focus keylines, focus rings (3px outline, 3px offset), selection, caret, the active lane underline, the road behind the reader on the lane line, and the stages a project has passed.
 - **Deep Works Orange** (`works-deep`): orange that has to read as small text or an arrow on paper (link-arrow hover, ghost-button hover keyline), 4.7:1 on paper. On night grounds it swaps back to `works`.
 - **Light Orange** (`works-light`): a second tag, bars in a chart. Never text.
 
@@ -345,7 +345,7 @@ Depth comes from the plate's keyline and from the navy against paper, not from s
 
 ## Shapes
 
-Rounded rectangles only, with corners that grow with the sign: 6px for small controls, markers, fields and the hero card's inner image; 8px for chips, steps and the twin-nav items; 10px for the standard plate; 12px for white signs and large figure signs; 14px for the orientation board and phone sheets; 20px for the full-screen gantry. The route shield's corner is relative (0.35em) so it scales with the heading it sits in. Lines are 2px (row rules, keylines, field borders) or 3px (rules above lists and figure groups). The one arrow is a filled silhouette, masked from a CSS variable and coloured with `currentColor`.
+Rounded rectangles only, with corners that grow with the sign: 6px for markers and the hero card's inner image; 8px (`--r-control`) for every button, field, chip and tag, and the twin-nav items; 10px for the standard plate; 12px for white signs and large figure signs; 14px for the orientation board and phone sheets; 20px for the full-screen gantry. The route shield's corner is relative (0.35em) so it scales with the heading it sits in. Lines are 2px (row rules, keylines, field borders) or 3px (rules above lists and figure groups). The one arrow is a filled silhouette, masked from a CSS variable and coloured with `currentColor`.
 
 ### The Line System
 
@@ -369,7 +369,7 @@ No thick circle, no gradient circle, no circle inside a circle (except a photo i
 ## Components
 
 ### Buttons
-Signs you can press. One family (2026-11-03): every button is a pill at least 52px tall, Ploni Tzar 500 at 1.0625rem, 0.8em by 1.65em padding, a 1.15em arrow in the text colour.
+Signs you can press. One family (2026-11-03): every button is a control (`--r-control` corners, no pills since 2026-11-19) at least 52px tall, Ploni Tzar 500 at 1.0625rem, 0.8em by 1.65em padding, a 1.15em arrow in the text colour.
 - **Everyday (`.btn`):** navy plate, white legend, one hairline.
 - **Primary (`.btn--primary`, `.btn--works`, the menu's search button):** works orange with an ink legend and an ink arrow. Never white on orange: that is about 2:1, ink on orange is about 7:1. One per context: the page's way forward.
 - **Ghost (`.btn--ghost`):** white sign, ink legend and hairline.
@@ -387,8 +387,8 @@ Three equal plates under the destination plate with a dimmed white keyline (55%)
 ### Distance sign
 A navy plate holding live figures as label and tabular number pairs, with a 2px plate-line rule above an orange "all projects" link. The same sign shape carries project figures and page figures elsewhere.
 
-### Route shield
-A small orange shield with a sign-ink keyline holding the page's two-digit number, set inline at the start of the page title and of its menu row (`00` on home). Size is relative to the heading, never below 0.8125rem.
+### Route number
+The page's two-digit number, set at the top of the start of the page title and of its menu and footer rows (`00` on home), as the brand book numbers a chapter: a Ploni Tzar 500 figure in orange, no plate, no keyline. Bright `works` on navy (title bands, menu, footer); `works-deep` on paper. Size is relative to the heading, never below 0.8125rem. (The class is still `.shield`.)
 
 ### Markers
 Every project on the map is the same 26px navy plate with an orange centre. Hover, focus or active: it scales 1.3x and inverts (orange plate, navy keyline and centre). Clusters are 40px plates with a white count. Edge counters are 32px plates pointing at what lies past the screen edge.
@@ -411,16 +411,16 @@ Practice areas and jobs: name, one line, a count and the arrow in a three-column
 ### Navigation
 - **Gantry header:** fixed, transparent over the map, solid navy once the page scrolls. Wordmark at the start, "talk to us" and the menu plate at the end.
 - **Lane split:** the two worlds (project management, control company) as two plates that part ways, each with a 45-degree lane arrow. On desktop they sit in the header on every page, the home map included (they used to stand as large plates at the bottom start, over the destination plate), with an orange underline for the current world; on phones they become a fixed two-cell bar at the bottom edge.
-- **Menu:** a full-screen gantry plate (20px corners, 13px keyline inset) of destination rows with live counts and the shield number; the current page shows an orange "אתה כאן" tag. It unrolls from the top edge and names rise in line masks.
+- **Menu:** a full-screen gantry plate (20px corners, 13px keyline inset) of destination rows with live counts and the shield number; the current page shows "אתה כאן" after an orange dot: the junction, no tag. It unrolls from the top edge and names rise in line masks.
 
 ### Stage row and steps
-Project stage is one thin line across four stages, with a tick at each: the stages behind the project are solid orange, the ones ahead dashed grey, because they don't exist yet. A finished project's line goes ink. Numbered steps are route shields (2.75rem navy plates) sitting on one dashed orange lane.
+Project stage is one thin line across four stages, with a tick at each: the stages behind the project are solid orange, the ones ahead dashed grey, because they don't exist yet. A finished project's line goes ink. Numbered steps follow the book's timeline: one thin grey line runs through all of them to the edge, and each number is a Ploni Light figure in a thin full circle sitting on the line, cut out of it by the ground (`log_stage_ring()`). In the drive the current step's circle turns orange.
 
 ### Title band and sheet label
-Every inner page opens on a navy band that continues the header strip, with a display title, an optional meta line and lede, and an orange sheet label at the end giving how much lies down this road. Hero images hang from the band into the paper.
+Every inner page opens on a navy band that continues the header strip, with a display title, an optional meta line and lede, and a sheet label at the end giving how much lies down this road: white words in a thin rounded line, no fill (the page's orange is its headline's period). Hero images hang from the band into the paper.
 
 ### Motion
-GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger); the home headline also comes up out of a 14px blur (1.5s, expo.out) while the ring glyph draws its arc. The city arrives as a wireframe and its volumes dissolve in through 4px blocks as the camera settles (`uFace` 0 → 1). The home map's frame (`--frame` 12px, `--r-frame` 26px, `clip-path`) opens to the full window over the first 80vh of scroll, through a scroll-driven CSS animation where the browser supports one. Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line turns orange as far as the reader has come. Lines of the line system draw in from the start side, crossing lines cut through after them, and the dot lands last with a small overshoot; circles close counter-clockwise from the top, the way traffic turns in a roundabout (`src/lines/draw.js`). The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Lenis smooths the wheel on every page (`src/smooth.js`, started by motion.js) and hands ScrollTrigger the same time base; on the home page ScrollTrigger drives the camera (the drive, see Layout). Ctrl/⌘ + wheel stays the map's zoom, an armed projects map keeps its wheel, anything with its own scroll keeps it, touch stays native, and the page stands still under the menu and phone sheets. While driving, a sheet-margin readout under the header gives the camera's grid reference and the scale. The map and the road carry a light print grain (`--grain`, overlay blend), so the sheet reads printed, not lit. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
+GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger); the home headline also comes up out of a 14px blur (1.5s, expo.out) while the ring glyph fades in and turns. The city arrives as a wireframe and its volumes dissolve in through 4px blocks as the camera settles (`uFace` 0 → 1). The home map's frame (`--frame` 12px, `--r-frame` 26px, `clip-path`) opens to the full window over the first 80vh of scroll, through a scroll-driven CSS animation where the browser supports one. Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line turns orange as far as the reader has come. Lines of the line system draw in from the start side, crossing lines cut through after them, and the dot lands last with a small overshoot; circles close counter-clockwise from the top, the way traffic turns in a roundabout (`src/lines/draw.js`). The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Lenis smooths the wheel on every page (`src/smooth.js`, started by motion.js) and hands ScrollTrigger the same time base; on the home page ScrollTrigger drives the camera (the drive, see Layout). Ctrl/⌘ + wheel stays the map's zoom, an armed projects map keeps its wheel, anything with its own scroll keeps it, touch stays native, and the page stands still under the menu and phone sheets. While driving, a sheet-margin readout under the header gives the camera's grid reference and the scale. The map and the road carry a light print grain (`--grain`, overlay blend), so the sheet reads printed, not lit. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
 
 ## Swap points for TwoPointFour
 
@@ -441,13 +441,13 @@ The legacy aliases in tokens.css (`--orange`, `--night`, `--night-ink`, `--grey`
 - **Do** make night by swapping tokens on the container (The Token Swap Rule).
 - **Do** use the one guide-sign arrow for every link that goes somewhere, pointing forward (left), and move it forward on hover.
 - **Do** set every number in tabular numerals and isolate grid references left to right.
-- **Do** put a route shield at the start of every page title and its menu row.
+- **Do** put a route number at the start of every page title and its menu row.
 - **Do** show state by recolouring the keyline orange, not by lifting or glowing.
 
 ### Don't:
 - **Don't** put a panel behind the home headline or anything that hides the map; the headline sits on the sea.
 - **Don't** fall back to a centred headline with two buttons, or a three-card service grid; lists of things are destination rows.
 - **Don't** use a second icon family, emoji or glyph characters as icons; the authored arrow, close, plus, minus and caret masks are the whole set.
-- **Don't** add small uppercase kickers above headings; the route shield and the title band already say where you are.
+- **Don't** add small uppercase kickers above headings; the route number and the title band already say where you are.
 - **Don't** paint night variants of single components or hard-code navy into a component.
 - **Don't** let a white sign's keyline swap with the night world; it stays `sign-ink`.

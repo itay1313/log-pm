@@ -55,7 +55,7 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
 /* ------------------------------------------------------------------ the plate */
 
 /*
- * A plate: navy ground drawn with one hairline, rounded corners; buttons are pills. The inset shadow draws the
+ * A plate: navy ground drawn with one hairline, rounded corners; buttons take the control radius (--r-control). The inset shadow draws the
  * line so the plate needs no extra element. .plate--day is the white sign with an ink line.
  */
 .plate, .btn, .menu-toggle {
@@ -67,16 +67,22 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
   box-shadow: inset 0 0 0 1px var(--k-line);
   transition: box-shadow .35s var(--ease-out), background-color .35s var(--ease-out), color .35s var(--ease-out);
 }
-.btn, .menu-toggle { border-radius: var(--r-pill); }
+.btn, .menu-toggle { border-radius: var(--r-control); }
 .plate--day { --k-ground: var(--legend); --k-line: var(--sign-ink); }
 .plate--works { --k-ground: var(--works); --k-line: var(--plate); }
 
-/* The route shield: a page's number in the header order, set inline at the start of its heading and its menu row. */
+/*
+ * The route number: a page's number in the header order, set at the start of its heading and its menu row the way
+ * the brand book numbers a chapter ("07 · הקו הדק"): an orange figure, no plate around it. Deep orange on paper,
+ * where bright orange can't be read; a night world swaps it back to --works.
+ */
 .shield {
-  display: inline-block; vertical-align: top; margin: .32em 0 0; margin-inline-end: .5em; padding: .38em .7em .32em; border-radius: var(--r-pill);
+  display: inline-block; vertical-align: top; margin: .3em 0 0; margin-inline-end: .55em;
   font: var(--fw-medium) max(var(--fs-micro), .19em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
-  background: var(--works); color: var(--sign-ink);
+  color: var(--works-deep);
 }
+/* Title bands, the menu and the home map are navy without being night worlds: they take the bright orange. */
+:is(.hero, .page-header, .about-hero, .careers-hero, .control-hero, .gantry) .shield { color: var(--works); }
 
 /* The guide-sign arrow, used for every link that goes somewhere. It travels on hover. */
 .arrow {
@@ -172,11 +178,11 @@ select { appearance: none; cursor: pointer; padding-left: 2.6rem !important; }
 .search-form input { height: 3.25rem; padding-block: 0; }
 /* The search button is a primary button: same pill, same size, ink on orange. */
 .search-form button {
-  flex: none; min-height: 3.25rem; padding: 0 1.65em; border: 0; border-radius: var(--r-pill);
+  flex: none; min-height: 3.25rem; padding: 0 1.65em; border: 0; border-radius: var(--r-control);
   font: var(--fw-medium) var(--fs-base)/1 var(--font-display); background: var(--works); color: var(--sign-ink); cursor: pointer;
   transition: background-color .35s var(--ease-out), box-shadow .35s var(--ease-out);
 }
 .search-form button:hover, .search-form button:focus-visible { background: var(--legend); box-shadow: inset 0 0 0 1px var(--sign-ink); }
 
 /* Filters and search read as pills, like every other control */
-.filters select, .filters__search input, .search-form input { border-radius: var(--r-pill); padding-inline: 1.35em; }
+.filters select, .filters__search input, .search-form input { border-radius: var(--r-control); padding-inline: 1.35em; }
