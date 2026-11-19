@@ -362,7 +362,7 @@ GSAP. Headlines rise out of line masks and the orange period lands last. Lines d
 
 ### Don't (chapter 14):
 - **Don't** add a third colour for variety.
-- **Don't** recolour, stretch or redraw the logo, or use it as a graphic element, a frame or a background.
+- **Don't** recolour, stretch or redraw the logo, or use it as a graphic element, a frame or a background. The one exception is the home headline, where the logo's O turns between the words (`log_ring_glyph()`): the page opens on the roundabout that becomes that O, so it belongs to the opening. Itay's decision, 19.11.2026.
 - **Don't** put more than one orange dot on a page, apart from a map or a chart.
 - **Don't** run a line over a face.
 - **Don't** draw thick lines or filled frames. A rounded corner only in a thin line.
@@ -373,6 +373,5 @@ GSAP. Headlines rise out of line masks and the orange period lands last. Lines d
 - **Don't** use a second icon family, emoji or glyph characters as icons.
 
 ## Open
-- The logo's O still turns inside the home headline (`log_ring_glyph()`). The book keeps the logo out of graphic use; waiting for Itay's call.
 - `log_route_shield()` and `.shield` keep their old names: they print the page number.
 - The about page's opening picture is a stand-in until LOG picks a team photo.
