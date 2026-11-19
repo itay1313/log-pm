@@ -9,7 +9,8 @@
  */
 .vbg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: var(--plate); }
 .vbg--bleed { left: calc(50% - 50vw); right: calc(50% - 50vw); }
-.vbg__video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--vbg-focus, 50% 50%); }
+/* The footage is a place under a legend: greyed, then the one night layer over it (the book, chapter 09). */
+.vbg__video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--vbg-focus, 50% 50%); filter: grayscale(.85) contrast(1.05); }
 /* The map's print grain over the footage too: places read printed, like the map and the road, not lit like a screen. */
 .vbg::before {
   content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -20,11 +21,11 @@
   background: var(--vbg-scrim, linear-gradient(color-mix(in srgb, var(--night) 40%, transparent), color-mix(in srgb, var(--night) 40%, transparent)));
 }
 
-/* Stop / play: one small round plate in the band's end corner */
+/* Stop / play: a small thin circle in the band's end corner */
 .vbg__toggle {
   position: absolute; z-index: 2; inset-block-end: clamp(16px, 2.4vw, 28px); inset-inline-end: var(--gutter);
   display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
-  background: color-mix(in srgb, var(--night) 60%, transparent); color: var(--legend); box-shadow: inset 0 0 0 1.5px var(--hair-strong);
+  background: color-mix(in srgb, var(--night) 60%, transparent); color: var(--legend); box-shadow: inset 0 0 0 var(--line-w) var(--hair-strong);
   pointer-events: auto; cursor: pointer;
   transition: background-color .3s var(--ease-out), color .3s var(--ease-out), box-shadow .3s var(--ease-out);
 }

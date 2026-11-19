@@ -44,16 +44,15 @@ export const font = {
   fontFigure: "'Ploni', system-ui, sans-serif"
 };
 export const size = {
-  fsH1: "clamp(3rem, 1.9rem + 4.6vw, 6.25rem)",
-  fsH2: "clamp(2.5rem, 1.6rem + 3.2vw, 4.5rem)",
-  fsH3: "clamp(2rem, 1.45rem + 1.9vw, 3.25rem)",
-  fsH4: "clamp(1.625rem, 1.3rem + 1vw, 2.25rem)",
+  fsH1: "clamp(2.75rem, 1.75rem + 3.4vw, 4.5rem)",
+  fsH2: "clamp(2.25rem, 1.5rem + 2.4vw, 3.5rem)",
+  fsH3: "clamp(2rem, 1.5rem + 1.1vw, 2.5rem)",
+  fsH4: "clamp(1.5rem, 1.3rem + .5vw, 1.75rem)",
   fsTitle: "1.5rem",
   fsLead: "1.25rem",
-  fsBase: "1.0625rem",
+  fsBase: "1.125rem",
   fsSmall: ".9375rem",
-  fsMicro: ".8125rem",
-  fsMega: "clamp(4.25rem, 14vw, 14.5rem)"
+  fsMicro: ".875rem"
 };
 export const weight = {
   fwLight: 300,
@@ -76,15 +75,12 @@ export const tracking = {
 };
 export const radius = {
   rControl: "8px",
-  rFrame: "26px",
-  rPlate: "10px",
-  rSmall: "6px"
+  rFrame: "26px"
 };
 export const line = {
   frame: "12px",
-  keyline: "2px",
-  keylineInset: "5px",
   lineW: "2px",
+  ruleW: "1px",
   dot: "12px",
   dash: "8px",
   dashGap: "6px",

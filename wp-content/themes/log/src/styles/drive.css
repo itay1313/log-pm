@@ -13,9 +13,9 @@
 }
 html.drive-on .drive { overflow-x: clip; } /* the overlays span the viewport; clip, so sticky still works */
 
-/* The figures: big tabular numbers under an orange 3px rule, no plate. */
+/* The figures: big Light numbers, each under the thin line. The line is white: the page's orange is spent on its dot. */
 .drive-figures { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin: 0; align-self: end; }
-.drive-figures > div { display: flex; flex-direction: column-reverse; gap: .4rem; padding-top: .85rem; border-top: 1px solid var(--works); }
+.drive-figures > div { display: flex; flex-direction: column-reverse; gap: .4rem; padding-top: .85rem; border-top: var(--line-w) solid var(--hair-strong); }
 .drive-figures dt { font: var(--type-label); color: var(--legend-muted); }
 .drive-figures dd { margin: 0; font: var(--fw-light) var(--fs-h1)/.88 var(--font-figure); letter-spacing: var(--track-figure); font-variant-numeric: tabular-nums; }
 
@@ -98,9 +98,9 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 
 /* Drawn over the site: dimension lines, the area, the grid reference, the white sign and its leader. */
 .build-overlay { position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); overflow: visible; pointer-events: none; }
-.build-overlay .dim { stroke: var(--legend); stroke-width: 1.5; fill: none; }
-.build-overlay .leader { stroke: var(--sign-ink); stroke-width: 2; }
-.build-overlay .leader-dot { fill: var(--works); stroke: var(--sign-ink); stroke-width: 2; }
+.build-overlay .dim { stroke: var(--legend); stroke-width: var(--line-w); fill: none; }
+.build-overlay .leader { stroke: var(--sign-ink); stroke-width: var(--line-w); }
+.build-overlay .leader-dot { fill: var(--works); } /* a dot, no ring */
 .build-label { position: absolute; top: 0; left: 0; font: var(--fw-bold) var(--fs-small) var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 1px 10px color-mix(in srgb, var(--night-deep) 95%, transparent); translate: -50% -50%; }
 .build-label--area { font: var(--fw-light) var(--fs-h4) var(--font-figure); letter-spacing: var(--track-heading); }
 .build-label--area small { display: block; font: var(--type-label); color: var(--legend-muted); text-align: center; }
@@ -108,7 +108,7 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 /* The white sign: the plan's facts and its real stage. It never swaps with the night (sign ink stays). */
 .build-sign {
   --ink: var(--sign-ink); --slate: var(--day-slate); --rule: var(--day-rule);
-  position: absolute; top: 0; left: 0; width: min(330px, calc(100vw - 32px)); padding: 1.25rem 1.4rem 1.3rem; border-radius: 22px;
+  position: absolute; top: 0; left: 0; width: min(330px, calc(100vw - 32px)); padding: 1.25rem 1.4rem 1.3rem; 
   background: var(--legend); color: var(--sign-ink); opacity: 0; visibility: hidden;
   box-shadow: 0 30px 60px -18px color-mix(in srgb, var(--night-deep) 70%, transparent), 0 4px 12px color-mix(in srgb, var(--night-deep) 30%, transparent);
 }
@@ -120,7 +120,7 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 .build-sign__facts dt { font-size: var(--fs-micro); color: var(--slate); }
 .build-sign .stage-row { margin-bottom: 1rem; }
 .build-sign__go { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.35rem; border-radius: var(--r-control); background: var(--plate); color: var(--legend); font: var(--type-legend); text-decoration: none; transition: background-color .25s, color .25s; }
-.build-sign__go i { width: 1.3em; height: .9em; background: currentColor; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; transition: translate .4s var(--ease-out); }
+.build-sign__go i { width: 1.3em; height: .9em; background: currentColor; -webkit-mask: var(--icon-arrow) left center / auto no-repeat; mask: var(--icon-arrow) left center / auto no-repeat; transition: translate .4s var(--ease-out); }
 .build-sign__go:hover, .build-sign__go:focus-visible { background: var(--works); color: var(--plate); }
 .build-sign__go:hover i { translate: -6px 0; }
 
@@ -191,18 +191,18 @@ html.road-on .gantries .domain {
     linear-gradient(90deg, var(--map-sky) 0 3px, var(--steel) 3px) 0 0 / 24px 100% no-repeat,
     linear-gradient(90deg, var(--map-sky) 0 3px, var(--steel) 3px) 100% 0 / 24px 100% no-repeat;
 }
-/* The sign hangs from the beam on two rods: a plate, keyline and all, with the count where the distance goes. */
+/* The sign hangs from the beam on two rods, edged in the thin line, with the count where the distance goes. */
 html.road-on .gantries .domain__link {
   position: absolute; top: 46px; left: 50%; width: min(780px, 92vw); translate: -50% 0; pointer-events: none;
   display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 2rem; row-gap: .6rem;
-  padding: 2rem 2.4rem 1.9rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend);
-  box-shadow: inset 0 0 0 7px var(--plate), inset 0 0 0 10px var(--legend), 0 40px 80px -30px color-mix(in srgb, var(--night-deep) 80%, transparent);
+  padding: 2rem 2.4rem 1.9rem; background: var(--plate); color: var(--legend);
+  box-shadow: inset 0 0 0 var(--line-w) var(--legend), 0 40px 80px -30px color-mix(in srgb, var(--night-deep) 80%, transparent);
   transition: box-shadow .3s var(--ease-out);
 }
 html.road-on .gantries .domain__link::before { content: ''; position: absolute; top: -24px; inset-inline: 22%; height: 24px; border-inline: 7px solid var(--steel); }
 html.road-on .gantries .domain__link:hover, html.road-on .gantries .domain__link:focus-visible {
   padding-inline: 2.4rem; background: var(--plate); outline: none;
-  box-shadow: inset 0 0 0 7px var(--plate), inset 0 0 0 10px var(--works), 0 40px 80px -30px color-mix(in srgb, var(--night-deep) 80%, transparent);
+  box-shadow: inset 0 0 0 var(--line-w) var(--works), 0 40px 80px -30px color-mix(in srgb, var(--night-deep) 80%, transparent);
 }
 html.road-on .gantries .domain__name { grid-column: 1; font-size: var(--fs-h2); line-height: var(--lh-display); letter-spacing: var(--track-heading); }
 html.road-on .gantries .domain__line { grid-column: 1; font-size: var(--fs-lead); }
@@ -213,14 +213,14 @@ html.road-on .exit { position: relative; z-index: 1; height: 300vh; padding: 0; 
 html.road-on .exit__inner { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; }
 html.road-on .exit-sign {
   position: absolute; z-index: 2; inset-inline-start: 0; top: 44%; display: grid; justify-items: start; gap: .5rem; width: min(360px, 78vw); margin: 0;
-  padding: 1.5rem 1.7rem 1.6rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend);
-  box-shadow: inset 0 0 0 7px var(--plate), inset 0 0 0 10px var(--legend), 0 40px 80px -30px color-mix(in srgb, var(--night-deep) 80%, transparent);
+  padding: 1.5rem 1.7rem 1.6rem; background: var(--plate); color: var(--legend);
+  box-shadow: inset 0 0 0 var(--line-w) var(--legend), 0 40px 80px -30px color-mix(in srgb, var(--night-deep) 80%, transparent);
   transform-origin: 100% 50%;
 }
-.exit-sign__tag { padding: .3rem .7rem .25rem; border-radius: 6px; background: var(--legend); color: var(--sign-ink); font: var(--fw-bold) var(--fs-base) var(--font-display); }
+.exit-sign__tag { padding: .3rem .7rem .25rem; border-radius: var(--r-control); background: var(--legend); color: var(--sign-ink); font: var(--fw-bold) var(--fs-base) var(--font-display); }
 .exit-sign__name { font: var(--fw-bold) var(--fs-h3)/1 var(--font-display); letter-spacing: var(--track-title); }
-.exit-sign__arrow { justify-self: end; width: 3rem; height: 2.1rem; background: var(--works); rotate: 135deg; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; }
-html.road-on .exit-frame { position: absolute; z-index: 2; top: 0; left: 0; border: 3px solid var(--legend); border-radius: var(--r-plate); pointer-events: none; opacity: 0; }
+.exit-sign__arrow { justify-self: end; width: 3rem; height: 2.1rem; background: var(--works); rotate: 135deg; -webkit-mask: var(--icon-arrow) left center / auto no-repeat; mask: var(--icon-arrow) left center / auto no-repeat; }
+html.road-on .exit-frame { position: absolute; z-index: 2; top: 0; left: 0; border: var(--line-w) solid var(--legend); pointer-events: none; opacity: 0; }
 html.road-on .exit-world {
   position: absolute; z-index: 1; inset: 0 calc(50% - 50vw); display: grid; clip-path: inset(50% 50% 50% 50%);
   background:

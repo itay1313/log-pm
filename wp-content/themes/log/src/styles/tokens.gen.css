@@ -43,16 +43,15 @@
   --font-headline: 'Ploni Tzar', 'Ploni', system-ui, sans-serif; /* headlines: Ploni Tzar Bold, two to four words, closed by a period */
   --font-figure: 'Ploni', system-ui, sans-serif; /* big numbers, numbering and quotes: Ploni Light */
   /* size */
-  --fs-h1: clamp(3rem, 1.9rem + 4.6vw, 6.25rem); /* 48 → 97: page titles, the big figures */
-  --fs-h2: clamp(2.5rem, 1.6rem + 3.2vw, 4.5rem); /* 40 → 72: section titles, the home headline */
-  --fs-h3: clamp(2rem, 1.45rem + 1.9vw, 3.25rem); /* 32 → 51: destination rows, lead cards, step titles */
-  --fs-h4: clamp(1.625rem, 1.3rem + 1vw, 2.25rem); /* 26 → 35: card titles, steps, quotes */
+  --fs-h1: clamp(2.75rem, 1.75rem + 3.4vw, 4.5rem); /* 44 → 72: page titles, the home headline, the big figures. 72 is the book's ceiling for a headline on the site */
+  --fs-h2: clamp(2.25rem, 1.5rem + 2.4vw, 3.5rem); /* 36 → 56: section titles. 56 is where the book's headline range starts */
+  --fs-h3: clamp(2rem, 1.5rem + 1.1vw, 2.5rem); /* 32 → 40: destination rows, lead cards, step titles */
+  --fs-h4: clamp(1.5rem, 1.3rem + .5vw, 1.75rem); /* 24 → 28: card titles, steps, quotes. 28 is the book's subhead */
   --fs-title: 1.5rem; /* 24: small titles in Ploni Tzar */
   --fs-lead: 1.25rem; /* 20: ledes, prose, names in lists */
-  --fs-base: 1.0625rem; /* 17: body, buttons, legends */
+  --fs-base: 1.125rem; /* 18: body, buttons, legends (the book's body size) */
   --fs-small: .9375rem; /* 15: captions, meta */
-  --fs-micro: .8125rem; /* 13: map labels, table heads */
-  --fs-mega: clamp(4.25rem, 14vw, 14.5rem); /* the footer's last legend, the one exception */
+  --fs-micro: .875rem; /* 14: map labels, table heads. The book sets nothing smaller */
   /* weight */
   --fw-light: 300;
   --fw-regular: 400;
@@ -70,15 +69,12 @@
   --track-figure: -0.045em; /* big light figures and quotes */
   --track-title: -0.01em;
   /* radius */
-  --r-control: 8px; /* buttons, fields, chips and tags: the book allows a rounded corner only in a thin line, so no pills */
-  --r-frame: 26px; /* the frame around the home map */
-  --r-plate: 10px;
-  --r-small: 6px;
+  --r-control: 8px; /* the one radius: buttons, fields, chips and tags. The book allows a rounded corner only in a thin line, so no pills; photographs and surfaces stay square */
+  --r-frame: 26px; /* the frame around the home map while it opens */
   /* line */
   --frame: 12px; /* the home map's inset from the window */
-  --keyline: 2px;
-  --keyline-inset: 5px;
   --line-w: 2px; /* every line and circle in the language, one weight (the book: 2px on a 1280 sheet) */
+  --rule-w: 1px; /* the grey hair between the rows of a list or a table, as the book draws it. Never in ink, never a frame */
   --dot: 12px; /* the dot at a line's end or crossing: filled, no ring (the book: 10 to 14px) */
   --dash: 8px; /* a dashed line: what doesn't exist yet */
   --dash-gap: 6px;

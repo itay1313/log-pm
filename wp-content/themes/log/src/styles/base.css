@@ -23,7 +23,7 @@ input, textarea { caret-color: var(--works); }
 :is(.site-header, .gantry, .hero, .drive, .road, .section--night, .section--control, .site-footer) { --focus: var(--works); }
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: var(--paper); }
-::-webkit-scrollbar-thumb { background: var(--slate); border: 3px solid var(--paper); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--slate); border: 3px solid var(--paper); border-radius: var(--r-control); }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink); }
 
 h1, h2, h3, h4 { font-family: var(--font-display); line-height: var(--lh-heading); margin: 0 0 .5em; letter-spacing: var(--track-heading); text-wrap: balance; }
@@ -48,28 +48,28 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
 
 .container { width: min(100% - 2 * var(--gutter), var(--container)); margin-inline: auto; }
 .screen-reader-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.skip-link { position: absolute; inset-inline-start: 1rem; top: -100%; background: var(--works); color: var(--plate); padding: .7rem 1.1rem; z-index: 200; font: var(--type-legend); border-radius: var(--r-small); }
+.skip-link { position: absolute; inset-inline-start: 1rem; top: -100%; background: var(--works); color: var(--plate); padding: .7rem 1.1rem; z-index: 200; font: var(--type-legend); border-radius: var(--r-control); }
 .skip-link:focus { top: 1rem; }
-.placeholder { color: var(--slate); border: 2px dashed var(--rule); border-radius: var(--r-plate); padding: 1.5rem; font-size: var(--fs-small); }
+.placeholder { color: var(--slate); border: var(--line-w) dashed var(--rule); padding: 1.5rem; font-size: var(--fs-small); } /* dashed: it isn't built yet */
 
-/* ------------------------------------------------------------------ the plate */
+/* ------------------------------------------------------------------ controls */
 
 /*
- * A plate: navy ground drawn with one hairline, rounded corners; buttons take the control radius (--r-control). The inset shadow draws the
- * line so the plate needs no extra element. .plate--day is the white sign with an ink line.
+ * A control is one of two things, never both: filled (a ground, no line) or outlined (the thin line with the one
+ * rounded corner the book allows, no ground). --k-ground is the fill, --k-line the legend, --k-edge the outline,
+ * which is transparent on a filled control. On night grounds a navy button would vanish, so it turns outlined.
  */
 .plate, .btn, .menu-toggle {
   --k-ground: var(--plate);
   --k-line: var(--legend);
+  --k-edge: transparent;
   background-color: var(--k-ground);
   color: var(--k-line);
-  border-radius: var(--r-plate);
-  box-shadow: inset 0 0 0 1px var(--k-line);
+  box-shadow: inset 0 0 0 var(--line-w) var(--k-edge);
   transition: box-shadow .35s var(--ease-out), background-color .35s var(--ease-out), color .35s var(--ease-out);
 }
 .btn, .menu-toggle { border-radius: var(--r-control); }
-.plate--day { --k-ground: var(--legend); --k-line: var(--sign-ink); }
-.plate--works { --k-ground: var(--works); --k-line: var(--plate); }
+:is(.sheet--night, .section--control, .section--night, .site-footer, .gantry, .hero, body.page-template-page-control) .btn:not(.btn--primary, .btn--works, .btn--ghost, .btn--day) { --k-ground: transparent; --k-edge: var(--legend); }
 
 /*
  * The route number: a page's number in the header order, set at the start of its heading and its menu row the way
@@ -84,10 +84,10 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
 /* Title bands, the menu and the home map are navy without being night worlds: they take the bright orange. */
 :is(.hero, .page-header, .about-hero, .careers-hero, .control-hero, .gantry) .shield { color: var(--works); }
 
-/* The guide-sign arrow, used for every link that goes somewhere. It travels on hover. */
+/* The arrow, for every link that goes somewhere: one thin line, as long as its box is wide. It travels on hover. */
 .arrow {
-  display: inline-block; flex: none; width: 1.3em; height: .9em; background: currentColor; vertical-align: middle;
-  -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat;
+  display: inline-block; flex: none; width: 1.3em; height: .9em; min-height: 12px; background: currentColor; vertical-align: middle;
+  -webkit-mask: var(--icon-arrow) left center / auto no-repeat; mask: var(--icon-arrow) left center / auto no-repeat;
   transition: translate .45s var(--ease-out);
 }
 .arrow--lane { rotate: 45deg; } /* lane arrows: forward and to the start side */
@@ -101,12 +101,12 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 /* ------------------------------------------------------------------ buttons, links */
 
 /*
- * One button family: a pill at least 52px tall, Ploni Tzar 500 at 17px, the same padding everywhere.
- *   .btn            navy plate, white legend: the everyday button
- *   .btn--primary   the page's action, works orange with an ink legend (ink on orange is 7:1; white on it is 2:1)
+ * One button family: at least 52px tall, Ploni Tzar 500 at 18px, the same padding everywhere.
+ *   .btn            filled navy, white legend: the everyday button (outlined in white on night grounds)
+ *   .btn--primary   the page's action, filled orange with an ink legend (ink on orange is 7:1; white on it is 2:1)
  *   .btn--works     the same orange action (the menu's "talk to us")
- *   .btn--ghost     white sign, ink legend
- * Hover and focus turn the navy and orange buttons into the white sign with ink, and the white one into navy.
+ *   .btn--ghost     outlined in the thin line, ink legend, no ground
+ * Hover and focus turn the filled buttons white with ink, and the outlined one navy.
  */
 .btn {
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .7em;
@@ -114,10 +114,10 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
   font: var(--fw-medium) var(--fs-base)/1.2 var(--font-display);
 }
 .btn .arrow { width: 1.15em; height: .8em; }
-.btn:hover, .btn:focus-visible { --k-ground: var(--legend); --k-line: var(--sign-ink); color: var(--sign-ink); }
-.btn--primary, .btn--works { --k-ground: var(--works); --k-line: var(--works); color: var(--sign-ink); }
-.btn--ghost, .btn--day { --k-ground: var(--legend); --k-line: var(--sign-ink); }
-.btn--ghost:hover, .btn--day:hover, .btn--ghost:focus-visible, .btn--day:focus-visible { --k-ground: var(--plate); --k-line: var(--plate); color: var(--legend); }
+.btn--primary, .btn--works { --k-ground: var(--works); --k-line: var(--sign-ink); }
+.btn--ghost, .btn--day { --k-ground: transparent; --k-line: var(--ink); --k-edge: var(--ink); }
+.btn:is(:hover, :focus-visible) { --k-ground: var(--legend); --k-line: var(--sign-ink); --k-edge: var(--sign-ink); }
+.btn--ghost:hover, .btn--day:hover, .btn--ghost:focus-visible, .btn--day:focus-visible { --k-ground: var(--plate); --k-line: var(--legend); --k-edge: var(--plate); }
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
 .link-more, .link-row a, .back-link {
@@ -126,7 +126,7 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 }
 .link-more::after, .link-row a::after {
   content: ''; width: 1.3em; height: .9em; background: currentColor; flex: none;
-  -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat;
+  -webkit-mask: var(--icon-arrow) left center / auto no-repeat; mask: var(--icon-arrow) left center / auto no-repeat;
   transition: translate .45s var(--ease-out), background-color .3s;
 }
 .link-more:hover::after, .link-row a:hover::after, .link-more:focus-visible::after, .link-row a:focus-visible::after { translate: -6px 0; background-color: var(--works-deep); }
@@ -137,7 +137,7 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 .back-link { font-size: var(--fs-base); color: var(--legend-muted); margin-bottom: 1.5rem; }
 .back-link::before {
   content: ''; width: 1.3em; height: .9em; background: currentColor; scale: -1 1;
-  -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat;
+  -webkit-mask: var(--icon-arrow) left center / auto no-repeat; mask: var(--icon-arrow) left center / auto no-repeat;
   transition: translate .4s var(--ease-out);
 }
 .back-link:hover { color: var(--legend); }
@@ -150,16 +150,17 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 .field--wide { grid-column: 1 / -1; }
 .field > span { font: var(--type-label); }
 .field small { color: var(--slate); font-weight: var(--fw-regular); }
+/* A field is the thin line closed around the place to write, with the one rounded corner the book allows a line. */
 .field input, .field select, .field textarea, .filters select, .filters__search input, .search-form input {
-  font: inherit; font-size: var(--fs-base); color: var(--ink); background-color: var(--legend); width: 100%;
-  border: 1px solid var(--ink); border-radius: 14px; padding: .85em 1.1em; transition: border-color .25s, box-shadow .25s;
+  font: inherit; font-size: var(--fs-base); color: var(--ink); background-color: var(--paper-2); width: 100%;
+  border: var(--line-w) solid var(--ink); border-radius: var(--r-control); padding: .85em 1.1em; transition: border-color .25s, box-shadow .25s;
 }
 .field input:focus, .field select:focus, .field textarea:focus, .filters select:focus, .filters__search input:focus, .search-form input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--focus); }
 .field input[type=file] { padding: .6em; }
 .field .is-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 25%, transparent); }
 .field__hint { font-size: var(--fs-small); color: var(--danger); }
 select { appearance: none; cursor: pointer; padding-left: 2.6rem !important; }
-.field select, .filters select { background: var(--legend) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 7'%3E%3Cpath d='M0 0h10L5 7z' fill='%2315202b'/%3E%3C/svg%3E") left 1rem center / 10px 7px no-repeat; }
+.field select, .filters select { background: var(--paper-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2315202b' stroke-width='2'/%3E%3C/svg%3E") left 1rem center / 12px 8px no-repeat; }
 .check { display: flex; gap: .7rem; align-items: flex-start; font-size: var(--fs-small); margin-bottom: .8rem; }
 .check input { margin-top: .3em; width: 1.1rem; height: 1.1rem; accent-color: var(--works); }
 .check .field__hint { display: block; width: 100%; }
@@ -168,21 +169,20 @@ select { appearance: none; cursor: pointer; padding-left: 2.6rem !important; }
 .form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 1rem; margin-bottom: 1.5rem; }
 @media (max-width: 560px) { .form__grid { grid-template-columns: 1fr; } }
 .form__error { color: var(--danger); margin: .75rem 0; }
-.form__success { font: var(--type-title); padding: 1.5rem 1.75rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend); }
-.form__context { color: var(--slate); margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--rule-soft); }
+.form__success { font: var(--type-title); padding: 1.25rem 0; border-top: var(--line-w) solid var(--ink); }
+.form__context { color: var(--slate); margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: var(--rule-w) solid var(--rule); }
 .form__context-clear { font: inherit; font-size: var(--fs-small); color: var(--slate); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; margin-inline-start: .5rem; }
 .form button[type=submit] { margin-top: .75rem; }
-.notice { padding: 1.1rem 1.4rem; border-radius: var(--r-plate); background: var(--plate); color: var(--legend); font: var(--type-title); }
+.notice { padding: 1.1rem 0; border-top: var(--line-w) solid var(--ink); font: var(--type-title); }
 
 .search-form { display: flex; gap: .5rem; max-width: 680px; }
 .search-form input { height: 3.25rem; padding-block: 0; }
-/* The search button is a primary button: same pill, same size, ink on orange. */
+/* The search button is a primary button: same size, ink on orange. */
 .search-form button {
   flex: none; min-height: 3.25rem; padding: 0 1.65em; border: 0; border-radius: var(--r-control);
   font: var(--fw-medium) var(--fs-base)/1 var(--font-display); background: var(--works); color: var(--sign-ink); cursor: pointer;
   transition: background-color .35s var(--ease-out), box-shadow .35s var(--ease-out);
 }
-.search-form button:hover, .search-form button:focus-visible { background: var(--legend); box-shadow: inset 0 0 0 1px var(--sign-ink); }
+.search-form button:hover, .search-form button:focus-visible { background: var(--legend); box-shadow: inset 0 0 0 var(--line-w) var(--sign-ink); }
 
-/* Filters and search read as pills, like every other control */
 .filters select, .filters__search input, .search-form input { border-radius: var(--r-control); padding-inline: 1.35em; }
