@@ -184,6 +184,7 @@ function log_deploy_handle( WP_REST_Request $req ) {
 		'ref'       => $c['ref'] ?? '',
 		'run'       => $c['run_id'] ?? '',
 		'installed' => $installed,
+		'opcache'   => function_exists( 'wp_opcache_invalidate_directory' ) && function_exists( 'opcache_invalidate' ), // cleared after the swap
 	] );
 }
 
@@ -246,12 +247,27 @@ function log_deploy_install( string $zip_bytes ) {
 			return log_deploy_error( 500, "Couldn't move the new $dir into place." );
 		}
 		$swapped[] = $dir;
-		if ( function_exists( 'wp_opcache_invalidate_directory' ) ) {
-			wp_opcache_invalidate_directory( $live );
-		}
+		log_deploy_clear_opcache( $live );
 	}
 	log_deploy_rmtree( $stage );
 	return $swapped;
+}
+
+/**
+ * Drops the swapped folder's PHP from OPcache, so the next request runs the new files. Without it the server kept
+ * running the old bytecode until OPcache revalidated on its own (about two minutes on uPress). Core's helper lives
+ * in wp-admin/includes/file.php, which a REST request doesn't load, so it's loaded here.
+ * Returns whether the cache could be cleared (no OPcache, or opcache.restrict_api, means it couldn't).
+ */
+function log_deploy_clear_opcache( string $dir ): bool {
+	if ( ! function_exists( 'wp_opcache_invalidate_directory' ) && is_readable( ABSPATH . 'wp-admin/includes/file.php' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+	if ( ! function_exists( 'wp_opcache_invalidate_directory' ) || ! function_exists( 'opcache_invalidate' ) ) {
+		return false;
+	}
+	wp_opcache_invalidate_directory( $dir );
+	return true;
 }
 
 function log_deploy_undo( array $swapped, string $prev ): void {
