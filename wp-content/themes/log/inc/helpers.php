@@ -286,3 +286,23 @@ function log_has_clients(): bool {
 function log_show_empty(): bool {
 	return current_user_can( 'edit_pages' );
 }
+
+/**
+ * LOG's own photograph for an opening that has no picture of its own yet. The file lives in uploads/log-brand/
+ * with the brand book's photographs (never in the public repository); '' while it hasn't been uploaded.
+ * Both crops are 2200 wide, with a 900-wide "-s" copy for phones.
+ */
+function log_own_photo( string $file, string $alt, int $height ): string {
+	$url = log_bk_photo_url( $file );
+	if ( $url === '' ) {
+		return '';
+	}
+	$small = log_bk_photo_url( str_replace( '.jpg', '-s.jpg', $file ) );
+	return sprintf(
+		'<img src="%s"%s alt="%s" width="2200" height="%d" fetchpriority="high" decoding="async">',
+		esc_url( $url ),
+		$small ? sprintf( ' srcset="%s 900w, %s 2200w" sizes="(min-width: 1400px) 1320px, 92vw"', esc_url( $small ), esc_url( $url ) ) : '',
+		esc_attr( $alt ),
+		$height
+	);
+}

@@ -41,7 +41,17 @@ $items = new WP_Query( [
 ?>
 <section class="control-hero">
 	<figure class="control-hero__media">
-		<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] ); elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת פתיחה (רק עורכים רואים את זה)</span><?php endif; ?>
+		<?php
+		// The page's own picture; until it has one, LOG's aerial photograph; without either, a slot only editors see.
+		$own = has_post_thumbnail() ? '' : log_own_photo( 'aerial.jpg', 'כיכר, כבישים ושכונת מגורים במבט מהאוויר', 875 );
+		if ( has_post_thumbnail() ) :
+			the_post_thumbnail( 'log-wide', [ 'fetchpriority' => 'high' ] );
+		elseif ( $own ) :
+			echo $own; // phpcs:ignore WordPress.Security.EscapeOutput
+		elseif ( current_user_can( 'edit_pages' ) ) :
+			?><span class="placeholder placeholder--media">מקום לתמונת פתיחה (רק עורכים רואים את זה)</span><?php
+		endif;
+		?>
 	</figure>
 	<div class="control-hero__strip">
 		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'control-city' ] ); ?>
