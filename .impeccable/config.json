@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "wp-content/themes/log/src/brand/brand.css"
+        ],
+        "createdAt": "2026-11-19T16:25:37.270Z",
+        "reason": "Itay 19.11.2026: keep the photograph inside the letters (.fx-masked). The gradient there is one flat navy layer over a photo, not a colour gradient"
+      }
+    ]
+  }
+}
