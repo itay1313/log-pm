@@ -59,7 +59,7 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
  * rounded corner the book allows, no ground). --k-ground is the fill, --k-line the legend, --k-edge the outline,
  * which is transparent on a filled control. On night grounds a navy button would vanish, so it turns outlined.
  */
-.plate, .btn, .menu-toggle {
+.plate, .btn, .menu-toggle, .gantry__close {
   --k-ground: var(--plate);
   --k-line: var(--legend);
   --k-edge: transparent;

@@ -12,8 +12,9 @@
 
 <?php
 /**
- * The gantry (spec v6 §6): logo, the two worlds as a lane split, and the menu. The header is a guide sign
- * hung over every page: transparent over the map and the title band, a solid navy bar once the page moves.
+ * The gantry (spec v6 §6): logo, the two worlds as a lane split, and the menu. The header hangs over every
+ * page: transparent over the map and the title band, a solid navy bar once the page moves. One outlined
+ * control in it, the menu; "talk to us" is a plain link with the arrow.
  * On phones the lane split leaves the header and rides the bottom edge of the screen.
  */
 $nav       = log_nav_items();
@@ -29,9 +30,9 @@ $distances = log_nav_distances();
 
 		<div class="site-header__tools">
 			<a class="site-header__talk" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php echo esc_html( log_text( 'header_cta', 'בואו נדבר', 'option' ) ); ?><i class="arrow" aria-hidden="true"></i></a>
-			<button class="menu-toggle plate" type="button" aria-expanded="false" aria-controls="site-menu" aria-haspopup="dialog">
-				<span class="menu-toggle__lanes" aria-hidden="true"><i></i><i></i><i></i></span>
+			<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-haspopup="dialog">
 				<span class="menu-toggle__label">תפריט</span>
+				<span class="menu-toggle__lanes" aria-hidden="true"><i></i><i></i></span>
 			</button>
 		</div>
 	</div>
@@ -41,7 +42,7 @@ $distances = log_nav_distances();
 	<div class="gantry__plate">
 		<div class="gantry__top">
 			<a class="site-header__logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="לוג ניהול פרויקטים – לעמוד הבית"><?php get_template_part( 'template-parts/logo', null, [ 'variant' => 'night', 'label' => '' ] ); ?></a>
-			<button class="gantry__close plate" type="button" autofocus><span>סגירה</span><i class="icon icon--close" aria-hidden="true"></i></button>
+			<button class="gantry__close" type="button" autofocus><span>סגירה</span><i class="icon icon--close" aria-hidden="true"></i></button>
 		</div>
 
 		<nav class="gantry__nav" aria-label="ניווט ראשי">
