@@ -59,13 +59,15 @@ function log_bk_opener( string $n ): void {
 	$chapters = log_bk_chapters();
 	$i        = (int) $n - 1;
 	$photo    = [ 'aerial-night.jpg', 'night-city.jpg', 'aerial.jpg' ][ $i % 3 ];
+	// Two chapters open on the place drawn instead of photographed: the one that sets the grounds, and the one with the map.
+	$drawn    = [ '08' => 5, '11' => 31 ][ $n ] ?? 0;
 	$x        = [ 139, 420, 260, 139, 560, 330 ][ $i % 6 ];
 	$y        = [ 560, 500, 600, 470, 540 ][ $i % 5 ];
 	printf(
 		'<section class="bk-page bk-page--night bk-opener" id="ch-%1$s" data-chapter="%1$s" aria-label="%2$s" style="--y: %5$d; --focus: %6$d%%">%3$s<span class="bk-cross" style="--x: %4$d; --y: %5$d" aria-hidden="true"><i class="bk-cross__v"></i><i class="bk-cross__h"></i><i class="bk-cross__dot"></i></span><p class="bk-opener__n" aria-hidden="true">%1$s</p><div class="bk-opener__body"><p class="bk-kicker bk-kicker--works">פרק %1$s מתוך %7$d</p>',
 		esc_attr( $n ),
 		esc_attr( $chapters[ $n ] ?? '' ),
-		log_bk_photo( $photo, '', 'bk-photo--bleed', 'dark' ), // phpcs:ignore WordPress.Security.EscapeOutput
+		$drawn ? log_city( [ 'seed' => $drawn, 'cols' => 15, 'rows' => 9, 'scale' => 0.74, 'theta' => 30 + $drawn % 9, 'cx' => 0.36, 'cy' => 0.66, 'class' => 'bk-opener__city' ] ) : log_bk_photo( $photo, '', 'bk-photo--bleed', 'dark' ), // phpcs:ignore WordPress.Security.EscapeOutput
 		$x,
 		$y,
 		[ 30, 62, 46, 78, 20 ][ $i % 5 ],

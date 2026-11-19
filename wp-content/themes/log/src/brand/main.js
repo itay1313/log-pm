@@ -22,6 +22,7 @@ import { SplitText } from 'gsap/SplitText';
 import { drawLines } from '../lines/draw.js';
 import { depthText, depthTilt, maskedText, warpText } from '../fx/text.js';
 import { riso } from '../fx/riso.js';
+import { cityRise } from '../fx/city.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText);
 
@@ -335,6 +336,13 @@ mm.add({ motion: '(prefers-reduced-motion: no-preference)', wide: '(min-width: 1
       // The leading idea carries the place inside its letters.
       const masked = page.querySelector('[data-fx-masked]');
       if (masked) undo.push(maskedText(masked, masked.dataset.fxMasked, page));
+      // The drawn city stands up out of the ground, from its middle outward; a plan on it draws itself after.
+      const city = page.querySelector('.cty');
+      if (city) {
+        const rise = cityRise(city);
+        tl.add(rise, 0.25);
+        undo.push(rise.undo);
+      }
       const lede = page.querySelector('.bk-head .bk-lede');
       if (lede) tl.from(lede, { opacity: 0, y: 16, duration: 1 }, 0.4);
 
