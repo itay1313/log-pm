@@ -120,6 +120,12 @@ function log_bk_photo_url( string $file ): string {
  * $scrim: '' (people: never a layer), or light | mid | dark (places under text: the one transparent, greying layer).
  */
 function log_bk_photo( string $file, string $alt = '', string $class = '', string $scrim = '' ): string {
+	// A place under a layer is grey anyway: when a grey copy ("-g") was uploaded it is used as it is, which spares the
+	// browser a filter on every frame and the PDF a re-drawn bitmap per photograph.
+	if ( $scrim && log_bk_photo_url( str_replace( '.jpg', '-g.jpg', $file ) ) !== '' ) {
+		$file   = str_replace( '.jpg', '-g.jpg', $file );
+		$class .= ' bk-photo--grey';
+	}
 	$url = log_bk_photo_url( $file );
 	return sprintf(
 		'<figure class="bk-photo %1$s%2$s%3$s">%4$s</figure>',
@@ -163,13 +169,16 @@ function log_bk_rows( array $rows, string $class = '' ): void {
 }
 
 /**
- * One colour swatch. Only the token's name is written here: its value is read from the live CSS custom
- * properties by src/brand/main.js, so the book can never disagree with the site.
+ * One colour as a band of the sheet. Only the token's name is written here: its value is read from the live CSS
+ * by src/brand/main.js, so the book can never disagree with the site. $on is the token text takes on it; $share
+ * is its share of a typical page (the bands open in those proportions, then even out as the sheet is scrolled).
  */
-function log_bk_swatch( string $token, string $name, string $role ): void {
+function log_bk_band( string $token, string $on, int $share, string $name, string $role ): void {
 	printf(
-		'<figure class="bk-swatch" style="--sw: var(--%1$s)"><span class="bk-swatch__chip"></span><figcaption><b>%2$s</b><span class="bk-swatch__hex" data-token-value="--%1$s"></span><span class="bk-swatch__role">%3$s</span></figcaption></figure>',
+		'<figure class="bk-band" style="--sw: var(--%1$s); --on: var(--%2$s); --share: %3$d"><figcaption><b>%4$s</b><span class="bk-band__hex" data-token-value="--%1$s"></span><span class="bk-band__role">%5$s</span></figcaption></figure>',
 		esc_attr( $token ),
+		esc_attr( $on ),
+		$share,
 		esc_html( $name ),
 		esc_html( $role )
 	);

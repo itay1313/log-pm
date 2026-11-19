@@ -70,13 +70,12 @@
 
 <?php log_bk_open( '10', 'שמונה עשר סימנים', 'bk-icons' ); ?>
 	<?php log_bk_head( '10', 'שמונה עשר סימנים', 'קו דק, נגיעה אחת של כתום, ומקווקו למה שעוד לא נבנה. כל אייקון מצייר את מה שכתוב תחתיו.' ); ?>
-	<div class="bk-icons__cols">
-		<?php echo log_bk_photo( 'icons.png', 'שמונה עשר האייקונים של לוג: תכנון עירוני, צוות, קיימות, אתרים, מצגות, חיבור, שיחה, תוכניות, הובלה, ביצוע, לוח זמנים, נתונים, רעיונות, מבנים, שכבות, סביבה, בקרה ויעד', 'bk-icons__sheet' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-		<div>
-			<?php echo log_bk_photo( 'icons-social.png', 'אייקונים לרשתות: אינסטגרם, פייסבוק, לינקדאין ולב', 'bk-icons__sheet' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-			<?php log_bk_rules( [ 'אייקון חדש נבנה באותו עובי קו ובאותה פינה מעוגלת.', 'כתום רק על חלק אחד באייקון.', 'פלטפורמות: אותו ריבוע, אותו קו.' ] ); ?>
-		</div>
-	</div>
+	<ul class="bk-icons__grid">
+		<?php foreach ( log_icons() as $name => [ $label ] ) : ?>
+			<li><?php echo log_icon( $name ); // phpcs:ignore WordPress.Security.EscapeOutput -- fixed markup from log_icons() ?><span><?php echo esc_html( $label ); ?></span></li>
+		<?php endforeach; ?>
+	</ul>
+	<?php log_bk_rules( [ 'אייקון חדש נבנה באותו עובי קו ובאותה פינה מעוגלת.', 'כתום רק על חלק אחד באייקון.', 'פלטפורמות: אותו ריבוע, אותו קו.' ], 1, 'bk-rules--3' ); ?>
 <?php log_bk_close(); ?>
 
 <?php log_bk_open( '11', 'גרף עמודות', 'bk-data' ); ?>
@@ -96,7 +95,7 @@
 	</div>
 <?php log_bk_close(); ?>
 
-<?php log_bk_open( '11', 'ציר זמן עד הקצה', 'bk-time' ); ?>
+<?php log_bk_open( '11', 'ציר זמן עד הקצה', 'bk-time bk-page--hold' ); ?>
 	<?php log_bk_head( '11', 'ציר זמן עד הקצה', 'הקו עובר מקצה לקצה של העמוד. לכל חודש ציר אמצע אחד: העיגול, שם החודש והמועדים ממורכזים עליו.' ); ?>
 	<?php echo log_bk_timeline(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 	<?php

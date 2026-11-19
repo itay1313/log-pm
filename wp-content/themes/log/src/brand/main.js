@@ -77,6 +77,20 @@ for (const link of document.querySelectorAll('[data-toc]')) {
   if (at >= 0 && slot) slot.textContent = `עמוד ${two(at + 1)}`;
 }
 
+/**
+ * Where each sheet starts in the scroll. Stacked sheets hold at the top of the window, so this is counted from
+ * the layout (heights, the gap, and the room a held sheet leaves after itself), never measured from the screen.
+ */
+function starts() {
+  const gap = parseFloat(getComputedStyle(pages[0].parentElement).rowGap) || 0;
+  let y = 0;
+  return pages.map((p) => {
+    const at = y;
+    y += p.offsetHeight + gap + (parseFloat(getComputedStyle(p).marginBottom) || 0);
+    return at;
+  });
+}
+
 /* ---------------------------------------------------------------- 2. the route */
 
 /**
@@ -95,7 +109,8 @@ if (chapters.length) {
 
   const build = () => {
     const h = innerHeight;
-    const y = (i) => PAD + (pages.indexOf(chapters[i]) / (pages.length - 1)) * (h - 2 * PAD);
+    const tops = starts();
+    const y = (i) => PAD + (tops[pages.indexOf(chapters[i])] / tops[tops.length - 1]) * (h - 2 * PAD);
     let d = `M${X} 0`;
     chapters.forEach((_, i) => { d += ` V${(y(i) - R).toFixed(1)} A${R} ${R} 0 0 ${i % 2} ${X} ${(y(i) + R).toFixed(1)}`; });
     d += ` V${h}`;
@@ -137,19 +152,22 @@ if (chapters.length) {
 /* ---------------------------------------------------------------- 3. motion */
 
 const mm = gsap.matchMedia();
-mm.add('(prefers-reduced-motion: no-preference)', () => {
+mm.add({ motion: '(prefers-reduced-motion: no-preference)', wide: '(min-width: 900px)' }, (ctx) => {
+  if (!ctx.conditions.motion) return undefined;
+  const wide = ctx.conditions.wide; // on a phone the sheets reflow: they don't stack, and nothing holds
   // Arrow keys, Page Up/Down and Space turn the pages, one sheet at a time.
   const turn = (e) => {
     if (e.target.closest('input, textarea, select, [contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) return;
     const dir = ['ArrowDown', 'PageDown', ' '].includes(e.key) && !e.shiftKey ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) || (e.key === ' ' && e.shiftKey) ? -1 : 0;
-    if (!dir) return;
-    // Stacked sheets hold at the top, so where each one starts is counted, not measured: equal sheets, equal gaps.
-    const step = pages[0].offsetHeight + parseFloat(getComputedStyle(pages[0].parentElement).rowGap || 0);
-    const at = Math.round(scrollY / step);
-    const next = gsap.utils.clamp(0, pages.length - 1, at + dir);
-    if (next === at && Math.abs(scrollY - at * step) < 4) return;
+    if (!dir || !wide) return; // a phone scrolls the reflowed sheets as an ordinary page
+    const tops = starts();
+    let at = 0;
+    tops.forEach((t, i) => { if (t <= scrollY + 4) at = i; });
+    // Going back from the middle of a sheet returns to its start first.
+    const next = dir < 0 && scrollY - tops[at] > 8 ? at : gsap.utils.clamp(0, pages.length - 1, at + dir);
+    if (Math.abs(tops[next] - scrollY) < 4) return;
     e.preventDefault();
-    gsap.to(window, { scrollTo: next * step, duration: 1, ease: 'power3.inOut', overwrite: true });
+    gsap.to(window, { scrollTo: tops[next], duration: 1, ease: 'power3.inOut', overwrite: true });
   };
   addEventListener('keydown', turn);
 
@@ -204,15 +222,59 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
   // The stack: as the next sheet slides over, the one under it steps back and dims.
   pages.forEach((page, i) => {
     const next = pages[i + 1];
-    if (!next) return;
+    if (!next || !wide) return;
     gsap.to(page, { scale: 0.92, '--dim': 0.62, ease: 'none', scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 12%', scrub: true } });
   });
+
+  // Three sheets hold while a scene plays with the scroll. Each has room after itself for it (.bk-page--hold).
+  const scene = (page) => gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: page, start: () => `top ${parseFloat(getComputedStyle(page).top) || 0}px`, end: () => `+=${innerHeight * 1.1}`, scrub: 0.6 } });
+
+  // Colour: the bands open in the proportions of a typical page, mostly paper, a sliver of orange, then even out.
+  const colours = wide && document.querySelector('.bk-colors.bk-page--hold');
+  if (colours) {
+    const bands = [...colours.querySelectorAll('.bk-band')];
+    const tl = scene(colours);
+    bands.forEach((band) => {
+      const share = Number(getComputedStyle(band).getPropertyValue('--share')) || 1;
+      tl.fromTo(band, { flexGrow: share / (100 / bands.length) }, { flexGrow: 1, duration: 1, ease: 'power2.inOut' }, 0.12);
+      tl.fromTo(band.querySelector('figcaption'), { opacity: share > 15 ? 1 : 0 }, { opacity: 1, duration: 0.3 }, 0.75);
+    });
+  }
+
+  // The logo: its quarters drive apart to show the cuts, then lock again; the language beside it follows.
+  const anatomy = wide && document.querySelector('.bk-anatomy.bk-page--hold');
+  if (anatomy) {
+    const quarters = [...anatomy.querySelectorAll('.bk-anatomy__logo [data-q]')];
+    const out = { 1: [1, -1], 2: [-1, -1], 3: [-1, 1], 4: [1, 1] };
+    const tl = scene(anatomy);
+    quarters.forEach((q) => {
+      const [x, y] = out[q.dataset.q] || [0, 0];
+      const far = (q.getBBox?.().width || 40) * 0.22;
+      tl.to(q, { x: x * far, y: y * far, rotation: x * y * -8, duration: 0.38, ease: 'power2.inOut' }, 0.1)
+        .to(q, { x: 0, y: 0, rotation: 0, duration: 0.38, ease: 'power3.inOut' }, 0.6);
+    });
+    const ring = anatomy.querySelector('.bk-anatomy__language .circ svg');
+    if (ring) tl.fromTo(ring, { rotation: 0 }, { rotation: -360, duration: 1, transformOrigin: '50% 50%' }, 0);
+    const sw = anatomy.querySelector('.bk-anatomy__language .ln--switch');
+    if (sw) tl.fromTo(sw, { '--at': '96%' }, { '--at': '18%', duration: 0.8 }, 0.1);
+  }
+
+  // The timeline: the line travels edge to edge with the scroll, and each month lands as the line reaches it.
+  const time = wide && document.querySelector('.bk-time.bk-page--hold');
+  if (time) {
+    const tl = scene(time);
+    tl.fromTo(time.querySelector('.bk-timeline__line'), { scaleX: 0 }, { scaleX: 1, duration: 1 }, 0);
+    time.querySelectorAll('.bk-timeline li').forEach((li, i) => {
+      tl.fromTo(li.querySelector('.circ'), { scale: 0 }, { scale: 1, duration: 0.12, ease: 'back.out(2.4)' }, 0.1 + i * 0.22)
+        .fromTo(li.querySelectorAll(':scope > :not(.circ)'), { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.14, stagger: 0.03, ease: 'power2.out' }, 0.14 + i * 0.22);
+    });
+  }
 
   // Every other sheet plays once, as it arrives.
   const items = [
     '.bk-rules > li', '.bk-rows > li', '.bk-how__grid > li', '.bk-toc__list > li', '.bk-junction__words > li', '.bk-vision__cols > div',
     '.bk-tone__cols > div > h3', '.bk-quote', '.bk-logo__versions > li', '.bk-wrong__grid > li', '.bk-anatomy__notes > div', '.bk-anatomy__language > *',
-    '.bk-swatch figcaption', '.bk-colors__foot > div', '.bk-table tr', '.bk-type__faces > li', '.bk-formats__row > li', '.bk-lines__kinds > li > :not(.ln)',
+    '.bk-colors__foot > div', '.bk-icons__grid > li', '.bk-table tr', '.bk-type__faces > li', '.bk-formats__row > li', '.bk-lines__kinds > li > :not(.ln)',
     '.bk-circles__kinds > li > :not(.circ)', '.bk-minis > li > :not(.bk-mini)', '.bk-photos__cols h3', '.bk-scrims__places > ul:first-child > li > :not(.bk-scrims__case)',
     '.bk-scrims__person > p', '.bk-social__frames .bk-cap', '.bk-highlights__row > li', '.bk-banner h3', '.bk-banner__text', '.bk-fb__cols h3', '.bk-fb__cols h3 + p',
     '.bk-sign', '.bk-note', '.bk-grid__sheet > p', '.bk-timeline li > :not(.circ)',
@@ -255,7 +317,8 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
       if (lede) tl.from(lede, { opacity: 0, y: 16, duration: 1 }, 0.4);
 
       // Structure first: the lines of the page run from the start side to the edge.
-      const lines = page.querySelectorAll(':scope .bk-line, :scope .bk-timeline__line, :scope .bk-chart__avg');
+      const held = wide && page.classList.contains('bk-page--hold'); // its scene runs with the scroll, above
+      const lines = page.querySelectorAll(held ? ':scope .bk-line' : ':scope .bk-line, :scope .bk-timeline__line, :scope .bk-chart__avg');
       if (lines.length) tl.from(lines, { scaleX: 0, duration: 1.3, ease: 'power3.inOut', stagger: 0.12 }, 0.35);
       const ticks = page.querySelectorAll('.bk-junction__tick');
       if (ticks.length) tl.from(ticks, { scaleY: 0, duration: 0.6, stagger: 0.14, ease: 'power3.out' }, 0.9);
@@ -269,8 +332,8 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
       }
 
       // Colour arrives as paint: chips fill from the top, the ratio bar from the start side.
-      const chips = page.querySelectorAll('.bk-swatch__chip');
-      if (chips.length) tl.from(chips, { scaleY: 0, duration: 1, stagger: 0.07, ease: 'power4.out' }, 0.45);
+      const bands = page.querySelector('.bk-bands');
+      if (bands) tl.fromTo(bands, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'power4.out', clearProps: 'clipPath' }, 0.4);
       const ratio = page.querySelectorAll('.bk-ratio__bar i, .bk-nightfam__chips i');
       if (ratio.length) tl.from(ratio, { scaleX: 0, duration: 0.9, stagger: 0.06, ease: 'power3.out' }, 0.9);
 
@@ -288,11 +351,11 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
       }
 
       // Circles on a line land on it one after another (the drawn ones belong to lines/draw.js).
-      const circles = page.querySelectorAll('.bk-timeline .circ, .bk-highlights__row .circ');
+      const circles = page.querySelectorAll(held ? '.bk-highlights__row .circ' : '.bk-timeline .circ, .bk-highlights__row .circ');
       if (circles.length) tl.from(circles, { scale: 0, duration: 0.8, stagger: 0.1, ease: 'back.out(1.8)', clearProps: 'transform' }, 0.8);
 
       // Then the words, row by row.
-      const rows = [...page.querySelectorAll(items)].filter((el) => !el.closest('.bk-mini'));
+      const rows = [...page.querySelectorAll(items)].filter((el) => !el.closest('.bk-mini') && !(held && el.closest('.bk-timeline')));
       if (rows.length) tl.from(rows, { opacity: 0, y: 22, duration: 0.9, stagger: { each: 0.045, from: 'start' }, clearProps: 'transform,opacity' }, 0.55);
 
       const folio = page.querySelector('.bk-folio');

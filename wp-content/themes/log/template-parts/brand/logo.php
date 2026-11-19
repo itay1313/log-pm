@@ -37,7 +37,7 @@ $wrong = [
 	?>
 <?php log_bk_close(); ?>
 
-<?php log_bk_open( '04', 'מהלוגו לשפה', 'bk-anatomy' ); ?>
+<?php log_bk_open( '04', 'מהלוגו לשפה', 'bk-anatomy bk-page--hold' ); ?>
 	<?php log_bk_head( '04', 'מהלוגו לשפה', 'מהלוגו לוקחים את החיתוך ואת החלפת הצבע. לא את העובי: בשפה הקווים דקים.' ); ?>
 	<div class="bk-anatomy__stage">
 		<div class="bk-anatomy__logo"><?php echo log_logo( [ 'variant' => 'color' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>

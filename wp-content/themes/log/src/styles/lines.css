@@ -121,3 +121,11 @@
   overflow: hidden;
 }
 .circ__in > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ------------------------------------------------------------------ icons (inc/icons.php): the same thin line */
+
+/* One line at the line's weight at any size, round joins, one orange part (.o), dashes only for what isn't built (.d). */
+.ico { display: block; width: var(--ico, 48px); height: auto; overflow: visible; fill: none; stroke: currentColor; stroke-width: var(--ico-w, var(--line-w)); stroke-linecap: round; stroke-linejoin: round; }
+.ico * { vector-effect: non-scaling-stroke; }
+.ico .o { stroke: var(--works); }
+.ico .d { stroke-dasharray: 3 4; }

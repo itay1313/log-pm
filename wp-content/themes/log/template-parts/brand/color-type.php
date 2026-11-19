@@ -39,16 +39,16 @@ $formats = [
 	[ 'story', 'סטורי · 1080 על 1920', 'שוליים 80. בלי טקסט בשליש התחתון.' ],
 ];
 ?>
-<?php log_bk_open( '05', 'כתום אחד', 'bk-colors' ); ?>
+<?php log_bk_open( '05', 'כתום אחד', 'bk-colors bk-page--hold' ); ?>
 	<?php log_bk_head( '05', 'כתום אחד', 'אספלט, נייר ואפורים בונים את העמוד. הכתום מסמן דבר אחד: מה שחשוב עכשיו.' ); ?>
-	<div class="bk-colors__row">
+	<div class="bk-bands">
 		<?php
-		log_bk_swatch( 'night', 'אספלט', 'רקע כהה, כותרות, קווים' );
-		log_bk_swatch( 'paper', 'נייר', 'רקע בהיר' );
-		log_bk_swatch( 'works', 'כתום', 'הדבר האחד שחשוב' );
-		log_bk_swatch( 'works-light', 'כתום בהיר', 'עמודות בגרף, תגית שנייה' );
-		log_bk_swatch( 'rule', 'אפור', 'עמודות, מספור, קווים' );
-		log_bk_swatch( 'slate', 'אפור כהה', 'גוף טקסט, כיתובים' );
+		log_bk_band( 'night', 'night-ink', 22, 'אספלט', 'רקע כהה, כותרות, קווים' );
+		log_bk_band( 'paper', 'ink', 62, 'נייר', 'רקע בהיר' );
+		log_bk_band( 'works', 'sign-ink', 5, 'כתום', 'הדבר האחד שחשוב' );
+		log_bk_band( 'works-light', 'sign-ink', 2, 'כתום בהיר', 'עמודות בגרף, תגית שנייה' );
+		log_bk_band( 'rule', 'ink', 6, 'אפור', 'עמודות, מספור, קווים' );
+		log_bk_band( 'slate', 'night-ink', 3, 'אפור כהה', 'גוף טקסט, כיתובים' );
 		?>
 	</div>
 	<div class="bk-colors__foot">
