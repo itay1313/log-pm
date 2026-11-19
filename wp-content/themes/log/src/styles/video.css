@@ -10,6 +10,11 @@
 .vbg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: var(--plate); }
 .vbg--bleed { left: calc(50% - 50vw); right: calc(50% - 50vw); }
 .vbg__video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--vbg-focus, 50% 50%); }
+/* The map's print grain over the footage too: places read printed, like the map and the road, not lit like a screen. */
+.vbg::before {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: var(--grain) 0 0 / 180px 180px; opacity: var(--grain-strength); mix-blend-mode: overlay;
+}
 .vbg::after {
   content: ''; position: absolute; inset: 0;
   background: var(--vbg-scrim, linear-gradient(color-mix(in srgb, var(--night) 40%, transparent), color-mix(in srgb, var(--night) 40%, transparent)));

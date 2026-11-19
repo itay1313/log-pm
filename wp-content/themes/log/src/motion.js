@@ -5,6 +5,7 @@
  * - The lane line, one thin grey line down the start edge of every page, turns orange as far as the reader has come.
  * - Lines and circles of the line system draw in from the start side; the dot lands last (lines/draw.js).
  * - Lists arrive row by row as they come into view; pictures unroll from the top; figures count once from 70%.
+ * - The main calls to action lean towards a fine pointer; the client strip runs faster as the page scrolls (src/fx).
  * - The menu gantry drops in and its destinations rise; leaving a page, a navy plate covers it and lifts on arrival.
  * Reduced motion: this module never initialises, nothing moves and nothing is hidden (the menu opens without tweens).
  */
@@ -13,6 +14,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { initSmooth } from './smooth.js';
 import { drawLines, splitCircle } from './lines/draw.js';
+import { countUp } from './fx/count.js';
+import { magnet } from './fx/magnet.js';
+import { velocityStrip } from './fx/velocity.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -31,6 +35,9 @@ export function initMotion() {
   laneLine();
   drawLines();
   footer();
+  // After React Bits, in GSAP (src/fx): the main calls lean to the pointer; the client strip answers the scroll.
+  magnet('.btn--primary, .btn--works, .site-header__talk, .site-footer__go');
+  velocityStrip('.logo-run');
 }
 
 /**
@@ -163,18 +170,8 @@ function sections() {
     onEnter: (batch) => gsap.fromTo(batch, { opacity: 0.2, y: 22 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.07, ease: 'expo.out', clearProps: 'transform,opacity' }),
   });
 
-  // Figures count once, from 70% of their value, so nothing ever reads as missing.
-  const fmt = new Intl.NumberFormat('he-IL');
-  for (const dd of document.querySelectorAll('.numbers dd, .project__numbers dd, .domain__count')) {
-    const target = Number(dd.textContent.replace(/[^\d.]/g, ''));
-    if (!target || target < 10) continue;
-    const text = dd.textContent;
-    const o = { v: target * 0.7 };
-    ScrollTrigger.create({
-      trigger: dd, start: 'top 92%', once: true,
-      onEnter: () => gsap.to(o, { v: target, duration: 1.4, ease: 'expo.out', onUpdate: () => (dd.textContent = text.replace(/[\d,.]+/, fmt.format(Math.round(o.v)))) }),
-    });
-  }
+  // Figures count once, from 70% of their value, so nothing ever reads as missing (fx/count.js).
+  countUp('.numbers dd, .project__numbers dd, .domain__count');
 }
 
 function rowsIn(selector) {
