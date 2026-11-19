@@ -2,7 +2,8 @@
  * The motion grammar (direction contract): guide signs mount, legends rise, arrows travel, the lane line draws.
  * - Legends (display headings) rise line by line inside masks: SplitText lines, power4.out.
  * - Plates mount from the gantry: a clip from the top edge opening downwards, expo.out.
- * - The lane line, one orange works marking down the start edge of every page, draws with the scroll.
+ * - The lane line, one thin grey line down the start edge of every page, turns orange as far as the reader has come.
+ * - Lines and circles of the line system draw in from the start side; the dot lands last (lines/draw.js).
  * - Lists arrive row by row as they come into view; pictures unroll from the top; figures count once from 70%.
  * - The menu gantry drops in and its destinations rise; leaving a page, a navy plate covers it and lifts on arrival.
  * Reduced motion: this module never initialises, nothing moves and nothing is hidden (the menu opens without tweens).
@@ -11,6 +12,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { initSmooth } from './smooth.js';
+import { drawLines } from './lines/draw.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -27,6 +29,7 @@ export function initMotion() {
   titleBands();
   sections();
   laneLine();
+  drawLines();
   footer();
 }
 
@@ -184,11 +187,14 @@ function rowsIn(selector) {
   });
 }
 
-/** The lane line (main.js puts it down) is drawn as far as the reader has come. */
+/**
+ * The lane line (main.js puts it down) is the switch line of the brand book: grey road ahead, orange as far as the
+ * reader has come, through a short blend. --p is where the switch sits, from the top.
+ */
 function laneLine() {
   const line = document.querySelector('.lane-line');
   if (!line) return;
-  gsap.fromTo(line, { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: line, start: 'top 75%', end: 'bottom 75%', scrub: 0.6 } });
+  gsap.fromTo(line, { '--p': '0%' }, { '--p': '100%', ease: 'none', scrollTrigger: { trigger: line, start: 'top 75%', end: 'bottom 75%', scrub: 0.6 } });
 }
 
 /** The end of the road: the last legend rises, the board unrolls from its top edge, the stop line draws across. */
