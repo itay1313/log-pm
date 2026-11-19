@@ -341,13 +341,13 @@ label.filters__group { display: grid; gap: .4rem; font: var(--type-label); color
 .jobs__item a { grid-template-columns: minmax(0, 1fr) auto auto; }
 .jobs__title { font-size: var(--fs-h4); }
 
-.people { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 2.75rem 1.5rem; }
-.person__photo { margin: 0 0 1rem; position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--plate); }
-.person__photo img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; filter: grayscale(1) contrast(1.05); transition: filter .6s var(--ease-out); }
-.person:hover .person__photo img { filter: none; }
-body.page-template-page-control .person__photo, .section--night .person__photo { background: var(--plate-2); box-shadow: inset 0 0 0 1px var(--legend-muted); }
-body.page-template-page-control .person__placeholder, .section--night .person__placeholder { background: transparent; }
-.person__placeholder { display: grid; place-items: center; width: 100%; height: 100%; background: var(--plate); font: var(--fw-light) var(--fs-h2)/1 var(--font-figure); color: var(--legend-muted); letter-spacing: var(--track-figure); }
+/* A person stands in the split circle, in natural colour (the book, chapters 07 and 09): no grey, no layer, no plate.
+   Without a photo yet the circle holds the initials, as the book numbers a team. */
+.people { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 2.75rem 1.5rem; }
+.person__photo { margin: 0 0 1.1rem; line-height: 0; }
+.person__photo .circ { --circ-n: 176; }
+.person__photo .circ__in:not(:has(> img)) { color: var(--slate); }
+@media (max-width: 560px) { .person__photo .circ { --circ-n: 148; } }
 .person__name { font-size: var(--fs-lead); font-weight: var(--fw-medium); margin-bottom: .15rem; }
 .person__role { color: var(--slate); font-size: var(--fs-base); margin: 0; }
 

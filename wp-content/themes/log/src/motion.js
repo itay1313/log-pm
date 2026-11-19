@@ -163,11 +163,11 @@ function sections() {
   const rows = '.domain, .jobs__item, .expertise li, .values__item, .roles__item, .process li, .search-results li, .knowledge-list li, .national__list li, .facts > div, .numbers > div, .project__numbers > div, .timeline li, .office, .partners li';
   rowsIn(rows);
 
-  // Pictures and plates unroll from the top as they come near.
-  const media = gsap.utils.toArray('.card__media, .person__photo, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .minimap, .gallery__grid figure');
+  // Pictures unroll from the top as they come near. People don't: their split circle draws itself (lines/draw.js).
+  const media = gsap.utils.toArray('.card__media, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .minimap, .gallery__grid figure');
   ScrollTrigger.batch(media, {
     start: 'top 92%', once: true,
-    onEnter: (batch) => gsap.fromTo(batch, { clipPath: 'inset(0% 0% 100% 0% round 10px)' }, { clipPath: 'inset(0% 0% 0% 0% round 10px)', duration: 1.2, stagger: 0.08, ease: 'expo.out', clearProps: 'clipPath' }),
+    onEnter: (batch) => gsap.fromTo(batch, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, stagger: 0.08, ease: 'expo.out', clearProps: 'clipPath' }),
   });
 
   // Prose and ledes settle from an already-visible state.

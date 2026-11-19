@@ -40,7 +40,7 @@ echo log_roundabout( 'home' ); // phpcs:ignore WordPress.Security.EscapeOutput -
 		?>
 		<h1 class="hero__title<?php echo $short ? ' hero__title--short' : ''; ?>" id="hero-title"><?php
 			// The brand's ring turns inside the line, just before the last word.
-			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . log_title( $m[2] ) . '</em>' : log_title( $title );
+			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . log_title( $m[2], true ) . '</em>' : log_title( $title, true );
 		?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
 
