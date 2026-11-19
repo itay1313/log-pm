@@ -2,7 +2,7 @@
 /**
  * Helpers for the web brand book at /brand (page-brand.php, template-parts/brand/*).
  *
- * The book follows LOG's brand book chapter by chapter (01 to 14) and is a stack of 1280×720 sheets, the same
+ * The book follows LOG's brand book chapter by chapter (01 to 14) and is a run of 1280×720 sheets, the same
  * sheets on screen and in the PDF (tools/brand-pdf.mjs). A sheet opens with its chapter label, one headline that
  * ends in the page's one orange dot, and a sentence; it closes with the folio. Values come from the theme's
  * tokens; photographs are LOG's own and live in uploads/log-brand/, outside the public repository.
@@ -129,12 +129,16 @@ function log_bk_photo( string $file, string $alt = '', string $class = '', strin
 		$class .= ' bk-photo--grey';
 	}
 	$url = log_bk_photo_url( $file );
+	// The first photograph of the book is the cover's: it is fetched at once, and the opening waits for it.
+	static $first = true;
+	$load  = $first ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+	$first = false;
 	return sprintf(
 		'<figure class="bk-photo %1$s%2$s%3$s">%4$s</figure>',
 		esc_attr( $class ),
 		$scrim ? ' bk-photo--scrim bk-photo--' . esc_attr( $scrim ) : '',
 		$url ? '' : ' bk-photo--none',
-		$url ? sprintf( '<img src="%s" alt="%s" loading="lazy" decoding="async">', esc_url( $url ), esc_attr( $alt ) ) : ''
+		$url ? sprintf( '<img src="%s" alt="%s" %s decoding="async">', esc_url( $url ), esc_attr( $alt ), $load ) : ''
 	);
 }
 
