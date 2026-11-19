@@ -184,6 +184,7 @@ function log_deploy_handle( WP_REST_Request $req ) {
 		'ref'       => $c['ref'] ?? '',
 		'run'       => $c['run_id'] ?? '',
 		'installed' => $installed,
+		'opcache'   => function_exists( 'opcache_invalidate' ), // the swapped folders were dropped from OPcache
 	] );
 }
 
@@ -246,12 +247,38 @@ function log_deploy_install( string $zip_bytes ) {
 			return log_deploy_error( 500, "Couldn't move the new $dir into place." );
 		}
 		$swapped[] = $dir;
-		if ( function_exists( 'wp_opcache_invalidate_directory' ) ) {
-			wp_opcache_invalidate_directory( $live );
-		}
 	}
 	log_deploy_rmtree( $stage );
+	// Only once both folders are in: clearing the cache must never stand between the swap and its end.
+	foreach ( $swapped as $dir ) {
+		log_deploy_clear_opcache( $targets[ $dir ][0] );
+	}
 	return $swapped;
+}
+
+/**
+ * Drops the swapped folder's PHP from OPcache, so the next request runs the new files. Without it the server kept
+ * running the old bytecode until OPcache revalidated by itself (about two minutes on uPress).
+ * Self-contained on purpose: core's wp_opcache_invalidate_directory() needs wp-admin's file.php and an initialised
+ * $wp_filesystem, neither of which a REST request has (calling it here crashed a deploy). Any error is swallowed:
+ * a cache that stays warm costs two minutes, a deploy that dies costs the endpoint.
+ * Returns whether the cache could be cleared.
+ */
+function log_deploy_clear_opcache( string $dir ): bool {
+	if ( ! function_exists( 'opcache_invalidate' ) || ! is_dir( $dir ) ) {
+		return false;
+	}
+	try {
+		$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ) );
+		foreach ( $files as $file ) {
+			if ( $file->isFile() && $file->getExtension() === 'php' ) {
+				@opcache_invalidate( $file->getPathname(), true ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- restrict_api makes it warn
+			}
+		}
+		return true;
+	} catch ( Throwable $e ) {
+		return false;
+	}
 }
 
 function log_deploy_undo( array $swapped, string $prev ): void {
