@@ -165,7 +165,7 @@ if ( $domains ) : ?>
 			<div class="exit-world__body">
 				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo log_title( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
 				<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
-				<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
+				<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
 			</div>
 		</div>
 	</div>

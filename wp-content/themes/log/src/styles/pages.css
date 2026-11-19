@@ -144,8 +144,7 @@ body.page-template-page-control {
 .exit-sign { display: none; } /* only the road (drive.css) puts it up */
 .section--control .section__title { font-size: var(--fs-h1); margin-bottom: .3em; }
 .section--control .section__lede { color: var(--legend-muted); }
-.section--control .btn { justify-self: start; --k-ground: var(--works); --k-line: var(--works); color: var(--sign-ink); }
-.section--control .btn:hover, .section--control .btn:focus-visible { --k-ground: var(--legend); --k-line: var(--sign-ink); color: var(--sign-ink); }
+.section--control .btn { justify-self: start; }
 @media (max-width: 900px) { .section--control .exit-world__body { grid-template-columns: 1fr; } }
 
 /* ------------------------------------------------------------------ project tiles */
