@@ -13,6 +13,9 @@ $path = log_rows( 'careers_path', [
 	[ 'name' => 'ברוכים הבאים', 'text' => 'חפיפה מסודרת ואדם שמלווה אתכם בהתחלה.' ],
 ], 'option' );
 $gallery = log_field( 'careers_gallery', 'option' );
+if ( ! is_array( $gallery ) || ! $gallery ) {
+	$gallery = log_standins( 'careers' ); // stock, until the settings page gets LOG's own pictures
+}
 $videos  = array_filter( (array) log_field( 'careers_videos', 'option' ), static fn( $v ) => ! empty( $v['video']['url'] ) );
 $image   = log_field( 'careers_image', 'option' );
 

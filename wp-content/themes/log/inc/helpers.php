@@ -306,3 +306,22 @@ function log_own_photo( string $file, string $alt, int $height ): string {
 		$height
 	);
 }
+
+/**
+ * Stock pictures that stand in an empty gallery until LOG uploads its own (assets/img/standin/, sources and
+ * license in its SOURCES.md). Each one has the shape of an ACF image, so the templates draw it like a real one.
+ */
+function log_standins( string $set ): array {
+	$sets = [
+		'jlm'     => [ 'הרכבת הקלה ברחוב יפו בירושלים', 'בניין מגורים מאבן ירושלמית עם מרפסות', 'בניין אבן, דקלים והרכבת הקלה ליד החומה' ],
+		'tlv'     => [ 'קשת לבנה של בניין באוהאוס מעל צמרות עצים', 'שדרה בתל אביב עם דקלים, הולכי רגל ורוכבי אופניים', 'נתיבי איילון והמגדלים בלילה' ],
+		'life'    => [ 'שלושה אנשים רכונים מעל תכנית, במבט מלמעלה', 'קבוצה משרטטת על דפים סביב שולחן', 'אדם עובד ליד שולחן עם מודל' ],
+		'careers' => [ 'הצגת עבודה מול לוח תכנון', 'צוות סביב תכנית פרושה על שולחן, במבט מלמעלה', 'מודל של שכונת מגורים', 'שניים ליד שולחן עם לוחות חומרים', 'מפת עיר, עפרונות ויד שמסמנת עליה' ],
+	];
+	$out = [];
+	foreach ( $sets[ $set ] ?? [] as $i => $alt ) {
+		$url   = LOG_THEME_URI . '/assets/img/standin/' . $set . '-' . ( $i + 1 ) . '.jpg';
+		$out[] = [ 'url' => $url, 'sizes' => [ 'log-card' => $url, 'log-wide' => $url ], 'alt' => $alt ];
+	}
+	return $out;
+}
