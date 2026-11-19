@@ -683,7 +683,10 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
     --fs-kicker: 13px; --fs-title: 44px; --fs-lede: 17px; --fs-h3: 18px; --fs-p: 15px; --fs-cap: 13px;
     height: auto; min-height: 0; padding: 40px 20px 0; gap: 0;
   }
-  .bk-cover, .bk-end, .bk-remember, .bk-opener { min-height: 100svh; }
+  .bk-cover, .bk-end, .bk-remember, .bk-opener, .bk-lock { min-height: 100svh; }
+  .bk-lock { padding-bottom: 40px; }
+  .bk-lock .logo { top: 32px; --logo-w: 110px; }
+  .bk-lock .bk-title--cover { font-size: 64px; }
   .bk-opener__n { font-size: 78vw; left: -2vw; bottom: 12svh; }
   .bk-opener__body { inset-inline: 20px; bottom: 30svh; }
   .bk-title--opener { font-size: 64px; }
