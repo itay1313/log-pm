@@ -78,6 +78,11 @@
   --frame: 12px; /* the home map's inset from the window */
   --keyline: 2px;
   --keyline-inset: 5px;
+  --line-w: 2px; /* every line and circle in the language, one weight (the book: 2px on a 1280 sheet) */
+  --dot: 12px; /* the dot at a line's end or crossing: filled, no ring (the book: 10 to 14px) */
+  --dash: 8px; /* a dashed line: what doesn't exist yet */
+  --dash-gap: 6px;
+  --switch-blend: 40px; /* the short gradient where a switch line turns from grey to orange */
   /* layout */
   --container: 1320px;
   --gutter: clamp(16px, 4vw, 56px);

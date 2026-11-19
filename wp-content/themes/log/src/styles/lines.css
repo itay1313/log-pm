@@ -1,0 +1,124 @@
+/*
+ * The thin line (inc/lines.php; brand book chapter 03). One weight, --line-w, for every line and every circle.
+ * Colours: asphalt (--ink, which a night world swaps to --night-ink), grey (--rule) and orange (--works);
+ * white on a dark photo. A line takes --ln-c from itself or any parent.
+ *
+ * Lines run from the start side (right in Hebrew) and end at the end side, where a dot sits.
+ * src/lines/draw.js draws them in; these rules are their finished state, which is also the reduced-motion state.
+ */
+
+.ln {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 100%;
+  height: var(--line-w);
+  background: var(--ln-c, var(--ink));
+}
+.ln--y { width: var(--line-w); height: 100%; }
+
+/* Dashed: only what doesn't exist yet. */
+.ln--dashed { background: repeating-linear-gradient(to left, var(--ln-c, var(--ink)) 0 var(--dash), transparent 0 calc(var(--dash) + var(--dash-gap))); }
+.ln--dashed:dir(ltr) { background: repeating-linear-gradient(to right, var(--ln-c, var(--ink)) 0 var(--dash), transparent 0 calc(var(--dash) + var(--dash-gap))); }
+.ln--dashed.ln--y { background: repeating-linear-gradient(to bottom, var(--ln-c, var(--ink)) 0 var(--dash), transparent 0 calc(var(--dash) + var(--dash-gap))); }
+
+/* Switch: grey until the point where we come in (--at), orange from there, through a short blend. */
+.ln--switch {
+  --a: calc(var(--at) - var(--switch-blend) / 2);
+  --b: calc(var(--at) + var(--switch-blend) / 2);
+  background: linear-gradient(to left, var(--ln-from, var(--rule)) var(--a), var(--works) var(--b));
+}
+.ln--switch:dir(ltr) { background: linear-gradient(to right, var(--ln-from, var(--rule)) var(--a), var(--works) var(--b)); }
+.ln--switch.ln--y { background: linear-gradient(to bottom, var(--ln-from, var(--rule)) var(--a), var(--works) var(--b)); }
+
+/* The dot: filled, no ring. At a line's end it is centred on the end; on a cross, on the crossing. */
+.dot,
+.ln__dot {
+  display: block;
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 50%;
+  background: var(--works);
+}
+.dot { display: inline-block; vertical-align: middle; }
+.dot--white { background: var(--night-ink); }
+.ln__dot {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 0;
+  margin-block-start: calc(var(--dot) / -2);
+  margin-inline-end: calc(var(--dot) / -2);
+}
+.ln--y .ln__dot {
+  top: auto;
+  bottom: 0;
+  inset-inline: 50% auto;
+  margin: 0 calc(var(--dot) / -2) calc(var(--dot) / -2);
+}
+
+/* Cross: a second line cuts straight through at --at, square ends, the dot where they meet. */
+.ln--cross { --cross: 96px; }
+.ln__x {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: var(--at);
+  width: var(--line-w);
+  height: var(--cross);
+  margin-block-start: calc(var(--cross) / -2);
+  margin-inline-start: calc(var(--line-w) / -2);
+  background: var(--ln-c, var(--ink));
+}
+.ln--cross .ln__dot { inset-inline: var(--at) auto; margin-inline: calc(var(--dot) / -2) 0; }
+.ln--y .ln__x {
+  top: var(--at);
+  inset-inline-start: 50%;
+  width: var(--cross);
+  height: var(--line-w);
+  margin-block-start: calc(var(--line-w) / -2);
+  margin-inline-start: calc(var(--cross) / -2);
+}
+.ln--y.ln--cross .ln__dot { top: var(--at); bottom: auto; margin-block: calc(var(--dot) / -2) 0; }
+
+/* ------------------------------------------------------------------ circles: a thin line that closes */
+
+/*
+ * A circle's size is a plain number of pixels (--circ-n) times a unit (--circ-u, 1px; the book's sheet pixel),
+ * so its stroke can be set in the SVG's own units and still come out at the line's weight: 2px on any size.
+ * (non-scaling-stroke would do the same, but it breaks dashes and the drawing.)
+ */
+.circ {
+  --circ-n: 120;
+  --circ-u: 1px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: calc(var(--circ-n) * var(--circ-u));
+  aspect-ratio: 1;
+  color: var(--ink);
+}
+.circ svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.circ :is(circle, path):not(.circ__mask) {
+  fill: none;
+  stroke: var(--ln-c, var(--works));
+  stroke-width: calc(200 / var(--circ-n)); /* 2px in a 100-unit box */
+}
+.circ--dashed { --ln-c: var(--rule); color: var(--slate); }
+.circ--dashed circle:not(.circ__mask) { stroke-dasharray: calc(800 / var(--circ-n)) calc(600 / var(--circ-n)); } /* 8px, 6px */
+.circ__on { --ln-c: var(--works); }
+.circ__off { --ln-c: var(--logo-grey); }
+.circ--halves { --ln-c: var(--ink); }
+
+/* The middle: a counted number in Ploni Light, or a person's picture inset from the ring. */
+.circ__in {
+  position: relative;
+  font: var(--fw-light) calc(var(--circ-n) * var(--circ-u) * .4)/1 var(--font-figure);
+  letter-spacing: var(--track-figure);
+}
+.circ__in:has(> img) {
+  width: 80%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.circ__in > img { display: block; width: 100%; height: 100%; object-fit: cover; }

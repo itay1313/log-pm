@@ -247,7 +247,7 @@ One palette for the site and the brand book (`src/tokens/tokens.json`). Two fami
 **No colour outside the tokens.** CSS reads `var(--…)` and makes a shade or a shadow with `color-mix()` between tokens; JS reads `tokens.js` (`color`, `alpha`, `mix`). Shadows and scrims are night-deep at an opacity, never black. The projects map, the 3D map, the road and the drawings all paint from the same two families. `npm run build` runs `src/tokens/lint.mjs` first and fails on any raw #hex, rgb() or 0x colour in `src/`; a mask or a light temperature (a three.js sun) is marked `colour-ok: <reason>`.
 
 ### Primary
-- **Works-Zone Orange** (`works`): LOG's projects and the 3D city on the map, the route shield, the destination plate's "go" button, the sheet label on title bands, hover and focus keylines, focus rings (3px outline, 3px offset), selection, caret, the active lane underline, the lane line and the stage dashes.
+- **Works-Zone Orange** (`works`): LOG's projects and the 3D city on the map, the route shield, the destination plate's "go" button, the sheet label on title bands, hover and focus keylines, focus rings (3px outline, 3px offset), selection, caret, the active lane underline, the road behind the reader on the lane line, and the stages a project has passed.
 - **Deep Works Orange** (`works-deep`): orange that has to read as small text or an arrow on paper (link-arrow hover, ghost-button hover keyline), 4.7:1 on paper. On night grounds it swaps back to `works`.
 - **Light Orange** (`works-light`): a second tag, bars in a chart. Never text.
 
@@ -325,7 +325,7 @@ The second chapter is the build. The camera dives into one real plan (chosen on 
 
 Below the map, content is rows, not grids of boxes: destination rows with a 3px ink rule on top and 2px rules between. Project tiles use an auto-fill grid (min 300px, gaps 3.25rem by 1.75rem). Steps are four columns on one dashed orange lane, turning vertical on phones. Title bands are a two-column grid with the title on the start side and the orange sheet label at the end.
 
-**The Lane Line.** One dashed orange line (4px wide, 30px dash, 24px gap; 3px, 18/16 on phones) runs down the start edge of the main content and draws in as the reader scrolls.
+**The Lane Line.** The line system's switch line, down the start edge of the main content: one `--line-w` line, grey (`rule`) for the road ahead and orange for the road behind the reader. The switch follows the scroll through a short blend (`--switch-blend`); under reduced motion the line stays grey. In the footer it turns across as a solid orange stop line.
 
 Breakpoints observed: 1180px (lane-split loses its second line), 900px (header collapses, the lane split moves to a fixed bottom bar, menu goes single column), 760px (home becomes legend on top, tools at the bottom; process goes vertical), 700px and 560px (form and footer columns). A short-viewport rule (max-height 760px) drops the hero lede.
 
@@ -346,6 +346,25 @@ Depth comes from the plate's keyline and from the navy against paper, not from s
 ## Shapes
 
 Rounded rectangles only, with corners that grow with the sign: 6px for small controls, markers, fields and the hero card's inner image; 8px for chips, steps and the twin-nav items; 10px for the standard plate; 12px for white signs and large figure signs; 14px for the orientation board and phone sheets; 20px for the full-screen gantry. The route shield's corner is relative (0.35em) so it scales with the heading it sits in. Lines are 2px (row rules, keylines, field borders) or 3px (rules above lists and figure groups). The one arrow is a filled silhouette, masked from a CSS variable and coloured with `currentColor`.
+
+### The Line System
+
+The brand book's thin line (book chapter 03; `inc/lines.php`, `src/styles/lines.css`). Every line and circle has one weight, `--line-w` (2px), runs to the edge, and cuts square: lines cross, they never round off. Each kind marks one thing, and a line nobody can name the meaning of doesn't go on the page.
+
+- **Solid** (`log_line()`): what exists or was approved. Page structure, axes, a finished stage.
+- **Dashed** (`log_line( 'dashed' )`, `--dash` 8px, `--dash-gap` 6px): only what doesn't exist yet: a plan not built, a reference line such as an average. Never decoration, never on a photo, never around a person.
+- **Switch** (`log_line( 'switch', [ 'at' => 40 ] )`): grey until the point where LOG comes in, orange from there, through a 40px blend. Once per line, and only when it means something. The lane line is one.
+- **Dot** (`log_line( 'dot' )`, `log_dot()`): the line ends in a filled orange dot, `--dot` 12px, no ring. It points at the one thing that matters. One orange dot on a page; a headline's orange period counts as it.
+- **Cross** (`log_line( 'cross' )`): a second line cuts straight through, the dot on the crossing.
+
+A circle is a line that closes (`log_circle()`), at the same weight however big it gets:
+
+- **Full:** a counted number in Ploni Light: how many dates, how many projects.
+- **Dashed:** what is planned and hasn't happened. Never around a person.
+- **Split:** a person, as a frame for a photo or the number on the team page: four quarters cut where the logo's O is cut, orange and grey in turn.
+- **Halves:** a person in black only: two halves, cut at the top and the bottom, no colour.
+
+No thick circle, no gradient circle, no circle inside a circle (except a photo inside a split circle), and no circle as an ornament.
 
 ## Components
 
@@ -395,13 +414,13 @@ Practice areas and jobs: name, one line, a count and the arrow in a three-column
 - **Menu:** a full-screen gantry plate (20px corners, 13px keyline inset) of destination rows with live counts and the shield number; the current page shows an orange "אתה כאן" tag. It unrolls from the top edge and names rise in line masks.
 
 ### Stage row and steps
-Project stage is four lane dashes lit in orange up to "now"; a finished project's dashes go ink. Numbered steps are route shields (2.75rem navy plates) sitting on one dashed orange lane.
+Project stage is one thin line across four stages, with a tick at each: the stages behind the project are solid orange, the ones ahead dashed grey, because they don't exist yet. A finished project's line goes ink. Numbered steps are route shields (2.75rem navy plates) sitting on one dashed orange lane.
 
 ### Title band and sheet label
 Every inner page opens on a navy band that continues the header strip, with a display title, an optional meta line and lede, and an orange sheet label at the end giving how much lies down this road. Hero images hang from the band into the paper.
 
 ### Motion
-GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger); the home headline also comes up out of a 14px blur (1.5s, expo.out) while the ring glyph draws its arc. The city arrives as a wireframe and its volumes dissolve in through 4px blocks as the camera settles (`uFace` 0 → 1). The home map's frame (`--frame` 12px, `--r-frame` 26px, `clip-path`) opens to the full window over the first 80vh of scroll, through a scroll-driven CSS animation where the browser supports one. Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line scales in with scroll. The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Lenis smooths the wheel on every page (`src/smooth.js`, started by motion.js) and hands ScrollTrigger the same time base; on the home page ScrollTrigger drives the camera (the drive, see Layout). Ctrl/⌘ + wheel stays the map's zoom, an armed projects map keeps its wheel, anything with its own scroll keeps it, touch stays native, and the page stands still under the menu and phone sheets. While driving, a sheet-margin readout under the header gives the camera's grid reference and the scale. The map and the road carry a light print grain (`--grain`, overlay blend), so the sheet reads printed, not lit. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
+GSAP. Legends rise from line masks (yPercent 112, power4.out, 1.05 to 1.15s, 0.08s stagger); the home headline also comes up out of a 14px blur (1.5s, expo.out) while the ring glyph draws its arc. The city arrives as a wireframe and its volumes dissolve in through 4px blocks as the camera settles (`uFace` 0 → 1). The home map's frame (`--frame` 12px, `--r-frame` 26px, `clip-path`) opens to the full window over the first 80vh of scroll, through a scroll-driven CSS animation where the browser supports one. Plates and tiles unroll from their top edge with a clip-path inset rounded to 10px (expo.out, about 1.2s). Figures count up once (expo.out, 1.4s). The lane line turns orange as far as the reader has come. Lines of the line system draw in from the start side, crossing lines cut through after them, and the dot lands last with a small overshoot; circles close counter-clockwise from the top, the way traffic turns in a roundabout (`src/lines/draw.js`). The menu unrolls in 0.8s expo.inOut; a navy cover closes over the page on exit (0.55s expo.in) and lifts on arrival. Arrows translate 6px over 0.45s on `cubic-bezier(.16, 1, .3, 1)`. Lenis smooths the wheel on every page (`src/smooth.js`, started by motion.js) and hands ScrollTrigger the same time base; on the home page ScrollTrigger drives the camera (the drive, see Layout). Ctrl/⌘ + wheel stays the map's zoom, an armed projects map keeps its wheel, anything with its own scroll keeps it, touch stays native, and the page stands still under the menu and phone sheets. While driving, a sheet-margin readout under the header gives the camera's grid reference and the scale. The map and the road carry a light print grain (`--grain`, overlay blend), so the sheet reads printed, not lit. Reduced motion turns all of it off and shows everything: the drive's chapter is then an ordinary night section under a still map.
 
 ## Swap points for TwoPointFour
 
