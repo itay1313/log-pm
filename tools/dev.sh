@@ -10,6 +10,10 @@ PRIVATE=()
 if [ -f tools/fixtures/private/blue_lines_main.geojson ]; then
   PRIVATE=(--mount=./tools/fixtures/private/blue_lines_main.geojson:/wordpress/wp-content/mu-plugins/blue_lines_main.geojson)
 fi
+# The brand book's photos (LOG's own, git-ignored) stand in for the uploads folder they live in on the site.
+if [ -d tools/fixtures/private/brand ]; then
+  PRIVATE+=(--mount=./tools/fixtures/private/brand:/wordpress/wp-content/uploads/log-brand)
+fi
 
 npx --yes @wp-playground/cli@latest server \
   --port=8881 \
