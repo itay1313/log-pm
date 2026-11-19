@@ -12,6 +12,7 @@
 @import '../styles/tokens.css';
 @import '../styles/logo.css';
 @import '../styles/lines.css';
+@import '../styles/city.css';
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -611,6 +612,33 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-timeline li > p b { color: var(--ink); font-family: var(--font-display); margin-inline-end: .6em; }
 .bk-time .bk-rules { margin-top: calc(36 * var(--u)); }
 
+/* The drawn city (inc/city.php, styles/city.css). In chapter 08 it is a ground: it fills the sheet under the head and
+   runs off three edges. In chapter 11 it is a map: a panel of the sheet at the end side, edge to edge, with the
+   sheet's words beside it. */
+.bk-city > .cty, .bk-opener__city { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; --cty-wall: var(--night-deep); }
+/* Under a chapter's name the drawing steps back, the way a photograph does under its layer. */
+.bk-opener__city { opacity: .5; }
+.bk-city .bk-rules { position: relative; z-index: 1; margin-top: calc(20 * var(--u)); max-width: calc(1000 * var(--u)); }
+.bk-city .bk-rules li { padding-block: calc(4 * var(--u)); }
+.bk-city .bk-rules li::before { top: calc(4 * var(--u) + .72em - 4 * var(--u)); }
+
+.bk-map { --map-w: 742; }
+.bk-map > :not(.bk-map__fig) { margin-inline-end: calc((var(--map-w) - 67 + 44) * var(--u)); }
+.bk-map__fig { position: absolute; inset-block: 0; left: 0; z-index: 0; width: calc(var(--map-w) * var(--u)); margin: 0; overflow: hidden; background: var(--night-2); container-type: inline-size; }
+.bk-map__fig .cty { width: 100%; height: 100%; --cty-halo: var(--night-2); }
+.bk-map__fig .cty__area text { --cty-halo: transparent; }
+/* The sheet's margin, as the map prints it: where we are on the Israeli grid, and at what scale. */
+.bk-map__grid, .bk-map__scale { position: absolute; z-index: 1; left: calc(28 * var(--u)); margin: 0; color: var(--night-ink); direction: ltr; text-align: left; }
+.bk-map__grid { top: calc(26 * var(--u)); display: grid; gap: calc(6 * var(--u)); }
+.bk-map__grid b { font: var(--fw-bold) calc(15 * var(--u))/1 var(--font-display); letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+.bk-map__grid span, .bk-map__scale span { font: var(--fw-medium) calc(12 * var(--u))/1 var(--font-display); color: var(--night-muted); direction: rtl; }
+.bk-map__scale { bottom: calc(28 * var(--u)); display: grid; gap: calc(7 * var(--u)); justify-items: start; }
+.bk-map__scale i { display: block; width: calc(var(--len) / 742 * 100cqw); height: calc(6 * var(--u)); border: var(--hair) solid var(--night-ink); border-top: 0; }
+.bk-map .bk-title { font-size: calc(60 * var(--u)); }
+.bk-map .bk-rules { margin-top: calc(18 * var(--u)); }
+.bk-map .bk-rules li { padding-block: calc(9 * var(--u)); }
+.bk-map .bk-rules li::before { top: calc(9 * var(--u) + .72em - 4 * var(--u)); }
+
 /* ------------------------------------------------------------------ 12 to 14, the end */
 
 .bk-social__cols { display: grid; grid-template-columns: auto 1fr; gap: calc(56 * var(--u)); margin-top: calc(22 * var(--u)); align-items: start; }
@@ -795,6 +823,22 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-time > .bk-timeline { --q: calc(var(--col) / 900); }
   .bk-timeline li > p { width: 90%; font-size: 12px; }
   .bk-photos__people { height: 150px; }
+  /* The drawn city follows the words as a band from edge to edge; the map stands between the head and its rules. */
+  /* The top third of the drawing is open ground, so the band is pulled up under the words by about that much. */
+  .bk-city > .cty { position: relative; inset: auto; order: 2; width: calc(100% + 2 * var(--m)); max-width: none; height: auto; aspect-ratio: 5 / 4; margin: calc(32px - 22cqw) calc(-1 * var(--m)) 0; }
+  .bk-city .bk-rules { max-width: none; }
+  .bk-map > :not(.bk-map__fig) { margin-inline-end: 0; }
+  .bk-map__fig { position: relative; inset: auto; order: 1; width: auto; aspect-ratio: 742 / 720; margin: 28px calc(-1 * var(--m)) 0; }
+  .bk-map .bk-rules { order: 2; }
+  .bk-map .bk-folio { order: 3; }
+  .bk-map .bk-title { font-size: var(--fs-title); }
+}
+/* On a phone the map is half its drawn size, so what is written on it is set twice as large. */
+@media screen and (max-width: 639px) {
+  .bk-map__fig .cty__dim text { font-size: 23px; }
+  .bk-map__fig .cty__area text { font-size: 50px; }
+  .bk-map__fig .cty__area .cty__area-cap { font-size: 20px; translate: 0 10px; }
+  .bk-map__fig .cty__pin { scale: 1.5; }
 }
 
 /* Between a phone and a full sheet (tablets, small windows): the same reflow, in two columns where pieces pair up. */
