@@ -324,6 +324,18 @@ function log_control_roles(): array {
 }
 
 /**
+ * The stock team picture (Unsplash License): opens the careers page until the settings page gets a picture, and
+ * the About page wherever LOG's own team photograph isn't on the server.
+ */
+function log_team_standin(): string {
+	return sprintf(
+		'<img src="%s" alt="%s" width="2000" height="1334" fetchpriority="high" decoding="async">',
+		esc_url( LOG_THEME_URI . '/assets/img/about-team.jpg' ),
+		esc_attr( 'צוות עובד סביב לוח תכנון במשרד מואר' )
+	);
+}
+
+/**
  * Stock pictures that stand in an empty gallery until LOG uploads its own (assets/img/standin/, sources and
  * license in its SOURCES.md). Each one has the shape of an ACF image, so the templates draw it like a real one.
  */

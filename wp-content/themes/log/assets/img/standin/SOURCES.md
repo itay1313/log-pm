@@ -24,5 +24,6 @@ Squares are 640 px, the careers ones 1000 x 750. Page: `unsplash.com/photos/<id>
 | `careers-4.jpg` | Careers, "איך זה נראה" | Two people at a table of material boards | AhirGl0nhww |
 | `careers-5.jpg` | Careers, "איך זה נראה" | A city map, pencils and a hand marking it | qoAIlAmLJBU |
 
-The openings of the control company and careers pages are not here: they use LOG's own photographs from
-`uploads/log-brand/` (`aerial.jpg`, `team.jpg`), through `log_own_photo()`.
+The openings of the control company and About pages are not here: they use LOG's own photographs from
+`uploads/log-brand/` (`aerial.jpg`, `team.jpg`), through `log_own_photo()`. The careers page opens on the older
+stock picture `assets/img/about-team.jpg` (`log_team_standin()`), which also covers About where `team.jpg` is missing.

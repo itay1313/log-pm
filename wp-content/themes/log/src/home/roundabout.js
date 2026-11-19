@@ -60,7 +60,9 @@ export function roundabout(stage, { mode = 'home', headerLogo = null, onOpen, on
     const cy = mb.top - box.top + O.y * k;
     const s0 = (0.62 * Math.min(W, H)) / (2 * O.R); // at the start the ring fills most of the short side
     const sEdge = (Math.max(W, H) / (2 * SCENE)) * 1.15; // below this the drawing's edge would show
-    const sFade = Math.max(s0 * 0.78, sEdge * 1.5);
+    // The city stays whole for most of the rise and goes just before its edge would show. On a wide screen the
+    // edge comes early, so the fade starts as late as the edge allows, never at the first frame.
+    const sFade = Math.max(Math.min(s0 * 0.9, sEdge * 1.3), sEdge * 1.05); // a very wide window still gets a fade
 
     const cam = { t: 0, rot: 38 };
     const frame = () => {
@@ -84,7 +86,8 @@ export function roundabout(stage, { mode = 'home', headerLogo = null, onOpen, on
     drive();
 
     tl = gsap.timeline({ onComplete: () => onDone?.() });
-    tl.to(cam, { t: 1, rot: 12, duration: 2.1, ease: 'power2.inOut', onUpdate: frame }, 0.35)
+    // A second over the city with the traffic moving before the camera rises, so the place registers.
+    tl.to(cam, { t: 1, rot: 12, duration: 2.6, ease: 'power2.inOut', onUpdate: frame }, 1.1)
       // The ring is the O now: the logo takes over, its letters come up beside it, its quarters lock.
       .set(logo, { opacity: 1 }, '>')
       .set(svg, { opacity: 0 }, '<')

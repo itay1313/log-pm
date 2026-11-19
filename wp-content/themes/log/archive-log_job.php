@@ -36,9 +36,9 @@ $jobs = new WP_Query( [
 	<figure class="careers-hero__media">
 		<?php if ( is_array( $image ) && ! empty( $image['url'] ) ) : ?>
 			<img src="<?php echo esc_url( $image['sizes']['log-wide'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>" fetchpriority="high">
-		<?php elseif ( $own = log_own_photo( 'team.jpg', 'צוות לוג במשרד, עם שני כלבים', 875 ) ) : // LOG's team photograph, until the settings page gets one ?>
-			<?php echo $own; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-		<?php elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת צוות (רק עורכים רואים את זה)</span><?php endif; ?>
+		<?php else : // stock, until the settings page gets a picture; LOG's own team photograph opens the About page ?>
+			<?php echo log_team_standin(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+		<?php endif; ?>
 	</figure>
 	<div class="container careers-hero__copy">
 		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'careers-build', 'bleed' => true ] ); ?>
