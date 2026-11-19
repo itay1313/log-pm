@@ -26,6 +26,9 @@ $galleries = array_filter( [
 	'תל אביב'       => log_field( 'gallery_tlv' ),
 	'אירועים ויום עבודה' => log_field( 'gallery_life' ),
 ] );
+if ( ! $galleries ) { // stock, until the page gets LOG's own pictures; one real gallery is enough to drop all of it
+	$galleries = [ 'ירושלים' => log_standins( 'jlm' ), 'תל אביב' => log_standins( 'tlv' ), 'אירועים ויום עבודה' => log_standins( 'life' ) ];
+}
 ?>
 <section class="about-hero">
 	<figure class="about-hero__media">

@@ -13,6 +13,9 @@ $path = log_rows( 'careers_path', [
 	[ 'name' => 'ברוכים הבאים', 'text' => 'חפיפה מסודרת ואדם שמלווה אתכם בהתחלה.' ],
 ], 'option' );
 $gallery = log_field( 'careers_gallery', 'option' );
+if ( ! is_array( $gallery ) || ! $gallery ) {
+	$gallery = log_standins( 'careers' ); // stock, until the settings page gets LOG's own pictures
+}
 $videos  = array_filter( (array) log_field( 'careers_videos', 'option' ), static fn( $v ) => ! empty( $v['video']['url'] ) );
 $image   = log_field( 'careers_image', 'option' );
 
@@ -33,6 +36,8 @@ $jobs = new WP_Query( [
 	<figure class="careers-hero__media">
 		<?php if ( is_array( $image ) && ! empty( $image['url'] ) ) : ?>
 			<img src="<?php echo esc_url( $image['sizes']['log-wide'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>" fetchpriority="high">
+		<?php elseif ( $own = log_own_photo( 'team.jpg', 'צוות לוג במשרד, עם שני כלבים', 875 ) ) : // LOG's team photograph, until the settings page gets one ?>
+			<?php echo $own; // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		<?php elseif ( current_user_can( 'edit_pages' ) ) : // an empty slot is shown to editors only ?><span class="placeholder placeholder--media">מקום לתמונת צוות (רק עורכים רואים את זה)</span><?php endif; ?>
 	</figure>
 	<div class="container careers-hero__copy">
