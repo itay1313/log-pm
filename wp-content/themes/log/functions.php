@@ -16,5 +16,6 @@ require LOG_THEME_DIR . '/inc/brand.php';
 require LOG_THEME_DIR . '/inc/lines.php';
 require LOG_THEME_DIR . '/inc/roundabout.php';
 require LOG_THEME_DIR . '/inc/icons.php';
+require LOG_THEME_DIR . '/inc/city.php';
 require LOG_THEME_DIR . '/inc/cleanup.php';
 require LOG_THEME_DIR . '/inc/brand-book.php';
