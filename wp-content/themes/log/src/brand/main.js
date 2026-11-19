@@ -3,6 +3,7 @@
  * pages and draws each page's line as it comes into view.
  */
 import './brand.css';
+import { drawLines } from '../lines/draw.js';
 
 const html = document.documentElement;
 const rootStyle = getComputedStyle(html);
@@ -68,3 +69,6 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObse
   }, { threshold: 0.35 });
   document.querySelectorAll('.bk-page').forEach((p) => io.observe(p));
 }
+
+// The line system's specimens draw the way they do on the site.
+drawLines();
