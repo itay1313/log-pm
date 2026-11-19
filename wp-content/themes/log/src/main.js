@@ -40,10 +40,18 @@ if (header) {
 }
 
 // The logo assembles on the first page of a visit. The head script set .logo-intro (motion allowed, not seen yet).
+// On the home the roundabout does it instead (.ra-intro): the aerial ring becomes the O and lands in the header.
 {
   const html = document.documentElement;
   const logo = document.querySelector('.site-header .logo[data-animate]');
-  if (logo && html.classList.contains('logo-intro')) {
+  const ra = document.querySelector('.ra--home');
+  if (ra && html.classList.contains('ra-intro')) {
+    html.classList.remove('logo-intro');
+    import('./home/roundabout.js').then((m) => m.openHome(ra)).catch(() => {
+      html.classList.remove('ra-intro');
+      document.dispatchEvent(new CustomEvent('log:opened'));
+    });
+  } else if (logo && html.classList.contains('logo-intro')) {
     import('./lines/logo.js').then((m) => m.assemble(logo)).catch(() => html.classList.remove('logo-intro'));
   } else {
     html.classList.remove('logo-intro');

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script>(function(h){try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('motion');if(!sessionStorage.getItem('log-logo'))h.classList.add('logo-intro')}if(sessionStorage.getItem('log-wipe'))h.classList.add('is-wiping');if(sessionStorage.getItem('log-cover'))h.classList.add('is-covered')}catch(e){}})(document.documentElement)</script>
+	<script>(function(h){try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('motion');if(!sessionStorage.getItem('log-logo'))h.classList.add('logo-intro')<?php echo is_front_page() ? ";if(!sessionStorage.getItem('log-ra'))h.classList.add('ra-intro')" : ''; ?>}if(sessionStorage.getItem('log-wipe'))h.classList.add('is-wiping');if(sessionStorage.getItem('log-cover'))h.classList.add('is-covered')}catch(e){}})(document.documentElement)</script>
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>

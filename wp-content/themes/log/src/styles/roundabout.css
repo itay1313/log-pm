@@ -1,0 +1,67 @@
+/*
+ * The roundabout (inc/roundabout.php, src/home/roundabout.js): LOG's O seen from above.
+ * The stage holds the aerial drawing, the four lines that run out of the O, and the logo, centred.
+ * Without the script (reduced motion, print, no JS) a stage shows where the moment ends: the logo, the lines out.
+ *
+ * --ra-logo-w sizes the logo; the O's outer radius is 190 of the logo's 1005.832 units, and its centre sits
+ * on the logo's centre to within half a unit, so the lines can be placed from the stage's centre in CSS.
+ */
+.ra {
+  --ra-logo-w: clamp(200px, 26vw, 340px);
+  --ra-r: calc(var(--ra-logo-w) * 0.1889);
+  position: relative;
+  overflow: hidden;
+  background: var(--night-deep);
+  isolation: isolate;
+}
+.ra__city { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ra__blocks { fill: var(--night); }
+.ra__roofs { fill: var(--night-2); }
+.ra__plaza { fill: var(--night); }
+.ra__ring { fill: none; stroke: var(--night-deep); }
+.ra__ring--lit { stroke: var(--night-ink); opacity: 0; }
+.ra__arms { fill: var(--night-deep); }
+.ra__island { fill: var(--map-tree); }
+.ra__kerb { fill: none; stroke: var(--map-tree-lit); stroke-width: 3; stroke-dasharray: 6 8; }
+.ra__trees { fill: var(--map-tree-lit); }
+.ra__marks { fill: var(--night-muted); stroke: var(--night-muted); }
+.ra__lane { fill: none; stroke-width: 2.5; stroke-dasharray: 16 18; opacity: .55; }
+.ra__giveway { fill: none; stroke-width: 3; stroke-dasharray: 5 4; opacity: .7; }
+.ra__marks rect { stroke: none; opacity: .5; }
+.ra__car rect { fill: var(--night-muted); opacity: .75; }
+.ra__lamp { fill: var(--night-ink); }
+
+/* The lines out of the O: they start on the O's outer edge, in its cuts, and run to the stage's edges. */
+.ra__lines { position: absolute; inset: 0; pointer-events: none; }
+.ra__line { position: absolute; display: block; background: var(--night-muted); }
+.ra__line--n, .ra__line--s { left: calc(50% - var(--line-w) / 2); width: var(--line-w); }
+.ra__line--e, .ra__line--w { top: calc(50% - var(--line-w) / 2); height: var(--line-w); }
+.ra__line--n { top: 0; bottom: calc(50% + var(--ra-r)); transform-origin: 50% 100%; }
+.ra__line--s { top: calc(50% + var(--ra-r)); bottom: 0; transform-origin: 50% 0; }
+.ra__line--e { left: calc(50% + var(--ra-r)); right: 0; transform-origin: 0 50%; }
+.ra__line--w { left: 0; right: calc(50% + var(--ra-r)); transform-origin: 100% 50%; }
+
+.ra__logo { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.ra__logo .logo { --logo-w: var(--ra-logo-w); }
+
+/* At rest (and before the script takes it) the stage is the end of the moment: no city, the logo, the lines. */
+.ra:not(.is-live) .ra__city { display: none; }
+
+/* ------------------------------------------------------------------ the home's opening */
+
+/* The home prints the stage on every visit; it only shows on the first page of a visit with motion allowed,
+   when the head script sets .ra-intro. The header logo waits for the stage's logo to land in it. */
+.ra--home { display: none; }
+html.ra-intro .ra--home {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  /* If the script never runs, the stage still gets out of the way. */
+  animation: ra-gone 0s 9s forwards;
+}
+html.ra-intro .site-header__logo .logo { opacity: 0; animation: ra-back 0s 9s forwards; }
+@keyframes ra-gone { to { visibility: hidden; opacity: 0; } }
+@keyframes ra-back { to { opacity: 1; } }
+
+@media print { .ra--home { display: none !important; } }
