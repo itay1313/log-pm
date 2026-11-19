@@ -5,11 +5,13 @@
  *    so the book can't disagree with the site.
  * 2. The route: one thin line down the side of the whole book, round a small roundabout at every chapter,
  *    orange as far as you've come, with the dot travelling on it.
- * 3. Motion (GSAP): the cover opens like the site does, lines run to their edges and cross, the dot lands last;
+ * 3. The riso fields: a quiet print texture behind the book and down the side of the night sheets, which a
+ *    pointer or a finger stirs.
+ * 4. Motion (GSAP): the cover opens like the site does, lines run to their edges and cross, the dot lands last;
  *    every sheet then plays once as it arrives: headline out of its mask, the period landing, lines drawing,
  *    photographs unrolling, bars growing to their numbers. Arrow keys turn the pages.
  *
- * Everything in 3 lives inside gsap.matchMedia: with reduced motion (and in the PDF, which asks for it) nothing is
+ * Everything in 4 lives inside gsap.matchMedia: with reduced motion (and in the PDF, which asks for it) nothing is
  * ever hidden, and the sheets are simply there, finished.
  */
 import './brand.css';
@@ -19,6 +21,7 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { SplitText } from 'gsap/SplitText';
 import { drawLines } from '../lines/draw.js';
 import { depthText, depthTilt, maskedText, warpText } from '../fx/text.js';
+import { riso } from '../fx/riso.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText);
 
@@ -149,10 +152,29 @@ if (chapters.length) {
   build();
 }
 
-/* ---------------------------------------------------------------- 3. motion */
+/* ---------------------------------------------------------------- 3. the riso fields */
+
+/**
+ * A quiet print texture you can touch (src/fx/riso.js): behind the whole book, where it shows between the sheets,
+ * and down the end side of the night sheets that open and close things. With reduced motion it is a still print.
+ */
+if (!document.querySelector('.bk-lock')) {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const field = (cls) => { const c = document.createElement('canvas'); c.className = cls; c.setAttribute('aria-hidden', 'true'); return c; };
+  const desk = field('bk-riso bk-riso--desk');
+  document.body.prepend(desk);
+  riso(desk, window, { cell: 7, density: 0.36, still });
+  for (const page of document.querySelectorAll('.bk-cover, .bk-opener, .bk-remember, .bk-end')) {
+    const side = field('bk-riso bk-riso--side');
+    page.append(side);
+    riso(side, page, { cell: 6, density: 0.4, still });
+  }
+}
+
+/* ---------------------------------------------------------------- 4. motion */
 
 const mm = gsap.matchMedia();
-mm.add({ motion: '(prefers-reduced-motion: no-preference)', wide: '(min-width: 900px)' }, (ctx) => {
+mm.add({ motion: '(prefers-reduced-motion: no-preference)', wide: '(min-width: 1100px)' }, (ctx) => {
   if (!ctx.conditions.motion) return undefined;
   const wide = ctx.conditions.wide; // on a phone the sheets reflow: they don't stack, and nothing holds
   // Arrow keys, Page Up/Down and Space turn the pages, one sheet at a time.
