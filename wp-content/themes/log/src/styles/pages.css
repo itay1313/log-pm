@@ -138,14 +138,47 @@ body.page-template-page-control {
   .domain__count, .jobs__item a::after { grid-row: 1 / span 2; grid-column: 2; }
 }
 
-/* The control company on the home page: its own world, a night band */
-.section--control .exit-world__body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(2rem, 6vw, 7rem); align-items: end; }
-.section--control .exit-world__body > .btn { margin-top: 1.75rem; }
+/*
+ * The control company on the home page: its own world, a night band over a place. LOG's aerial roundabout lies
+ * under one even night layer (a place that carries text is greyed, the book says, and takes a single layer).
+ * On it: the legend, one sentence and the way in, then the three roles on the book's timeline, one thin line
+ * that leaves each number's circle and runs on to the next and out to the edge.
+ */
+.section--control { overflow: hidden; }
 .exit-sign { display: none; } /* only the road (drive.css) puts it up */
-.section--control .section__title { font-size: var(--fs-h1); margin-bottom: .3em; }
-.section--control .section__lede { color: var(--legend-muted); }
-.section--control .btn { justify-self: start; }
-@media (max-width: 900px) { .section--control .exit-world__body { grid-template-columns: 1fr; } }
+.exit-world__place { position: absolute; inset: 0; z-index: 0; margin: 0; overflow: hidden; background: var(--plate); }
+/* The picture is a little wider than its frame and hangs from the start edge, so the roundabout stands on the end
+   half of the screen, clear of the legend. */
+.exit-world__place img { width: 118%; max-width: none; height: 100%; object-fit: cover; object-position: 50% 42%; }
+.exit-world__place--colour img { filter: grayscale(.85); }
+.exit-world__place::after { content: ''; position: absolute; inset: 0; background: color-mix(in srgb, var(--night) 68%, transparent); }
+.section--control .exit-world__body { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); }
+.section--control .section__title { font-size: var(--fs-h1); margin: 0 0 .4em; }
+.exit-world__say { display: grid; justify-items: start; max-width: 33rem; margin-bottom: clamp(2.5rem, 7vh, 4.75rem); }
+.section--control .section__lede { margin: 0 0 1.75rem; color: var(--legend); }
+
+.exit-roles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+.exit-roles li { position: relative; padding-inline-end: clamp(1.25rem, 3vw, 3rem); }
+/* The line leaves the circle and runs to the next one; the last runs out to the window's edge. */
+.exit-roles li::before {
+  content: ''; position: absolute; top: calc(22px - var(--line-w) / 2); inset-inline: calc(44px + .85rem) .85rem; height: var(--line-w);
+  background: var(--hair-strong); transform-origin: 100% 50%;
+}
+.exit-roles li:dir(ltr)::before { transform-origin: 0 50%; }
+.exit-roles li:last-child::before { inset-inline-end: calc(-1 * max(var(--gutter), (100vw - var(--container)) / 2)); }
+.exit-roles .stage { margin-bottom: 1.4rem; }
+.exit-roles .stage .circ { --ln-c: var(--legend); color: var(--legend); background: none; box-shadow: none; }
+.exit-roles h3 { margin: 0 0 .5rem; font: var(--type-h4); letter-spacing: var(--track-heading); }
+.exit-roles p { margin: 0; max-width: 32ch; font-size: var(--fs-base); line-height: 1.5; color: var(--legend-muted); }
+@media (max-width: 900px) {
+  .exit-world__say { margin-bottom: 1.75rem; }
+  .exit-roles { grid-template-columns: minmax(0, 1fr); border-top: var(--line-w) solid var(--hair-strong); }
+  .exit-roles li { display: grid; grid-template-columns: 2.75rem minmax(0, 1fr); column-gap: 1.1rem; align-items: center; padding: .9rem 0; border-bottom: var(--rule-w) solid var(--hair); }
+  .exit-roles li::before { display: none; }
+  .exit-roles .stage { grid-row: span 2; margin: 0; }
+  .exit-roles h3 { margin: 0; font-size: var(--fs-title); }
+  .exit-roles p { grid-column: 2; margin-top: .25rem; font-size: var(--fs-small); }
+}
 
 /* ------------------------------------------------------------------ project tiles */
 
