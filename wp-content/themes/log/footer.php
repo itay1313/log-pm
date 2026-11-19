@@ -2,7 +2,7 @@
 
 <?php
 /**
- * Footer (spec v6 §6): logo and a line about LOG, links to every level-2 page, both offices,
+ * Footer (spec v6 §6): the last junction, logo and a line about LOG, links to every level-2 page, both offices,
  * phone and email, LinkedIn and Instagram, accessibility statement, privacy and cookie policies,
  * cookie settings, copyright.
  */
@@ -15,13 +15,16 @@ $legal = array_filter( [
 <footer class="site-footer">
 	<?php if ( ! is_page( 'contact' ) ) { get_template_part( 'template-parts/video-bg', null, [ 'name' => 'footer-city', 'focus' => '50% 60%' ] ); } ?>
 	<div class="site-footer__inner">
-		<?php if ( ! is_page( 'contact' ) ) : ?>
-			<a class="site-footer__cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><span class="site-footer__cta-text"><?php
-				// The ring turns between the words here too, the way it does in the home headline.
-				$cta = log_text( 'header_cta', 'בואו נדבר', 'option' );
-				echo preg_match( '/^(.+)\s(\S+)$/u', $cta, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . esc_html( $m[2] ) : esc_html( $cta );
-			?></span><span class="site-footer__go" aria-hidden="true"><i class="arrow"></i></span></a>
-		<?php endif; ?>
+		<?php
+		// The last junction, set like the book's cover: the legend stands on a thin line that runs edge to edge, the
+		// page's lane line comes down and cuts straight through it, and the one orange dot sits where they cross.
+		?>
+		<div class="site-footer__lead">
+			<?php if ( ! is_page( 'contact' ) ) : ?>
+				<a class="site-footer__cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><span class="site-footer__cta-text"><?php echo log_title( log_text( 'header_cta', 'בואו נדבר', 'option' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped in log_title() ?></span><i class="arrow" aria-hidden="true"></i></a>
+			<?php endif; ?>
+			<?php echo log_line( 'cross', [ 'class' => 'site-footer__junction' ] ); // phpcs:ignore WordPress.Security.EscapeOutput -- built in log_line() ?>
+		</div>
 
 		<?php // The destination board: every level-2 page as a row of the last guide sign, with what lies down each road. ?>
 		<nav class="site-footer__board" aria-labelledby="footer-board-label">
@@ -53,8 +56,7 @@ $legal = array_filter( [
 			</div>
 		</div>
 
-		<?php // The road ends here: the lane line turns and runs across, a stop line under the last sign. ?>
-		<span class="site-footer__end" aria-hidden="true"></span>
+		<?php echo log_line( 'solid', [ 'class' => 'site-footer__end' ] ); // phpcs:ignore WordPress.Security.EscapeOutput -- built in log_line() ?>
 		<nav class="site-footer__nav" aria-label="מדיניות ונגישות">
 			<ul class="site-footer__list">
 				<?php foreach ( $legal as $label => $p ) : ?><li><a href="<?php echo esc_url( get_permalink( $p ) ); ?>"><?php echo esc_html( $label ); ?></a></li><?php endforeach; ?>
