@@ -5,7 +5,7 @@
 get_header();
 ?>
 <section class="not-found container">
-	<h1><?php echo esc_html( log_text( 'notfound_title', 'הכתובת הזו לא נמצאת במפה.', 'option' ) ); ?></h1>
+	<h1><?php echo log_title( log_text( 'notfound_title', 'הכתובת הזו לא נמצאת במפה.', 'option' ), true ); ?></h1>
 	<p><?php echo esc_html( log_text( 'notfound_text', 'אולי העמוד זז, אולי הקישור השתבש. אפשר להמשיך מכאן:', 'option' ) ); ?></p>
 	<ul class="not-found__links">
 		<li><a class="btn btn--primary" href="<?php echo esc_url( home_url( '/' ) ); ?>">לעמוד הבית</a></li>

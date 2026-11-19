@@ -2,21 +2,22 @@
 name: LOG Project Management
 description: Israel's guide-sign system for planning work. Navy plates with a white keyline, works-zone orange for anything active, road paper for reading.
 colors:
-  plate: "#13212f"
-  plate-2: "#1b2c3d"
-  plate-line: "#3a4e62"
-  plate-deep: "#0b131b"
-  legend: "#f2f4f1"
-  legend-muted: "#a3b3bf"
+  night: "#13212f"
+  night-2: "#1b2c3d"
+  night-line: "#3a4e62"
+  night-deep: "#0b131b"
+  night-ink: "#f2f4f1"
+  night-muted: "#a3b3bf"
+  night-rule-soft: "#2a3d50"
   paper: "#e7eae6"
   paper-2: "#f4f5f2"
   ink: "#15202b"
   slate: "#53606a"
   rule: "#b8c0c2"
   rule-soft: "#d3d8d6"
-  night-rule-soft: "#2a3d50"
-  works: "#f7931d"
-  works-deep: "#b9650a"
+  works: "#f89e2d"
+  works-light: "#fbc48a"
+  works-deep: "#97580c"
   sign-ink: "#15202b"
   logo-grey: "#77787b"
   logo-orange-deep: "#f67b1c"
@@ -28,6 +29,10 @@ colors:
   map-road-regional: "#b4c4d4"
   map-road: "#e3ebf2"
   map-road-major: "#ffffff"
+  map-sky: "#4a6178"
+  map-sky-zenith: "#121922"
+  map-tree: "#3e5a52"
+  map-tree-lit: "#557466"
 typography:
   display:
     fontFamily: "'Ploni', system-ui, sans-serif"
@@ -231,24 +236,28 @@ Density follows signage: big legends in Ploni Tzar, tabular figures, one arrow s
 - Works orange marks LOG's work and every active state, and nothing decorative.
 - Route shields number the pages: a small orange shield at the start of each page title and menu row.
 - One authored guide-sign arrow (broad head, square shaft), pointing forward, which is left in RTL.
-- Ploni Light for headlines and figures, set huge with tight tracking; Ploni Tzar 500 for the small legends on pills and labels; Ploni for running text; tabular numerals for every number.
+- Heavy Ploni Tzar 700 for headlines, each closed by a period; Ploni Light for big figures and quotes; Ploni for running text; Ploni Tzar 500 for the small legends on pills and labels; tabular numerals for every number.
 - The ring glyph: the wordmark's O, an orange arc that draws itself in and turns, set inside a headline before its last word (home, footer).
 - Night is a token swap, never a repaint of individual components.
 
 ## Colors
 
-A signage palette: two navies and a retroreflective white for the plates, a cool road paper for reading, one orange that means "active" or "LOG".
+One palette for the site and the brand book (`src/tokens/tokens.json`). Two families, night and day, and one orange. Night is asphalt at night: the brand dark, the ground of the map and the places. Day is road paper: people and reading. The orange is the book's #f89e2d and marks the one thing that matters now. The book's neutral asphalt (#24242B) and its secondary blue-grey (#9DBBC4) are retired: the navy took the asphalt's place, and the blue-grey survives only as the map's national roads.
+
+**No colour outside the tokens.** CSS reads `var(--…)` and makes a shade or a shadow with `color-mix()` between tokens; JS reads `tokens.js` (`color`, `alpha`, `mix`). Shadows and scrims are night-deep at an opacity, never black. The projects map, the 3D map, the road and the drawings all paint from the same two families. `npm run build` runs `src/tokens/lint.mjs` first and fails on any raw #hex, rgb() or 0x colour in `src/`; a mask or a light temperature (a three.js sun) is marked `colour-ok: <reason>`.
 
 ### Primary
 - **Works-Zone Orange** (`works`): LOG's projects and the 3D city on the map, the route shield, the destination plate's "go" button, the sheet label on title bands, hover and focus keylines, focus rings (3px outline, 3px offset), selection, caret, the active lane underline, the lane line and the stage dashes.
-- **Deep Works Orange** (`works-deep`): orange that has to read as small text or an arrow on paper (link-arrow hover, ghost-button hover keyline). On night grounds it swaps back to `works`.
+- **Deep Works Orange** (`works-deep`): orange that has to read as small text or an arrow on paper (link-arrow hover, ghost-button hover keyline), 4.7:1 on paper. On night grounds it swaps back to `works`.
+- **Light Orange** (`works-light`): a second tag, bars in a chart. Never text.
 
-### Neutral
-- **Guide-Sign Navy** (`plate`): the plate ground. Home map backdrop, title bands, header strip, gantry menu, distance signs, markers, the footer and the control company's page.
-- **Raised Navy** (`plate-2`): media fallbacks, the menu's search input, offices on the footer, the ring-wipe band.
-- **Plate Rule** (`plate-line`): 2px dividers on navy (menu rows, the distance sign's divider, zoom button seam, footer rules).
-- **Retroreflective White** (`legend`): text and keylines on navy; the ground of the white sign and of input fields.
-- **Faded Legend** (`legend-muted`): secondary text on navy, distances in menu rows, back links, the hero lede.
+### Night and day
+The night family is `night-*`; the older `plate-*` and `legend-*` names are aliases in tokens.css and read the same values.
+- **Night** (`night`, alias `plate`): the plate ground. Home map backdrop, title bands, header strip, gantry menu, distance signs, markers, the footer and the control company's page.
+- **Raised Night** (`night-2`): media fallbacks, the menu's search input, offices on the footer, the ring-wipe band.
+- **Night Line** (`night-line`): 2px dividers on navy (menu rows, the distance sign's divider, zoom button seam, footer rules).
+- **Night Ink** (`night-ink`, alias `legend`): text and keylines on navy; the ground of the white sign and of input fields.
+- **Night Muted** (`night-muted`, alias `legend-muted`): secondary text on navy, distances in menu rows, back links, the hero lede.
 - **Road Paper** (`paper`): the day ground of reading pages and the scrollbar track.
 - **Light Paper** (`paper-2`): quiet panels on paper (offices, job sidebar, client logos) with a 2px inset rule.
 - **Road Ink** (`ink`): text on paper, 3px heading rules over lists, field borders.
@@ -271,16 +280,16 @@ The 3D map (the `C` object in `src/hero/scene.js`) uses fog and sea navies (`map
 **Display Font:** Ploni Tzar (with Ploni, system-ui)
 **Body Font:** Ploni (with system-ui)
 
-**Character:** Headlines are Ploni Light (`--font-headline`, weight 300, tracking `--track-headline` -0.045em, leading .92): size carries the hierarchy, never weight. Ploni Tzar (`--font-display`) stays for the small legends: pill labels, captions, counts, the route shield. Ploni does the reading. Both are licensed and self-hosted (Ploni 300 to 600, Ploni Tzar 300 to 700).
+**Character:** The brand book's three weights, no more: a heavy headline, regular text, light figures. Headlines are Ploni Tzar Bold (`--font-headline`, weight 700, tracking `--track-headline` -0.03em, leading .92), two to four words, closed by a period (`log_title()`); the page's main headline closes on the orange period, its one orange dot. Big figures, numbering and quotes are Ploni Light (`--font-figure`, tracking `--track-figure` -0.045em). Ploni Tzar 500 (`--font-display`) stays for the small legends: pill labels, captions, counts, the route shield. Ploni does the reading. Both are licensed and self-hosted (Ploni 300 to 600, Ploni Tzar 300 to 700).
 
 ### Hierarchy
 One scale, defined once in `wp-content/themes/log/src/styles/tokens.css`: sizes `--fs-*`, weights `--fw-*`, leading `--lh-*`, tracking `--track-*`, and `--type-*` roles to use with `font:`. No stylesheet sets a size outside it. Sizes below run from a 375px phone to a 1440px screen.
 
-Headlines, Ploni Light 300, grow with the screen:
-- **h1** `--fs-h1` (48 → 97px, leading .92, tracking -0.045em): page titles in the title band, the project title, "who we are", the drive's figures.
-- **h2** `--fs-h2` (40 → 72px, .92, -0.045em): section titles, the home headline (capped at 4.5rem, three lines), the numbers rows.
-- **h3** `--fs-h3` (32 → 51px, 1.02, -0.03em): destination rows (practice areas, jobs), lead cards, the build steps on the map, the hero figures. The menu's rows run between h3 and h1, also scaled by viewport height.
-- **h4** `--fs-h4` (26 → 35px, 1.02, -0.03em): card titles, process steps, values, quotes and blockquotes, small section heads (featured, search groups, article h2).
+Headlines, Ploni Tzar Bold 700, grow with the screen:
+- **h1** `--fs-h1` (48 → 97px, leading .92, tracking -0.03em): page titles in the title band, the project title, "who we are". The drive's figures use the size in Ploni Light.
+- **h2** `--fs-h2` (40 → 72px, .92, -0.03em): section titles, the home headline (capped at 4.5rem). The numbers rows use the size in Ploni Light.
+- **h3** `--fs-h3` (32 → 51px, 1.02, -0.02em): destination rows (practice areas, jobs), lead cards, the build steps on the map, the hero figures. The menu's rows run between h3 and h1, also scaled by viewport height.
+- **h4** `--fs-h4` (26 → 35px, 1.02, -0.02em): card titles, process steps, values, quotes and blockquotes (those in Ploni Light), small section heads (featured, search groups, article h2).
 
 Text steps are fixed:
 - **Title** `--fs-title` 24px, Ploni Tzar 500: h3 elements, office and popup names, side titles, form success.
@@ -291,12 +300,14 @@ Text steps are fixed:
 
 The footer's "בואו נדבר" (`--fs-mega`, up to 14.5rem) is the one size outside the scale, on purpose.
 
-Weights: 300 for headlines, 400 for reading, 500 for every legend, label and small title. 700 appears only on the road's gantry signs (the exit sign) and on labels drawn straight over the 3D map, where they need the extra stroke against the city.
+Weights: 700 for headlines (and the road's gantry signs, and labels over the 3D map), 400 for reading, 300 for big figures and quotes, 500 for every legend, label and small title.
 
 ### Named Rules
 **The Tabular Rule.** Every number (counts, units, distances, years, shields, grid references) is set with tabular numerals. Grid references are isolated left-to-right inside RTL text.
 
-**The Legend Rule.** Text on a pill or a small label is Ploni Tzar 500. Anything set big (titles, destinations, figures, menu rows) is Ploni Light. Bold appears only on the road's gantry signs and on labels over the map.
+**The Legend Rule.** Text on a pill or a small label is Ploni Tzar 500. Titles, destinations and menu rows are Ploni Tzar Bold. Figures and quotes set big are Ploni Light.
+
+**The Period Rule.** A headline ends in a period, set by `log_title()`; one that ends in ? or ! keeps it. Names (a project, a job, a person) are not headlines and take none. Only the page's main headline gets the orange period. The last word and its period are tied (`.title-end`, nowrap), so a period never wraps alone. The orange period lands last: after the headline's lines rise, it grows from nothing with a small overshoot (motion.js `rise()`, the coming-soon page in CSS); under reduced motion it is simply there.
 
 ## Layout
 

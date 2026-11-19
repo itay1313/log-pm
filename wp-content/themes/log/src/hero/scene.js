@@ -67,8 +67,9 @@ export async function createScene(container, { reduced = false } = {}) {
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
-  scene.add(new THREE.HemisphereLight(0xfff1e2, 0x1b2430, 1.35));
-  const sun = new THREE.DirectionalLight(0xfff4ea, 2.6);
+  // Light, not paint: a warm sky over navy ground, and a low warm sun.
+  scene.add(new THREE.HemisphereLight(0xfff1e2, color.night2, 1.35)); // colour-ok: light temperature
+  const sun = new THREE.DirectionalLight(0xfff4ea, 2.6); // colour-ok: light temperature
   sun.position.set(-0.55, 1, 0.35);
   scene.add(sun);
 
@@ -101,10 +102,10 @@ export async function createScene(container, { reduced = false } = {}) {
     roadMajor: lineMaterial(C.roadMajor, 0.0, fogUniforms),
     rail: lineMaterial(C.road, 0.0, fogUniforms),
     sea: seaMaterial(C.sea, reduced ? 1 : 0, revealUniforms),
-    building: siteBuildings(new THREE.MeshLambertMaterial({ color: C.buildingFace, emissive: '#0b1118', side: THREE.FrontSide }), C.buildingLine, reduced ? 1 : 0),
+    building: siteBuildings(new THREE.MeshLambertMaterial({ color: C.buildingFace, emissive: color.nightDeep, side: THREE.FrontSide }), C.buildingLine, reduced ? 1 : 0),
     planFill: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide }),
     planFillLarge: new THREE.MeshBasicMaterial({ color: C.plan, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide }),
-    planEdge: lineMaterial('#fff6ec', 1.0, fogUniforms),
+    planEdge: lineMaterial(color.paper2, 1.0, fogUniforms),
   };
 
   const groups = { national: new THREE.Group(), regional: new THREE.Group(), mid: new THREE.Group(), detail: new THREE.Group(), plans: new THREE.Group() };
@@ -330,7 +331,7 @@ export async function createScene(container, { reduced = false } = {}) {
     const N = 1024, cv = document.createElement('canvas');
     cv.width = cv.height = N;
     const g = cv.getContext('2d');
-    g.fillStyle = '#000'; g.fillRect(0, 0, N, N); g.fillStyle = '#fff';
+    g.fillStyle = '#000'; g.fillRect(0, 0, N, N); g.fillStyle = '#fff'; // colour-ok: a mask, not paint
     const toPx = ([x, z]) => [((x - minX) / (maxX - minX)) * N, ((z - minZ) / (maxZ - minZ)) * N];
     for (const poly of local) {
       g.beginPath();
@@ -768,7 +769,7 @@ function siteBuildings(material, line, face = 1) {
   const u = {
     uSiteMask: { value: null }, uSiteMin: { value: new THREE.Vector2() }, uSiteSize: { value: new THREE.Vector2(1, 1) },
     uSiteOn: { value: 0 }, uRise: { value: 0 }, uDim: { value: 0 }, uTint: { value: 0 },
-    uSiteColor: { value: new THREE.Color('#f2f4f1') }, uDimColor: { value: new THREE.Color('#1b2c3d') },
+    uSiteColor: { value: new THREE.Color(color.nightInk) }, uDimColor: { value: new THREE.Color(color.night2) },
     uLine: { value: new THREE.Color(line) }, uFace: { value: face },
     uGrow: { value: 1e9 }, uGrowAt: { value: new THREE.Vector2() },
   };
@@ -843,10 +844,10 @@ function skyTexture() {
   c.width = c.height = 512;
   const g = c.getContext('2d');
   const grd = g.createRadialGradient(110, 50, 10, 200, 160, 620);
-  grd.addColorStop(0, '#4a6178');
-  grd.addColorStop(0.32, '#2b3d50');
-  grd.addColorStop(0.62, '#1d2a3a');
-  grd.addColorStop(1, '#121922');
+  grd.addColorStop(0, color.mapSky);
+  grd.addColorStop(0.32, color.nightRuleSoft);
+  grd.addColorStop(0.62, color.mapFog);
+  grd.addColorStop(1, color.mapSkyZenith);
   g.fillStyle = grd;
   g.fillRect(0, 0, 512, 512);
   const tex = new THREE.CanvasTexture(c);

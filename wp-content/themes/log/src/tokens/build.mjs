@@ -2,6 +2,8 @@
 /**
  * Token generator. Reads src/tokens/tokens.json (the one source) and writes:
  *   src/styles/tokens.gen.css  custom properties on :root, imported by tokens.css
+ *   assets/brand/tokens.css    the same file, shipped (src/ isn't deployed) for pages that stand outside the
+ *                              build: log-core's coming-soon gate inlines it
  *   src/tokens/tokens.js       the same values for JS (the 3D map, MapLibre, drawings, the /brand book)
  *   DESIGN.md                  the `colors:` block of its frontmatter (the prose stays hand-written)
  *
@@ -17,6 +19,7 @@ const theme = resolve(here, '../..');
 const files = {
   json: resolve(here, 'tokens.json'),
   css: resolve(theme, 'src/styles/tokens.gen.css'),
+  shipped: resolve(theme, 'assets/brand/tokens.css'),
   js: resolve(here, 'tokens.js'),
   design: resolve(theme, '../../../DESIGN.md'),
 };
@@ -54,8 +57,14 @@ export function alpha(hex, a) {
   const n = parseInt(hex.slice(1), 16);
   return \`rgba(\${n >> 16}, \${(n >> 8) & 255}, \${n & 255}, \${a})\`;
 }
+/** Two token colours mixed in sRGB, t the share of b, as #rrggbb: the shades a drawing needs between two tokens. */
+export function mix(a, b, t = 0.5) {
+  const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16);
+  const c = (s) => Math.round(((x >> s) & 255) * (1 - t) + ((y >> s) & 255) * t);
+  return '#' + ((1 << 24) | (c(16) << 16) | (c(8) << 8) | c(0)).toString(16).slice(1);
+}
 `;
-jsText += `export default { ${Object.keys(js).join(', ')}, alpha };\n`;
+jsText += `export default { ${Object.keys(js).join(', ')}, alpha, mix };\n`;
 
 // DESIGN.md: replace the colors block (from "colors:" to the next top-level key) inside the frontmatter.
 let design = existsSync(files.design) ? readFileSync(files.design, 'utf8') : null;
@@ -65,7 +74,7 @@ if (design) {
   design = design.replace(/^colors:\n(?:  .*\n)+/m, block);
 }
 
-const outputs = [[files.css, css], [files.js, jsText], ...(design ? [[files.design, design]] : [])];
+const outputs = [[files.css, css], [files.shipped, css], [files.js, jsText], ...(design ? [[files.design, design]] : [])];
 let stale = 0;
 for (const [path, text] of outputs) {
   const current = existsSync(path) ? readFileSync(path, 'utf8') : '';

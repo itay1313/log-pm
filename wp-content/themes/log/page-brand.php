@@ -22,11 +22,18 @@ the_post();
 <main class="bk-book">
 	<?php if ( post_password_required() ) : ?>
 		<section class="bk-page bk-page--night bk-lock" aria-label="ספר המותג">
-			<p class="bk-kicker">לוג ניהול פרויקטים</p>
+			<?php echo log_logo( [ 'variant' => 'night' ] ); ?>
 			<?php log_bk_title( 'ספר המותג', 'h1', 'bk-title--cover' ); ?>
 			<div class="bk-lock__form">
 				<p>הספר פתוח למי שקיבל סיסמה מלוג.</p>
-				<?php echo get_the_password_form(); // phpcs:ignore WordPress.Security.EscapeOutput -- core markup ?>
+				<?php // Core's form, in Hebrew whatever the site language: same action and field names. ?>
+				<form action="<?php echo esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ); ?>" method="post">
+					<input type="hidden" name="redirect_to" value="<?php echo esc_url( get_permalink() ); ?>">
+					<p>
+						<label for="bk-pass">סיסמה<input name="post_password" id="bk-pass" type="password" autocomplete="current-password" spellcheck="false" required></label>
+						<input type="submit" name="Submit" value="פתיחת הספר">
+					</p>
+				</form>
 			</div>
 		</section>
 	<?php else : ?>

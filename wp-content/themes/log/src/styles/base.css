@@ -27,8 +27,12 @@ input, textarea { caret-color: var(--works); }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink); }
 
 h1, h2, h3, h4 { font-family: var(--font-display); line-height: var(--lh-heading); margin: 0 0 .5em; letter-spacing: var(--track-heading); text-wrap: balance; }
-/* Headlines are light and huge, tracked tight; weight never carries the hierarchy, size does. */
-h1, h2 { font-family: var(--font-headline); font-weight: var(--fw-light); letter-spacing: var(--track-headline); }
+/* Headlines are heavy Ploni Tzar, short, closed by a period (log_title()). Big figures stay light: --font-figure. */
+h1, h2 { font-family: var(--font-headline); font-weight: var(--fw-bold); letter-spacing: var(--track-headline); }
+/* The last word holds its period (no period alone on a line). The orange one is the page's junction: one per page,
+   and the headline's rise ends with it landing (motion.js). */
+.title-end { white-space: nowrap; }
+.period--dot { display: inline-block; color: var(--works); }
 h1 { font-size: var(--fs-h1); line-height: var(--lh-display); }
 h2 { font-size: var(--fs-h2); line-height: var(--lh-display); }
 h3 { font-size: var(--fs-title); font-weight: var(--fw-medium); letter-spacing: var(--track-title); line-height: var(--lh-title); }
@@ -146,7 +150,7 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 }
 .field input:focus, .field select:focus, .field textarea:focus, .filters select:focus, .filters__search input:focus, .search-form input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--focus); }
 .field input[type=file] { padding: .6em; }
-.field .is-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(179,38,30,.25); }
+.field .is-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 25%, transparent); }
 .field__hint { font-size: var(--fs-small); color: var(--danger); }
 select { appearance: none; cursor: pointer; padding-left: 2.6rem !important; }
 .field select, .filters select { background: var(--legend) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 7'%3E%3Cpath d='M0 0h10L5 7z' fill='%2315202b'/%3E%3C/svg%3E") left 1rem center / 10px 7px no-repeat; }

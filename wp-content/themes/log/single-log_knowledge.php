@@ -48,7 +48,7 @@ while ( have_posts() ) : the_post();
 		if ( $more && $more->have_posts() ) : ?>
 			<section class="section section--more">
 				<div class="container">
-					<h2 class="section__title">פריטים נוספים</h2>
+					<h2 class="section__title"><?php echo log_title( 'פריטים נוספים' ); ?></h2>
 					<ul class="knowledge-list">
 						<?php while ( $more->have_posts() ) : $more->the_post(); ?>
 							<li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a> <span class="meta"><?php echo esc_html( get_the_date() ); ?></span></li>

@@ -66,7 +66,7 @@ function rollLabels() {
  * Display headings rise line by line inside masks. Re-splits when the width changes. The first split waits for
  * the webfonts: lines measured in the wider fallback face break in the wrong places.
  */
-function rise(el, vars = {}) {
+function rise(el, { delay = 0, ...vars } = {}) {
   if (!el) return null;
   return document.fonts.ready.then(() => SplitText.create(el, {
     type: 'lines',
@@ -74,7 +74,12 @@ function rise(el, vars = {}) {
     autoSplit: true,
     onSplit(self) {
       gsap.set(el, { opacity: 1 });
-      return gsap.from(self.lines, { yPercent: 112, duration: 1.15, stagger: 0.09, ease: 'power4.out', ...vars });
+      const tl = gsap.timeline({ delay });
+      tl.from(self.lines, { yPercent: 112, duration: 1.15, stagger: 0.09, ease: 'power4.out', ...vars });
+      // The junction lands: the orange period arrives after its words, from nothing to full, with a small overshoot.
+      const dot = el.querySelector('.period--dot');
+      if (dot) tl.from(dot, { scale: 0, transformOrigin: '50% 80%', duration: 0.7, ease: 'back.out(3)', clearProps: 'transform' }, '-=0.45');
+      return tl;
     },
   }));
 }

@@ -37,7 +37,7 @@ $jobs = new WP_Query( [
 	</figure>
 	<div class="container careers-hero__copy">
 		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'careers-build', 'bleed' => true ] ); ?>
-		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ) ); ?></h1>
+		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ), true ); ?></h1>
 		<p class="page-header__lede"><?php echo esc_html( log_text( 'careers_lede', 'בלוג תעבדו לצד מיטב אנשי המקצוע, תקבלו אחריות אמיתית על תהליכים מהותיים ותהיו חלק מארגון שמאמין בצמיחה מקצועית ואישית.', 'option' ) ); ?></p>
 		<div class="cta-row">
 			<a class="btn btn--primary" href="#jobs">למשרות הפתוחות</a>
@@ -49,7 +49,7 @@ $jobs = new WP_Query( [
 <?php if ( ( is_array( $gallery ) && $gallery ) || $videos || log_show_empty() ) : ?>
 <section class="section" data-section="culture">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_culture_title', 'איך זה נראה', 'option' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'careers_culture_title', 'איך זה נראה', 'option' ) ); ?></h2>
 		<?php if ( is_array( $gallery ) && $gallery ) : ?>
 			<div class="gallery__grid">
 				<?php foreach ( $gallery as $img ) : ?><figure><img src="<?php echo esc_url( $img['sizes']['log-card'] ?? $img['url'] ); ?>" alt="<?php echo esc_attr( $img['alt'] ); ?>" loading="lazy"></figure><?php endforeach; ?>
@@ -75,7 +75,7 @@ $jobs = new WP_Query( [
 
 <section class="section" data-section="people">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_people_title', 'האנשים', 'option' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'careers_people_title', 'האנשים', 'option' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'careers_people_text', 'אדריכלים, מתכננים, כלכלנים ואנשי נתונים, באותו צוות ועל אותן תכניות.', 'option' ) ); ?></p>
 		<a class="link-more" href="<?php echo esc_url( home_url( '/about/#team' ) ); ?>">להכיר את הצוות</a>
 	</div>
@@ -83,7 +83,7 @@ $jobs = new WP_Query( [
 
 <section class="section" data-section="path" id="path">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_path_title', 'מסלול הגיוס', 'option' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'careers_path_title', 'מסלול הגיוס', 'option' ) ); ?></h2>
 		<ol class="process">
 			<?php foreach ( array_slice( $path, 0, 4 ) as $i => $step ) : ?>
 				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $step['name'] ?? '' ); ?></h3><?php if ( ! empty( $step['text'] ) ) : ?><p><?php echo esc_html( $step['text'] ); ?></p><?php endif; ?></li>
@@ -95,7 +95,7 @@ $jobs = new WP_Query( [
 <?php if ( $values ) : ?>
 	<section class="section" data-section="values">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'careers_values_title', 'הערכים בפועל', 'option' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_title( log_text( 'careers_values_title', 'הערכים בפועל', 'option' ) ); ?></h2>
 			<ul class="values">
 				<?php foreach ( array_slice( $values, 0, 4 ) as $v ) : if ( empty( $v['name'] ) ) { continue; } ?>
 					<li class="values__item"><h3><?php echo esc_html( $v['name'] ); ?></h3><?php if ( ! empty( $v['practice_1'] ) ) : ?><p><?php echo esc_html( $v['practice_1'] ); ?></p><?php endif; ?></li>
@@ -108,7 +108,7 @@ $jobs = new WP_Query( [
 
 <section class="section" data-section="jobs" id="jobs">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'careers_jobs_title', 'משרות פתוחות', 'option' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'careers_jobs_title', 'משרות פתוחות', 'option' ) ); ?></h2>
 		<?php if ( $jobs->have_posts() ) : ?>
 			<?php get_template_part( 'template-parts/jobs-list', null, [ 'query' => $jobs ] ); ?>
 		<?php else : ?>

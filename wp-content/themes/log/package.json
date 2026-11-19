@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "tokens": "node src/tokens/build.mjs",
-    "prebuild": "node src/tokens/build.mjs",
+    "prebuild": "node src/tokens/build.mjs && node src/tokens/lint.mjs",
+    "lint:colours": "node src/tokens/lint.mjs",
     "dev": "vite",
     "build": "vite build"
   },

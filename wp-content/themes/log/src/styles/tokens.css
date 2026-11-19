@@ -1,7 +1,6 @@
 /*
- * LOG · visual world: Israel's guide-sign system for planning work (direction contract in .impeccable/surfaces/).
- * Navy guide plates with a white keyline, works-zone orange for LOG's active work and every active state,
- * road paper for reading.
+ * LOG · one language for the site and the brand book. Night (navy, asphalt at night) for the map and the
+ * places, road paper by day for people and reading, one orange for the one thing that matters now.
  *
  * Every raw value (colour, size, weight, radius, easing) lives in src/tokens/tokens.json and reaches this
  * file through tokens.gen.css. This file keeps what is built from those values: legacy aliases, type roles,
@@ -10,22 +9,28 @@
 @import './tokens.gen.css';
 
 :root {
-  /* Legacy names some markup and the map still read */
+  /* Older names, kept so markup and styles that read them follow the night family. New code uses --night-*. */
+  --plate: var(--night);
+  --plate-2: var(--night-2);
+  --plate-line: var(--night-line);
+  --plate-deep: var(--night-deep);
+  --legend: var(--night-ink);
+  --legend-muted: var(--night-muted);
   --orange: var(--works);
   --orange-deep: var(--works-deep);
-  --night: var(--plate);
-  --night-2: var(--plate-2);
-  --night-line: var(--plate-line);
-  --night-ink: var(--legend);
-  --night-muted: var(--legend-muted);
   --grey: var(--slate);
   --line: var(--rule-soft);
+  /* The day values, fixed here on :root. Night worlds swap --slate and --rule (pages.css); a white sign
+     inside one still reads them by day. */
+  --day-slate: var(--slate);
+  --day-rule: var(--rule);
 
   /* Type roles: use these with `font:` so a role is one line, everywhere. */
-  --type-h1: var(--fw-light) var(--fs-h1)/var(--lh-display) var(--font-headline);
-  --type-h2: var(--fw-light) var(--fs-h2)/var(--lh-display) var(--font-headline);
-  --type-h3: var(--fw-light) var(--fs-h3)/var(--lh-heading) var(--font-headline);
-  --type-h4: var(--fw-light) var(--fs-h4)/var(--lh-heading) var(--font-headline);
+  /* The book's three weights, no more: heavy headlines, regular text, light figures. */
+  --type-h1: var(--fw-bold) var(--fs-h1)/var(--lh-display) var(--font-headline);
+  --type-h2: var(--fw-bold) var(--fs-h2)/var(--lh-display) var(--font-headline);
+  --type-h3: var(--fw-bold) var(--fs-h3)/var(--lh-heading) var(--font-headline);
+  --type-h4: var(--fw-bold) var(--fs-h4)/var(--lh-heading) var(--font-headline);
   --type-title: var(--fw-medium) var(--fs-title)/var(--lh-title) var(--font-display);
   --type-name: var(--fw-medium) var(--fs-lead) var(--font-display);
   --type-legend: var(--fw-medium) var(--fs-base) var(--font-display);

@@ -46,7 +46,7 @@ $items = new WP_Query( [
 	<div class="control-hero__strip">
 		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'control-city' ] ); ?>
 		<div class="container">
-			<h1 class="control-hero__title"><?php echo log_route_shield(); ?><?php echo esc_html( log_text( 'hero_title', 'חברת הבקרה' ) ); ?></h1>
+			<h1 class="control-hero__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'hero_title', 'חברת הבקרה' ), true ); ?></h1>
 			<p class="control-hero__line"><?php echo esc_html( log_text( 'hero_eyebrow', 'לוג היא חברת הבקרה של הרשות הממשלתית להתחדשות עירונית.' ) ); ?></p>
 		</div>
 	</div>
@@ -54,7 +54,7 @@ $items = new WP_Query( [
 
 <section class="section" data-section="what">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'what_title', 'מה הפעילות' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'what_title', 'מה הפעילות' ) ); ?></h2>
 		<div class="section__prose">
 			<?php if ( get_the_content() ) : the_content(); else : ?>
 				<p>כחברת הבקרה, לוג מלווה את פרויקטי הפינוי-בינוי בכל הארץ ומחזיקה עבור הרשות את תמונת המצב הלאומית.</p>
@@ -66,7 +66,7 @@ $items = new WP_Query( [
 
 <section class="section section--roles" data-section="roles">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'roles_title', 'שלושה תפקידים' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'roles_title', 'שלושה תפקידים' ) ); ?></h2>
 		<ol class="roles">
 			<?php foreach ( array_slice( $roles, 0, 3 ) as $i => $r ) : ?>
 				<li class="roles__item"><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $r['name'] ?? '' ); ?></h3><p><?php echo esc_html( $r['text'] ?? '' ); ?></p></li>
@@ -77,7 +77,7 @@ $items = new WP_Query( [
 
 <section class="section section--method" data-section="method">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'method_title', 'שיטת העבודה' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'method_title', 'שיטת העבודה' ) ); ?></h2>
 		<ol class="process">
 			<?php foreach ( array_slice( $method, 0, 4 ) as $i => $m ) : ?>
 				<li><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $m['name'] ?? '' ); ?></h3><p><?php echo esc_html( $m['text'] ?? '' ); ?></p></li>
@@ -89,7 +89,7 @@ $items = new WP_Query( [
 <?php if ( $team && $team->have_posts() ) : ?>
 	<section class="section section--team" data-section="team">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'team_title', 'הצוות' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_title( log_text( 'team_title', 'הצוות' ) ); ?></h2>
 			<div class="people">
 				<?php while ( $team->have_posts() ) : $team->the_post(); get_template_part( 'template-parts/card-person' ); endwhile; wp_reset_postdata(); ?>
 			</div>
@@ -100,7 +100,7 @@ $items = new WP_Query( [
 <?php if ( $numbers ) : ?>
 	<section class="section section--numbers" data-section="numbers">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'numbers_title', 'במספרים' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_title( log_text( 'numbers_title', 'במספרים' ) ); ?></h2>
 			<dl class="numbers">
 				<?php foreach ( $numbers as $n ) : ?>
 					<div><dd><?php echo log_number( $n['value'] ); ?></dd><dt><?php echo esc_html( $n['label'] ?? '' ); ?><?php if ( ! empty( $n['updated'] ) ) : ?> <small>נכון ל-<?php echo esc_html( wp_date( 'n/Y', strtotime( $n['updated'] ) ) ); ?></small><?php endif; ?></dt></div>
@@ -113,7 +113,7 @@ $items = new WP_Query( [
 <?php if ( $items->have_posts() ) : ?>
 	<section class="section section--items" data-section="items">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'items_title', 'פריטים מקצועיים' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_title( log_text( 'items_title', 'פריטים מקצועיים' ) ); ?></h2>
 			<div class="grid grid--knowledge">
 				<?php while ( $items->have_posts() ) : $items->the_post(); get_template_part( 'template-parts/card-knowledge' ); endwhile; wp_reset_postdata(); ?>
 			</div>
@@ -124,7 +124,7 @@ $items = new WP_Query( [
 <?php if ( $partners ) : ?>
 	<section class="section section--partners" data-section="partners">
 		<div class="container">
-			<h2 class="section__title"><?php echo esc_html( log_text( 'partners_title', 'שותפי העבודה' ) ); ?></h2>
+			<h2 class="section__title"><?php echo log_title( log_text( 'partners_title', 'שותפי העבודה' ) ); ?></h2>
 			<ul class="partners-row"><?php foreach ( $partners as $p ) : ?><li><?php echo esc_html( $p ); ?></li><?php endforeach; ?></ul>
 		</div>
 	</section>
@@ -132,7 +132,7 @@ $items = new WP_Query( [
 
 <section class="section section--cta" data-section="contact">
 	<div class="container">
-		<h2 class="section__title"><?php echo esc_html( log_text( 'contact_title', 'פנייה לחברת הבקרה' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'contact_title', 'פנייה לחברת הבקרה' ) ); ?></h2>
 		<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/contact/?topic=control' ) ); ?>"><?php echo esc_html( log_text( 'cta', 'לטופס הפנייה' ) ); ?></a>
 	</div>
 </section>
