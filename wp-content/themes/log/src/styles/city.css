@@ -1,0 +1,45 @@
+/*
+ * The city in lines (inc/city.php): the home map's look as a drawing. Navy volumes, the orange line on their
+ * corners and roof, roads in a thin line that runs to the edge. One unit of the drawing is one sheet pixel, so a
+ * line here weighs what it weighs everywhere else. src/fx/city.js raises the houses; these rules are the drawing
+ * at rest, which is also what print and reduced motion get.
+ */
+
+.cty {
+  --cty-line: var(--works);
+  --cty-wall: var(--night);
+  --cty-roof: var(--map-building-face);
+  display: block;
+  width: calc(var(--cty-w) * var(--q, 1px));
+  height: auto;
+  overflow: hidden;
+  font-family: var(--font-display);
+}
+.cty__roads { fill: none; stroke: var(--night-line); stroke-width: 1; }
+.cty__fade { stop-color: var(--night-line); }
+
+/* A house: its walls and its roof, the line on every edge. Further from the middle the line lets go. */
+.cty .w, .cty .r { stroke: var(--cty-line); stroke-width: 1; stroke-linejoin: round; }
+.cty .w { fill: var(--cty-wall); }
+.cty .r { fill: var(--cty-roof); }
+.cty .f { fill: none; stroke: var(--cty-line); stroke-width: .7; opacity: .5; }
+.cty .b--mid { --cty-line: color-mix(in srgb, var(--works) 60%, var(--night)); --cty-roof: color-mix(in srgb, var(--map-building-face) 70%, var(--night)); }
+.cty .b--far { --cty-line: color-mix(in srgb, var(--works) 32%, var(--night)); --cty-roof: color-mix(in srgb, var(--map-building-face) 40%, var(--night)); }
+
+/* A plan: the orange plate with its own streets showing through, under a dashed boundary (what isn't built yet). */
+.cty__plate { fill: var(--works); fill-opacity: .55; }
+.cty__streets, .cty__rounds { fill: none; stroke: var(--night-ink); stroke-opacity: .34; stroke-width: 1; }
+.cty__bound { fill: none; stroke: var(--works); stroke-width: 3; stroke-dasharray: 15 12; }
+
+/* Its dimensions: a thin light line with square ends, the length in metres beside it. */
+.cty__dim-line, .cty__dim-ticks { fill: none; stroke: var(--night-ink); stroke-opacity: .82; stroke-width: 1; }
+.cty__dim text, .cty__area text { paint-order: stroke; stroke: var(--cty-halo, transparent); stroke-width: 5px; stroke-linejoin: round; }
+.cty__dim text { fill: var(--night-ink); font-size: 13px; font-weight: var(--fw-bold); text-anchor: middle; direction: rtl; font-variant-numeric: tabular-nums; }
+.cty__area text { fill: var(--night-ink); font: var(--fw-light) 34px/1 var(--font-figure); letter-spacing: var(--track-figure); text-anchor: middle; direction: rtl; }
+.cty__area .cty__area-cap { font: var(--fw-medium) 12px/1 var(--font-display); letter-spacing: 0; fill-opacity: .8; }
+
+/* A project is the dot. Several at one place: a dark disc with their number. */
+.cty__pin circle { fill: var(--works); stroke: var(--night); stroke-width: 3; }
+.cty__pin .cty__pin-ring { fill: none; stroke: var(--night-ink); stroke-opacity: .4; stroke-width: 1; }
+.cty__pin--many circle { fill: var(--night); stroke: var(--night-ink); stroke-width: 1; }
+.cty__pin text { fill: var(--night-ink); font-size: 14px; font-weight: var(--fw-bold); text-anchor: middle; font-variant-numeric: tabular-nums; }
