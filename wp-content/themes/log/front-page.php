@@ -19,6 +19,11 @@ $projects_url = get_post_type_archive_link( 'log_project' );
 // The drive: the map stays pinned behind the first chapter and the scroll moves its camera (src/home/drive.js).
 // Without WebGL, or with reduced motion, the chapters are ordinary sections under the map.
 ?>
+<?php
+// The opening: an aerial roundabout that becomes the logo's O (inc/roundabout.php). It shows once per visit,
+// with motion allowed; otherwise it stays hidden markup.
+echo log_roundabout( 'home' ); // phpcs:ignore WordPress.Security.EscapeOutput -- built in log_roundabout()
+?>
 <div class="drive" id="drive">
 <section class="hero" id="hero" data-section="map" aria-labelledby="hero-title">
 	<div class="hero-stage" role="region" aria-label="מפת הפרויקטים של לוג בתלת-ממד. גרירה מזיזה, Ctrl וגלילה מקרבים. כל סימן הוא כפתור עם שם הפרויקט; Enter פותח חלונית ו-Esc סוגר."></div>

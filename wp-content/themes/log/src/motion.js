@@ -104,6 +104,13 @@ const mount = (targets, vars = {}) => gsap.fromTo(targets,
 function heroIntro() {
   const hero = document.getElementById('hero');
   if (!hero) return;
+  // On the first visit the roundabout opens the page (home/roundabout.js); the headline rises as its night lifts.
+  if (document.documentElement.classList.contains('ra-intro')) {
+    document.addEventListener('log:opened', () => heroIn(hero), { once: true });
+  } else heroIn(hero);
+}
+
+function heroIn(hero) {
   // The headline comes up out of a blur, word by word, as if the lens found it. Words, not lines: the browser keeps
   // the wrapping (SplitText's line detection breaks Hebrew headlines in the wrong places).
   const title = hero.querySelector('.hero__title');
