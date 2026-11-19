@@ -70,7 +70,7 @@
   --track-figure: -0.045em; /* big light figures and quotes */
   --track-title: -0.01em;
   /* radius */
-  --r-pill: 999px;
+  --r-control: 8px; /* buttons, fields, chips and tags: the book allows a rounded corner only in a thin line, so no pills */
   --r-frame: 26px; /* the frame around the home map */
   --r-plate: 10px;
   --r-small: 6px;

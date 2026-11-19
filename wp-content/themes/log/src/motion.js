@@ -12,7 +12,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { initSmooth } from './smooth.js';
-import { drawLines } from './lines/draw.js';
+import { drawLines, splitCircle } from './lines/draw.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -245,7 +245,7 @@ function pageCover() {
   const cover = document.createElement('div');
   cover.className = 'page-cover';
   cover.setAttribute('aria-hidden', 'true');
-  cover.innerHTML = '<span class="page-cover__mark"><span class="page-cover__ring"></span></span>';
+  cover.innerHTML = `<span class="page-cover__mark">${splitCircle()}</span>`;
   document.body.appendChild(cover);
 
   if (html.classList.contains('is-covered')) {

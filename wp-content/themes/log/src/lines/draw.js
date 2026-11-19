@@ -52,6 +52,16 @@ function circle(el) {
   if (inner) tl.from(inner, { opacity: 0, scale: 0.9, duration: 0.7, ease: 'expo.out', clearProps: 'opacity,transform' }, '-=0.5');
 }
 
+/**
+ * The split circle's markup for a page built in JS (the page cover), the same geometry as log_circle( 'split' ):
+ * four arcs on r=49, cut 22° at each quarter, orange at top right and bottom left.
+ */
+export function splitCircle() {
+  const pt = (deg) => `${(50 + 49 * Math.sin(deg * Math.PI / 180)).toFixed(3)} ${(50 - 49 * Math.cos(deg * Math.PI / 180)).toFixed(3)}`;
+  const arc = (from, cls) => `<path class="${cls}" d="M${pt(from + 11)} A49 49 0 0 1 ${pt(from + 79)}"/>`;
+  return `<span class="circ circ--split"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">${arc(0, 'circ__on')}${arc(90, 'circ__off')}${arc(180, 'circ__on')}${arc(270, 'circ__off')}</svg></span>`;
+}
+
 /** Draw every line and circle under root. Returns the matchMedia context, so a caller can revert it. */
 export function drawLines(root = document) {
   const mm = gsap.matchMedia();

@@ -88,7 +88,8 @@ html.drive-on .drive-build.is-live .section__title { max-width: 12ch; margin-bot
 html.drive-on .drive-build.is-live .process { display: grid; grid-template-columns: minmax(0, 1fr); align-self: end; width: min(100%, 31rem); margin: 0 0 1.5rem; }
 html.drive-on .drive-build.is-live .process::before { display: none; }
 html.drive-on .drive-build.is-live .process li { grid-area: 1 / 1; align-self: end; padding: 0; visibility: hidden; }
-html.drive-on .drive-build.is-live .process li .stage { width: 3.25rem; height: 3.25rem; margin-bottom: 1.1rem; font-size: var(--fs-lead); background: var(--works); color: var(--sign-ink); box-shadow: none; }
+html.drive-on .drive-build.is-live .process li .stage { margin-bottom: 1.1rem; }
+html.drive-on .drive-build.is-live .process li .stage .circ { --circ-n: 52; --ln-c: var(--works); background: none; box-shadow: none; color: var(--legend); }
 html.drive-on .drive-build.is-live .process li h3 { margin-bottom: .55rem; font-size: var(--fs-h3); line-height: var(--lh-heading); letter-spacing: var(--track-heading); }
 html.drive-on .drive-build.is-live .process li p { max-width: 34ch; font-size: var(--fs-lead); line-height: 1.5; }
 html.drive-on .drive-build.is-live .process li p.build-note { grid-column: 1 / -1; margin-top: 1rem; font: var(--fw-medium) var(--fs-small)/1.4 var(--font-display); color: var(--legend-muted); }
@@ -118,7 +119,7 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 .build-sign__facts dd { margin: 0; font: var(--type-h4); letter-spacing: var(--track-heading); font-variant-numeric: tabular-nums; }
 .build-sign__facts dt { font-size: var(--fs-micro); color: var(--slate); }
 .build-sign .stage-row { margin-bottom: 1rem; }
-.build-sign__go { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.35rem; border-radius: var(--r-pill); background: var(--plate); color: var(--legend); font: var(--type-legend); text-decoration: none; transition: background-color .25s, color .25s; }
+.build-sign__go { pointer-events: auto; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.35rem; border-radius: var(--r-control); background: var(--plate); color: var(--legend); font: var(--type-legend); text-decoration: none; transition: background-color .25s, color .25s; }
 .build-sign__go i { width: 1.3em; height: .9em; background: currentColor; -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat; transition: translate .4s var(--ease-out); }
 .build-sign__go:hover, .build-sign__go:focus-visible { background: var(--works); color: var(--plate); }
 .build-sign__go:hover i { translate: -6px 0; }
@@ -129,7 +130,9 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
   html.drive-on .drive-build.is-live .drive-build__inner::before { background: linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 80%, transparent) 0%, transparent 24%, transparent 38%, color-mix(in srgb, var(--night-deep) 90%, transparent) 68%, color-mix(in srgb, var(--night-deep) 94%, transparent) 100%); } /* the step reads over white buildings */
   html.drive-on .drive-build.is-live .section__title { font-size: var(--fs-h3); }
   html.drive-on .drive-build.is-live .process { margin-bottom: .5rem; }
-  html.drive-on .drive-build.is-live .process li .stage { width: 2.5rem; height: 2.5rem; margin-bottom: .6rem; font-size: var(--fs-base); }
+  html.drive-on .drive-build.is-live .process li .stage { margin-bottom: .6rem; }
+  html.drive-on .drive-build.is-live .process li .stage .circ { --circ-n: 40; }
+  html.drive-on .drive-build.is-live .process li .stage .circ__in { font-size: var(--fs-base); }
   html.drive-on .drive-build.is-live .process li h3 { font-size: var(--fs-h4); }
   html.drive-on .drive-build.is-live .process li p { font-size: var(--fs-base); }
   html.drive-on .drive-build.is-live .section__lede { display: none; }

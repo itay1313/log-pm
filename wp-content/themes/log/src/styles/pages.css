@@ -27,7 +27,6 @@ body.page-template-page-control {
   --rule: var(--plate-line); --rule-soft: var(--night-rule-soft); --works-deep: var(--works);
   color-scheme: dark; background: var(--plate); color: var(--legend);
 }
-body.page-template-page-control .stage { box-shadow: inset 0 0 0 1px var(--works); }
 
 /* ------------------------------------------------------------------ the title band */
 
@@ -44,7 +43,7 @@ body.page-template-page-control .stage { box-shadow: inset 0 0 0 1px var(--works
 .page-header__meta { order: 2; font: var(--type-legend); color: var(--legend-muted); margin: 0 0 1rem; }
 .page-header .back-link { margin-bottom: 1.25rem; }
 /* The distance plate at the end of a title band: how much lies down this road */
-.sheet-label { grid-column: 2; grid-row: 1 / span 3; align-self: end; margin: 0 0 .4rem; padding: .7rem 1.35rem .65rem; border-radius: var(--r-pill); background: var(--works); color: var(--plate); font: var(--fw-medium) var(--fs-base)/1 var(--font-display); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sheet-label { grid-column: 2; grid-row: 1 / span 3; align-self: end; margin: 0 0 .4rem; padding: .7rem 1.35rem .65rem; border-radius: var(--r-control); box-shadow: inset 0 0 0 1px var(--hair-strong); color: var(--legend); font: var(--fw-medium) var(--fs-base)/1 var(--font-display); white-space: nowrap; font-variant-numeric: tabular-nums; } /* a rounded corner only in a thin line: no filled plate */
 @media (max-width: 700px) { .page-header { grid-template-columns: 1fr; } .sheet-label { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 1.25rem; } }
 
 /* Heroes with a picture: the copy is the band, the picture hangs from it into the paper */
@@ -85,11 +84,16 @@ body.page-template-page-control .stage { box-shadow: inset 0 0 0 1px var(--works
 .project__hero .stage-row__label { color: var(--legend-muted); }
 .project__hero .stage-row--done .stage-row__fill { --works: var(--legend); }
 
-/* Numbered steps: route shields on one dashed lane. The number carries the order. */
-.stage { display: inline-grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; font: var(--type-legend); font-variant-numeric: tabular-nums; background: var(--plate); color: var(--legend); box-shadow: 0 0 0 6px var(--paper); }
-.stage i { display: none; }
+/*
+ * Numbered steps, as the brand book draws a timeline: one thin grey line runs through all the steps to the edge,
+ * and each step's number is a Light figure in a thin full circle sitting on it, cut out of the line by the ground.
+ * The drive lights the current step's circle orange.
+ */
+.stage { display: inline-block; line-height: 0; }
+.stage .circ { --circ-n: 44; --ln-c: var(--rule); color: var(--ink); border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 6px var(--paper); }
+.stage .circ__in { font-size: var(--fs-lead); }
 .process { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 2.5rem; margin-bottom: 2rem; }
-.process::before { content: ''; position: absolute; inset-inline: 0; top: calc(1.375rem - 1px); height: 2px; background: repeating-linear-gradient(to left, var(--works) 0 14px, transparent 14px 26px); }
+.process::before { content: ''; position: absolute; inset-inline: 0; top: calc(1.375rem - var(--line-w) / 2); height: var(--line-w); background: var(--rule); }
 .process li { position: relative; padding-inline-end: 2rem; }
 .process li .stage { position: relative; z-index: 1; margin-bottom: 1.6rem; }
 .process li h3 { margin: 0 0 .5rem; font: var(--type-h4); letter-spacing: var(--track-heading); }
@@ -98,7 +102,7 @@ body.page-template-page-control .stage { box-shadow: inset 0 0 0 1px var(--works
 .process--compact li h3 { font-size: var(--fs-lead); }
 @media (max-width: 760px) {
   .process { grid-template-columns: 1fr; gap: 2rem; }
-  .process::before { inset-inline: auto; inset-inline-start: calc(1.375rem - 1px); top: 0; bottom: 0; width: 2px; height: auto; background: repeating-linear-gradient(to bottom, var(--works) 0 12px, transparent 12px 22px); }
+  .process::before { inset-inline: auto; inset-inline-start: calc(1.375rem - var(--line-w) / 2); top: 0; bottom: 0; width: var(--line-w); height: auto; }
   .process li { display: grid; grid-template-columns: 2.75rem 1fr; column-gap: 1.25rem; padding: 0; }
   .process li .stage { grid-row: span 2; margin: 0; }
 }
@@ -180,15 +184,15 @@ body.page-template-page-control .stage { box-shadow: inset 0 0 0 1px var(--works
 label.filters__group { display: grid; gap: .4rem; font: var(--type-label); color: var(--slate); }
 .filters select { min-width: 12rem; font-family: var(--font-text); font-weight: var(--fw-regular); }
 .filters__search { flex: 1 1 18rem; }
-.filters__view { margin-inline-start: auto; display: flex; padding: 5px; gap: 4px; border-radius: var(--r-pill); background: var(--plate); }
-.filters__view button { font: var(--type-legend); background: none; border: 0; border-radius: var(--r-pill); padding: .65em 1.35em; cursor: pointer; color: var(--legend-muted); transition: background-color .25s, color .25s; }
+.filters__view { margin-inline-start: auto; display: flex; padding: 5px; gap: 4px; border-radius: var(--r-control); background: var(--plate); }
+.filters__view button { font: var(--type-legend); background: none; border: 0; border-radius: var(--r-control); padding: .65em 1.35em; cursor: pointer; color: var(--legend-muted); transition: background-color .25s, color .25s; }
 .filters__view button:hover { color: var(--legend); }
 .filters__view button.is-active { background: var(--works); color: var(--plate); }
 .filters__count { width: 100%; margin: 0; color: var(--slate); font: var(--type-legend); font-variant-numeric: tabular-nums; }
 .filters__clear { font: inherit; font-size: var(--fs-base); background: none; border: 0; color: var(--ink); text-decoration: underline; text-decoration-color: var(--works); text-decoration-thickness: 2px; text-underline-offset: .22em; cursor: pointer; padding: 0; }
 .filters--chips, .type-tabs { display: flex; flex-wrap: wrap; gap: .5rem; border: 0; padding: 0; margin: 0 0 2.25rem; }
 .type-tabs { flex-basis: 100%; margin: 0; }
-.chip { font: var(--type-legend); padding: .6rem 1.25rem; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--slate); cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); transition: color .25s, background-color .25s, box-shadow .25s; }
+.chip { font: var(--type-legend); padding: .6rem 1.25rem; border: 0; border-radius: var(--r-control); background: transparent; color: var(--slate); cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); transition: color .25s, background-color .25s, box-shadow .25s; }
 .chip:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .chip.is-active { background: var(--plate); color: var(--legend); box-shadow: inset 0 0 0 1px var(--plate); }
 .featured { margin-bottom: clamp(48px, 7vw, 96px); }
@@ -292,11 +296,12 @@ label.filters__group { display: grid; gap: .4rem; font: var(--type-label); color
 .partners li { padding: .6rem 0; border-bottom: 1px solid var(--rule-soft); font: var(--type-legend); }
 .partners li span { color: var(--slate); font: var(--fw-regular) var(--fs-base) var(--font-text); }
 .timeline { position: relative; margin-inline-start: .3rem; }
-.timeline::before { content: ''; position: absolute; inset-block: .4rem; inset-inline-start: 0; width: 4px; background: repeating-linear-gradient(to bottom, var(--rule) 0 14px, transparent 14px 24px); }
+.timeline::before { content: ''; position: absolute; inset-block: .4rem; inset-inline-start: calc(6px - var(--line-w) / 2); width: var(--line-w); background: var(--rule); }
 .timeline li { position: relative; padding: .6rem 1.75rem .6rem 0; padding-inline-start: 1.75rem; }
-.timeline li::before { content: ''; position: absolute; inset-inline-start: -4px; top: 1.05rem; width: 12px; height: 12px; border-radius: 3px; background: var(--works); box-shadow: 0 0 0 3px var(--paper); }
+/* Each milestone is a dot on the line, as in a chart, where every dot is data: orange once it has happened, grey before. */
+.timeline li::before { content: ''; position: absolute; inset-inline-start: 0; top: 1.05rem; width: var(--dot); height: var(--dot); border-radius: 50%; background: var(--works); box-shadow: 0 0 0 4px var(--paper); }
 .timeline li.is-pending { color: var(--slate); }
-.timeline li.is-pending::before { background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink), 0 0 0 3px var(--paper); }
+.timeline li.is-pending::before { background: var(--rule); }
 .timeline__year { font-family: var(--font-display); font-weight: var(--fw-medium); margin-inline-end: .75rem; font-variant-numeric: tabular-nums; }
 .timeline__later { font-size: var(--fs-small); color: var(--slate); margin-inline-start: .5rem; }
 .gallery__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
@@ -528,7 +533,7 @@ body.page-template-page-control .person__placeholder, .section--night .person__p
   border-radius: 24px; background: var(--plate-2);
   box-shadow: inset 0 0 0 1px var(--hair), 0 40px 80px -40px color-mix(in srgb, var(--night-deep) 80%, transparent);
 }
-.site-footer__ask { position: absolute; top: 0; inset-inline-start: clamp(1.25rem, 3vw, 2.5rem); translate: 0 -50%; margin: 0; padding: .4rem 1.1rem .35rem; border-radius: var(--r-pill); background: var(--works); color: var(--plate); font: var(--type-legend); }
+.site-footer__ask { position: absolute; top: 0; inset-inline-start: clamp(1.25rem, 3vw, 2.5rem); translate: 0 -50%; margin: 0; padding: .4rem 1.1rem .35rem; border-radius: var(--r-control); background: var(--plate); color: var(--legend); box-shadow: inset 0 0 0 1px var(--hair-strong); font: var(--type-legend); }
 .site-footer__board ul { display: grid; }
 .site-footer__board li + li { border-top: 1px solid var(--hair); }
 .site-footer__board a {
