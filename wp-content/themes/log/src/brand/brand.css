@@ -17,8 +17,7 @@
 
 html { -webkit-text-size-adjust: 100%; background: var(--night-deep); scroll-padding-top: 24px; }
 body {
-  margin: 0;
-  background: var(--night-deep);
+  margin: 0; /* no ground of its own: the desk's riso field sits between the page's ground and the sheets */
   color: var(--ink);
   font-family: var(--font-text);
   font-weight: var(--fw-regular);
@@ -668,9 +667,10 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .fx-depth__layers .bk-dot { color: inherit; }
 .fx-depth__face { position: relative; display: block; }
 
-/* Masked: a photograph shows through the letters, held dark enough to read as type. */
+/* Masked: a photograph shows through the letters under a flat navy layer (one colour, written as a gradient only
+   because a layer over an image has to be one), dark enough that the words read as type first. */
 .fx-masked {
-  background-image: linear-gradient(color-mix(in srgb, var(--night) 34%, transparent), color-mix(in srgb, var(--night) 34%, transparent)), var(--fx-image);
+  background-image: linear-gradient(color-mix(in srgb, var(--night) 62%, transparent), color-mix(in srgb, var(--night) 62%, transparent)), var(--fx-image);
   background-size: cover, 180% auto; background-position: 50% 20%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
@@ -688,6 +688,16 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-lock__form input[type="submit"] { min-height: 48px; padding: 0 24px; border: 0; border-radius: var(--r-control); background: var(--night-ink); color: var(--sign-ink); font: var(--type-legend); cursor: pointer; }
 .bk-lock__form input[type="submit"]:hover { background: var(--works); }
 
+/* ------------------------------------------------------------------ riso fields (src/fx/riso.js): print you can touch */
+
+/* Dots in one tone close to the ground (color), the touch in orange (outline-color), blown up with hard pixels. */
+.bk-riso { display: block; image-rendering: pixelated; pointer-events: none; color: var(--night-2); outline-color: var(--works); }
+.bk-riso--desk { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; }
+.bk-riso--side {
+  position: absolute; z-index: 0; inset-block: 0; left: 0; width: 46%; height: 100%; color: var(--night-ink); opacity: .11;
+  -webkit-mask-image: linear-gradient(to right, #000 22%, transparent); mask-image: linear-gradient(to right, #000 22%, transparent);
+}
+
 /* ------------------------------------------------------------------ the route: one line down the whole book */
 
 .bk-route { position: fixed; z-index: 20; inset-block: 0; right: 6px; width: 44px; pointer-events: none; }
@@ -701,32 +711,32 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-route a span { position: absolute; top: 50%; right: calc(100% + 4px); translate: 6px -50%; padding: 7px 11px; white-space: nowrap; background: var(--night-2); color: var(--night-ink); font: var(--fw-medium) 13px/1 var(--font-display); opacity: 0; pointer-events: none; transition: opacity .25s var(--ease-out), translate .35s var(--ease-out); }
 .bk-route a:hover span, .bk-route a:focus-visible span, .bk-route a.is-current:hover span { opacity: 1; translate: 0 -50%; }
 .bk-route__page { position: absolute; right: calc(100% - 6px); margin-top: -.5em; font: var(--fw-medium) 11px/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--works); mix-blend-mode: normal; }
-@media (max-width: 899px) { .bk-route { display: none; } }
+@media (max-width: 1099px) { .bk-route { display: none; } }
 
 /* ------------------------------------------------------------------ phones: the sheet lets go of its height and reflows */
 
-@media screen and (max-width: 899px) {
+@media screen and (max-width: 1099px) {
   .bk-book { padding: 0; gap: 0; }
+  /* The reading column is at most 760px and centred; --m is the side margin, so whatever bleeds still reaches the edges. */
   .bk-page {
     position: relative; top: auto;
-    --w: 100cqw; --u: 1px; --m: 20px;
+    --w: 100cqw; --u: 1px; --m: max(20px, calc((100cqw - 760px) / 2)); --col: calc(100cqw - 2 * var(--m));
     --fs-kicker: 13px; --fs-title: 44px; --fs-lede: 17px; --fs-h3: 18px; --fs-p: 15px; --fs-cap: 13px;
-    height: auto; min-height: 0; padding: 40px 20px 0; gap: 0;
+    height: auto; min-height: 0; padding: 40px var(--m) 0; gap: 0;
   }
   .bk-cover, .bk-end, .bk-remember, .bk-opener, .bk-lock { min-height: 100svh; }
   .bk-lock { padding-bottom: 40px; }
   .bk-lock .logo { top: 32px; --logo-w: 110px; }
   .bk-lock .bk-title--cover { font-size: 64px; }
   .bk-opener__n { font-size: 78vw; left: -2vw; bottom: 12svh; }
-  .bk-opener__body { inset-inline: 20px; bottom: 30svh; }
+  .bk-opener__body { inset-inline: var(--m); bottom: 30svh; }
   .bk-title--opener { font-size: 64px; }
   .bk-opener .bk-cross { display: none; }
   .bk-cover__body { margin-top: 44svh; }
   .bk-title--cover { font-size: 72px; }
-  .bk-cross { --q: calc(100cqw / 1280 * 2.2); }
   .bk-cover .bk-cross, .bk-remember .bk-cross, .bk-end .bk-cross { display: none; }
   .bk-cover__version { position: static; margin-top: 24px; }
-  .bk-end__logo { left: 20px; top: auto; bottom: 64px; }
+  .bk-end__logo { left: var(--m); top: auto; bottom: 64px; }
   .bk-folio { margin-top: 36px; }
   .bk-lede { max-width: none; }
   .bk-toc__list, .bk-how__grid, .bk-junction__words, .bk-vision__cols, .bk-tone__cols, .bk-logo__versions, .bk-wrong__grid,
@@ -738,8 +748,9 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-rules--2 li:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid var(--rule); }
   .bk-circles__kinds, .bk-highlights__row, .bk-scrims__places ul:first-child { grid-template-columns: 1fr 1fr; gap: 20px 12px; }
   .bk-page--hold { margin-bottom: 0; }
-  .bk-bands { flex-wrap: wrap; height: auto; margin-inline: -20px; }
+  .bk-bands { flex-wrap: wrap; height: auto; margin-inline: calc(-1 * var(--m)); }
   .bk-band { flex: 1 1 50%; min-height: 150px; }
+  .bk-band figcaption { min-width: 0; padding-inline: var(--m); }
   .bk-icons__grid { grid-template-columns: repeat(3, 1fr); }
   .bk-icons__grid .ico { --ico: 48px; }
   .bk-rules--3 { grid-template-columns: 1fr; }
@@ -767,9 +778,9 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-anatomy__notes { gap: 24px; }
   .bk-type__sample { white-space: normal; }
   .bk-type__sample--xl { font-size: 56px; }
-  .bk-grid__sheet { margin-inline: 34px 0; }
+  .bk-grid__sheet { margin: 0 0 0 34px; } /* room for the measures, which stand at the physical left */
   .bk-formats__row { flex-wrap: wrap; justify-content: flex-start; }
-  .bk-mini { --q: calc((100cqw - 40px) / var(--mw)); }
+  .bk-mini { --q: calc(var(--col) / var(--mw)); }
   .bk-social__frames { flex-direction: column; align-items: stretch; }
   .bk-banner__avatar { position: static; margin-top: 12px; width: 120px; height: 120px; }
   .bk-banner__avatar .logo { --logo-w: 88px; }
@@ -779,10 +790,31 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-table tr { padding-block: 12px; border-bottom: 1px solid var(--rule); }
   .bk-table tbody th, .bk-table td { border: 0; padding: 3px 0; }
   .bk-contrast__ratio { text-align: start; }
-  .bk-chart { --q: calc((100cqw - 40px) / 660); }
-  .bk-timeline { --q: calc((100cqw - 40px) / 900); }
+  /* The full-size chart and timeline take the column; the ones inside miniatures keep the miniature's scale. */
+  .bk-data__cols > .bk-chart { --q: calc(var(--col) / 660); }
+  .bk-time > .bk-timeline { --q: calc(var(--col) / 900); }
   .bk-timeline li > p { width: 90%; font-size: 12px; }
   .bk-photos__people { height: 150px; }
+}
+
+/* Between a phone and a full sheet (tablets, small windows): the same reflow, in two columns where pieces pair up. */
+@media screen and (min-width: 640px) and (max-width: 1099px) {
+  .bk-page { --fs-title: 56px; --fs-lede: 19px; padding-top: 56px; }
+  .bk-title--cover { font-size: 112px; }
+  .bk-title--opener { font-size: 96px; }
+  .bk-toc__list, .bk-how__grid, .bk-tone__cols, .bk-minis--2, .bk-minis--3, .bk-wrong__grid, .bk-rules--2, .bk-photos__cols, .bk-lines__kinds { grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  .bk-toc__list { grid-auto-flow: row; }
+  .bk-logo__versions, .bk-junction__words { grid-template-columns: repeat(3, 1fr); }
+  .bk-circles__kinds, .bk-highlights__row { grid-template-columns: repeat(4, 1fr); }
+  .bk-highlights__row { grid-template-columns: repeat(3, 1fr); }
+  .bk-icons__grid { grid-template-columns: repeat(6, 1fr); }
+  .bk-band { flex-basis: 33.33%; }
+  .bk-minis .bk-mini { --q: calc((var(--col) - 24px) / 2 / var(--mw)); }
+  .bk-social__frames { flex-direction: row; align-items: flex-end; flex-wrap: wrap; }
+  .bk-social__frames .bk-mini { --q: calc((var(--col) - 36px) / 3 / 1080); }
+  .bk-junction__words li { grid-template-columns: 1fr; }
+  .bk-junction__words .bk-num { font-size: 56px; grid-row: auto; }
+  .bk-junction__words h3 { font-size: 34px; }
 }
 
 /* ------------------------------------------------------------------ print: one sheet per PDF page */
@@ -794,6 +826,6 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-book { display: block; padding: 0; }
   .bk-page { --w: 1280px; position: relative; top: auto; margin: 0; break-after: page; break-inside: avoid; }
   .bk-page--hold { margin-bottom: 0; }
-  .bk-page::after { display: none; }
+  .bk-page::after, .bk-riso { display: none; }
   .bk-route { display: none; }
 }
