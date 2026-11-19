@@ -6,7 +6,7 @@
  *
  * Chapter 1, the whole country: the camera rises from Gush Dan to all of Israel seen from over the sea,
  * every project lights up as a beacon rippling out from where the camera stood, the figures count with them,
- * and the legend lights word by word.
+ * and the legend reads in beats: the headline lights a sentence at a time, each with its own paragraph.
  *
  * Chapter 2, the build: the camera dives into one real plan and LOG's four steps happen on it. The boundary
  * draws itself as a dashed works line with the grid reference running; the site fills and dimension lines
@@ -36,10 +36,9 @@ const AT = {
   ui: [0, 0.05],        // the map's tools fade
   rise: [0, 0.34],      // the camera climbs to the country while the legend scrolls in
   beacons: [0.3, 0.6],  // projects light up, the figures count with them
-  title: [0.3, 0.42],
-  prose: [0.44, 0.78],
-  links: [0.76, 0.84],
+  beats: [0.3, 1],      // the paragraphs take turns across this stretch, one beat each
 };
+const BEAT_IN = 0.045, BEAT_OUT = 0.035; // how long a paragraph takes to arrive and to leave, in chapter progress
 
 // Chapter 2 beats. The first fifth is the flight in, while the chapter scrolls up; then one step per fifth.
 const BUILD = {
@@ -87,17 +86,29 @@ export function initDrive(hero, scene, points, features) {
   const inner = chapter.querySelector('.drive-country__inner');
   const title = chapter.querySelector('.section__title');
   const prose = chapter.querySelector('.section__prose');
-  const links = chapter.querySelector('.link-row');
   const figureList = chapter.querySelector('.drive-figures');
   const figures = [...chapter.querySelectorAll('.drive-figures dd[data-count]')].map((dd) => ({ dd, n: Number(dd.dataset.count) }));
 
   const home = scene.homeView();
   scene.setBeacons(points, home.tx, home.tz);
 
-  // The legend lights word by word: dim words are already there to read, never hidden.
-  const titleWords = SplitText.create(title, { type: 'words' }).words;
-  const proseWords = SplitText.create(prose, { type: 'words' }).words;
-  const dim = 0.16;
+  // The legend reads in beats. Each paragraph has the place to itself for a beat; the headline is split into its
+  // sentences ("מתכננים." "מחברים." "מובילים.") and lights one with each paragraph when the counts match, or all at
+  // once with the first when they don't. Waiting sentences are dim, never hidden; paragraphs fade by opacity only,
+  // so a screen reader still has all of them.
+  const paras = [...prose.querySelectorAll('p')];
+  const beats = Math.max(1, paras.length);
+  const words = SplitText.create(title, { type: 'words' }).words.filter((w) => !w.closest('.shield'));
+  const sentences = [];
+  for (const w of words) {
+    const open = sentences.at(-1);
+    if (open && !open.done) open.words.push(w); else sentences.push({ words: [w], done: false });
+    if (/[.!?]$/.test(w.textContent.trim())) sentences.at(-1).done = true;
+  }
+  const paired = sentences.length === beats && beats > 1;
+  const groups = paired ? sentences.map((x) => x.words) : [words];
+  const beatAt = (i) => lerp(AT.beats[0], AT.beats[1], i / beats);
+  const dim = 0.3;
 
   const build = buildChapter(drive.querySelector('.drive-build'), scene, features, hero);
 
@@ -161,16 +172,23 @@ export function initDrive(hero, scene, points, features) {
     if (figureList) figureList.style.opacity = span([AT.beacons[0] - 0.06, AT.beacons[0]], p1).toFixed(3); // no zeros waiting on screen
 
     inner.style.setProperty('--scrim', span([0.12, 0.34], p1).toFixed(3));
-    light(titleWords, span(AT.title, p1));
-    light(proseWords, span(AT.prose, p1));
-    gsap.set(links, { opacity: lerp(dim, 1, span(AT.links, p1)) });
+    read(p1);
   }
 
-  /** Words lit up to t (0 → 1), each fading in over a few neighbours so the edge is soft. */
-  function light(words, t) {
-    const n = words.length, soft = 3;
-    const head = t * (n + soft);
-    for (let i = 0; i < n; i++) words[i].style.opacity = lerp(dim, 1, clamp01((head - i) / soft)).toFixed(3);
+  /** The beats at chapter progress p: one paragraph on screen, and the headline lit as far as the reader has come. */
+  function read(p) {
+    paras.forEach((el, i) => {
+      const a = beatAt(i), b = beatAt(i + 1);
+      const inn = ease(span([a, a + BEAT_IN], p));
+      const out = i < beats - 1 ? ease(span([b - BEAT_OUT, b], p)) : 0;
+      el.style.opacity = (inn * (1 - out)).toFixed(3);
+      el.style.transform = `translateY(${((1 - inn) * 22 - out * 16).toFixed(1)}px)`;
+    });
+    groups.forEach((group, i) => {
+      const a = beatAt(i);
+      const o = lerp(dim, 1, span([a, a + BEAT_IN], p)).toFixed(3);
+      for (const w of group) w.style.opacity = o;
+    });
   }
 
   const track = (el, set) => ScrollTrigger.create({

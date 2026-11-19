@@ -20,21 +20,32 @@ html.drive-on .drive { overflow-x: clip; } /* the overlays span the viewport; cl
 .drive-figures dd { margin: 0; font: var(--fw-light) var(--fs-h1)/.88 var(--font-figure); letter-spacing: var(--track-figure); font-variant-numeric: tabular-nums; }
 
 html.drive-on .hero { position: sticky; top: 0; }
-html.drive-on .drive-country { --drive-len: 300vh; height: var(--drive-len); padding: 0; z-index: 6; background: transparent; pointer-events: none; }
+html.drive-on .drive-country { --drive-len: 320vh; height: var(--drive-len); padding: 0; z-index: 6; background: transparent; pointer-events: none; }
 html.drive-on .drive-country a { pointer-events: auto; }
+/*
+ * The legend keeps to a narrow column on the start side, so the country has the screen. It reads in beats
+ * (drive.js): the headline lights one sentence at a time, and each sentence brings its own paragraph, all of
+ * them set in the same place. The figures stand side by side at the bottom end, where the map's own figures stood.
+ */
 html.drive-on .drive-country__inner {
-  position: sticky; top: 0; height: 100vh; height: 100svh; align-items: end; align-content: end;
-  padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(28px, 8vh, 96px);
+  position: sticky; top: 0; height: 100vh; height: 100svh; grid-template-columns: minmax(0, 31rem) minmax(0, 1fr); align-items: end; align-content: end;
+  padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(28px, 7vh, 84px);
 }
-/* A scrim on the start side and the bottom keeps the legend readable over the country; no panel. */
+html.drive-on .drive-country .section__title { margin-bottom: .5em; text-shadow: 0 2px 30px color-mix(in srgb, var(--night-deep) 50%, transparent); }
+html.drive-on .drive-country .section__prose { display: grid; max-width: none; }
+html.drive-on .drive-country .section__prose p { grid-area: 1 / 1; margin: 0; will-change: opacity, transform; }
+html.drive-on .drive-country .link-row { margin-top: 2rem; gap: .75rem 2.25rem; }
+html.drive-on .drive-country .link-row a { font-size: var(--fs-base); }
+html.drive-on .drive-figures { display: flex; justify-content: flex-end; align-items: flex-end; gap: clamp(2rem, 4vw, 3.5rem); }
+html.drive-on .drive-figures > div { min-width: 8.5rem; }
+html.drive-on .drive-figures dd { text-shadow: 0 2px 24px color-mix(in srgb, var(--night-deep) 60%, transparent); }
+/* A scrim behind the column and along the bottom keeps the legend readable over the country; no panel. */
 html.drive-on .drive-country__inner::before {
   content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; opacity: var(--scrim, 0);
   background:
-    linear-gradient(270deg, color-mix(in srgb, var(--night-deep) 86%, transparent) 0%, color-mix(in srgb, var(--night-deep) 60%, transparent) 34%, transparent 66%),
-    linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 82%, transparent) 0%, transparent 46%);
+    linear-gradient(270deg, color-mix(in srgb, var(--night-deep) 88%, transparent) 0%, color-mix(in srgb, var(--night-deep) 66%, transparent) 24%, transparent 50%),
+    linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 74%, transparent) 0%, transparent 34%);
 }
-html.drive-on .drive-country .section__title { text-shadow: 0 2px 30px color-mix(in srgb, var(--night-deep) 50%, transparent); }
-html.drive-on .drive-figures dd { text-shadow: 0 2px 24px color-mix(in srgb, var(--night-deep) 60%, transparent); }
 
 /* The sheet margin while driving: grid reference and scale under the gantry, on the end side. */
 .drive-coord { position: absolute; z-index: 5; inset-inline-end: var(--gutter); top: calc(var(--header-h) + 1.25rem); margin: 0; display: grid; justify-items: end; gap: .1rem; font: var(--type-micro); color: var(--legend-muted); opacity: 0; pointer-events: none; text-shadow: 0 1px 10px color-mix(in srgb, var(--night-deep) 90%, transparent); }
@@ -47,13 +58,20 @@ html.drive-on .drive-figures dd { text-shadow: 0 2px 24px color-mix(in srgb, var
 
 @media (max-width: 900px) {
   .drive-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-row: 1; align-self: start; }
-  html.drive-on .drive-country { --drive-len: 240vh; }
-  html.drive-on .drive-country__inner { align-content: space-between; row-gap: 0; padding-top: calc(var(--header-h) + 1.25rem); padding-bottom: calc(58px + 1.25rem + env(safe-area-inset-bottom)); } /* clear of the lane bar */
+  html.drive-on .drive-country { --drive-len: 260vh; }
+  html.drive-on .drive-country__inner { grid-template-columns: minmax(0, 1fr); align-content: space-between; row-gap: 0; padding-top: calc(var(--header-h) + 1.25rem); padding-bottom: calc(58px + 1.25rem + env(safe-area-inset-bottom)); } /* clear of the lane bar */
   html.drive-on .drive-country .section__title { font-size: var(--fs-h2); }
-  html.drive-on .drive-country .section__prose p { margin-bottom: .6em; }
+  html.drive-on .drive-figures { display: grid; }
+  html.drive-on .drive-figures > div { min-width: 0; }
   html.drive-on .drive-figures dd { font-size: var(--fs-h2); }
   html.drive-on .drive-country .section__prose { font-size: var(--fs-base); }
-  html.drive-on .drive-country__inner::before { background: linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 90%, transparent) 0%, color-mix(in srgb, var(--night-deep) 55%, transparent) 55%, color-mix(in srgb, var(--night-deep) 75%, transparent) 100%); }
+  html.drive-on .drive-country .link-row { margin-top: 1.25rem; }
+  /* One paragraph at a time leaves the middle of the screen to the country: dark under the legend and behind the figures only. */
+  html.drive-on .drive-country__inner::before {
+    background:
+      linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, color-mix(in srgb, var(--night-deep) 80%, transparent) 26%, transparent 50%),
+      linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 78%, transparent) 0%, transparent 26%);
+  }
 }
 
 /* ------------------------------------------------------------------ chapter 2: the build */
