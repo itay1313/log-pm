@@ -56,7 +56,7 @@ add_action( 'template_redirect', function () {
 }, 0 );
 
 /**
- * The page is one full-screen gantry sign, the same plate as the theme's menu: route shield 00 and the
+ * The page is one full-screen gantry sign, the same plate as the theme's menu: route number 00 and the
  * legend, then a lane marking that is painted as far as the works plate and stops there.
  * Self-contained (inline CSS, the theme's self-hosted fonts, no script), so it never depends on the build.
  * Its colours and fonts are the theme's tokens: assets/brand/tokens.css, written from src/tokens/tokens.json.
@@ -122,11 +122,12 @@ h1 {
   font: 700 clamp(3.75rem, 11vw, 11.5rem)/.92 var(--font-display); letter-spacing: -0.035em;
 }
 h1 > span { display: inline-block; }
-/* The route shield: 00 is home in the header order. */
+/* The route number, as the theme sets it (base.css .shield): 00 is home in the header order. An orange figure at the
+   top of the headline's start, the way the brand book numbers a chapter, with no plate around it. */
 .shield {
-  display: inline-block; vertical-align: .5em; margin-inline-end: .45em; padding: .3em .5em .24em; border-radius: .35em;
-  font: 700 max(.8125rem, .26em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
-  background: var(--works); color: var(--sign-ink); box-shadow: inset 0 0 0 .17em var(--works), inset 0 0 0 .3em var(--sign-ink);
+  display: inline-block; vertical-align: top; margin: .3em 0 0; margin-inline-end: .55em;
+  font: 500 max(.8125rem, .19em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
+  color: var(--works);
 }
 
 /* The lane marking is painted forward from the legend and stops at the works plate. Whole dashes only (round). */
