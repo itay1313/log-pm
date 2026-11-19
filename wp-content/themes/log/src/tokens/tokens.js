@@ -83,7 +83,12 @@ export const radius = {
 export const line = {
   frame: "12px",
   keyline: "2px",
-  keylineInset: "5px"
+  keylineInset: "5px",
+  lineW: "2px",
+  dot: "12px",
+  dash: "8px",
+  dashGap: "6px",
+  switchBlend: "40px"
 };
 export const layout = {
   container: "1320px",

@@ -13,13 +13,18 @@
 }
 @keyframes motion-safety { to { opacity: 1; } }
 
-/* The lane line: one orange works marking down the start edge, drawn as far as the reader has come. */
+/*
+ * The lane line: the brand book's switch line, down the start edge of the page. The road ahead is grey; the road
+ * behind the reader is orange, and the switch (--p, set by motion.js) follows the scroll through a short blend.
+ * Without motion it stays grey: a quiet margin rule. It reads --rule, so a night world swaps it by itself.
+ */
+@property --p { syntax: '<length-percentage>'; inherits: false; initial-value: 0%; }
 .site-main { position: relative; }
 .lane-line {
-  position: absolute; z-index: 4; inset-inline-start: calc(var(--gutter) / 2 - 1px); bottom: 0; width: 2px; pointer-events: none;
-  background: repeating-linear-gradient(180deg, var(--works) 0 18px, transparent 18px 34px); transform-origin: top center;
+  position: absolute; z-index: 4; inset-inline-start: calc(var(--gutter) / 2 - var(--line-w) / 2); bottom: 0; width: var(--line-w); pointer-events: none;
+  background: linear-gradient(to bottom, var(--works) calc(var(--p) - var(--switch-blend) / 2), var(--rule) calc(var(--p) + var(--switch-blend) / 2));
 }
-@media (max-width: 760px) { .lane-line { inset-inline-start: 4px; width: 2px; background: repeating-linear-gradient(180deg, var(--works) 0 12px, transparent 12px 24px); } }
+@media (max-width: 760px) { .lane-line { inset-inline-start: 4px; } }
 
 /* Page change: a navy plate covers the page before it leaves and lifts after it arrives. */
 .page-cover { position: fixed; inset: 0; z-index: 9998; visibility: hidden; display: grid; place-items: center; background: var(--plate); pointer-events: none; }

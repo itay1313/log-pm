@@ -10,6 +10,7 @@
  */
 @import '../styles/tokens.css';
 @import '../styles/logo.css';
+@import '../styles/lines.css';
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -46,6 +47,13 @@ li { list-style: none; }
   --m: calc(67 * var(--u)); /* the grid's side margin: 67 of 1280 */
   --line: var(--ink);
   --muted: var(--slate);
+  /* The line system's measures, in sheet pixels: 2px on a 1280 sheet, as the book prescribes. */
+  --line-w: max(1px, calc(2 * var(--u)));
+  --dot: calc(12 * var(--u));
+  --dash: calc(8 * var(--u));
+  --dash-gap: calc(6 * var(--u));
+  --switch-blend: calc(40 * var(--u));
+  --circ-u: var(--u);
   counter-increment: bk-page;
   position: relative;
   display: flex;
@@ -92,7 +100,7 @@ li { list-style: none; }
 .bk-line {
   display: block;
   flex: none;
-  height: 1px;
+  height: var(--line-w);
   margin-inline: calc(-1 * var(--m));
   background: var(--line);
   transform-origin: right center; /* drawn from the start side, the way the page reads */
@@ -101,7 +109,7 @@ li { list-style: none; }
   position: absolute;
   inset-block: 0;
   inset-inline-start: var(--line-x, var(--m));
-  width: 1px;
+  width: var(--line-w);
   height: auto;
   margin: 0;
   transform-origin: center top;
@@ -256,6 +264,93 @@ li { list-style: none; }
 .bk-scale__sample { white-space: nowrap; overflow: hidden; text-overflow: clip; }
 .bk-scale .bk-folio { grid-column: 1 / -1; }
 
+/* ------------------------------------------------------------------ the thin line */
+
+.bk-lines__head { display: grid; gap: calc(14 * var(--u)); }
+.bk-lines__head .bk-lede { color: var(--slate); max-width: calc(720 * var(--u)); }
+.bk-lines__kinds {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: calc(40 * var(--u));
+  margin-block: auto calc(36 * var(--u));
+  padding-top: calc(12 * var(--u));
+}
+.bk-lines__kinds .ln { --cross: calc(80 * var(--u)); margin-block: calc(40 * var(--u)) calc(44 * var(--u)); }
+.bk-lines__kinds h3,
+.bk-circles__kinds h3 { font: var(--fw-bold) max(16px, calc(21 * var(--u)))/1.15 var(--font-display); margin-bottom: calc(6 * var(--u)); }
+.bk-lines__kinds p,
+.bk-circles__kinds p { font-size: max(13px, calc(15 * var(--u))); line-height: 1.5; color: var(--slate); }
+.bk-lines__rules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: calc(56 * var(--u));
+  border-top: var(--line-w) solid var(--ink);
+}
+.bk-lines__rules div {
+  display: grid;
+  grid-template-columns: calc(120 * var(--u)) 1fr;
+  gap: calc(16 * var(--u));
+  padding-block: calc(12 * var(--u));
+  border-bottom: max(1px, var(--u)) solid var(--rule);
+  font-size: max(13px, calc(15 * var(--u)));
+}
+.bk-lines__rules dt { font: var(--fw-bold) max(13px, calc(15 * var(--u)))/1.5 var(--font-display); }
+.bk-lines__rules dd { color: var(--slate); }
+
+.bk-circles__kinds {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: calc(48 * var(--u));
+  margin-block: auto calc(36 * var(--u));
+  text-align: center;
+}
+.bk-circles__kinds .circ { --circ-n: 172; margin-bottom: calc(28 * var(--u)); }
+.bk-circles__kinds p { max-width: calc(250 * var(--u)); margin-inline: auto; }
+.bk-circles__rule {
+  padding-top: calc(16 * var(--u));
+  border-top: var(--line-w) solid var(--ink);
+  font-size: max(13px, calc(16 * var(--u)));
+  color: var(--slate);
+}
+
+.bk-when__table {
+  width: 100%;
+  margin-top: auto;
+  border-collapse: collapse;
+  font-size: max(13px, calc(15 * var(--u)));
+  line-height: 1.4;
+}
+.bk-when__table thead th {
+  padding-bottom: calc(10 * var(--u));
+  border-bottom: var(--line-w) solid var(--ink);
+  font: var(--fw-medium) max(12px, calc(13 * var(--u)))/1 var(--font-display);
+  color: var(--slate);
+  text-align: start;
+}
+.bk-when__table tbody th,
+.bk-when__table td {
+  padding-block: calc(13 * var(--u));
+  border-bottom: max(1px, var(--u)) solid var(--rule);
+  vertical-align: middle;
+  text-align: start;
+}
+.bk-when__table tbody th {
+  width: 27%;
+  font: var(--fw-bold) max(14px, calc(17 * var(--u)))/1.2 var(--font-display);
+}
+.bk-when__table td { color: var(--slate); padding-inline-end: calc(28 * var(--u)); }
+.bk-when__table td:first-of-type { width: 42%; color: var(--ink); }
+.bk-when__sample {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(96 * var(--u));
+  height: calc(40 * var(--u));
+  margin-inline-end: calc(20 * var(--u));
+  vertical-align: middle;
+}
+.bk-when__sample .circ { --circ-n: 40; }
+
 /* ------------------------------------------------------------------ the lock */
 
 .bk-lock .logo { --logo-w: calc(150 * var(--u)); min-width: 96px; }
@@ -334,6 +429,21 @@ li { list-style: none; }
   .bk-works .bk-line { margin-inline-end: calc(-1 * var(--m)); }
   .bk-works .bk-folio { order: 3; }
 
+  .bk-lines__kinds, .bk-circles__kinds, .bk-lines__rules { grid-template-columns: 1fr; gap: 8px; }
+  .bk-lines__kinds .ln { margin-block: 40px 20px; }
+  .bk-lines__kinds li { padding-bottom: 20px; }
+  .bk-circles__kinds { gap: 32px; margin-top: 32px; }
+  .bk-page { --circ-u: 1px; }
+  .bk-circles__kinds .circ { --circ-n: 140; }
+  .bk-circles__kinds p { max-width: 280px; }
+  .bk-lines__rules div { grid-template-columns: 96px 1fr; }
+  .bk-when__table, .bk-when__table tbody, .bk-when__table tr, .bk-when__table th, .bk-when__table td { display: block; width: auto; }
+  .bk-when__table { margin-top: 32px; }
+  .bk-when__table thead { display: none; }
+  .bk-when__table tr { padding-block: 16px; border-bottom: 1px solid var(--rule); }
+  .bk-when__table tbody th, .bk-when__table td { border: 0; padding: 4px 0; }
+  .bk-when__sample { width: 72px; height: 32px; }
+  .bk-when__sample .circ { --circ-n: 32; }
   .bk-specimen__glyphs { font-size: 200px; top: -24px; }
   .bk-specimen__weights { grid-template-columns: 1fr; }
 
