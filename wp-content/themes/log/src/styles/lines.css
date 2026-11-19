@@ -82,18 +82,17 @@
 /* ------------------------------------------------------------------ circles: a thin line that closes */
 
 /*
- * A circle's size is a plain number of pixels (--circ-n) times a unit (--circ-u, 1px; the book's sheet pixel),
+ * A circle's size is a plain number of pixels (--circ-n) times a unit (--circ-u, inherited: 1px, or the book's sheet pixel),
  * so its stroke can be set in the SVG's own units and still come out at the line's weight: 2px on any size.
  * (non-scaling-stroke would do the same, but it breaks dashes and the drawing.)
  */
 .circ {
   --circ-n: 120;
-  --circ-u: 1px;
   position: relative;
   display: inline-grid;
   place-items: center;
   flex: none;
-  width: calc(var(--circ-n) * var(--circ-u));
+  width: calc(var(--circ-n) * var(--circ-u, 1px));
   aspect-ratio: 1;
   color: var(--ink);
 }
@@ -112,7 +111,7 @@
 /* The middle: a counted number in Ploni Light, or a person's picture inset from the ring. */
 .circ__in {
   position: relative;
-  font: var(--fw-light) calc(var(--circ-n) * var(--circ-u) * .4)/1 var(--font-figure);
+  font: var(--fw-light) calc(var(--circ-n) * var(--circ-u, 1px) * .4)/1 var(--font-figure);
   letter-spacing: var(--track-figure);
 }
 .circ__in:has(> img) {

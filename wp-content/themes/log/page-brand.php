@@ -38,7 +38,7 @@ the_post();
 		</section>
 	<?php else : ?>
 		<?php
-		foreach ( [ 'cover', 'junction', 'color-type', 'line' ] as $chapter ) {
+		foreach ( [ 'cover', 'idea', 'logo', 'color-type', 'line', 'visual', 'social', 'closing' ] as $chapter ) {
 			get_template_part( 'template-parts/brand/' . $chapter );
 		}
 		?>
