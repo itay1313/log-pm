@@ -16,9 +16,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; background: var(--night-deep); scroll-padding-top: 24px; }
+html { -webkit-text-size-adjust: 100%; background: var(--night-deep); }
 body {
-  margin: 0; /* no ground of its own: the desk's riso field sits between the page's ground and the sheets */
+  margin: 0;
   color: var(--ink);
   font-family: var(--font-text);
   font-weight: var(--fw-regular);
@@ -40,25 +40,22 @@ img, svg { display: block; max-width: 100%; }
   counter-reset: bk-page;
   display: grid;
   justify-items: center;
-  gap: 18vh;
-  padding-bottom: 12vh;
 }
 
 /*
- * On screen a sheet is the largest 16:9 that fits the window, edge to edge, and the sheets stack: each one holds
- * in place while the next slides over it (the dimming and the step back are driven by main.js).
+ * On screen the sheets follow one another down an ordinary page, each as wide as the window. A sheet may be a
+ * little taller than the window (the page scrolls); only on a very wide, low window does it stop growing, and
+ * then its ground carries on to both edges.
  */
 .bk-page {
-  --w: min(100cqw, 100svh * 16 / 9);
+  --w: min(100cqw, 210svh);
   --u: calc(var(--w) / 1280);
   --q: var(--u);
   --line: var(--ink);
   --muted: var(--slate);
   --ground: var(--paper-2);
   counter-increment: bk-page;
-  position: sticky;
-  top: max(0px, calc((100svh - var(--w) * 9 / 16) / 2));
-  transform-origin: 50% 0;
+  position: relative;
   isolation: isolate;
   display: flex;
   flex-direction: column;
@@ -69,8 +66,9 @@ img, svg { display: block; max-width: 100%; }
   background: var(--ground);
   color: var(--ink);
   font-size: var(--fs-p);
+  box-shadow: 0 0 0 100vmax var(--ground);
+  clip-path: inset(0 -100vmax);
 }
-.bk-page::after { content: ''; position: absolute; inset: 0; z-index: 9; pointer-events: none; background: var(--night-deep); opacity: var(--dim, 0); }
 .bk-page--night, .bk-mini--night {
   --ink: var(--night-ink);
   --slate: var(--night-muted);
@@ -346,9 +344,6 @@ img, svg { display: block; max-width: 100%; }
 .bk-photos__cols > div > :not(.bk-photo, .bk-photos__people) { margin-inline: var(--m) calc(26 * var(--u)); }
 .bk-photos__cols > div:last-child > :not(.bk-photo, .bk-photos__people) { margin-inline: calc(26 * var(--u)) var(--m); }
 .bk-circles__kinds .circ { --circ-n: 196; }
-
-/* A sheet that holds while a scene plays with the scroll gets the room for it after itself. */
-.bk-page--hold { margin-bottom: 110vh; }
 
 /* ------------------------------------------------------------------ 05 colour */
 
@@ -716,11 +711,54 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-lock__form input[type="submit"] { min-height: 48px; padding: 0 24px; border: 0; border-radius: var(--r-control); background: var(--night-ink); color: var(--sign-ink); font: var(--type-legend); cursor: pointer; }
 .bk-lock__form input[type="submit"]:hover { background: var(--works); }
 
+/* ------------------------------------------------------------------ the opening: what the first load looks like */
+
+/*
+ * Until the fonts and the cover are ready the book is under a night ground with LOG's O turning where the cover's
+ * two lines cross. Then the O closes into the dot, the lines run out of it to the edges, and the ground opens
+ * along the horizontal one (main.js). The class is set by a line of script in the head, so without script, with
+ * reduced motion and in print there is no veil at all.
+ */
+.bk-veil { display: none; }
+.bk-loading .bk-veil {
+  --vw: min(100vw, 210svh); --vu: calc(var(--vw) / 1280);
+  --vx: calc((100vw - var(--vw)) / 2 + 139 * var(--vu)); --vy: calc(603 * var(--vu));
+  --v-hair: max(1px, var(--vu)); --v-line: max(1px, calc(2 * var(--vu))); --v-dot: max(8px, calc(12 * var(--vu)));
+  display: block; position: fixed; inset: var(--wp-admin--admin-bar--height, 0px) 0 0; z-index: 100; overflow: hidden; /* under WordPress's bar, for whoever is signed in */
+}
+.bk-veil--centre, .bk-loading .bk-veil--centre { --vx: 50vw; --vy: 50svh; }
+.bk-veil > i, .bk-veil > svg { position: absolute; display: block; }
+.bk-veil__half { inset-inline: 0; background: var(--night-deep); }
+.bk-veil__half:first-child { top: 0; height: var(--vy); }
+.bk-veil__half:nth-child(2) { top: var(--vy); bottom: 0; }
+.bk-veil__v { inset-block: 0; left: calc(var(--vx) - var(--v-hair) / 2); width: var(--v-hair); background: color-mix(in srgb, var(--night-ink) 62%, transparent); transform-origin: 50% var(--vy); transform: scaleY(0); }
+.bk-veil__h {
+  inset-inline: 0; top: calc(var(--vy) - var(--v-line) / 2); height: var(--v-line); transform-origin: var(--vx) 50%; transform: scaleX(0);
+  background: linear-gradient(to right, var(--works) var(--vx), color-mix(in srgb, var(--night-ink) 34%, transparent) calc(var(--vx) + 40 * var(--vu)));
+}
+.bk-veil__dot { left: var(--vx); top: var(--vy); width: var(--v-dot); height: var(--v-dot); margin: calc(var(--v-dot) / -2); border-radius: 50%; background: var(--works); transform: scale(0); }
+.bk-veil__o { left: var(--vx); top: var(--vy); width: max(44px, calc(64 * var(--vu))); height: max(44px, calc(64 * var(--vu))); margin: calc(max(44px, 64 * var(--vu)) / -2); overflow: visible; }
+/* The logo stands where the cover has it, so it never moves: only the ground behind it opens. */
+.bk-veil__logo { position: absolute; top: calc(52 * var(--vu)); right: calc((100vw - var(--vw)) / 2 + 67 * var(--vu)); animation: bk-veil-in .9s var(--ease-out) both; }
+.bk-veil__logo .logo { --logo-w: calc(150 * var(--vu)); }
+@keyframes bk-veil-in { from { opacity: 0; } }
+.bk-veil__o path { fill: none; stroke: var(--logo-grey); stroke-width: 4; opacity: .28; animation: bk-veil-turn 1.4s linear infinite; }
+.bk-veil__o path:nth-child(odd) { stroke: var(--works); }
+/* Counter-clockwise, the way traffic takes a roundabout here. */
+.bk-veil__o path:nth-child(4) { animation-delay: -1.05s; }
+.bk-veil__o path:nth-child(3) { animation-delay: -.7s; }
+.bk-veil__o path:nth-child(2) { animation-delay: -.35s; }
+.bk-veil.is-ready .bk-veil__o path { animation: none; }
+@keyframes bk-veil-turn { 0%, 100% { opacity: .28; } 20% { opacity: 1; } 60% { opacity: .28; } }
+@media (max-width: 1099px) {
+  .bk-loading .bk-veil { --vx: 50vw; --vy: 50svh; --vu: 1px; }
+  .bk-veil__logo { right: max(20px, calc((100vw - 760px) / 2)); }
+}
+
 /* ------------------------------------------------------------------ riso fields (src/fx/riso.js): print you can touch */
 
 /* Dots in one tone close to the ground (color), the touch in orange (outline-color), blown up with hard pixels. */
 .bk-riso { display: block; image-rendering: pixelated; pointer-events: none; color: var(--night-2); outline-color: var(--works); }
-.bk-riso--desk { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; }
 .bk-riso--side {
   position: absolute; z-index: 0; inset-block: 0; left: 0; width: 46%; height: 100%; color: var(--night-ink); opacity: .11;
   -webkit-mask-image: linear-gradient(to right, #000 22%, transparent); mask-image: linear-gradient(to right, #000 22%, transparent);
@@ -735,19 +773,28 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-route__island { opacity: .55; }
 .bk-route__done { stroke: var(--works); }
 .bk-route__dot { fill: var(--works); }
-.bk-route a { position: absolute; left: 50%; width: 30px; height: 26px; margin: -13px 0 0 -15px; pointer-events: auto; }
-.bk-route a span { position: absolute; top: 50%; right: calc(100% + 4px); translate: 6px -50%; padding: 7px 11px; white-space: nowrap; background: var(--night-2); color: var(--night-ink); font: var(--fw-medium) 13px/1 var(--font-display); opacity: 0; pointer-events: none; transition: opacity .25s var(--ease-out), translate .35s var(--ease-out); }
-.bk-route a:hover span, .bk-route a:focus-visible span, .bk-route a.is-current:hover span { opacity: 1; translate: 0 -50%; }
-.bk-route__page { position: absolute; right: calc(100% - 6px); margin-top: -.5em; font: var(--fw-medium) 11px/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--works); mix-blend-mode: normal; }
+/* Every roundabout is a way in: a wide target, the dot landing in it under the pointer, the chapter's name beside it. */
+.bk-route a { position: absolute; left: 50%; width: 40px; height: 34px; margin: -17px 0 0 -20px; pointer-events: auto; cursor: pointer; outline-offset: -4px; }
+.bk-route a::before { content: ''; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px; border-radius: 50%; background: var(--works); scale: 0; transition: scale .45s var(--ease-out); }
+.bk-route a:hover::before, .bk-route a:focus-visible::before { scale: 1; }
+.bk-route a span {
+  position: absolute; top: 50%; right: calc(100% - 2px); translate: 10px -50%; display: flex; align-items: baseline; gap: 9px;
+  padding: 9px 13px 9px 12px; white-space: nowrap; background: var(--night-2); color: var(--night-ink); border-inline-start: 2px solid var(--works); box-shadow: 0 0 0 1px var(--night-line);
+  font: var(--fw-medium) 14px/1 var(--font-display); opacity: 0; pointer-events: none;
+  transition: opacity .25s var(--ease-out), translate .45s var(--ease-out);
+}
+.bk-route a span b { font: var(--fw-light) 17px/1 var(--font-figure); letter-spacing: var(--track-figure); color: var(--works); font-variant-numeric: tabular-nums; }
+.bk-route a:hover span, .bk-route a:focus-visible span, .bk-route a.is-flash span { opacity: 1; translate: 0 -50%; }
+.bk-route__page { position: absolute; right: calc(100% - 6px); margin-top: -.5em; font: var(--fw-medium) 11px/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--works); transition: opacity .25s var(--ease-out); }
+.bk-route:has(a:hover, a:focus-visible, a.is-flash) .bk-route__page { opacity: 0; }
 @media (max-width: 1099px) { .bk-route { display: none; } }
 
 /* ------------------------------------------------------------------ phones: the sheet lets go of its height and reflows */
 
 @media screen and (max-width: 1099px) {
-  .bk-book { padding: 0; gap: 0; }
   /* The reading column is at most 760px and centred; --m is the side margin, so whatever bleeds still reaches the edges. */
   .bk-page {
-    position: relative; top: auto;
+    box-shadow: none; clip-path: none;
     --w: 100cqw; --u: 1px; --m: max(20px, calc((100cqw - 760px) / 2)); --col: calc(100cqw - 2 * var(--m));
     --fs-kicker: 13px; --fs-title: 44px; --fs-lede: 17px; --fs-h3: 18px; --fs-p: 15px; --fs-cap: 13px;
     height: auto; min-height: 0; padding: 40px var(--m) 0; gap: 0;
@@ -775,7 +822,6 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-rules--2 { gap: 0; }
   .bk-rules--2 li:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid var(--rule); }
   .bk-circles__kinds, .bk-highlights__row, .bk-scrims__places ul:first-child { grid-template-columns: 1fr 1fr; gap: 20px 12px; }
-  .bk-page--hold { margin-bottom: 0; }
   .bk-bands { flex-wrap: wrap; height: auto; margin-inline: calc(-1 * var(--m)); }
   .bk-band { flex: 1 1 50%; min-height: 150px; }
   .bk-band figcaption { min-width: 0; padding-inline: var(--m); }
@@ -867,9 +913,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 @media print {
   html, body { background: none; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .bk-book { display: block; padding: 0; }
-  .bk-page { --w: 1280px; position: relative; top: auto; margin: 0; break-after: page; break-inside: avoid; }
-  .bk-page--hold { margin-bottom: 0; }
-  .bk-page::after, .bk-riso { display: none; }
-  .bk-route { display: none; }
+  .bk-book { display: block; }
+  .bk-page { --w: 1280px; margin: 0; box-shadow: none; clip-path: none; break-after: page; break-inside: avoid; }
+  .bk-riso, .bk-route, .bk-veil { display: none !important; }
 }

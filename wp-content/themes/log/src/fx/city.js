@@ -3,8 +3,9 @@
  * point and runs outward, each house growing from its footprint to its height. Then the plan, if the drawing has
  * one: the boundary draws itself, the plate fills, the dimension lines stretch and the area counts up.
  *
- * Returns a GSAP timeline to place on a page's own; the drawing waits at its start. timeline.undo() puts the drawing
- * back as it was served, for when the page's motion is reverted.
+ * Returns a GSAP timeline to place on a page's own, or to tie to the scroll (pass scrub: true, so it can also run
+ * backwards); the drawing waits at its start. timeline.undo() puts the drawing back as it was served, for when
+ * the page's motion is reverted.
  */
 import { gsap } from 'gsap';
 
@@ -22,7 +23,7 @@ function houses(svg) {
   });
 }
 
-export function cityRise(svg, { from = [0.5, 0.62], duration = 2.6 } = {}) {
+export function cityRise(svg, { from = [0.5, 0.62], duration = 2.6, scrub = false } = {}) {
   const tl = gsap.timeline();
   const restore = [];
   tl.undo = () => restore.forEach((f) => f());
@@ -81,7 +82,8 @@ export function cityRise(svg, { from = [0.5, 0.62], duration = 2.6 } = {}) {
     bound.setAttribute('mask', `url(#${id})`);
     const unmask = () => { bound.removeAttribute('mask'); mask.remove(); };
     restore.push(unmask);
-    tl.to(pen, { strokeDashoffset: 0, duration: 1.8, ease: 'power2.inOut', onComplete: unmask }, at);
+    // Tied to the scroll the pen can be taken back, so the mask stays until undo().
+    tl.to(pen, { strokeDashoffset: 0, duration: 1.8, ease: 'power2.inOut', onComplete: scrub ? undefined : unmask }, at);
 
     const plate = svg.querySelector('.cty__plate');
     if (plate) tl.from(plate, { fillOpacity: 0, duration: 1.1, ease: 'power2.out' }, at + 0.9);
