@@ -36,7 +36,7 @@ export function initMotion() {
   drawLines();
   footer();
   // After React Bits, in GSAP (src/fx): the main calls lean to the pointer; the client strip answers the scroll.
-  magnet('.btn--primary, .btn--works, .site-header__talk, .site-footer__go');
+  magnet('.btn--primary, .btn--works, .site-header__talk');
   velocityStrip('.logo-run');
 }
 
@@ -163,11 +163,11 @@ function sections() {
   const rows = '.domain, .jobs__item, .expertise li, .values__item, .roles__item, .process li, .search-results li, .knowledge-list li, .national__list li, .facts > div, .numbers > div, .project__numbers > div, .timeline li, .office, .partners li';
   rowsIn(rows);
 
-  // Pictures and plates unroll from the top as they come near.
-  const media = gsap.utils.toArray('.card__media, .person__photo, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .minimap, .gallery__grid figure');
+  // Pictures unroll from the top as they come near. People don't: their split circle draws itself (lines/draw.js).
+  const media = gsap.utils.toArray('.card__media, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .minimap, .gallery__grid figure');
   ScrollTrigger.batch(media, {
     start: 'top 92%', once: true,
-    onEnter: (batch) => gsap.fromTo(batch, { clipPath: 'inset(0% 0% 100% 0% round 10px)' }, { clipPath: 'inset(0% 0% 0% 0% round 10px)', duration: 1.2, stagger: 0.08, ease: 'expo.out', clearProps: 'clipPath' }),
+    onEnter: (batch) => gsap.fromTo(batch, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, stagger: 0.08, ease: 'expo.out', clearProps: 'clipPath' }),
   });
 
   // Prose and ledes settle from an already-visible state.
@@ -201,7 +201,7 @@ function laneLine() {
   gsap.fromTo(line, { '--p': '0%' }, { '--p': '100%', ease: 'none', scrollTrigger: { trigger: line, start: 'top 75%', end: 'bottom 75%', scrub: 0.6 } });
 }
 
-/** The end of the road: the last legend rises, the board unrolls from its top edge, the stop line draws across. */
+/** The last junction: the legend rises and the destinations unroll; the lines and the dot draw themselves (lines/draw.js). */
 function footer() {
   const f = document.querySelector('.site-footer');
   if (!f) return;
@@ -210,15 +210,11 @@ function footer() {
     type: 'lines', mask: 'lines', autoSplit: true,
     onSplit: (self) => gsap.from(self.lines, { yPercent: 112, duration: 1.15, ease: 'power4.out', scrollTrigger: { trigger: f, start: 'top 80%', once: true } }),
   });
-  const go = f.querySelector('.site-footer__go');
-  if (go) gsap.from(go, { scale: 0.6, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: f, start: 'top 80%', once: true }, clearProps: 'transform,opacity' });
   const board = f.querySelector('.site-footer__board');
   if (board) {
-    gsap.fromTo(board, { clipPath: 'inset(0% 0% 100% 0% round 14px)' }, { clipPath: 'inset(-10% -2% -2% -2% round 14px)', duration: 1.2, ease: 'expo.out', clearProps: 'clipPath', scrollTrigger: { trigger: board, start: 'top 88%', once: true } });
+    gsap.fromTo(board, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(-10% -2% -2% -2%)', duration: 1.2, ease: 'expo.out', clearProps: 'clipPath', scrollTrigger: { trigger: board, start: 'top 88%', once: true } });
     gsap.from(board.querySelectorAll('li'), { opacity: 0, y: 18, duration: 0.8, stagger: 0.06, ease: 'expo.out', delay: 0.25, clearProps: 'transform,opacity', scrollTrigger: { trigger: board, start: 'top 88%', once: true } });
   }
-  const end = f.querySelector('.site-footer__end');
-  if (end) gsap.fromTo(end, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: end, start: 'top bottom', end: 'top 70%', scrub: 0.6 } });
 }
 
 /* ---------------------------------------------------------------- menu */

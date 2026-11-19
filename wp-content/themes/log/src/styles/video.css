@@ -9,7 +9,8 @@
  */
 .vbg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: var(--plate); }
 .vbg--bleed { left: calc(50% - 50vw); right: calc(50% - 50vw); }
-.vbg__video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--vbg-focus, 50% 50%); }
+/* The footage is a place under a legend: greyed, then the one night layer over it (the book, chapter 09). */
+.vbg__video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--vbg-focus, 50% 50%); filter: grayscale(.85) contrast(1.05); }
 /* The map's print grain over the footage too: places read printed, like the map and the road, not lit like a screen. */
 .vbg::before {
   content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -20,11 +21,11 @@
   background: var(--vbg-scrim, linear-gradient(color-mix(in srgb, var(--night) 40%, transparent), color-mix(in srgb, var(--night) 40%, transparent)));
 }
 
-/* Stop / play: one small round plate in the band's end corner */
+/* Stop / play: a small thin circle in the band's end corner */
 .vbg__toggle {
   position: absolute; z-index: 2; inset-block-end: clamp(16px, 2.4vw, 28px); inset-inline-end: var(--gutter);
   display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
-  background: color-mix(in srgb, var(--night) 60%, transparent); color: var(--legend); box-shadow: inset 0 0 0 1.5px var(--hair-strong);
+  background: color-mix(in srgb, var(--night) 60%, transparent); color: var(--legend); box-shadow: inset 0 0 0 var(--line-w) var(--hair-strong);
   pointer-events: auto; cursor: pointer;
   transition: background-color .3s var(--ease-out), color .3s var(--ease-out), box-shadow .3s var(--ease-out);
 }
@@ -35,11 +36,11 @@
 .vbg__toggle[aria-pressed='true']::before { background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); translate: 1px 0; }
 .vbg__toggle:hover, .vbg__toggle:focus-visible { background: var(--legend); color: var(--plate); box-shadow: none; }
 
-/* Footer: the city under "let's talk", fading out before the destination board */
+/* Footer: the city under "let's talk" and its junction, greyed and fading out into the destinations */
 .site-footer { isolation: isolate; }
 .site-footer > .vbg {
-  inset: 0 0 auto; height: clamp(520px, 78vh, 940px);
-  --vbg-scrim: linear-gradient(var(--plate) 0, color-mix(in srgb, var(--night) 42%, transparent) 24%, color-mix(in srgb, var(--night) 34%, transparent) 52%, var(--plate) 100%);
+  inset: 0 0 auto; height: clamp(440px, 64vh, 760px);
+  --vbg-scrim: linear-gradient(var(--plate) 0, color-mix(in srgb, var(--night) 48%, transparent) 22%, color-mix(in srgb, var(--night) 44%, transparent) 46%, color-mix(in srgb, var(--night) 80%, transparent) 72%, var(--plate) 100%);
 }
 .site-footer > .vbg .vbg__toggle { inset-block: calc(var(--header-h) + 12px) auto; } /* clear of the fixed header when the footer reaches the top */
 .site-footer__inner { position: relative; z-index: 1; }
@@ -61,5 +62,5 @@
   .control-hero__strip:has(> .vbg), .careers-hero__copy:has(> .vbg) { min-height: clamp(420px, 74svh, 640px); }
   .vbg__toggle { width: 40px; height: 40px; }
   /* Phones: "let's talk" and its arrow fill the width, so the pause button gets its own row above them */
-  .site-footer:has(> .vbg) { padding-top: calc(var(--header-h) + 76px); }
+  .site-footer:has(> .vbg) .site-footer__lead { padding-top: calc(var(--header-h) + 76px); }
 }

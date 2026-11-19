@@ -40,7 +40,7 @@ echo log_roundabout( 'home' ); // phpcs:ignore WordPress.Security.EscapeOutput -
 		?>
 		<h1 class="hero__title<?php echo $short ? ' hero__title--short' : ''; ?>" id="hero-title"><?php
 			// The brand's ring turns inside the line, just before the last word.
-			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . log_title( $m[2] ) . '</em>' : log_title( $title );
+			echo preg_match( '/^(.+)\s(\S+)$/u', $title, $m ) ? esc_html( $m[1] ) . ' ' . log_ring_glyph() . '<em>' . log_title( $m[2], true ) . '</em>' : log_title( $title, true );
 		?></h1>
 		<p class="hero__lede"><?php echo esc_html( log_text( 'hero_lede', 'תכנון עירוני בכל קנה מידה: מתכניות מפורטות ועד תכניות מתאר, כוללניות ואסטרטגיות.' ) ); ?></p>
 
@@ -165,7 +165,7 @@ if ( $domains ) : ?>
 			<div class="exit-world__body">
 				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo log_title( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
 				<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
-				<a class="btn" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
+				<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
 			</div>
 		</div>
 	</div>

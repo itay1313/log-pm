@@ -38,12 +38,16 @@
   --type-micro: var(--fw-medium) var(--fs-micro) var(--font-display);
   --type-meta: var(--fw-regular) var(--fs-small) var(--font-text);
 
-  /* One authored icon set. The guide-sign arrow (broad head, square shaft) points forward: left in RTL. */
-  --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 18'%3E%3Cpath d='M0 9 10.5 0v5.6H26v6.8H10.5V18z'/%3E%3C/svg%3E");
+  /*
+   * Small marks, drawn in the thin line like the icons (inc/icons.php). The arrow points forward: left in RTL.
+   * It is a mask at its own size (64 by 12, never scaled), anchored at its head: the shaft is as long as the box
+   * is wide and the line keeps its 2px at every length.
+   */
+  --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='12' viewBox='0 0 64 12'%3E%3Cpath d='M7 1 2 6l5 5M2 6h62' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
   --icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.5 1.5l9 9M10.5 1.5l-9 9' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
   --icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 1v10M1 6h10' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
   --icon-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1 6h10' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
-  --icon-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 7'%3E%3Cpath d='M0 0h10L5 7z'/%3E%3C/svg%3E");
+  --icon-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E");
 
   color-scheme: light;
   accent-color: var(--works);
