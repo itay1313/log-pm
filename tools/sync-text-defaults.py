@@ -29,6 +29,8 @@ PAGE_GROUPS = {
     'page-contact.php': 'group_log_page_contact',
 }
 OPTION_GROUPS = ['group_log_texts', 'group_log_settings']
+# A list more than one template shows is read through a helper: helper file → the group that owns the field.
+SHARED_ROWS = {'inc/helpers.php': 'group_log_page_control'}
 
 PHP_STR = r"""'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*\""""
 
@@ -65,9 +67,16 @@ def balanced(src: str, start: int) -> str:
 def collect(theme: str):
     texts, rows = {}, {}  # (group|None for options, name) → value
     files = glob.glob(os.path.join(theme, '*.php')) + glob.glob(os.path.join(theme, 'template-parts/*.php'))
-    for path in sorted(files):
+    shared = {os.path.join(theme, rel): group for rel, group in SHARED_ROWS.items()}
+    for path in sorted(files) + sorted(p for p in shared if os.path.exists(p)):
         src = open(path, encoding='utf-8').read()
         base = os.path.basename(path)
+        if path in shared:  # lists only, each owned by the group named above
+            for m in re.finditer(r"log_rows\(\s*'([a-z0-9_]+)'\s*,\s*\[", src):
+                parsed = parse_rows(balanced(src, m.end() - 1))
+                if parsed:
+                    add(rows, (shared[path], m.group(1)), parsed, base)
+            continue
         for m in re.finditer(r"log_text\(\s*'([a-z0-9_]+)'\s*,\s*(%s)\s*(,\s*'option')?" % PHP_STR, src):
             group = None if m.group(3) else PAGE_GROUPS.get(base)
             if group is None and not m.group(3):
@@ -75,13 +84,19 @@ def collect(theme: str):
             add(texts, (group, m.group(1)), php_string(m.group(2)), base)
         for m in re.finditer(r"log_rows\(\s*'([a-z0-9_]+)'\s*,\s*\[", src):
             literal = balanced(src, m.end() - 1)
-            parsed = []
-            for row in re.finditer(r"\[((?:\s*'[a-z0-9_]+'\s*=>\s*(?:%s)\s*,?)+)\s*\]" % PHP_STR, literal[1:-1]):
-                parsed.append({k: php_string(v) for k, v in re.findall(r"'([a-z0-9_]+)'\s*=>\s*(%s)" % PHP_STR, row.group(1))})
+            parsed = parse_rows(literal)
             if parsed:
                 scope = "'option'" in src[m.end() - 1 + len(literal):][:20]
                 add(rows, (None if scope else PAGE_GROUPS.get(base), m.group(1)), parsed, base)
     return texts, rows
+
+
+def parse_rows(literal: str) -> list:
+    """The rows of a PHP list of ['key' => 'value', ...] arrays."""
+    parsed = []
+    for row in re.finditer(r"\[((?:\s*'[a-z0-9_]+'\s*=>\s*(?:%s)\s*,?)+)\s*\]" % PHP_STR, literal[1:-1]):
+        parsed.append({k: php_string(v) for k, v in re.findall(r"'([a-z0-9_]+)'\s*=>\s*(%s)" % PHP_STR, row.group(1))})
+    return parsed
 
 
 def add(store, key, value, where):

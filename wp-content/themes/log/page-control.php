@@ -9,11 +9,7 @@
 get_header();
 the_post();
 
-$roles = log_rows( 'roles', [
-	[ 'name' => 'מעקב וניתוח ארצי', 'text' => 'תמונת מצב של כל פרויקטי הפינוי-בינוי במדינה, מעודכנת ומאומתת.' ],
-	[ 'name' => 'התרת חסמים בירוקרטיים', 'text' => 'זיהוי מה תוקע פרויקט, ומי יכול לשחרר אותו.' ],
-	[ 'name' => 'חיבור בין השטח לממשל', 'text' => 'מינהלות, מוסדות תכנון ומשרדי ממשלה סביב שולחן אחד.' ],
-] );
+$roles = log_control_roles(); // shared with the home page's exit (inc/helpers.php)
 $method = log_rows( 'method', [
 	[ 'name' => 'איסוף', 'text' => 'נתונים מהרשויות, מהמינהלות ומהמערכות הממשלתיות.' ],
 	[ 'name' => 'טיוב ובקרה', 'text' => 'אימות, השלמה ואחידות של כל רשומה.' ],
@@ -78,7 +74,7 @@ $items = new WP_Query( [
 	<div class="container">
 		<h2 class="section__title"><?php echo log_title( log_text( 'roles_title', 'שלושה תפקידים' ) ); ?></h2>
 		<ol class="roles">
-			<?php foreach ( array_slice( $roles, 0, 3 ) as $i => $r ) : ?>
+			<?php foreach ( $roles as $i => $r ) : ?>
 				<li class="roles__item"><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $r['name'] ?? '' ); ?></h3><p><?php echo esc_html( $r['text'] ?? '' ); ?></p></li>
 			<?php endforeach; ?>
 		</ol>

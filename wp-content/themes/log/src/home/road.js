@@ -7,6 +7,8 @@
  *
  * Chapter 4: an exit sign stands on the start shoulder, "יציאה · חברת הבקרה". Its face fades, and the window it
  * leaves opens until the control company's world fills the screen: the two worlds meet only through an exit.
+ * The world is a place, LOG's aerial roundabout at night, which settles as the window opens; then the legend
+ * rises and the three roles are laid along one thin line.
  *
  * Plain CSS 3D and ScrollTrigger, no WebGL, so it runs whenever motion is allowed (main.js). The DOM is the
  * ordinary pair of sections; without this module they read as rows and a night band.
@@ -39,6 +41,8 @@ export function initRoad(road) {
   const exitSign = exit.querySelector('.exit-sign');
   const world = exit.querySelector('.exit-world');
   const body = exit.querySelector('.exit-world__body');
+  const place = exit.querySelector('.exit-world__place img');
+  const roles = exit.querySelector('.exit-roles');
   // The window keeps the sign's keyline while it opens.
   const frame = document.createElement('span');
   frame.className = 'exit-frame';
@@ -60,12 +64,12 @@ export function initRoad(road) {
     plane.style.setProperty('--travel', `${(-(q * n * GAP + r * EXIT_RUN)).toFixed(1)}px`);
 
     // The exit: the sign comes up with its chapter, its face fades, the window opens, the world's legend rises.
-    const face = 1 - span([0.36, 0.44], r);
-    const open = ease(span([0.42, 0.78], r));
+    const face = 1 - span([0.34, 0.42], r);
+    const open = ease(span([0.4, 0.72], r));
     exitSign.style.transform = `scale(${lerp(0.82, 1, ease(span([0, 0.34], r))).toFixed(3)})`;
     exitSign.style.opacity = face.toFixed(3);
     exitSign.style.visibility = face > 0.001 ? 'visible' : 'hidden';
-    if (r < 0.36) {
+    if (r < 0.34) {
       world.style.clipPath = 'inset(50% 50% 50% 50%)';
       frame.style.opacity = 0;
     } else {
@@ -79,12 +83,14 @@ export function initRoad(road) {
         transform: `translate(${(w.left + l - box.left + k).toFixed(1)}px, ${(w.top + t - box.top + k).toFixed(1)}px)`,
         width: `${Math.max(0, w.width - l - rt - 2 * k).toFixed(1)}px`,
         height: `${Math.max(0, w.height - t - b - 2 * k).toFixed(1)}px`,
-        opacity: (1 - span([0.74, 0.84], r)).toFixed(3),
+        opacity: (1 - span([0.68, 0.76], r)).toFixed(3),
       });
     }
-    const legend = span([0.7, 0.84], r);
+    if (place) place.style.transform = `scale(${lerp(1.16, 1, ease(span([0.4, 0.8], r))).toFixed(4)})`;
+    const legend = span([0.64, 0.76], r);
     body.style.opacity = legend.toFixed(3);
     body.style.transform = `translateY(${((1 - ease(legend)) * 40).toFixed(1)}px)`;
+    roles?.classList.toggle('is-in', r > 0.76); // CSS lays the lines and raises the rows, staggered (drive.css)
   }
 
   if (gantries && n) {

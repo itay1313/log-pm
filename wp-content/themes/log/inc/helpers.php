@@ -308,6 +308,22 @@ function log_own_photo( string $file, string $alt, int $height ): string {
 }
 
 /**
+ * The control company's three roles: the rows the editor wrote on the control page, or this fallback copy.
+ * The control page lists them in full and the home page's exit into the control company shows the same three,
+ * so both read them from here. tools/sync-text-defaults.py copies this fallback into the page's ACF group.
+ *
+ * @return array<int, array{name?: string, text?: string}>
+ */
+function log_control_roles(): array {
+	$page = get_page_by_path( 'control' );
+	return array_slice( log_rows( 'roles', [
+		[ 'name' => 'מעקב וניתוח ארצי', 'text' => 'תמונת מצב של כל פרויקטי הפינוי-בינוי במדינה, מעודכנת ומאומתת.' ],
+		[ 'name' => 'התרת חסמים בירוקרטיים', 'text' => 'זיהוי מה תוקע פרויקט, ומי יכול לשחרר אותו.' ],
+		[ 'name' => 'חיבור בין השטח לממשל', 'text' => 'מינהלות, מוסדות תכנון ומשרדי ממשלה סביב שולחן אחד.' ],
+	], $page ? $page->ID : false ), 0, 3 );
+}
+
+/**
  * The stock team picture (Unsplash License): opens the careers page until the settings page gets a picture, and
  * the About page wherever LOG's own team photograph isn't on the server.
  */

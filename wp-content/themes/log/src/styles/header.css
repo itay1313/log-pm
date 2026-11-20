@@ -8,52 +8,53 @@
 body.admin-bar .site-header { top: var(--wp-admin--admin-bar--height, 0px); }
 .site-header__inner { width: calc(100% - 2 * var(--gutter)); margin-inline: auto; min-height: var(--header-h); display: flex; align-items: center; gap: clamp(1rem, 2.4vw, 2.75rem); }
 .site-header__logo { text-decoration: none; color: inherit; display: inline-flex; }
-.site-header__tools { margin-inline-start: auto; display: flex; align-items: center; gap: clamp(1rem, 2vw, 1.75rem); }
-.site-header__talk {
-  display: inline-flex; align-items: center; gap: .6em; padding: .72rem 1.35rem; border-radius: var(--r-control);
-  font: var(--type-legend); text-decoration: none; box-shadow: inset 0 0 0 var(--line-w) var(--hair-strong);
-  transition: box-shadow .35s var(--ease-out), color .35s var(--ease-out);
-}
-.site-header__talk .arrow { width: 1.05em; height: .75em; color: var(--works); }
-.site-header__talk:hover, .site-header__talk:focus-visible { box-shadow: inset 0 0 0 var(--line-w) var(--works); }
+.site-header__tools { margin-inline-start: auto; display: flex; align-items: center; gap: clamp(1.25rem, 2.4vw, 2.5rem); }
+/* "Talk to us" is a plain link: the words and the arrow, no box. The menu is the header's one outlined control. */
+.site-header__talk { display: inline-flex; align-items: center; gap: .7em; min-height: 2.75rem; font: var(--type-legend); color: var(--legend); text-decoration: none; }
+.site-header__talk .arrow { width: 1.6em; height: .75em; color: var(--works); }
 
 /* Every page that doesn't open on a full-screen cover hangs its header over a navy strip, so the gantry
    always reads light on navy; the page's own title band continues the strip. */
 body:not(.has-cover) .site-main { padding-top: var(--header-h); background: linear-gradient(var(--plate) 0 var(--header-h), transparent 0); }
 body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)); background: linear-gradient(var(--plate) 0 calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)), transparent 0); }
 
-/* The menu button: filled white, the label and two dots that part on hover */
-.menu-toggle {
-  --k-ground: var(--legend); --k-line: var(--legend);
-  display: inline-flex; align-items: center; gap: .85rem; padding: .72rem 1.15rem .72rem 1.4rem; border: 0; color: var(--plate);
+/* The menu button: the thin line around the word and two lanes. Hover fills it white and the lanes pass each other. */
+.menu-toggle, .gantry__close {
+  --k-ground: transparent; --k-line: var(--legend); --k-edge: var(--hair-strong);
+  display: inline-flex; align-items: center; gap: .95rem; min-height: 3rem; padding: 0 1.2rem 0 1.3rem; border: 0; border-radius: var(--r-control);
   font: var(--type-legend); cursor: pointer;
 }
-.menu-toggle:hover, .menu-toggle:focus-visible { --k-ground: var(--works); --k-line: var(--works); color: var(--plate); }
-.menu-toggle__lanes { display: flex; gap: 4px; width: auto; order: 2; }
-.menu-toggle__lanes i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; transition: translate .45s var(--ease-out); }
-.menu-toggle__lanes i:nth-child(3) { display: none; }
-.menu-toggle:hover .menu-toggle__lanes i:first-child { translate: 2px 0; }
-.menu-toggle:hover .menu-toggle__lanes i:nth-child(2) { translate: -2px 0; }
+.menu-toggle:hover, .menu-toggle:focus-visible, .gantry__close:hover, .gantry__close:focus-visible { --k-ground: var(--legend); --k-line: var(--sign-ink); --k-edge: var(--legend); }
+.menu-toggle__lanes { display: grid; justify-items: start; gap: 6px; width: 22px; }
+.menu-toggle__lanes i { width: 100%; height: var(--line-w); background: currentColor; transition: translate .5s var(--ease-out), width .5s var(--ease-out); }
+.menu-toggle__lanes i + i { width: 60%; }
+.menu-toggle:hover .menu-toggle__lanes i { translate: -3px 0; }
+.menu-toggle:hover .menu-toggle__lanes i + i { width: 100%; translate: 3px 0; }
 
 /* ------------------------------------------------------------------ the two worlds: a lane split */
 
-.twin-nav { display: flex; gap: .35rem; }
-/* Projects bear forward to the start side (arrow at the end); the control company bears to the end side (arrow first). */
+/*
+ * In the header the split is one drawing between the two names: a thin line that forks, a branch to each world.
+ * The names hug it from both sides, so the pair reads as one sign. The branch of the world you are in, or point
+ * at, turns from grey to orange (the book's switch: the road you take). Phones and the menu use the lane arrows.
+ */
+.twin-nav { display: flex; align-items: center; gap: .35rem; }
 .twin-nav__item {
   position: relative; display: flex; align-items: center; gap: .6rem;
-  padding: .45rem .85rem .5rem; color: var(--legend-muted); text-decoration: none; transition: color .3s, background-color .3s;
+  padding: .45rem .5rem .5rem; color: var(--legend-muted); text-decoration: none; transition: color .3s;
 }
 .twin-nav__text { display: grid; }
-.twin-nav__item .arrow { width: 1.05rem; height: .75rem; transition: translate .4s var(--ease-out); }
+.twin-nav__item--projects .twin-nav__text { justify-items: end; text-align: end; } /* towards the fork */
+.twin-nav__item .arrow { display: none; width: 1.05rem; height: .75rem; transition: translate .4s var(--ease-out); }
 .twin-nav__item--control .arrow { rotate: 135deg; order: -1; }
 .twin-nav__name { font: var(--fw-medium) var(--fs-base)/1.2 var(--font-display); color: var(--legend); }
-.twin-nav__line { font-size: var(--fs-micro); line-height: 1.3; white-space: nowrap; }
-.twin-nav__item:hover { background: color-mix(in srgb, var(--night-ink) 6%, transparent); }
-.twin-nav__item:hover .arrow { translate: -2px -2px; color: var(--works); }
-.twin-nav__item--control:hover .arrow { translate: 2px -2px; }
-.twin-nav__item.is-active { box-shadow: inset 0 calc(-1 * var(--line-w)) 0 var(--works); border-end-start-radius: 0; border-end-end-radius: 0; }
-.twin-nav__item.is-active .arrow { color: var(--works); }
-@media (max-width: 1180px) { .twin-nav__line { display: none; } }
+.twin-nav__line { font-size: var(--fs-micro); line-height: 1.3; white-space: nowrap; transition: color .3s; }
+.twin-nav__item:hover .twin-nav__line, .twin-nav__item:focus-visible .twin-nav__line { color: var(--legend); }
+.twin-nav__fork { flex: none; width: 1.75rem; height: 2.25rem; overflow: visible; }
+.twin-nav__fork path { fill: none; stroke: var(--hair-strong); stroke-width: var(--line-w); vector-effect: non-scaling-stroke; transition: stroke .35s var(--ease-out); }
+.twin-nav:has(.twin-nav__item--projects:is(:hover, :focus-visible, .is-active)) :is(.twin-nav__stem, .twin-nav__way--projects),
+.twin-nav:has(.twin-nav__item--control:is(:hover, :focus-visible, .is-active)) :is(.twin-nav__stem, .twin-nav__way--control) { stroke: var(--works); }
+@media (max-width: 1180px) { .twin-nav__line { display: none; } .twin-nav__fork { width: 1.4rem; height: 1.8rem; } }
 
 /* The lane split at the top of the menu: the two worlds side by side, each outlined in the thin line. On the home
    map the pair stays in the header like everywhere else, so nothing hangs over the headline or the destination bar. */
@@ -62,7 +63,10 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   min-width: 15rem; padding: .95rem 1.25rem 1rem; gap: .9rem; border-radius: var(--r-control); color: var(--legend-muted);
   box-shadow: inset 0 0 0 var(--line-w) var(--hair);
 }
-.twin-nav--sign .twin-nav__item .arrow { width: 1.5rem; height: 1.05rem; margin-inline-start: auto; color: var(--works); }
+.twin-nav--sign .twin-nav__item .arrow { display: inline-block; width: 1.5rem; height: 1.05rem; margin-inline-start: auto; color: var(--works); }
+.twin-nav--sign .twin-nav__item--projects .twin-nav__text { justify-items: start; text-align: start; }
+.twin-nav--sign .twin-nav__item:hover .arrow { translate: -2px -2px; }
+.twin-nav--sign .twin-nav__item--control:hover .arrow { translate: 2px -2px; }
 .twin-nav--sign .twin-nav__item--control .arrow { margin-inline: 0 auto; }
 .twin-nav--sign .twin-nav__name { font: var(--fw-regular) var(--fs-title)/1.1 var(--font-display); letter-spacing: var(--track-heading); }
 .twin-nav--sign .twin-nav__line { display: block; font-size: var(--fs-micro); white-space: normal; }
@@ -76,7 +80,10 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   :root { --header-h: 68px; }
   .site-header__logo .logo { --logo-w: 5.25rem; }
   .site-header__talk { display: none; }
-  .menu-toggle { padding: .75rem 1rem; }
+  .menu-toggle { min-height: 2.75rem; padding-inline: 1.05rem .95rem; gap: .8rem; }
+  .twin-nav__fork { display: none; }
+  .twin-nav:not(.twin-nav--sign) .twin-nav__item .arrow { display: inline-block; }
+  .twin-nav:not(.twin-nav--sign) .twin-nav__item--projects .twin-nav__text { justify-items: start; text-align: start; }
   .twin-nav:not(.twin-nav--sign) {
     position: fixed; z-index: 55; inset-inline: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0;
     background: var(--plate); box-shadow: 0 calc(-1 * var(--rule-w)) 0 var(--plate-line); padding-bottom: env(safe-area-inset-bottom);
@@ -85,6 +92,7 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   .twin-nav:not(.twin-nav--sign) .twin-nav__item { justify-content: center; padding: .95rem .5rem; border-radius: 0; }
   .twin-nav:not(.twin-nav--sign) .twin-nav__item + .twin-nav__item { box-shadow: inset calc(-1 * var(--rule-w)) 0 0 var(--plate-line); }
   .twin-nav:not(.twin-nav--sign) .twin-nav__item.is-active { box-shadow: inset 0 var(--line-w) 0 var(--works); }
+  .twin-nav:not(.twin-nav--sign) .twin-nav__item.is-active .arrow { color: var(--works); }
   .twin-nav:not(.twin-nav--sign) .twin-nav__item + .twin-nav__item.is-active { box-shadow: inset 0 var(--line-w) 0 var(--works), inset calc(-1 * var(--rule-w)) 0 0 var(--plate-line); }
   body.home.at-map .twin-nav:not(.twin-nav--sign), body.sheet-open .twin-nav:not(.twin-nav--sign) { translate: 0 110%; }
 }
@@ -102,9 +110,8 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); grid-template-rows: auto 1fr; column-gap: clamp(2rem, 6vw, 7rem);
 }
 .gantry__top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding-bottom: clamp(1rem, 3vh, 2.5rem); }
-.gantry__close { --k-ground: var(--legend); --k-line: var(--legend); display: inline-flex; align-items: center; gap: .75rem; padding: .72rem 1.3rem; border: 0; border-radius: var(--r-control); color: var(--plate); font: var(--type-legend); cursor: pointer; }
+.gantry__close { gap: .8rem; }
 .gantry__close .icon { width: 13px; height: 13px; }
-.gantry__close:hover, .gantry__close:focus-visible { --k-ground: var(--works); --k-line: var(--works); }
 .gantry__nav { align-self: center; }
 
 .dest { border-top: var(--rule-w) solid var(--hair); }
@@ -125,11 +132,17 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
 
 .gantry__side { align-self: center; display: grid; align-content: start; gap: 1.75rem; padding-block: 1rem .5rem; }
 .dest__name .shield { font-size: max(var(--fs-micro), .17em); }
-/* In the menu "talk to us" is the one orange action; the search button is the white everyday button. */
-.gantry__side .search-form button { background: var(--legend); }
-.gantry__side .search-form button:hover, .gantry__side .search-form button:focus-visible { background: var(--works); box-shadow: none; }
-.gantry__side .search-form input { background: var(--plate-2); color: var(--legend); border: var(--line-w) solid var(--hair-strong); border-radius: var(--r-control); padding-inline: 1.25rem; }
-.gantry__side .search-form input::placeholder { color: var(--legend-muted); }
+/* In the menu "talk to us" is the one orange action. The search is a thin line to write on, like "לאן?" on the map:
+   it turns orange while you type, and the word at its end sends it. */
+.gantry__side .search-form { gap: 0; align-items: center; max-width: none; box-shadow: inset 0 calc(-1 * var(--line-w)) 0 var(--hair-strong); transition: box-shadow .35s var(--ease-out); }
+.gantry__side .search-form:hover { box-shadow: inset 0 calc(-1 * var(--line-w)) 0 var(--legend); }
+.gantry__side .search-form:focus-within { box-shadow: inset 0 calc(-1 * var(--line-w)) 0 var(--works); }
+.gantry__side .search-form input { flex: 1; min-width: 0; height: 3.5rem; padding-inline: 0 .75rem; border: 0; border-radius: 0; background: transparent; color: var(--legend); font-size: var(--fs-lead); }
+.gantry__side .search-form input:focus { box-shadow: none; }
+.gantry__side .search-form input::placeholder { color: var(--legend-muted); opacity: 1; }
+.gantry__side .search-form input::-webkit-search-cancel-button { filter: invert(1); }
+.gantry__side .search-form button { min-height: 2.75rem; padding: 0 0 0 .25rem; border-radius: 0; background: none; box-shadow: none; color: var(--legend); transition: color .3s var(--ease-out); }
+.gantry__side .search-form button:hover, .gantry__side .search-form button:focus-visible { background: none; box-shadow: none; color: var(--works); }
 .gantry__contact { display: grid; gap: .5rem; font: var(--type-legend); }
 .gantry__contact p { margin: 0; color: var(--legend-muted); }
 .gantry__contact b { color: var(--legend); font-weight: var(--fw-medium); margin-inline-end: .4em; }

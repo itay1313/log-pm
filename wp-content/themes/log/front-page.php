@@ -126,7 +126,8 @@ $drive_project = (int) log_field( 'drive_project' );
 
 <?php
 // The road (src/home/road.js): the practice areas pass overhead as gantry signs, then an exit sign opens into
-// the control company. Without motion both are ordinary sections; the scene is decoration only.
+// the control company: its place, its legend and its three roles. Without motion both are ordinary sections;
+// the scene is decoration only.
 ?>
 <div class="road" id="road">
 <div class="road__scene" aria-hidden="true"><div class="road__plane"></div></div>
@@ -158,14 +159,35 @@ if ( $domains ) : ?>
 	</section>
 <?php endif; ?>
 
+<?php
+// The exit opens onto a place: LOG's own aerial photograph of a roundabout at night, greyed under one even night
+// layer (the book: a place that carries text). The grey copy is used when it was uploaded; without the photograph
+// the world is plain night. Over it: the legend, and the control company's three roles on one thin line.
+$grey  = log_bk_photo_url( 'aerial-night-g.jpg' );
+$place = $grey ?: log_bk_photo_url( 'aerial-night.jpg' );
+$small = log_bk_photo_url( $grey ? 'aerial-night-s-g.jpg' : 'aerial-night-s.jpg' );
+$roles = log_control_roles();
+?>
 <section class="section section--control exit" data-section="control" aria-labelledby="control-title">
 	<div class="container exit__inner">
 		<p class="exit-sign" aria-hidden="true"><span class="exit-sign__tag">יציאה</span><span class="exit-sign__name"><?php echo esc_html( log_text( 'control_title', 'חברת הבקרה' ) ); ?></span><i class="exit-sign__arrow"></i></p>
 		<div class="exit-world">
+			<?php if ( $place ) : ?>
+				<figure class="exit-world__place<?php echo $grey ? '' : ' exit-world__place--colour'; ?>" aria-hidden="true"><img src="<?php echo esc_url( $place ); ?>"<?php echo $small ? sprintf( ' srcset="%s 900w, %s 2200w" sizes="100vw"', esc_url( $small ), esc_url( $place ) ) : ''; ?> alt="" width="2200" height="1238" loading="lazy" decoding="async"></figure>
+			<?php endif; ?>
 			<div class="exit-world__body">
 				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo log_title( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
-				<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
-				<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה</a>
+				<div class="exit-world__say">
+					<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
+					<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה<i class="arrow" aria-hidden="true"></i></a>
+				</div>
+				<?php if ( $roles ) : ?>
+					<ol class="exit-roles">
+						<?php foreach ( $roles as $i => $r ) : ?>
+							<li style="--i: <?php echo (int) $i; ?>"><?php echo log_stage_ring( $i + 1 ); ?><h3><?php echo esc_html( $r['name'] ?? '' ); ?></h3><?php if ( ! empty( $r['text'] ) ) : ?><p><?php echo esc_html( $r['text'] ); ?></p><?php endif; ?></li>
+						<?php endforeach; ?>
+					</ol>
+				<?php endif; ?>
 			</div>
 		</div>
 	</div>
