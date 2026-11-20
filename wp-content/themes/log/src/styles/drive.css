@@ -39,12 +39,16 @@ html.drive-on .drive-country .link-row a { font-size: var(--fs-base); }
 html.drive-on .drive-figures { display: flex; justify-content: flex-end; align-items: flex-end; gap: clamp(2rem, 4vw, 3.5rem); }
 html.drive-on .drive-figures > div { min-width: 8.5rem; }
 html.drive-on .drive-figures dd { text-shadow: 0 2px 24px color-mix(in srgb, var(--night-deep) 60%, transparent); }
-/* A scrim behind the column and along the bottom keeps the legend readable over the country; no panel. */
+/* A scrim behind the column and along the bottom keeps the legend readable over the country; no panel.
+   It runs one more screen below the legend and thins out there, so when the chapter scrolls away the scrim
+   leaves as a fade and never as an edge across the map. */
 html.drive-on .drive-country__inner::before {
-  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; opacity: var(--scrim, 0);
+  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw) -100vh; pointer-events: none; opacity: var(--scrim, 0);
   background:
     linear-gradient(270deg, color-mix(in srgb, var(--night-deep) 88%, transparent) 0%, color-mix(in srgb, var(--night-deep) 66%, transparent) 24%, transparent 50%),
-    linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 74%, transparent) 0%, transparent 34%);
+    linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 74%, transparent) 0%, transparent 34%) top / 100% 50% no-repeat,
+    linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 74%, transparent) 0%, transparent 70%) bottom / 100% 50% no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 90%); mask-image: linear-gradient(180deg, #000 50%, transparent 90%);
 }
 
 /* The sheet margin while driving: grid reference and scale under the gantry, on the end side. */
@@ -69,8 +73,9 @@ html.drive-on .drive-country__inner::before {
   /* One paragraph at a time leaves the middle of the screen to the country: dark under the legend and behind the figures only. */
   html.drive-on .drive-country__inner::before {
     background:
-      linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, color-mix(in srgb, var(--night-deep) 80%, transparent) 26%, transparent 50%),
-      linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 78%, transparent) 0%, transparent 26%);
+      linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, color-mix(in srgb, var(--night-deep) 80%, transparent) 26%, transparent 50%) top / 100% 50% no-repeat,
+      linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 78%, transparent) 0%, transparent 26%) top / 100% 50% no-repeat,
+      linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, transparent 70%) bottom / 100% 50% no-repeat;
   }
 }
 
@@ -94,11 +99,19 @@ html.drive-on .drive-build.is-live .drive-build__inner {
   position: sticky; top: 0; height: 100vh; height: 100svh; grid-template-rows: auto 1fr auto; justify-items: start;
   padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 3.5rem)); padding-bottom: clamp(28px, 7vh, 80px);
 }
+/* The scrim starts a screen above the chapter and thickens into it, the mirror of the one that leaves before it:
+   the chapter arrives over the map without its top edge showing. */
 html.drive-on .drive-build.is-live .drive-build__inner::before {
-  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; opacity: var(--scrim, 0);
+  content: ''; position: absolute; z-index: -1; inset: -100vh calc(50% - 50vw) 0; pointer-events: none; opacity: var(--scrim, 0);
   background:
     linear-gradient(270deg, color-mix(in srgb, var(--night-deep) 84%, transparent) 0%, color-mix(in srgb, var(--night-deep) 50%, transparent) 30%, transparent 56%),
-    linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 60%, transparent) 0%, transparent 30%);
+    linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 60%, transparent) 0%, transparent 30%) bottom / 100% 50% no-repeat,
+    linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 60%, transparent) 0%, transparent 70%) top / 100% 50% no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, transparent 10%, #000 50%); mask-image: linear-gradient(180deg, transparent 10%, #000 50%);
+}
+/* Night falls at the end of the chapter (drive.js sets --fall): the map dims to the night the road begins in. */
+html.drive-on .drive-build.is-live .drive-build__inner::after {
+  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; background: var(--night-deep); opacity: var(--fall, 0);
 }
 html.drive-on .drive-build.is-live .section__title { max-width: 12ch; margin-bottom: .3em; font-size: var(--fs-h2); text-shadow: 0 2px 30px color-mix(in srgb, var(--night-deep) 50%, transparent); }
 
@@ -145,7 +158,11 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
 @media (max-width: 760px) {
   html.drive-on .drive-build.is-live { --drive-len: 380vh; }
   html.drive-on .drive-build.is-live .drive-build__inner { padding-top: calc(var(--header-h) + 1rem); padding-bottom: calc(58px + 1rem + env(safe-area-inset-bottom)); }
-  html.drive-on .drive-build.is-live .drive-build__inner::before { background: linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 80%, transparent) 0%, transparent 24%, transparent 38%, color-mix(in srgb, var(--night-deep) 90%, transparent) 68%, color-mix(in srgb, var(--night-deep) 94%, transparent) 100%); } /* the step reads over white buildings */
+  html.drive-on .drive-build.is-live .drive-build__inner::before {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 80%, transparent) 0%, transparent 24%, transparent 38%, color-mix(in srgb, var(--night-deep) 90%, transparent) 68%, color-mix(in srgb, var(--night-deep) 94%, transparent) 100%) bottom / 100% 50% no-repeat, /* the step reads over white buildings */
+      linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 80%, transparent) 0%, transparent 70%) top / 100% 50% no-repeat;
+  }
   html.drive-on .drive-build.is-live .section__title { font-size: var(--fs-h3); }
   html.drive-on .drive-build.is-live .process { margin-bottom: .5rem; }
   html.drive-on .drive-build.is-live .process li .stage { margin-bottom: .6rem; }

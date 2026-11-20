@@ -171,7 +171,8 @@ export function initDrive(hero, scene, points, features) {
     for (const { dd, n } of figures) dd.textContent = fmt.format(Math.round(n * span(AT.beacons, p1)));
     if (figureList) figureList.style.opacity = span([AT.beacons[0] - 0.06, AT.beacons[0]], p1).toFixed(3); // no zeros waiting on screen
 
-    inner.style.setProperty('--scrim', span([0.12, 0.34], p1).toFixed(3));
+    // The scrim leaves with its chapter: by the time the legend has scrolled off, the next chapter's has taken over.
+    inner.style.setProperty('--scrim', (span([0.12, 0.34], p1) * (1 - span([0.02, 0.16], p2))).toFixed(3));
     read(p1);
   }
 
@@ -328,6 +329,8 @@ function buildChapter(el, scene, features, hero) {
     });
 
     innerEl.style.setProperty('--scrim', span([0.08, 0.2], q).toFixed(3));
+    // Night falls over the site as the chapter ends, so the map hands over to the night road without a cut.
+    innerEl.style.setProperty('--fall', ease(span([0.93, 1], q)).toFixed(3));
 
     // One step at a time: in from the start side, out upwards as the next arrives.
     steps.forEach((li, i) => {
