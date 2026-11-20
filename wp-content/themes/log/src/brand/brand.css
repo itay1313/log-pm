@@ -903,7 +903,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-cover__city {
     inset: auto auto 0 50%; height: 62svh; width: calc(62svh * 16 / 9); max-width: none; translate: -25% 0;
     background: linear-gradient(to top, var(--night) 30%, transparent 78%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 10%, #000 46%); mask-image: linear-gradient(to bottom, transparent 10%, #000 46%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 16%, #000 52%); mask-image: linear-gradient(to bottom, transparent 16%, #000 52%);
   }
   .bk-folio { margin-top: 36px; }
   .bk-lede { max-width: none; }
