@@ -16,12 +16,16 @@ $pairs = [
 	[ 'paper', 'works', 'נייר על כתום', 'לא משתמשים: נייר על כתום לא נקרא' ],
 ];
 
-// [ sample, font token, weight token, the face, its job ].
-$faces = [
-	[ 'אנחנו הצומת.', '--font-headline', '--fw-bold', 'Ploni Tzar Bold 700', 'כותרות ראשיות בלבד · שתיים עד ארבע מילים', 'xl' ],
-	[ 'מחברים. מובילים. מתכננים.', '--font-display', '--fw-medium', 'Ploni Tzar Medium 500', 'כותרות משנה ותוויות', 'l' ],
-	[ 'הפרויקטים שלכם בשפה שמבינים.', '--font-text', '--fw-regular', 'Ploni Regular 400', 'גוף טקסט, באפור כהה', 'm' ],
-	[ '01  99.4K', '--font-figure', '--fw-light', 'Ploni Light 300', 'מספרים גדולים ומספור', 'fig' ],
+// The scale, as the site sets it (src/tokens/tokens.json):
+// [ tag, its job, sample, row, the face, size on a desktop, size on a phone ('' when it doesn't change), leading, tracking ('' for none) ].
+$scale = [
+	[ 'H1', 'כותרת עמוד', 'אנחנו הצומת.', 'h1', 'Ploni Tzar Bold', '72', '44', '0.92', '-3%' ],
+	[ 'H2', 'כותרת פרק', 'מחברים. מובילים. מתכננים.', 'h2', 'Ploni Tzar Bold', '56', '36', '0.92', '-3%' ],
+	[ 'H3', 'כותרת משנה', 'הפרויקטים שלכם בשפה שמבינים.', 'h3', 'Ploni Tzar Bold', '40', '32', '1.02', '-2%' ],
+	[ 'H4', 'כותרת קטנה', 'תכנון עירוני בכל קנה מידה', 'h4', 'Ploni Tzar Bold', '28', '24', '1.02', '-2%' ],
+	[ 'גוף', 'טקסט רץ, באפור כהה', 'כותרת קצרה, ומשפט אחד שמסביר אותה.', 'body', 'Ploni Regular', '18', '', '1.6', '' ],
+	[ 'כיתוב', 'מקור והערה', 'מקור: דוח תנועת הגולשים באתר לוג.', 'cap', 'Ploni Regular', '14', '', '1.4', '' ],
+	[ 'מספר', 'נתון גדול ומספור', '01  99.4K', 'fig', 'Ploni Light', '72', '44', '1', '-4.5%' ],
 ];
 
 $sizes = [
@@ -84,16 +88,18 @@ $formats = [
 <?php log_bk_close(); ?>
 
 <?php log_bk_open( '06', 'משפחה אחת', 'bk-type' ); ?>
-	<?php log_bk_head( '06', 'משפחה אחת', 'Ploni Tzar לכותרות, Ploni לכל השאר. כותרת קצרה ונגמרת בנקודה.' ); ?>
+	<?php log_bk_head( '06', 'משפחה אחת', 'Ploni Tzar לכותרות, Ploni לכל השאר. ארבע רמות של כותרת, וכל אחת קטנה בבירור מזו שמעליה.' ); ?>
 	<div class="bk-type__cols">
-		<ul class="bk-type__faces">
-			<?php foreach ( $faces as [ $sample, $font, $weight, $face, $job, $size ] ) : ?>
-				<li>
-					<p class="bk-type__sample bk-type__sample--<?php echo esc_attr( $size ); ?>" style="font-family: var(<?php echo esc_attr( $font ); ?>); font-weight: var(<?php echo esc_attr( $weight ); ?>)"><?php echo esc_html( $sample ); ?></p>
-					<p class="bk-cap"><span dir="ltr"><?php echo esc_html( $face ); ?></span> · <?php echo esc_html( $job ); ?></p>
+		<ol class="bk-scale">
+			<?php foreach ( $scale as [ $tag, $job, $sample, $row, $face, $size, $phone, $leading, $tracking ] ) : ?>
+				<li class="bk-scale__row bk-scale__row--<?php echo esc_attr( $row ); ?>">
+					<p class="bk-scale__tag"><b><?php echo esc_html( $tag ); ?></b><span><?php echo esc_html( $job ); ?></span></p>
+					<p class="bk-scale__sample"><?php echo esc_html( $sample ); ?></p>
+					<p class="bk-scale__spec"><b dir="ltr"><?php echo esc_html( $face ); ?></b><span><?php echo esc_html( $size ); ?><?php echo $phone !== '' ? ' · בטלפון ' . esc_html( $phone ) : ''; ?></span></p>
+					<p class="bk-scale__spec bk-scale__spec--set"><span>שורה <i dir="ltr"><?php echo esc_html( $leading ); ?></i></span><span><?php if ( $tracking !== '' ) : ?>ריווח <i dir="ltr"><?php echo esc_html( $tracking ); ?></i><?php endif; ?></span></p>
 				</li>
 			<?php endforeach; ?>
-		</ul>
+		</ol>
 		<div class="bk-type__side">
 			<table class="bk-table bk-type__sizes">
 				<thead><tr><th scope="col">רמה</th><th scope="col">שקף 1280</th><th scope="col">פוסט 1080</th><th scope="col">אתר</th></tr></thead>

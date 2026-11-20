@@ -81,10 +81,11 @@
 <?php log_bk_close(); ?>
 
 <?php log_bk_open( '10', 'שמונה עשר סימנים', 'bk-icons' ); ?>
-	<?php log_bk_head( '10', 'שמונה עשר סימנים', 'קו דק, נגיעה אחת של כתום, ומקווקו למה שעוד לא נבנה. כל אייקון מצייר את מה שכתוב תחתיו.' ); ?>
+	<?php log_bk_head( '10', 'שמונה עשר סימנים', 'קו דק, נגיעה אחת של כתום, ומקווקו למה שעוד לא נבנה. לוחצים על אייקון והוא נשמר במחשב כקובץ SVG.' ); ?>
+	<?php // The link gets its file from src/brand/main.js, which writes the icon out with the live colours. Without it the icons are just shown. ?>
 	<ul class="bk-icons__grid">
 		<?php foreach ( log_icons() as $name => [ $label ] ) : ?>
-			<li><?php echo log_icon( $name ); // phpcs:ignore WordPress.Security.EscapeOutput -- fixed markup from log_icons() ?><span><?php echo esc_html( $label ); ?></span></li>
+			<li><a data-icon="<?php echo esc_attr( $name ); ?>" download="LOG-icon-<?php echo esc_attr( $name ); ?>.svg" aria-label="<?php echo esc_attr( 'הורדת האייקון "' . $label . '", קובץ SVG' ); ?>"><?php echo log_icon( $name ); // phpcs:ignore WordPress.Security.EscapeOutput -- fixed markup from log_icons() ?><span><?php echo esc_html( $label ); ?></span><i aria-hidden="true">SVG</i></a></li>
 		<?php endforeach; ?>
 	</ul>
 	<?php log_bk_rules( [ 'אייקון חדש נבנה באותו עובי קו ובאותה פינה מעוגלת.', 'כתום רק על חלק אחד באייקון.', 'פלטפורמות: אותו ריבוע, אותו קו.' ], 1, 'bk-rules--3' ); ?>

@@ -74,7 +74,11 @@ function log_bk_opener( string $n ): void {
 		count( $chapters )
 	);
 	log_bk_title( $chapters[ $n ] ?? '', 'h2', 'bk-title--opener' );
-	echo '</div></section>';
+	echo '</div>';
+	if ( $n === '08' ) {
+		echo log_bk_downloads(); // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in log_bk_downloads()
+	}
+	echo '</section>';
 }
 
 /**
@@ -97,6 +101,33 @@ function log_bk_backgrounds(): array {
 function log_bk_background_url( string $slug, bool $small = false ): string {
 	$file = '/assets/brand/backgrounds/log-background-' . $slug . ( $small ? '-s' : '' ) . '.jpg';
 	return is_readable( get_theme_file_path( $file ) ) ? get_theme_file_uri( $file ) : '';
+}
+
+/**
+ * The grounds as things to take: six small pictures under the line of chapter 08's opening sheet. Each is a link
+ * that saves its full-size JPG. Nothing is printed until the pictures have been drawn.
+ */
+function log_bk_downloads(): string {
+	$items = '';
+	foreach ( log_bk_backgrounds() as $slug => [ $name ] ) {
+		$file  = log_bk_background_url( $slug );
+		$small = log_bk_background_url( $slug, true );
+		if ( $file === '' || $small === '' ) {
+			continue;
+		}
+		$items .= sprintf(
+			'<li><a href="%1$s" download="LOG-background-%2$s.jpg" aria-label="%3$s"><img src="%4$s" alt="" width="480" height="270" loading="lazy" decoding="async"><span>%5$s</span></a></li>',
+			esc_url( $file ),
+			esc_attr( $slug ),
+			esc_attr( 'הורדת הרקע "' . $name . '", קובץ JPG' ),
+			esc_url( $small ),
+			esc_html( $name )
+		);
+	}
+	if ( $items === '' ) {
+		return '';
+	}
+	return '<div class="bk-get"><p class="bk-get__label"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 1v8M2.5 5.5 6 9l3.5-3.5M1.5 11h9"/></svg><b>רקעים להורדה</b> · לוחצים על תמונה והיא נשמרת במחשב · <span dir="ltr">JPG 3840×2160</span></p><ul>' . $items . '</ul></div>';
 }
 
 /** Closes a sheet with its folio: the logo's mark at the end side, the book's name and the page number at the start. */

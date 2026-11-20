@@ -3,8 +3,10 @@
  *
  * 1. Live values: colour codes, contrast ratios and the contents' page numbers are read from the page itself,
  *    so the book can't disagree with the site.
- * 2. The route: one thin line down the side of the whole book, round a small roundabout at every chapter,
- *    orange as far as you've come, with the dot travelling on it. Every roundabout is a link with its chapter's name.
+ *    Icons are written out as standalone SVG files with those same live colours, so each can be taken away.
+ * 2. The route: one thin line down the side of the whole book, round a small roundabout at the start, at every
+ *    chapter and at the end, orange as far as you've come, with the dot travelling on it. Every roundabout is a link
+ *    with its stop's name; near the pointer the line opens into the whole menu.
  * 3. The riso fields: a quiet print texture down the side of the night sheets, which a pointer or a finger stirs.
  * 4. Motion (GSAP). The book is an ordinary page that scrolls, and what is on it answers the scroll: lines and
  *    crossings draw as far as you have come, photographs drift inside their frames, the drawn city stands up, and
@@ -22,7 +24,7 @@ import { SplitText } from 'gsap/SplitText';
 import { drawLines } from '../lines/draw.js';
 import { depthText, depthTilt, maskedText, warpText } from '../fx/text.js';
 import { riso } from '../fx/riso.js';
-import { cityRise } from '../fx/city.js';
+import { cityPulse, cityRise } from '../fx/city.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText);
 
@@ -72,6 +74,23 @@ for (const el of document.querySelectorAll('[data-ratio]')) {
     verdict.classList.toggle('is-fail', ratio < 4.5);
   }
 }
+// An icon is taken away as the book draws it: a file of its own with the two live colours written in. The line is
+// the sheet's (2 on an icon of 58), and so are the dashes, both in the icon's own 48 units.
+const inkNow = rgb('--ink');
+const worksNow = rgb('--works');
+if (inkNow && worksNow) {
+  for (const link of document.querySelectorAll('a[data-icon]')) {
+    const copy = link.querySelector('svg')?.cloneNode(true);
+    if (!copy) continue;
+    for (const el of copy.querySelectorAll('*')) {
+      if (el.classList.contains('o')) el.setAttribute('stroke', hex(worksNow));
+      if (el.classList.contains('d')) el.setAttribute('stroke-dasharray', '2.5 3.3');
+      el.removeAttribute('class');
+    }
+    const file = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96" height="96" fill="none" stroke="${hex(inkNow)}" stroke-width="1.66" stroke-linecap="round" stroke-linejoin="round">${copy.innerHTML}</svg>`;
+    link.href = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(file)}`;
+  }
+}
 probe.remove();
 
 // The contents: each chapter's page is where its first sheet really is.
@@ -88,30 +107,41 @@ const calm = matchMedia('(prefers-reduced-motion: reduce)');
 /* ---------------------------------------------------------------- 2. the route */
 
 /**
- * One thin line runs down the side of the book from its first sheet to its last: the road. At every chapter it
- * goes round a small roundabout (LOG's O), one side then the other. It is orange as far as you have come, and
- * the dot travels on it. The roundabouts are the book's menu: each is a link, and says its chapter under the
- * pointer and for a moment when you drive into it. It is state, not animation, so it also runs with reduced motion.
+ * One thin line runs down the side of the book from its first sheet to its last: the road. At the start, at every
+ * chapter and at the end it goes round a small roundabout (LOG's O), one side then the other. It is orange as far
+ * as you have come, and the dot travels on it. The roundabouts are the book's menu: each is a link, and says its
+ * name under the pointer and for a moment when you drive into it. When the pointer comes near the line all of them
+ * say their names at once. It is state, not animation, so it also runs with reduced motion.
  */
 const chapters = pages.filter((p) => p.id.startsWith('ch-'));
+let tour = () => {}; // the line introduces itself once, after the opening
 if (chapters.length) {
   const route = document.createElement('nav');
   route.className = 'bk-route';
   route.setAttribute('aria-label', 'פרקי הספר');
   document.body.append(route);
-  const R = 7, X = 22, PAD = 26;
-  let length = 0, done = null, dot = null, label = null, stops = [], current = null, flash = 0;
+  const first = document.getElementById('start');
+  const last = document.getElementById('end');
+  const places = [
+    ...(first ? [{ el: first, n: '', name: 'התחלה' }] : []),
+    ...chapters.map((el) => ({ el, n: el.dataset.chapter, name: el.getAttribute('aria-label') })),
+    ...(last ? [{ el: last, n: '', name: 'סיום' }] : []),
+  ];
+  const at = places.map((p) => pages.indexOf(p.el));
+  const R = 8, X = 22, PAD = 26;
+  let length = 0, done = null, dot = null, label = null, stops = [], current = -1, flash = 0;
 
   const build = () => {
     const h = innerHeight;
     const tops = pages.map(top);
-    const y = (i) => PAD + (tops[pages.indexOf(chapters[i])] / tops[tops.length - 1]) * (h - 2 * PAD);
+    const y = (i) => PAD + (tops[at[i]] / tops[tops.length - 1]) * (h - 2 * PAD);
     let d = `M${X} 0`;
-    chapters.forEach((_, i) => { d += ` V${(y(i) - R).toFixed(1)} A${R} ${R} 0 0 ${i % 2} ${X} ${(y(i) + R).toFixed(1)}`; });
+    places.forEach((_, i) => { d += ` V${(y(i) - R).toFixed(1)} A${R} ${R} 0 0 ${i % 2} ${X} ${(y(i) + R).toFixed(1)}`; });
     d += ` V${h}`;
-    route.innerHTML = `<svg width="${X * 2}" height="${h}" aria-hidden="true"><path class="bk-route__road" d="${d}"/>${chapters.map((_, i) =>
+    route.innerHTML = `<svg width="${X * 2}" height="${h}" aria-hidden="true"><path class="bk-route__road" d="${d}"/>${places.map((_, i) =>
       `<path class="bk-route__island" d="M${X} ${(y(i) - R).toFixed(1)} A${R} ${R} 0 0 ${1 - (i % 2)} ${X} ${(y(i) + R).toFixed(1)}"/>`).join('')}<path class="bk-route__done" d="${d}"/><circle class="bk-route__dot" r="5"/></svg>`
-      + chapters.map((p, i) => `<a href="#${p.id}" style="top:${y(i).toFixed(1)}px"><span><b>${p.dataset.chapter}</b>${p.getAttribute('aria-label')}</span></a>`).join('')
+      + places.map((p, i) => `<a href="#${p.el.id}" style="top:${y(i).toFixed(1)}px;--i:${i}"><span>${p.n ? `<b>${p.n}</b>` : ''}${p.name}</span></a>`).join('')
+      + `<p class="bk-route__hint" style="top:${Math.max(y(0), 38).toFixed(1)}px" aria-hidden="true"><b>כל כיכר בקו היא פרק.</b>לוחצים עליה ומגיעים אליו.</p>`
       + '<p class="bk-route__page" aria-hidden="true"></p>';
     done = route.querySelector('.bk-route__done');
     dot = route.querySelector('.bk-route__dot');
@@ -119,6 +149,7 @@ if (chapters.length) {
     stops = [...route.querySelectorAll('a')];
     length = done.getTotalLength();
     done.style.strokeDasharray = `${length} ${length}`;
+    current = -1;
     update();
   };
 
@@ -127,28 +158,47 @@ if (chapters.length) {
     const max = document.documentElement.scrollHeight - innerHeight;
     const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
     done.style.strokeDashoffset = String(length * (1 - p));
-    const at = done.getPointAtLength(length * p);
-    dot.setAttribute('cx', at.x.toFixed(1));
-    dot.setAttribute('cy', at.y.toFixed(1));
+    const here = done.getPointAtLength(length * p);
+    dot.setAttribute('cx', here.x.toFixed(1));
+    dot.setAttribute('cy', here.y.toFixed(1));
     // The current sheet is the last whose top has come past the middle of the window.
     let page = 0;
     pages.forEach((el, i) => { if (el.getBoundingClientRect().top <= innerHeight / 2) page = i; });
     label.textContent = two(page + 1);
-    label.style.top = `${at.y.toFixed(1)}px`;
-    const ch = pages[page].dataset.chapter;
-    stops.forEach((a, i) => a.classList.toggle('is-current', chapters[i].dataset.chapter === ch));
-    // Driving into a chapter, its roundabout says its name for a moment.
-    if (ch !== current) {
-      const first = current === null;
-      current = ch;
-      clearTimeout(flash);
-      stops.forEach((a) => a.classList.remove('is-flash'));
-      const stop = stops.find((a) => a.classList.contains('is-current'));
-      if (stop && !first) {
-        stop.classList.add('is-flash');
-        flash = setTimeout(() => stop.classList.remove('is-flash'), 1800);
-      }
+    label.style.top = `${here.y.toFixed(1)}px`;
+    // And the current stop is the last one that sheet has passed.
+    let stop = 0;
+    at.forEach((index, i) => { if (index <= page) stop = i; });
+    if (stop === current) return;
+    const arriving = current >= 0;
+    current = stop;
+    clearTimeout(flash);
+    stops.forEach((a, i) => { a.classList.toggle('is-current', i === stop); a.classList.remove('is-flash'); });
+    // Driving into a stop, its roundabout says its name for a moment.
+    if (arriving) {
+      stops[stop].classList.add('is-flash');
+      flash = setTimeout(() => stops[stop]?.classList.remove('is-flash'), 1800);
     }
+  };
+
+  // Near the line the whole menu opens; it stays open while the pointer is on one of its rows.
+  addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
+    route.classList.toggle('is-near', e.clientX > innerWidth - 96 || !!e.target.closest?.('.bk-route'));
+  }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', () => route.classList.remove('is-near'));
+
+  tour = () => {
+    if (scrollY > innerHeight * 0.4 || !matchMedia('(min-width: 1100px)').matches) return;
+    try {
+      if (sessionStorage.getItem('bk-route-met')) return;
+      sessionStorage.setItem('bk-route-met', '1');
+    } catch { /* a private window: the line simply introduces itself again */ }
+    route.classList.add('is-tour');
+    const over = () => { route.classList.remove('is-tour'); removeEventListener('scroll', leave); };
+    const leave = () => { if (scrollY > innerHeight * 0.5) over(); };
+    addEventListener('scroll', leave, { passive: true });
+    setTimeout(over, 6500);
   };
 
   addEventListener('scroll', update, { passive: true });
@@ -156,14 +206,14 @@ if (chapters.length) {
   build();
 }
 
-// A link to a chapter (the route's roundabouts, the contents) drives there instead of jumping.
+// A link to a sheet (the route's roundabouts, the contents, the way back from the last sheet) drives there instead of jumping.
 addEventListener('click', (e) => {
-  const link = e.target.closest?.('a[href^="#ch-"]');
-  const to = link && document.getElementById(link.hash.slice(1));
-  if (!to || calm.matches || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  const link = e.target.closest?.('a[href^="#"]');
+  const to = link && link.hash.length > 1 && document.getElementById(link.hash.slice(1));
+  if (!to || !to.classList.contains('bk-page') || calm.matches || e.metaKey || e.ctrlKey || e.shiftKey) return;
   e.preventDefault();
   const y = top(to);
-  gsap.to(window, { scrollTo: { y, autoKill: true }, duration: gsap.utils.clamp(0.9, 2, Math.abs(y - scrollY) / 4200), ease: 'power3.inOut', overwrite: true });
+  gsap.to(window, { scrollTo: { y, autoKill: true }, duration: gsap.utils.clamp(0.9, 2.2, Math.abs(y - scrollY) / 4200), ease: 'power3.inOut', overwrite: true });
   history.replaceState(null, '', link.hash);
 });
 
@@ -252,6 +302,16 @@ function motion() {
           .add(() => undo.push(depthTilt(depth.stage, cover)));
       }
       tl.from(cover.querySelectorAll('.bk-lede, .bk-cover__version'), { opacity: 0, y: 16, duration: 1, stagger: 0.12, ease: E }, 1.05);
+      // The city beside the name stands up out of the photograph, from the crossing outward. Once it stands it
+      // answers the scroll: taller the further down you are, and a wave of it stretches or ducks with the wheel.
+      const town = cover.querySelector('.bk-cover__city');
+      if (town) {
+        const from = [0.11, 0.84]; // where the cover's two lines cross
+        const rise = cityRise(town, { from, duration: 3.2 });
+        tl.add(rise, 0.3);
+        undo.push(rise.undo, cityPulse(town, { trigger: cover, from, ready: () => rise.progress() === 1 }));
+        gsap.fromTo(town, { yPercent: 0 }, { yPercent: 9, ease: 'none', scrollTrigger: along(cover, 'top top', 'bottom top', true) });
+      }
       if (opened) tl.progress(1);
       intro = tl;
     }
@@ -303,7 +363,7 @@ function motion() {
     const items = [
       '.bk-rules > li', '.bk-rows > li', '.bk-how__grid > li', '.bk-toc__list > li', '.bk-junction__words > li', '.bk-vision__cols > div',
       '.bk-tone__cols > div > h3', '.bk-quote', '.bk-logo__versions > li', '.bk-wrong__grid > li', '.bk-anatomy__notes > div', '.bk-anatomy__language > *',
-      '.bk-colors__foot > div', '.bk-icons__grid > li', '.bk-table tr', '.bk-type__faces > li', '.bk-formats__row > li', '.bk-lines__kinds > li > :not(.ln)',
+      '.bk-colors__foot > div', '.bk-icons__grid > li', '.bk-table tr', '.bk-scale > li', '.bk-get__label', '.bk-get li', '.bk-again', '.bk-formats__row > li', '.bk-lines__kinds > li > :not(.ln)',
       '.bk-circles__kinds > li > :not(.circ)', '.bk-minis > li > :not(.bk-mini)', '.bk-photos__cols h3', '.bk-scrims__places > ul:first-child > li > :not(.bk-scrims__case)',
       '.bk-scrims__person > p', '.bk-social__frames .bk-cap', '.bk-highlights__row > li', '.bk-banner h3', '.bk-banner__text', '.bk-fb__cols h3', '.bk-fb__cols h3 + p',
       '.bk-sign', '.bk-note', '.bk-grid__sheet > p', '.bk-timeline li > :not(.circ)',
@@ -365,7 +425,7 @@ function motion() {
       if (masked) undo.push(maskedText(masked, masked.dataset.fxMasked, page));
 
       // The drawn city stands up out of the ground as far as you have scrolled; a plan on it draws itself after.
-      const city = page.querySelector('.cty');
+      const city = !first && page.querySelector('.cty'); // the cover's belongs to the opening
       if (city) {
         const rise = cityRise(city, { scrub: true });
         gsap.timeline({ scrollTrigger: along(city, 'top 84%', wide ? 'top 6%' : 'top 22%', 0.9) }).add(rise);
@@ -443,7 +503,7 @@ function motion() {
 function open() {
   const html = document.documentElement;
   const veil = document.querySelector('.bk-veil');
-  const finish = () => { opened = true; veil?.remove(); html.classList.remove('bk-loading', 'bk-opening'); };
+  const finish = () => { opened = true; veil?.remove(); html.classList.remove('bk-loading', 'bk-opening'); setTimeout(tour, 2200); };
   if (!veil || !html.classList.contains('bk-loading')) {
     intro?.play();
     finish();
