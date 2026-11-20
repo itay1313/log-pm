@@ -35,9 +35,12 @@ const C = {
 };
 const NATIONAL = { tx: 70000, tz: -20000, radius: 430000, phi: 0.62, theta: -0.18 };
 // Home: Gush Dan from the north, looking south, low enough to read the city as a line model. The sea fills
-// the start (right) side, where the headline sits; the orange city stands on the end side.
+// the start (right) side, where the headline sits; the orange city stands on the end side. The camera stands
+// far enough back that the projects south and east of the city are in the picture: a dozen, not three.
 const [HX, HZ] = toLocal(34.795, 32.05);
-const HOME = { tx: HX - 4300, tz: HZ - 300, radius: 6200, phi: 1.1, theta: Math.PI - 0.42 };
+const HOME_WIDE = { tx: HX - 3800, tz: HZ - 300, radius: 8000, phi: 1.16, theta: Math.PI - 0.27 };
+// A phone's headline sits above the map, so there is no sea to keep clear: the camera looks at the city itself.
+const HOME_TALL = { tx: HX - 800, tz: HZ - 300, radius: 8800, phi: 1.2, theta: Math.PI - 0.27 };
 const SWAY = 0.1; // the resting camera breathes this far and back instead of orbiting the sea away
 const MID_AT = 9000; // below this the full-detail z14 city takes over from the z13 one
 const REGIONAL_AT = 170000;
@@ -387,6 +390,7 @@ export async function createScene(container, { reduced = false } = {}) {
   }
 
   // Camera ------------------------------------------------------------------
+  const HOME = (container.clientWidth || 1) < 700 ? HOME_TALL : HOME_WIDE;
   const view = { ...NATIONAL };
   function applyView() {
     const t = new THREE.Vector3(view.tx, 0, view.tz);
