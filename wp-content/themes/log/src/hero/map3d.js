@@ -236,6 +236,7 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
 
   // The card's size from a ResizeObserver: reading offsetWidth every frame, after the markers moved, forced a layout.
   const cardBox = { w: 350, h: 420 };
+  const rtl = getComputedStyle(hero).direction === 'rtl'; // the legend stands on the start side: the right in Hebrew
   new ResizeObserver(([e]) => {
     const b = e.borderBoxSize?.[0];
     cardBox.w = b ? b.inlineSize : card.offsetWidth;
@@ -247,7 +248,10 @@ export async function mount3D(hero, features, { pred, onLock, onSheet }) {
     const s = scene.toScreen(cardItem.x, cardItem.z);
     if (!s) return closeCard();
     const { w: W, h: H } = scene.size(), cw = cardBox.w, ch = cardBox.h;
-    const left = s.x > W / 2 ? s.x - cw - 34 : s.x + 34;
+    // The card opens on the map's side of its marker, away from the headline and the search; only a marker
+    // too close to the end edge sends it the other way.
+    const away = rtl ? s.x - cw - 34 : s.x + 34;
+    const left = away >= 16 && away + cw <= W - 16 ? away : s.x > W / 2 ? s.x - cw - 34 : s.x + 34;
     const top = Math.min(H - ch - 16, Math.max(84, s.y - ch / 2));
     card.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
   }
