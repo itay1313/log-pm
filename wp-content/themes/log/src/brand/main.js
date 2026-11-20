@@ -13,6 +13,9 @@
  *    every headline, picture and row arrives when it reaches the window, not when its sheet does.
  * 5. The opening: the first load happens under a night veil that opens along the cover's own line.
  *
+ * A computer that can't keep up gets the same book with less moving (lite, below): no drifting photographs, no
+ * city that follows the scroll, still print fields. It is decided by the machine's size, or by watching the frames.
+ *
  * Everything in 4 lives inside gsap.matchMedia: with reduced motion (and in the PDF, which asks for it) nothing is
  * ever hidden, and the sheets are simply there, finished.
  */
@@ -23,12 +26,27 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { SplitText } from 'gsap/SplitText';
 import { drawLines } from '../lines/draw.js';
 import { depthText, depthTilt, maskedText, warpText } from '../fx/text.js';
-import { riso } from '../fx/riso.js';
+import { riso, risoRest } from '../fx/riso.js';
 import { cityPulse, cityRise } from '../fx/city.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText);
 
 const pages = [...document.querySelectorAll('.bk-page')];
+
+/**
+ * lite: true on a small machine (four cores or four gigabytes, or less), or from the moment the frames stop keeping
+ * up with the scroll. What can be switched off after the fact registers itself in `lighten`.
+ */
+let lite = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+const lighten = [];
+function goLite() {
+  if (lite) return;
+  lite = true;
+  document.documentElement.classList.add('bk-lite');
+  risoRest();
+  lighten.splice(0).forEach((f) => f());
+}
+if (lite) { document.documentElement.classList.add('bk-lite'); risoRest(); }
 const two = (n) => String(n).padStart(2, '0');
 
 /* ---------------------------------------------------------------- 1. live values */
@@ -129,11 +147,12 @@ if (chapters.length) {
   ];
   const at = places.map((p) => pages.indexOf(p.el));
   const R = 8, X = 22, PAD = 26;
-  let length = 0, done = null, dot = null, label = null, stops = [], current = -1, flash = 0;
+  const wide = matchMedia('(min-width: 1100px)'); // under it the line isn't shown
+  let length = 0, done = null, dot = null, label = null, stops = [], current = -1, flash = 0, tops = [], shown = -1, queued = false;
 
   const build = () => {
     const h = innerHeight;
-    const tops = pages.map(top);
+    tops = pages.map(top);
     const y = (i) => PAD + (tops[at[i]] / tops[tops.length - 1]) * (h - 2 * PAD);
     let d = `M${X} 0`;
     places.forEach((_, i) => { d += ` V${(y(i) - R).toFixed(1)} A${R} ${R} 0 0 ${i % 2} ${X} ${(y(i) + R).toFixed(1)}`; });
@@ -141,7 +160,7 @@ if (chapters.length) {
     route.innerHTML = `<svg width="${X * 2}" height="${h}" aria-hidden="true"><path class="bk-route__road" d="${d}"/>${places.map((_, i) =>
       `<path class="bk-route__island" d="M${X} ${(y(i) - R).toFixed(1)} A${R} ${R} 0 0 ${1 - (i % 2)} ${X} ${(y(i) + R).toFixed(1)}"/>`).join('')}<path class="bk-route__done" d="${d}"/><circle class="bk-route__dot" r="5"/></svg>`
       + places.map((p, i) => `<a href="#${p.el.id}" style="top:${y(i).toFixed(1)}px;--i:${i}"><span>${p.n ? `<b>${p.n}</b>` : ''}${p.name}</span></a>`).join('')
-      + `<p class="bk-route__hint" style="top:${Math.max(y(0), 38).toFixed(1)}px" aria-hidden="true"><b>כל כיכר בקו היא פרק.</b>לוחצים עליה ומגיעים אליו.</p>`
+      + `<p class="bk-route__hint" style="top:${(h * 0.24).toFixed(1)}px" aria-hidden="true"><b>כל כיכר בקו היא פרק.</b>לוחצים עליה ומגיעים אליו.</p>`
       + '<p class="bk-route__page" aria-hidden="true"></p>';
     done = route.querySelector('.bk-route__done');
     dot = route.querySelector('.bk-route__dot');
@@ -150,11 +169,13 @@ if (chapters.length) {
     length = done.getTotalLength();
     done.style.strokeDasharray = `${length} ${length}`;
     current = -1;
+    shown = -1;
     update();
   };
 
   const update = () => {
-    if (!done) return;
+    queued = false;
+    if (!done || !wide.matches) return;
     const max = document.documentElement.scrollHeight - innerHeight;
     const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
     done.style.strokeDashoffset = String(length * (1 - p));
@@ -163,9 +184,10 @@ if (chapters.length) {
     dot.setAttribute('cy', here.y.toFixed(1));
     // The current sheet is the last whose top has come past the middle of the window.
     let page = 0;
-    pages.forEach((el, i) => { if (el.getBoundingClientRect().top <= innerHeight / 2) page = i; });
-    label.textContent = two(page + 1);
-    label.style.top = `${here.y.toFixed(1)}px`;
+    const middle = scrollY + innerHeight / 2;
+    for (let i = 0; i < tops.length && tops[i] <= middle; i++) page = i;
+    if (page !== shown) { shown = page; label.textContent = two(page + 1); }
+    label.style.translate = `0 ${here.y.toFixed(1)}px`;
     // And the current stop is the last one that sheet has passed.
     let stop = 0;
     at.forEach((index, i) => { if (index <= page) stop = i; });
@@ -201,8 +223,10 @@ if (chapters.length) {
     setTimeout(over, 6500);
   };
 
-  addEventListener('scroll', update, { passive: true });
+  // Once a frame at most; the sheets' places are read again when they can have moved.
+  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
   addEventListener('resize', build, { passive: true });
+  addEventListener('load', build);
   build();
 }
 
@@ -224,12 +248,12 @@ addEventListener('click', (e) => {
  * things. With reduced motion it is a still print.
  */
 if (!document.querySelector('.bk-lock')) {
-  for (const page of document.querySelectorAll('.bk-cover, .bk-opener, .bk-remember, .bk-end')) {
+  for (const page of document.querySelectorAll('.bk-opener, .bk-remember, .bk-end')) { // the cover carries the city instead
     const side = document.createElement('canvas');
     side.className = 'bk-riso bk-riso--side';
     side.setAttribute('aria-hidden', 'true');
     page.append(side);
-    riso(side, page, { cell: 6, density: 0.4, still: calm.matches });
+    riso(side, page, { cell: 6, density: 0.4, still: calm.matches || lite });
   }
 }
 
@@ -261,6 +285,17 @@ function motion() {
       gsap.to(window, { scrollTo: { y: tops[next], autoKill: true }, duration: 1, ease: 'power3.inOut', overwrite: true });
     };
     addEventListener('keydown', turn);
+
+    // While the page scrolls, count the frames that came late. A run of them, and the book goes lite.
+    let late = 0;
+    const watch = (time, delta) => {
+      if (lite) { gsap.ticker.remove(watch); return; }
+      if (!ScrollTrigger.isScrolling()) return;
+      late = delta > 34 ? late + 1 : Math.max(0, late - 0.2);
+      if (late > 20) goLite();
+    };
+    gsap.ticker.add(watch);
+    undo.push(() => { gsap.ticker.remove(watch); lighten.length = 0; });
 
     /** Once, when the element reaches the window. */
     const once = (trigger, start = 'top 86%') => ({ trigger, start, once: true });
@@ -294,23 +329,29 @@ function motion() {
       // The book's name is a plan that rises into a building: flat at first, then it gains its depth and leans.
       const name = cover.querySelector('.bk-title');
       if (name) {
-        const depth = depthText(name);
+        const depth = depthText(name, { layers: lite ? 8 : 18 });
         undo.push(depth.undo);
         tl.from(depth.stage, { yPercent: 36, opacity: 0, duration: 1.2, ease: E }, 0.5)
           .fromTo(depth.stage, { '--grow': 0, rotationX: 0, rotationY: 0 }, { '--grow': 1, rotationX: -4, rotationY: 7, duration: 2, ease: E }, 0.8)
           .from(depth.stage.querySelector('.fx-depth__face .bk-dot'), land, 1.4)
-          .add(() => undo.push(depthTilt(depth.stage, cover)));
+          .add(() => { if (!lite) undo.push(depthTilt(depth.stage, cover)); });
       }
       tl.from(cover.querySelectorAll('.bk-lede, .bk-cover__version'), { opacity: 0, y: 16, duration: 1, stagger: 0.12, ease: E }, 1.05);
       // The city beside the name stands up out of the photograph, from the crossing outward. Once it stands it
       // answers the scroll: taller the further down you are, and a wave of it stretches or ducks with the wheel.
       const town = cover.querySelector('.bk-cover__city');
       if (town) {
-        const from = [0.11, 0.84]; // where the cover's two lines cross
-        const rise = cityRise(town, { from, duration: 3.2 });
-        tl.add(rise, 0.3);
-        undo.push(rise.undo, cityPulse(town, { trigger: cover, from, ready: () => rise.progress() === 1 }));
-        gsap.fromTo(town, { yPercent: 0 }, { yPercent: 9, ease: 'none', scrollTrigger: along(cover, 'top top', 'bottom top', true) });
+        if (lite) {
+          tl.from(town, { opacity: 0, duration: 1.8, ease: 'power2.out' }, 0.3); // it is simply there
+        } else {
+          const from = [0.11, 0.84]; // where the cover's two lines cross
+          const rise = cityRise(town, { from, duration: 3.2 });
+          tl.add(rise, 0.3);
+          const still = cityPulse(town, { trigger: cover, from, ready: () => rise.progress() === 1 });
+          undo.push(rise.undo, still);
+          lighten.push(still);
+          gsap.fromTo(town, { yPercent: 0 }, { yPercent: 9, ease: 'none', scrollTrigger: along(cover, 'top top', 'bottom top', true) });
+        }
       }
       if (opened) tl.progress(1);
       intro = tl;
@@ -378,9 +419,10 @@ function motion() {
       // A photograph that fills its sheet drifts behind it for as long as the sheet is in the window.
       const bleed = page.querySelector(':scope > .bk-photo--bleed');
       const still = bleed?.querySelector('img');
-      if (still) {
+      if (still && !lite) {
         gsap.set(still, { scale: 1.12 });
-        gsap.fromTo(still, { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: along(page, 'top bottom', 'bottom top', true) });
+        const drift = gsap.fromTo(still, { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: along(page, 'top bottom', 'bottom top', true) });
+        lighten.push(() => { drift.scrollTrigger?.kill(); drift.kill(); gsap.set(still, { yPercent: 0 }); });
         if (!first) gsap.from(bleed, { scale: 1.14, duration: 2.6, ease: E, scrollTrigger: once(page, 'top 82%') });
       }
 
@@ -426,10 +468,11 @@ function motion() {
 
       // The drawn city stands up out of the ground as far as you have scrolled; a plan on it draws itself after.
       const city = !first && page.querySelector('.cty'); // the cover's belongs to the opening
-      if (city) {
+      if (city && !lite) {
         const rise = cityRise(city, { scrub: true });
-        gsap.timeline({ scrollTrigger: along(city, 'top 84%', wide ? 'top 6%' : 'top 22%', 0.9) }).add(rise);
+        const run = gsap.timeline({ scrollTrigger: along(city, 'top 84%', wide ? 'top 6%' : 'top 22%', 0.9) }).add(rise);
         undo.push(rise.undo);
+        lighten.push(() => { run.scrollTrigger?.kill(); run.progress(1); });
       }
 
       // Structure: every line of the page runs from the start side to the edge as it climbs the window.
@@ -444,7 +487,9 @@ function motion() {
         const inside = (f) => (f.matches('.bk-photo') ? f.querySelector(':scope > img') : null);
         frames.map(inside).filter(Boolean).forEach((img) => {
           gsap.set(img, { scale: 1.08 });
-          gsap.fromTo(img, { yPercent: -3.5 }, { yPercent: 3.5, ease: 'none', scrollTrigger: along(img.parentElement, 'top bottom', 'bottom top', true) });
+          if (lite) return;
+          const drift = gsap.fromTo(img, { yPercent: -3.5 }, { yPercent: 3.5, ease: 'none', scrollTrigger: along(img.parentElement, 'top bottom', 'bottom top', true) });
+          lighten.push(() => { drift.scrollTrigger?.kill(); drift.kill(); gsap.set(img, { yPercent: 0 }); });
         });
         gsap.set(frames, { clipPath: 'inset(0% 0% 100% 0%)' });
         ScrollTrigger.batch(frames, {

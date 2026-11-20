@@ -53,6 +53,7 @@ export function cityRise(svg, { from = [0.5, 0.62], duration = 2.6, scrub = fals
         if (t >= 1) {
           if (b.done) continue;
           b.done = true;
+          b.drawn = b.h;
           b.w.setAttribute('d', b.d);
           b.roof.removeAttribute('transform');
           if (b.floors) b.floors.style.opacity = '';
@@ -60,6 +61,8 @@ export function cityRise(svg, { from = [0.5, 0.62], duration = 2.6, scrub = fals
         }
         b.done = false;
         const h = b.h * e;
+        if (b.drawn !== undefined && Math.abs(h - b.drawn) < 0.05) continue; // nothing to redraw: most of a scrubbed run
+        b.drawn = h;
         b.w.setAttribute('d', `M${b.lx} ${b.ly}L${b.cx} ${b.cy}L${b.rx} ${b.ry}L${b.rx} ${(b.ry - h).toFixed(1)}L${b.cx} ${(b.cy - h).toFixed(1)}L${b.lx} ${(b.ly - h).toFixed(1)}ZM${b.cx} ${b.cy}L${b.cx} ${(b.cy - h).toFixed(1)}`);
         b.roof.setAttribute('transform', `translate(0 ${(b.h - h).toFixed(1)})`);
         if (b.floors) b.floors.style.opacity = 0;
@@ -155,7 +158,9 @@ export function cityPulse(svg, { trigger = svg, from = [0.5, 0.62], ready = () =
   }
   const draw = (b, k) => {
     b.k = k;
-    b.g.classList.toggle('is-lit', Math.abs(k - b.rest) > 0.07);
+    b.drawn = undefined; // cityRise's memory of this house no longer holds
+    const lit = Math.abs(k - b.rest) > 0.07;
+    if (lit !== b.lit) { b.lit = lit; b.g.classList.toggle('is-lit', lit); }
     if (Math.abs(k - 1) < 0.004) { // exactly as served
       b.w.setAttribute('d', b.d);
       b.roof.removeAttribute('transform');
@@ -192,7 +197,7 @@ export function cityPulse(svg, { trigger = svg, from = [0.5, 0.62], ready = () =
       if (Math.abs(wave[b.lag]) > 0.002) moving = true;
     }
     if (!moving) {
-      for (const b of list) if (b.g.classList.contains('is-lit') || Math.abs(b.k - b.rest) > 0.001) draw(b, b.rest);
+      for (const b of list) if (b.lit || Math.abs(b.k - b.rest) > 0.001) draw(b, b.rest);
       gsap.ticker.remove(tick);
       live = false;
     }
