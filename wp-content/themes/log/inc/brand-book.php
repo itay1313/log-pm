@@ -74,7 +74,60 @@ function log_bk_opener( string $n ): void {
 		count( $chapters )
 	);
 	log_bk_title( $chapters[ $n ] ?? '', 'h2', 'bk-title--opener' );
-	echo '</div></section>';
+	echo '</div>';
+	if ( $n === '08' ) {
+		echo log_bk_downloads(); // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in log_bk_downloads()
+	}
+	echo '</section>';
+}
+
+/**
+ * The grounds people can take with them: the drawn city (inc/city.php) from six places, each a 3840×2160 JPG in
+ * assets/brand/backgrounds/. slug => [ name, the city's settings ]. The files are drawn from these settings by
+ * tools/brand-backgrounds.mjs: change one here, run the tool, commit the pictures it writes.
+ */
+function log_bk_backgrounds(): array {
+	return [
+		'west'    => [ 'עיר משמאל', [ 'seed' => 5, 'cols' => 18, 'rows' => 12, 'scale' => 0.96, 'theta' => 35, 'cx' => 0.3, 'cy' => 0.7 ] ],
+		'east'    => [ 'עיר מימין', [ 'seed' => 29, 'cols' => 18, 'rows' => 12, 'scale' => 0.92, 'theta' => 52, 'cx' => 0.74, 'cy' => 0.66 ] ],
+		'horizon' => [ 'קו רקיע', [ 'seed' => 11, 'cols' => 26, 'rows' => 9, 'scale' => 0.82, 'theta' => 31, 'cx' => 0.5, 'cy' => 0.9, 'fade' => [ 120, 420 ] ] ],
+		'centre'  => [ 'מרכז העיר', [ 'seed' => 3, 'cols' => 10, 'rows' => 9, 'scale' => 1.7, 'theta' => 42, 'cx' => 0.5, 'cy' => 0.62, 'density' => 1 ] ],
+		'far'     => [ 'מבט מרחוק', [ 'seed' => 17, 'cols' => 30, 'rows' => 24, 'scale' => 0.54, 'theta' => 28, 'cx' => 0.5, 'cy' => 0.5 ] ],
+		'plan'    => [ 'תכנית', [ 'seed' => 23, 'cols' => 20, 'rows' => 16, 'scale' => 0.92, 'theta' => 38, 'cx' => 0.5, 'cy' => 0.5, 'dims' => false, 'area' => false, 'plan' => [ [ 7, 6 ], [ 12, 6 ], [ 12, 8 ], [ 13, 8 ], [ 13, 10 ], [ 9, 10 ], [ 9, 9 ], [ 7, 9 ] ], 'pins' => [ [ 5, 5 ], [ 15, 11.5 ] ] ] ],
+	];
+}
+
+/** Where a ground's picture lives. $small: the thumbnail the book shows. '' until tools/brand-backgrounds.mjs has drawn it. */
+function log_bk_background_url( string $slug, bool $small = false ): string {
+	$file = '/assets/brand/backgrounds/log-background-' . $slug . ( $small ? '-s' : '' ) . '.jpg';
+	return is_readable( get_theme_file_path( $file ) ) ? get_theme_file_uri( $file ) : '';
+}
+
+/**
+ * The grounds as things to take: six small pictures under the line of chapter 08's opening sheet. Each is a link
+ * that saves its full-size JPG. Nothing is printed until the pictures have been drawn.
+ */
+function log_bk_downloads(): string {
+	$items = '';
+	foreach ( log_bk_backgrounds() as $slug => [ $name ] ) {
+		$file  = log_bk_background_url( $slug );
+		$small = log_bk_background_url( $slug, true );
+		if ( $file === '' || $small === '' ) {
+			continue;
+		}
+		$items .= sprintf(
+			'<li><a href="%1$s" download="LOG-background-%2$s.jpg" aria-label="%3$s"><img src="%4$s" alt="" width="480" height="270" loading="lazy" decoding="async"><span>%5$s</span></a></li>',
+			esc_url( $file ),
+			esc_attr( $slug ),
+			esc_attr( 'הורדת הרקע "' . $name . '", קובץ JPG' ),
+			esc_url( $small ),
+			esc_html( $name )
+		);
+	}
+	if ( $items === '' ) {
+		return '';
+	}
+	return '<div class="bk-get"><p class="bk-get__label"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 1v8M2.5 5.5 6 9l3.5-3.5M1.5 11h9"/></svg><b>רקעים להורדה</b> · לוחצים על תמונה והיא נשמרת במחשב · <span dir="ltr">JPG 3840×2160</span></p><ul>' . $items . '</ul></div>';
 }
 
 /** Closes a sheet with its folio: the logo's mark at the end side, the book's name and the page number at the start. */

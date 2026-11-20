@@ -1,13 +1,15 @@
 <?php
 /**
- * The cover and the contents. The cover is the book's one picture of the idea: a roundabout from the air, two thin
- * lines that run to the edges and cross, and the orange dot where they meet.
+ * The cover and the contents. The cover is the book's one picture of the idea: a roundabout from the air, the city
+ * drawn in lines standing up beside it, two thin lines that run to the edges and cross, and the orange dot where they meet.
  */
 
 $chapters = log_bk_chapters();
 ?>
-<section class="bk-page bk-page--night bk-cover" data-chapter="" aria-label="שער">
+<section class="bk-page bk-page--night bk-cover" id="start" data-chapter="" aria-label="שער">
 	<?php echo log_bk_photo( 'aerial-night.jpg', '', 'bk-photo--bleed', 'dark' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+	<?php // The plan over the place: the city in lines stands up out of the photograph, and answers the scroll (src/fx/city.js). ?>
+	<?php echo log_city( [ 'seed' => 5, 'cols' => 14, 'rows' => 10, 'scale' => 0.9, 'theta' => 35, 'cx' => 0.27, 'cy' => 0.74, 'class' => 'bk-cover__city' ] ); // phpcs:ignore WordPress.Security.EscapeOutput -- built in log_city() ?>
 	<span class="bk-cross" style="--x: 139; --y: 603" aria-hidden="true"><i class="bk-cross__v"></i><i class="bk-cross__h"></i><i class="bk-cross__dot"></i></span>
 	<div class="bk-cover__logo"><?php echo log_logo( [ 'variant' => 'night', 'tagline' => true, 'label' => 'לוג' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 	<div class="bk-cover__body">

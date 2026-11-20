@@ -26,6 +26,9 @@
 .cty .b--mid { --cty-line: color-mix(in srgb, var(--works) 60%, var(--night)); --cty-roof: color-mix(in srgb, var(--map-building-face) 70%, var(--night)); }
 .cty .b--far { --cty-line: color-mix(in srgb, var(--works) 32%, var(--night)); --cty-roof: color-mix(in srgb, var(--map-building-face) 40%, var(--night)); }
 
+/* A house the scroll is moving (fx/city.js, cityPulse) takes the full line for as long as it moves. */
+.cty .b.is-lit { --cty-line: var(--works); }
+
 /* A plan: the orange plate with its own streets showing through, under a dashed boundary (what isn't built yet). */
 .cty__plate { fill: var(--works); fill-opacity: .55; }
 .cty__streets, .cty__rounds { fill: none; stroke: var(--night-ink); stroke-opacity: .34; stroke-width: 1; }

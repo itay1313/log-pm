@@ -206,9 +206,29 @@ img, svg { display: block; max-width: 100%; }
 .bk-opener__body { position: absolute; z-index: 1; inset-inline: var(--m); bottom: calc((720 - var(--y)) * var(--u) + 26 * var(--u)); }
 .bk-title--opener { margin-top: calc(14 * var(--u)); max-width: 9.5em; font-size: calc(156 * var(--u)); line-height: .88; letter-spacing: -0.045em; text-wrap: balance; }
 
+/* Chapter 08 opens with its grounds to take away: six small pictures under the line, from the start side. */
+.bk-get { position: absolute; z-index: 1; inset-inline-start: var(--m); top: calc((var(--y) + 18) * var(--u)); }
+.bk-get__label { display: flex; align-items: center; flex-wrap: wrap; gap: calc(6 * var(--u)); font: var(--fw-medium) var(--fs-cap)/1 var(--font-display); color: var(--night-muted); }
+.bk-get__label b { font-weight: var(--fw-bold); color: var(--night-ink); }
+.bk-get__label svg { width: calc(12 * var(--u)); height: auto; overflow: visible; fill: none; stroke: var(--works); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.bk-get ul { display: flex; gap: calc(10 * var(--u)); margin-top: calc(12 * var(--u)); }
+.bk-get a { position: relative; display: block; width: calc(104 * var(--u)); overflow: hidden; box-shadow: 0 0 0 var(--hair) var(--night-line); outline-offset: calc(3 * var(--u)); transition: box-shadow .3s var(--ease-out), translate .5s var(--ease-out); }
+.bk-get img { display: block; width: 100%; height: auto; transition: scale .9s var(--ease-out); }
+.bk-get a span { position: absolute; inset: auto 0 0; padding: calc(5 * var(--u)) calc(7 * var(--u)); background: color-mix(in srgb, var(--night-deep) 88%, transparent); color: var(--night-ink); font: var(--fw-medium) calc(12 * var(--u))/1 var(--font-display); white-space: nowrap; translate: 0 101%; transition: translate .45s var(--ease-out); }
+.bk-get a:hover, .bk-get a:focus-visible { box-shadow: 0 0 0 var(--line-w) var(--works); translate: 0 calc(-4 * var(--u)); }
+.bk-get a:hover img, .bk-get a:focus-visible img { scale: 1.1; }
+.bk-get a:hover span, .bk-get a:focus-visible span { translate: 0 0; }
+
 /* ------------------------------------------------------------------ cover, contents */
 
 .bk-cover { color: var(--night-ink); }
+/* The plan over the place: the drawn city stands on the photograph at the end side, and thins out before the words. */
+.bk-cover__city {
+  position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; --cty-wall: var(--night-deep); opacity: .78;
+  -webkit-mask-image: linear-gradient(to right, #000 36%, transparent 60%); mask-image: linear-gradient(to right, #000 36%, transparent 60%);
+}
+.bk-cover__body, .bk-cover__logo, .bk-cover__version { z-index: 1; }
+.bk-cover__body { position: relative; }
 .bk-cover__logo { position: absolute; top: calc(52 * var(--u)); inset-inline-start: var(--m); }
 .bk-cover__logo .logo { --logo-w: calc(150 * var(--u)); }
 .bk-cover__body { margin-top: calc(170 * var(--u)); }
@@ -378,14 +398,26 @@ img, svg { display: block; max-width: 100%; }
 
 /* ------------------------------------------------------------------ 06 type and the grid */
 
-.bk-type__cols { display: grid; grid-template-columns: 1fr calc(430 * var(--u)); gap: calc(56 * var(--u)); margin-top: calc(24 * var(--u)); }
-.bk-type__faces { display: grid; gap: calc(14 * var(--u)); align-content: start; }
-.bk-type__sample { line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
-.bk-type__sample--xl { font-size: calc(92 * var(--u)); letter-spacing: -0.04em; }
-.bk-type__sample--l { font-size: calc(36 * var(--u)); }
-.bk-type__sample--m { font-size: calc(24 * var(--u)); letter-spacing: 0; color: var(--slate); }
-.bk-type__sample--fig { font-size: calc(60 * var(--u)); letter-spacing: -0.045em; white-space: pre; }
-.bk-type__faces .bk-cap { margin-top: calc(4 * var(--u)); }
+.bk-type__cols { display: grid; grid-template-columns: minmax(0, 1fr) calc(380 * var(--u)); gap: calc(48 * var(--u)); margin-top: calc(18 * var(--u)); }
+/* The scale: every level set at its real size on a desktop, its name at the start side and its measures at the end. */
+.bk-scale { display: grid; align-content: start; border-top: var(--line-w) solid var(--ink); }
+.bk-scale__row { display: grid; grid-template-columns: calc(92 * var(--u)) minmax(0, 1fr) calc(104 * var(--u)) calc(64 * var(--u)); align-items: center; column-gap: calc(18 * var(--u)); padding-block: calc(7 * var(--u)); border-bottom: var(--hair) solid var(--rule); }
+.bk-scale__tag { display: grid; gap: calc(3 * var(--u)); font: var(--fw-medium) calc(12 * var(--u))/1.2 var(--font-display); color: var(--muted); }
+.bk-scale__tag b { font: var(--fw-bold) calc(15 * var(--u))/1 var(--font-display); color: var(--works-deep); letter-spacing: .02em; }
+/* (.bk-page li > p greys every paragraph in a list: the samples take their own colour back.) */
+.bk-page .bk-scale__sample { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ink); padding-bottom: .06em; }
+.bk-scale__spec { display: grid; gap: calc(3 * var(--u)); font: var(--fw-medium) calc(12 * var(--u))/1.2 var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; }
+.bk-scale__spec b { font-weight: var(--fw-bold); color: var(--ink); white-space: nowrap; }
+.bk-scale__spec span:empty::before { content: '\00a0'; }
+.bk-scale__spec i { font-style: normal; }
+.bk-scale__row--h1 .bk-scale__sample { font: var(--fw-bold) calc(72 * var(--u))/.92 var(--font-headline); letter-spacing: var(--track-headline); }
+.bk-scale__row--h2 .bk-scale__sample { font: var(--fw-bold) calc(56 * var(--u))/.92 var(--font-headline); letter-spacing: var(--track-headline); }
+.bk-scale__row--h3 .bk-scale__sample { font: var(--fw-bold) calc(40 * var(--u))/1.02 var(--font-headline); letter-spacing: var(--track-heading); }
+.bk-scale__row--h4 .bk-scale__sample { font: var(--fw-bold) calc(28 * var(--u))/1.02 var(--font-headline); letter-spacing: var(--track-heading); }
+.bk-page .bk-scale__row--body .bk-scale__sample { font: var(--fw-regular) calc(18 * var(--u))/1.6 var(--font-text); color: var(--slate); }
+.bk-page .bk-scale__row--cap .bk-scale__sample { font: var(--fw-regular) calc(14 * var(--u))/1.4 var(--font-text); color: var(--slate); }
+.bk-scale__row--fig .bk-scale__sample { font: var(--fw-light) calc(52 * var(--u))/1 var(--font-figure); letter-spacing: var(--track-figure); white-space: pre; direction: ltr; text-align: end; }
+.bk-scale__row--h1, .bk-scale__row--h2 { padding-block: calc(9 * var(--u)) calc(6 * var(--u)); }
 .bk-type__sizes td { font-variant-numeric: tabular-nums; }
 .bk-type__sizes td, .bk-type__sizes tbody th { padding-block: calc(8 * var(--u)); }
 .bk-type__side .bk-rules { margin-top: calc(14 * var(--u)); }
@@ -569,7 +601,12 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-scrims__person > p { font-size: var(--fs-cap); color: var(--muted); }
 
 .bk-icons__grid { flex: 1; display: grid; grid-template-columns: repeat(6, 1fr); align-content: space-evenly; margin-top: calc(14 * var(--u)); border-top: var(--hair) solid var(--rule); }
-.bk-icons__grid li { display: grid; justify-items: center; gap: calc(10 * var(--u)); padding: calc(16 * var(--u)) 0; border-bottom: var(--hair) solid var(--rule); font: var(--fw-medium) calc(14 * var(--u))/1.2 var(--font-display); }
+.bk-icons__grid li { border-bottom: var(--hair) solid var(--rule); font: var(--fw-medium) calc(14 * var(--u))/1.2 var(--font-display); }
+/* An icon is taken as a file: the cell is a link (its file is written by main.js), and says so under the pointer. */
+.bk-icons__grid a { position: relative; display: grid; justify-items: center; gap: calc(10 * var(--u)); padding: calc(16 * var(--u)) 0; color: inherit; text-decoration: none; outline-offset: calc(-4 * var(--u)); }
+.bk-icons__grid a[href] { cursor: pointer; }
+.bk-icons__grid a i { position: absolute; top: calc(10 * var(--u)); inset-inline-end: calc(14 * var(--u)); padding: calc(4 * var(--u)) calc(7 * var(--u)); background: var(--ink); color: var(--paper-2); font: var(--fw-bold) calc(10 * var(--u))/1 var(--font-display); letter-spacing: .08em; opacity: 0; translate: 0 calc(5 * var(--u)); transition: opacity .25s var(--ease-out), translate .45s var(--ease-out); }
+.bk-icons__grid a[href]:hover i, .bk-icons__grid a[href]:focus-visible i { opacity: 1; translate: 0 0; }
 .bk-icons__grid .ico { --ico: calc(58 * var(--u)); transition: scale .5s var(--ease-out); }
 .bk-icons__grid li:hover .ico { scale: 1.12; }
 .bk-rules--3 { grid-template-columns: repeat(3, 1fr); column-gap: calc(40 * var(--q)); }
@@ -676,6 +713,21 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 
 .bk-end__logo { position: absolute; left: calc(176 * var(--u)); top: calc(476 * var(--u)); }
 .bk-end__logo .logo { --logo-w: calc(150 * var(--u)); }
+/* The way back to the cover sits on the line at the start side: LOG's O, the road going up through it, and where it leads. */
+.bk-again { position: absolute; z-index: 1; inset-inline-start: var(--m); bottom: calc(141 * var(--u)); display: flex; align-items: center; gap: calc(22 * var(--u)); color: var(--night-ink); text-decoration: none; outline-offset: calc(8 * var(--u)); }
+.bk-again .circ { --circ-n: 92; --circ-u: var(--u); }
+.bk-again .circ > svg { transition: rotate 1.1s var(--ease-out); }
+.bk-again:hover .circ > svg, .bk-again:focus-visible .circ > svg { rotate: 90deg; }
+.bk-again .circ__in { display: grid; place-items: center; width: 74%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: none; }
+.bk-again .bk-again__arrow { position: relative; inset: auto; width: calc(30 * var(--u)); height: calc(30 * var(--u)); overflow: visible; }
+.bk-again .bk-again__arrow path { fill: none; stroke: var(--night-ink); stroke-width: var(--line-w); stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.bk-again:hover .bk-again__arrow, .bk-again:focus-visible .bk-again__arrow { animation: bk-again-go .9s var(--ease-out); }
+@keyframes bk-again-go { 0% { translate: 0 0; } 42% { translate: 0 -160%; } 43% { translate: 0 160%; } 100% { translate: 0 0; } }
+.bk-again__text { display: grid; gap: calc(8 * var(--u)); }
+.bk-again__text b { font: var(--fw-bold) calc(38 * var(--u))/.95 var(--font-headline); letter-spacing: var(--track-headline); }
+.bk-again__text small { font: var(--fw-medium) var(--fs-cap)/1 var(--font-display); color: var(--night-muted); transition: color .3s var(--ease-out); }
+.bk-again:hover small, .bk-again:focus-visible small { color: var(--works); }
+@media (prefers-reduced-motion: reduce) { .bk-again .circ > svg { transition: none; } .bk-again .bk-again__arrow { animation: none !important; } }
 
 /* ------------------------------------------------------------------ text effects (src/fx/text.js), one place each */
 
@@ -773,7 +825,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-route__island { opacity: .55; }
 .bk-route__done { stroke: var(--works); }
 .bk-route__dot { fill: var(--works); }
-/* Every roundabout is a way in: a wide target, the dot landing in it under the pointer, the chapter's name beside it. */
+/* Every roundabout is a way in: a wide target, the dot landing in it under the pointer, the stop's name beside it. */
 .bk-route a { position: absolute; left: 50%; width: 40px; height: 34px; margin: -17px 0 0 -20px; pointer-events: auto; cursor: pointer; outline-offset: -4px; }
 .bk-route a::before { content: ''; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px; border-radius: 50%; background: var(--works); scale: 0; transition: scale .45s var(--ease-out); }
 .bk-route a:hover::before, .bk-route a:focus-visible::before { scale: 1; }
@@ -781,12 +833,32 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   position: absolute; top: 50%; right: calc(100% - 2px); translate: 10px -50%; display: flex; align-items: baseline; gap: 9px;
   padding: 9px 13px 9px 12px; white-space: nowrap; background: var(--night-2); color: var(--night-ink); border-inline-start: 2px solid var(--works); box-shadow: 0 0 0 1px var(--night-line);
   font: var(--fw-medium) 14px/1 var(--font-display); opacity: 0; pointer-events: none;
-  transition: opacity .25s var(--ease-out), translate .45s var(--ease-out);
+  transition: opacity .25s var(--ease-out), translate .45s var(--ease-out), padding .3s var(--ease-out), border-color .25s var(--ease-out);
 }
 .bk-route a span b { font: var(--fw-light) 17px/1 var(--font-figure); letter-spacing: var(--track-figure); color: var(--works); font-variant-numeric: tabular-nums; }
 .bk-route a:hover span, .bk-route a:focus-visible span, .bk-route a.is-flash span { opacity: 1; translate: 0 -50%; }
+/* The pointer comes near the line and the whole menu opens: every stop says its name in a small row, and the rows
+   can be clicked too. The one under the pointer keeps its full size and the orange edge. */
+.bk-route.is-near a span { opacity: 1; translate: 0 -50%; pointer-events: auto; transition-delay: calc(var(--i) * 18ms); }
+.bk-route.is-near a:not(:hover, :focus-visible) span { padding: 5px 10px 5px 9px; border-inline-start-color: var(--logo-grey); font-size: 12px; }
+.bk-route.is-near a:not(:hover, :focus-visible) span b { font-size: 12px; font-weight: var(--fw-medium); }
+.bk-route.is-near a.is-current:not(:hover, :focus-visible) span { border-inline-start-color: var(--works); }
+.bk-route.is-near a:hover, .bk-route.is-near a:focus-visible { z-index: 1; }
+/* Once, when the book opens: a ripple runs down the roundabouts and one sentence says what they are. */
+.bk-route a::after { content: ''; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px; border-radius: 50%; box-shadow: 0 0 0 2px var(--works); opacity: 0; pointer-events: none; }
+.bk-route.is-tour a::after { animation: bk-route-ripple 1.5s var(--ease-out) calc(.25s + var(--i) * 85ms) 2 both; }
+@keyframes bk-route-ripple { 0% { opacity: 0; scale: .7; } 22% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: 2.5; } }
+.bk-route__hint {
+  position: absolute; right: calc(100% + 4px); translate: 10px -50%; width: max-content; max-width: 250px; padding: 10px 13px 10px 12px;
+  background: var(--night-2); color: var(--night-ink); border-inline-start: 2px solid var(--works); box-shadow: 0 0 0 1px var(--night-line);
+  font: var(--fw-medium) 14px/1.35 var(--font-display); opacity: 0; pointer-events: none; transition: opacity .4s var(--ease-out), translate .7s var(--ease-out);
+}
+.bk-route__hint b { display: block; font-weight: var(--fw-bold); }
+.bk-route.is-tour .bk-route__hint { opacity: 1; translate: 0 -50%; }
+.bk-route.is-tour.is-near .bk-route__hint { opacity: 0; }
 .bk-route__page { position: absolute; right: calc(100% - 6px); margin-top: -.5em; font: var(--fw-medium) 11px/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--works); transition: opacity .25s var(--ease-out); }
-.bk-route:has(a:hover, a:focus-visible, a.is-flash) .bk-route__page { opacity: 0; }
+.bk-route:has(a:hover, a:focus-visible, a.is-flash) .bk-route__page, .bk-route.is-near .bk-route__page, .bk-route.is-tour .bk-route__page { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .bk-route.is-tour a::after { animation: none; } .bk-route a span { transition-delay: 0s !important; } }
 @media (max-width: 1099px) { .bk-route { display: none; } }
 
 /* ------------------------------------------------------------------ phones: the sheet lets go of its height and reflows */
@@ -812,6 +884,16 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-cover .bk-cross, .bk-remember .bk-cross, .bk-end .bk-cross { display: none; }
   .bk-cover__version { position: static; margin-top: 24px; }
   .bk-end__logo { left: var(--m); top: auto; bottom: 64px; }
+  .bk-again { bottom: 168px; gap: 16px; }
+  .bk-again .circ { --circ-n: 68; --circ-u: 1px; }
+  .bk-again .bk-again__arrow { width: 24px; height: 24px; }
+  .bk-again__text b { font-size: 30px; }
+  .bk-get { inset-inline: var(--m); top: auto; bottom: 26px; }
+  .bk-get ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .bk-get a { width: auto; }
+  .bk-get a span { display: none; }
+  .bk-opener:has(.bk-get) .bk-opener__body { bottom: max(30svh, 262px); }
+  .bk-cover__city { opacity: .42; -webkit-mask-image: linear-gradient(to bottom, transparent 30%, #000 62%); mask-image: linear-gradient(to bottom, transparent 30%, #000 62%); }
   .bk-folio { margin-top: 36px; }
   .bk-lede { max-width: none; }
   .bk-toc__list, .bk-how__grid, .bk-junction__words, .bk-vision__cols, .bk-tone__cols, .bk-logo__versions, .bk-wrong__grid,
@@ -850,8 +932,16 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-junction__tick, .bk-junction__words li.is-key::before, .bk-anatomy__notes .ln { display: none; }
   .bk-anatomy__logo .logo { --logo-w: 100%; }
   .bk-anatomy__notes { gap: 24px; }
-  .bk-type__sample { white-space: normal; }
-  .bk-type__sample--xl { font-size: 56px; }
+  .bk-scale__row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 8px; padding-block: 14px; }
+  .bk-scale__tag { display: flex; align-items: baseline; gap: 8px; }
+  .bk-scale__spec { grid-row: 1; grid-column: 2; display: flex; gap: 8px; font-size: 12px; }
+  .bk-scale__spec--set { display: none; }
+  .bk-page .bk-scale__sample { grid-column: 1 / -1; white-space: normal; }
+  .bk-scale__row--h1 .bk-scale__sample { font-size: 44px; }
+  .bk-scale__row--h2 .bk-scale__sample { font-size: 36px; }
+  .bk-scale__row--h3 .bk-scale__sample { font-size: 32px; }
+  .bk-scale__row--h4 .bk-scale__sample { font-size: 24px; }
+  .bk-scale__row--fig .bk-scale__sample { font-size: 44px; }
   .bk-grid__sheet { margin: 0 0 0 34px; } /* room for the measures, which stand at the physical left */
   .bk-formats__row { flex-wrap: wrap; justify-content: flex-start; }
   .bk-mini { --q: calc(var(--col) / var(--mw)); }
@@ -915,5 +1005,5 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .bk-book { display: block; }
   .bk-page { --w: 1280px; margin: 0; box-shadow: none; clip-path: none; break-after: page; break-inside: avoid; }
-  .bk-riso, .bk-route, .bk-veil { display: none !important; }
+  .bk-riso, .bk-route, .bk-veil, .bk-get, .bk-again, .bk-icons__grid a i { display: none !important; }
 }
