@@ -77,6 +77,28 @@ function log_bk_opener( string $n ): void {
 	echo '</div></section>';
 }
 
+/**
+ * The grounds people can take with them: the drawn city (inc/city.php) from six places, each a 3840×2160 JPG in
+ * assets/brand/backgrounds/. slug => [ name, the city's settings ]. The files are drawn from these settings by
+ * tools/brand-backgrounds.mjs: change one here, run the tool, commit the pictures it writes.
+ */
+function log_bk_backgrounds(): array {
+	return [
+		'west'    => [ 'עיר משמאל', [ 'seed' => 5, 'cols' => 18, 'rows' => 12, 'scale' => 0.96, 'theta' => 35, 'cx' => 0.3, 'cy' => 0.7 ] ],
+		'east'    => [ 'עיר מימין', [ 'seed' => 29, 'cols' => 18, 'rows' => 12, 'scale' => 0.92, 'theta' => 52, 'cx' => 0.74, 'cy' => 0.66 ] ],
+		'horizon' => [ 'קו רקיע', [ 'seed' => 11, 'cols' => 26, 'rows' => 9, 'scale' => 0.82, 'theta' => 31, 'cx' => 0.5, 'cy' => 0.9, 'fade' => [ 120, 420 ] ] ],
+		'centre'  => [ 'מרכז העיר', [ 'seed' => 3, 'cols' => 10, 'rows' => 9, 'scale' => 1.7, 'theta' => 42, 'cx' => 0.5, 'cy' => 0.62, 'density' => 1 ] ],
+		'far'     => [ 'מבט מרחוק', [ 'seed' => 17, 'cols' => 30, 'rows' => 24, 'scale' => 0.54, 'theta' => 28, 'cx' => 0.5, 'cy' => 0.5 ] ],
+		'plan'    => [ 'תכנית', [ 'seed' => 23, 'cols' => 20, 'rows' => 16, 'scale' => 0.92, 'theta' => 38, 'cx' => 0.5, 'cy' => 0.5, 'dims' => false, 'area' => false, 'plan' => [ [ 7, 6 ], [ 12, 6 ], [ 12, 8 ], [ 13, 8 ], [ 13, 10 ], [ 9, 10 ], [ 9, 9 ], [ 7, 9 ] ], 'pins' => [ [ 5, 5 ], [ 15, 11.5 ] ] ] ],
+	];
+}
+
+/** Where a ground's picture lives. $small: the thumbnail the book shows. '' until tools/brand-backgrounds.mjs has drawn it. */
+function log_bk_background_url( string $slug, bool $small = false ): string {
+	$file = '/assets/brand/backgrounds/log-background-' . $slug . ( $small ? '-s' : '' ) . '.jpg';
+	return is_readable( get_theme_file_path( $file ) ) ? get_theme_file_uri( $file ) : '';
+}
+
 /** Closes a sheet with its folio: the logo's mark at the end side, the book's name and the page number at the start. */
 function log_bk_close( bool $folio = true ): void {
 	if ( $folio ) {
