@@ -43,9 +43,11 @@ if (!grounds.length) fail(`no such ground: ${only.join(', ')}`);
 const tokens = join(theme, 'assets/brand/tokens.css');
 if (!existsSync(tokens)) fail('assets/brand/tokens.css is missing: run `npm run build` in the theme first');
 // The sheet's own rules for a city used as a ground (brand.css, .bk-opener__city): dark walls, the drawing stepped back.
-const page = (svg) => `<!doctype html><meta charset="utf-8"><style>${readFileSync(tokens, 'utf8')}${readFileSync(join(theme, 'src/styles/city.css'), 'utf8')}
+// A thumbnail is a quarter of the width: its lines are drawn heavier and at full strength, or they wash out.
+const page = (svg, small = false) => `<!doctype html><meta charset="utf-8"><style>${readFileSync(tokens, 'utf8')}${readFileSync(join(theme, 'src/styles/city.css'), 'utf8')}
 html, body { margin: 0; height: 100%; background: var(--night); overflow: hidden; }
 .cty { position: fixed; inset: 0; width: 100%; height: 100%; --cty-wall: var(--night-deep); opacity: .72; }
+${small ? '.cty { opacity: 1; } .cty .w, .cty .r { stroke-width: 2.8; } .cty__roads { stroke-width: 2; } .cty__bound { stroke-width: 6; }' : ''}
 </style>${svg}`;
 
 const profile = join(work, 'profile');
@@ -86,9 +88,9 @@ try {
 
   mkdirSync(out, { recursive: true });
   for (const { slug, name, svg } of grounds) {
-    await tab('Page.setDocumentContent', { frameId: frameTree.frame.id, html: page(svg) });
     // [ file suffix, CSS width, CSS height, device pixels per CSS pixel, JPEG quality ]
-    for (const [suffix, width, height, scale, quality] of [['', 1920, 1080, 2, 84], ['-s', 240, 135, 2, 82]]) {
+    for (const [suffix, width, height, scale, quality] of [['', 1920, 1080, 2, 84], ['-s', 240, 135, 2, 84]]) {
+      await tab('Page.setDocumentContent', { frameId: frameTree.frame.id, html: page(svg, suffix !== '') });
       await tab('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: scale, mobile: false });
       await sleep(250);
       const { data } = await tab('Page.captureScreenshot', { format: 'jpeg', quality });
