@@ -82,8 +82,8 @@ $when = [
 			<?php foreach ( $when as [ $sample, $name, $use, $not ] ) : ?>
 				<tr>
 					<th scope="row"><span class="bk-when__sample"><?php echo $sample; // phpcs:ignore WordPress.Security.EscapeOutput -- component markup ?></span><?php echo esc_html( $name ); ?></th>
-					<td><?php echo esc_html( $use ); ?></td>
-					<td><?php echo esc_html( $not ); ?></td>
+					<td data-label="מתי"><?php echo esc_html( $use ); ?></td>
+					<td data-label="לא"><?php echo esc_html( $not ); ?></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>

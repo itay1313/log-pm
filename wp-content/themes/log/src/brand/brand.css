@@ -954,6 +954,19 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-table tr { padding-block: 12px; border-bottom: 1px solid var(--rule); }
   .bk-table tbody th, .bk-table td { border: 0; padding: 3px 0; }
   .bk-contrast__ratio { text-align: start; }
+  /* The sizes are numbers that only mean something under their column: this one stays a table, and fits a phone. */
+  .bk-type__sizes { display: table; }
+  .bk-type__sizes thead { display: table-header-group; }
+  .bk-type__sizes tbody { display: table-row-group; }
+  .bk-type__sizes tr { display: table-row; padding: 0; border: 0; }
+  .bk-type__sizes th, .bk-type__sizes td { display: table-cell; }
+  .bk-type__sizes thead th { padding-bottom: 8px; white-space: nowrap; }
+  .bk-type__sizes thead th + th, .bk-type__sizes td { padding-inline-start: 12px; }
+  .bk-type__sizes tbody th, .bk-type__sizes td { padding-block: 11px; border-bottom: 1px solid var(--rule); }
+  .bk-type__sizes tbody th { font-size: 15px; }
+  .bk-type__sizes td { white-space: nowrap; }
+  /* A stacked row has lost its column heads: each cell says its own (data-label). */
+  .bk-table td[data-label]::before { content: attr(data-label) ': '; font-weight: var(--fw-bold); color: var(--ink); }
   /* The full-size chart and timeline take the column; the ones inside miniatures keep the miniature's scale. */
   .bk-data__cols > .bk-chart { --q: calc(var(--col) / 660); }
   .bk-time > .bk-timeline { --q: calc(var(--col) / 900); }
