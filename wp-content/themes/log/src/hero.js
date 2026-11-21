@@ -187,8 +187,9 @@ export async function initHero(hero) {
   }
   function renderList(kind) {
     const items = listItems(kind);
-    const cols = kind === 'national' ? ['שם', 'לקוח', 'שלב'] : ['שם', 'עיר', 'רשות', 'תחום', 'שלב'];
-    const cells = (p) => (kind === 'national' ? [p.client, p.stageLabel] : [p.city, p.authorityName, p.domainName, p.stageLabel]);
+    // One "place" column: the city, and the authority only where it differs (it is the same name on most rows).
+    const cols = kind === 'national' ? ['שם', 'לקוח', 'שלב'] : ['שם', 'מקום', 'תחום', 'שלב'];
+    const cells = (p) => (kind === 'national' ? [p.client, p.stageLabel] : [placeOf(p), p.domainName, p.stageLabel]);
     drawer.dataset.list = kind;
     drawer.innerHTML = `
       <div class="hero-drawer__head">

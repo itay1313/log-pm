@@ -605,9 +605,12 @@ html.motion .site-footer__junction .ln__x { background: linear-gradient(to botto
   .site-footer__board .arrow { grid-column: 3; grid-row: 1 / span 2; }
 }
 
-/* Cookie banner: low, compact, a white sign; accept and decline weigh the same */
-.cookie-banner { position: fixed; z-index: 90; inset-inline-start: var(--gutter); bottom: var(--gutter); width: min(28rem, calc(100% - 2 * var(--gutter))); display: grid; gap: 1rem; padding: 1.5rem 1.6rem 1.5rem; background: var(--legend); color: var(--sign-ink); box-shadow: 0 30px 60px -20px color-mix(in srgb, var(--night-deep) 55%, transparent), 0 2px 8px color-mix(in srgb, var(--night-deep) 12%, transparent); }
+/* Cookie banner: low, compact, a raised night sheet (the night tokens come from .sheet--night); accept and decline
+   are outlined at the same weight. It is the quietest thing on the page, never the brightest. */
+.cookie-banner { position: fixed; z-index: 90; inset-inline-start: var(--gutter); bottom: var(--gutter); width: min(28rem, calc(100% - 2 * var(--gutter))); display: grid; gap: 1rem; padding: 1.35rem 1.5rem 1.5rem; background-color: var(--plate-2); box-shadow: 0 30px 60px -20px color-mix(in srgb, var(--night-deep) 70%, transparent), 0 2px 8px color-mix(in srgb, var(--night-deep) 30%, transparent); }
 .cookie-banner__text { margin: 0; font-size: var(--fs-small); }
 .cookie-banner__actions { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
 .cookie-banner__actions .btn { padding: .85em 1em; }
 @media (max-width: 900px) { .cookie-banner { inset-inline: 8px; width: auto; bottom: calc(66px + env(safe-area-inset-bottom)); padding: 1rem 1.1rem 1.1rem; gap: .75rem; } body.at-map .cookie-banner { bottom: 8px; } }
+/* Phones, on the home map: the banner stands above the search, the filters and the figures, never over them. */
+@media (max-width: 760px) { body.home.at-map .cookie-banner { bottom: calc(152px + env(safe-area-inset-bottom)); } }
