@@ -964,7 +964,16 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-table tbody, .bk-table tr, .bk-table th, .bk-table td { display: block; width: auto !important; }
   .bk-table tr { padding-block: 12px; border-bottom: 1px solid var(--rule); }
   .bk-table tbody th, .bk-table td { border: 0; padding: 3px 0; }
-  .bk-contrast__ratio { text-align: start; }
+  /* The contrast pairs keep to two lines each: the chip, then the pair's name with its ratio at the end side, and
+     under them what it is for with the verdict. Five stacked lines a pair made eight pairs a page of its own. */
+  .bk-contrast__table tr { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 14px; row-gap: 3px; align-items: baseline; }
+  .bk-contrast__table tbody th, .bk-contrast__table td { padding: 0; }
+  .bk-contrast__table td:first-child { grid-row: 1 / span 2; align-self: center; }
+  .bk-contrast__chip { width: 60px; height: 38px; font-size: 15px; }
+  .bk-contrast__table tbody th { grid-column: 2; grid-row: 1; font-size: 16px; }
+  .bk-contrast__ratio { grid-column: 3; grid-row: 1; font-size: 19px; text-align: start; white-space: nowrap; }
+  .bk-contrast__table td:last-child { grid-column: 2; grid-row: 2; font-size: 14px; }
+  .bk-contrast__table .bk-contrast__verdict { grid-column: 3; grid-row: 2; font-size: 13px; text-align: end; }
   /* The sizes are numbers that only mean something under their column: this one stays a table, and fits a phone. */
   .bk-type__sizes { display: table; }
   .bk-type__sizes thead { display: table-header-group; }
