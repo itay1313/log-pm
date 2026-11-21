@@ -4,8 +4,13 @@
  * its core in the accent colour. Quiet by design: one tone close to its ground, a few dots of orange.
  *
  * The tone is the canvas's CSS `color`, the accent its `outline-color` (so both are tokens, set in CSS), and how
- * strong the field is, is its CSS opacity. It draws only while on screen. With reduced motion it is one still frame.
+ * strong the field is, is its CSS opacity. It draws only while on screen, and not while the page is scrolling: the
+ * drift is too slow to be missed then, and the scroll needs the frames. With reduced motion it is one still frame.
+ * risoRest() stills every field for good, for a computer that isn't keeping up.
  */
+let scrolled = -1e9, resting = false;
+if (typeof addEventListener === 'function') addEventListener('scroll', () => { scrolled = performance.now(); }, { passive: true });
+export function risoRest() { resting = true; }
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
 const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
 function noise(x, y) {
@@ -56,15 +61,16 @@ export function riso(canvas, host = canvas.parentElement, { cell = 6, fps = 20, 
   };
 
   const loop = (time) => {
+    if (resting) { raf = 0; return; }
     raf = requestAnimationFrame(loop);
-    if (time - last < 1000 / fps) return;
+    if (time - last < 1000 / fps || time - scrolled < 200) return;
     last = time;
     draw(time);
   };
   const run = (on) => {
     cancelAnimationFrame(raf);
     raf = 0;
-    if (on && !still && !document.hidden) raf = requestAnimationFrame(loop);
+    if (on && !still && !resting && !document.hidden) raf = requestAnimationFrame(loop);
   };
 
   const touchAt = (e) => {
