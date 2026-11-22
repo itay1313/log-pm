@@ -104,34 +104,64 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
   border: 0; background: transparent; color: var(--legend); overflow: hidden;
 }
 .gantry::backdrop { background: color-mix(in srgb, var(--night-deep) 55%, transparent); }
+/*
+ * The plate is a night sheet set like a chapter opener in the brand book. A thin line under the top bar runs edge
+ * to edge; a second line parts the destinations from the side column and cuts through it, the dot where they meet.
+ * The first is grey from the start side and turns orange at the crossing (--x). --mh, --mv and --md are the lines
+ * and the dot being drawn when the menu opens (motion.js); without motion they are simply there.
+ */
 .gantry__plate {
-  height: 100%; overflow: auto; overscroll-behavior: contain; border-radius: var(--r-frame); background: var(--plate);
-  padding: clamp(22px, 3vw, 40px) clamp(28px, 4.4vw, 72px) clamp(28px, 4vw, 56px);
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); grid-template-rows: auto 1fr; column-gap: clamp(2rem, 6vw, 7rem);
+  --pad-x: clamp(28px, 4.4vw, 72px); --pad-b: clamp(28px, 4vw, 56px); --gap: clamp(2rem, 4.5vw, 5rem); --side: clamp(300px, 30vw, 460px);
+  --x: calc(var(--pad-x) + var(--side) + var(--gap) / 2); /* the crossing, from the plate's left edge */
+  position: relative; height: 100%; overflow: auto; overscroll-behavior: contain; border-radius: var(--r-frame); background: var(--plate);
+  padding: clamp(18px, 2.4vw, 32px) var(--pad-x) 0;
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--side); grid-template-rows: auto 1fr; column-gap: var(--gap);
 }
-.gantry__top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding-bottom: clamp(1rem, 3vh, 2.5rem); }
+.gantry__top { position: relative; grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding-bottom: clamp(14px, 2vw, 26px); }
 .gantry__close { gap: .8rem; }
 .gantry__close .icon { width: 13px; height: 13px; }
-.gantry__nav { align-self: center; }
+.gantry__cross { display: contents; }
+.gantry__cross-h {
+  position: absolute; z-index: 2; inset-inline: 0; height: var(--line-w); margin-top: calc(var(--line-w) / -2); pointer-events: none;
+  grid-row: 2; align-self: start; /* it lies on the seam between the top bar and the sheet */
+  background: linear-gradient(to right, var(--works) calc(var(--x) - var(--switch-blend) / 2), var(--hair-strong) calc(var(--x) + var(--switch-blend) / 2));
+  transform: scaleX(var(--mh, 1)); transform-origin: 100% 50%;
+}
+.gantry__cross-v { position: absolute; z-index: 2; left: var(--x); width: var(--rule-w); grid-row: 2; align-self: stretch; height: 100%; background: var(--hair-strong); pointer-events: none; transform: scaleY(var(--mv, 1)); transform-origin: 50% 0; }
+.gantry__cross-dot {
+  position: absolute; z-index: 3; left: var(--x); grid-row: 2; align-self: start; width: var(--dot); height: var(--dot); margin: calc(var(--dot) / -2) calc(var(--dot) / -2 + var(--rule-w) / 2);
+  border-radius: 50%; background: var(--works); pointer-events: none; scale: var(--md, 1);
+}
 
+/* Destinations: a Light number, the name heavy, what lies down that road, the arrow. Rows between hairs; the row
+   you point at takes the thin orange line, laid from the start side, and its number turns orange. */
+.gantry__nav { align-self: center; padding-block: 1.5rem var(--pad-b); }
 .dest { border-top: var(--rule-w) solid var(--hair); }
 .dest__row {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; column-gap: clamp(1rem, 3vw, 2.5rem);
+  position: relative; display: grid; grid-template-columns: clamp(2.4rem, 4vw, 3.75rem) minmax(0, 1fr) auto auto; align-items: center; column-gap: clamp(.75rem, 2vw, 2rem);
   padding: clamp(.2rem, .9vh, .55rem) 0; border-bottom: var(--rule-w) solid var(--hair); color: var(--legend); text-decoration: none;
 }
+.dest__row::after { content: ''; position: absolute; inset-inline: 0; bottom: calc(-1 * var(--rule-w)); height: var(--line-w); background: var(--works); transform: scaleX(0); transform-origin: 100% 50%; transition: transform .7s var(--ease-out); }
+.dest__row:dir(ltr)::after { transform-origin: 0 50%; }
+.dest__n { font: var(--fw-light) clamp(var(--fs-lead), 1.7vw, var(--fs-h4))/1 var(--font-figure); letter-spacing: var(--track-figure); font-variant-numeric: tabular-nums; color: var(--legend-muted); transition: color .3s var(--ease-out); }
 .dest__name { display: block; overflow: hidden; font: var(--fw-bold) clamp(var(--fs-h3), min(4.8vw + 1.2vh, 10vh), var(--fs-h1))/var(--lh-heading) var(--font-headline); letter-spacing: var(--track-headline); padding-bottom: .06em; }
-.dest__name > span { display: inline-block; transition: color .3s, translate .5s var(--ease-out); }
+.dest__name > span { display: inline-block; transition: translate .5s var(--ease-out); }
 .dest__dist { font: var(--type-legend); color: var(--legend-muted); font-variant-numeric: tabular-nums; text-align: end; }
 .dest__row .arrow { width: clamp(1.75rem, 2.4vw, 2.4rem); height: clamp(1.2rem, 1.6vw, 1.6rem); color: var(--legend-muted); transition: translate .5s var(--ease-out), color .3s; }
-.dest__row:hover .dest__name > span, .dest__row:focus-visible .dest__name > span { color: var(--works); translate: -.12em 0; }
+.dest__row:hover .dest__name > span, .dest__row:focus-visible .dest__name > span { translate: -.12em 0; }
 .dest__row:hover .arrow, .dest__row:focus-visible .arrow { color: var(--works); translate: -10px 0; }
+.dest__row:hover::after, .dest__row:focus-visible::after { transform: none; }
+.dest__row:hover .dest__n, .dest__row:focus-visible .dest__n, .dest__item.is-current .dest__n { color: var(--works); }
 .dest__row:focus-visible { outline-offset: -2px; }
-/* You are here */
 /* "You are here" is the junction: the orange dot, then the words. No plate. */
 .dest__item.is-current .dest__dist::before { content: 'אתה כאן'; display: inline-block; margin-inline-end: 1.1rem; padding-inline-start: calc(var(--dot) + .5em); background: radial-gradient(circle closest-side, var(--works) 96%, transparent) right center / var(--dot) var(--dot) no-repeat; color: var(--legend); font-weight: var(--fw-medium); }
 
-.gantry__side { align-self: center; display: grid; align-content: start; gap: 1.75rem; padding-block: 1rem .5rem; }
-.dest__name .shield { font-size: max(var(--fs-micro), .17em); }
+/* The side column stands on a place: the picture runs from the crossing lines out to the plate's edges. At a third
+   of its strength over the night it is the book's one even layer; the words on it stay white. */
+.gantry__side { position: relative; display: flex; flex-direction: column; gap: 1.6rem; margin-inline-end: calc(-1 * var(--pad-x)); padding: clamp(1.5rem, 4vh, 2.75rem) 0 var(--pad-b); padding-inline-end: var(--pad-x); }
+.gantry__place { position: absolute; z-index: 0; inset-block: 0; inset-inline: calc(var(--gap) / -2) 0; width: calc(100% + var(--gap) / 2); max-width: none; height: 100%; object-fit: cover; opacity: .34; pointer-events: none; }
+.gantry__place--colour { filter: grayscale(.85); }
+.gantry__side > :not(.gantry__place) { position: relative; z-index: 1; }
 /* In the menu "talk to us" is the one orange action. The search is a thin line to write on, like "לאן?" on the map:
    it turns orange while you type, and the word at its end sends it. */
 .gantry__side .search-form { gap: 0; align-items: center; max-width: none; box-shadow: inset 0 calc(-1 * var(--line-w)) 0 var(--hair-strong); transition: box-shadow .35s var(--ease-out); }
@@ -143,7 +173,7 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
 .gantry__side .search-form input::-webkit-search-cancel-button { filter: invert(1); }
 .gantry__side .search-form button { min-height: 2.75rem; padding: 0 0 0 .25rem; border-radius: 0; background: none; box-shadow: none; color: var(--legend); transition: color .3s var(--ease-out); }
 .gantry__side .search-form button:hover, .gantry__side .search-form button:focus-visible { background: none; box-shadow: none; color: var(--works); }
-.gantry__contact { display: grid; gap: .5rem; font: var(--type-legend); }
+.gantry__contact { display: grid; gap: .5rem; margin-top: auto; font: var(--type-legend); }
 .gantry__contact p { margin: 0; color: var(--legend-muted); }
 .gantry__contact b { color: var(--legend); font-weight: var(--fw-medium); margin-inline-end: .4em; }
 /* Plain links only: the button keeps its own ink on orange. */
@@ -152,18 +182,23 @@ body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + 
 .gantry__contact .btn { justify-self: start; margin-top: 1rem; }
 @media (max-width: 900px) {
   .gantry { padding: 6px; }
-  .gantry__plate { grid-template-columns: 1fr; grid-template-rows: auto auto auto; padding: 18px 22px 28px; }
-  .gantry__nav { align-self: start; }
-  .dest__row { grid-template-columns: minmax(0, 1fr) auto; row-gap: .1rem; }
-  .dest__dist { grid-column: 1; grid-row: 2; text-align: start; font-size: var(--fs-small); }
-  .dest__row .arrow { grid-row: 1 / span 2; grid-column: 2; }
-  .gantry__side { margin-top: 1.75rem; align-self: start; gap: 1.25rem; }
+  /* One column: the destinations, then the side column on its place, edge to edge. The second line stays home. */
+  .gantry__plate { --pad-x: 22px; --x: 36%; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; padding-top: 16px; }
+  .gantry__cross-v, .gantry__cross-dot { display: none; }
+  .gantry__nav { align-self: start; padding-block: .75rem 1.75rem; }
+  .dest { border-top: 0; }
+  .dest__row { grid-template-columns: 2.5rem minmax(0, 1fr) auto; row-gap: .1rem; padding-block: .4rem; }
+  .dest__n { font-size: var(--fs-lead); }
+  .dest__dist { grid-column: 2; grid-row: 2; text-align: start; font-size: var(--fs-small); }
+  .dest__row .arrow { grid-row: 1 / span 2; grid-column: 3; }
+  .gantry__side { margin-inline: calc(-1 * var(--pad-x)); padding: 1.75rem var(--pad-x) 28px; gap: 1.25rem; }
+  .gantry__place { inset-inline: 0; width: 100%; }
   .gantry__side .search-form { order: -1; } /* search first; the lanes follow */
+  .gantry__contact { margin-top: .5rem; }
   .twin-nav--sign { grid-template-columns: 1fr 1fr; }
   .twin-nav--sign .twin-nav__item { padding: .8rem .9rem; }
   .twin-nav--sign .twin-nav__name { font-size: var(--fs-base); }
   .twin-nav--sign .twin-nav__line { display: none; }
   .twin-nav--sign .twin-nav__item .arrow { width: 1.4rem; height: 1rem; }
-  .dest__row { padding-block: .3rem; }
 }
 body.menu-open { overflow: hidden; }
