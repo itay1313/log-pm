@@ -125,7 +125,8 @@ $drive_project = (int) log_field( 'drive_project' );
 </div>
 
 <?php
-// The road (src/home/road.js): the practice areas pass overhead as gantry signs, then an exit sign opens into
+// The road (src/home/road.js): the practice areas pass overhead as gantry signs, each one held at reading distance,
+// with an index of all of them in the corner (built by road.js from this list); then an exit sign opens into
 // the control company: its place, its legend and its three roles. Without motion both are ordinary sections;
 // the scene is decoration only.
 ?>
@@ -146,7 +147,7 @@ if ( $domains ) : ?>
 			<h2 class="section__title" id="domains-title"><?php echo log_route_shield( 1 ); ?><?php echo log_title( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
 			<ul class="domains">
 				<?php foreach ( $domains as $d ) : ?>
-					<li class="domain">
+					<li class="domain" data-count="<?php echo (int) $domain_counts[ $d->slug ]; ?>">
 						<a class="domain__link" href="<?php echo esc_url( add_query_arg( 'domain', $d->slug, $projects_url ) ); ?>">
 							<h3 class="domain__name"><?php echo esc_html( $d->name ); ?></h3>
 							<?php if ( $line = log_field( 'sentence', 'term_' . $d->term_id ) ) : ?><p class="domain__line"><?php echo esc_html( $line ); ?></p><?php endif; ?>

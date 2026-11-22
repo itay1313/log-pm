@@ -330,7 +330,11 @@ function buildChapter(el, scene, features, hero) {
 
     innerEl.style.setProperty('--scrim', span([0.08, 0.2], q).toFixed(3));
     // Night falls over the site as the chapter ends, so the map hands over to the night road without a cut.
-    innerEl.style.setProperty('--fall', ease(span([0.93, 1], q)).toFixed(3));
+    const fall = ease(span([0.93, 1], q));
+    innerEl.style.setProperty('--fall', fall.toFixed(3));
+    // The road waits under this chapter's last screen and shows only once the night is whole (drive.css): when the
+    // chapter lifts, the road's horizon is already at its edge.
+    document.documentElement.classList.toggle('night-fallen', fall > 0.995);
 
     // One step at a time: in from the start side, out upwards as the next arrives.
     steps.forEach((li, i) => {
