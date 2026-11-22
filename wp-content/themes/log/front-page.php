@@ -14,6 +14,15 @@ $process = log_rows( 'process', [
 	[ 'name' => 'בקרה ומעקב', 'text' => 'מה קורה בשטח אחרי האישור, ומה צריך לתקן.' ],
 ] );
 $projects_url = get_post_type_archive_link( 'log_project' );
+// Practice areas: one card per domain with published projects, counted live.
+$domain_counts = [];
+foreach ( log_public_projects() as $p ) {
+	foreach ( wp_get_post_terms( $p->ID, 'log_domain', [ 'fields' => 'slugs' ] ) as $slug ) {
+		$domain_counts[ $slug ] = ( $domain_counts[ $slug ] ?? 0 ) + 1;
+	}
+}
+$domains = array_filter( log_ordered_terms( 'log_domain' ), static fn( $t ) => ! empty( $domain_counts[ $t->slug ] ) );
+$has_domains = (bool) $domains;
 ?>
 <?php
 // The drive: the map stays pinned behind the first chapter and the scroll moves its camera (src/home/drive.js).
@@ -82,24 +91,39 @@ echo log_roundabout( 'home' ); // phpcs:ignore WordPress.Security.EscapeOutput -
 	<p class="hero__hint" aria-hidden="true">כדי להתקרב: Ctrl וגלילה</p>
 </section>
 
+<?php
+// Chapter 1 of the drive, set like a chapter opener in the brand book: the motto stands heavy on one thin line that
+// crosses the window, the chapter's number is drawn huge in outline behind it, and a second line cuts through, the dot
+// where they meet. The line is grey from the start side and turns orange at the crossing, over LOG's figures.
+// $chapters: how many numbered chapters the drive has (the practice areas only when there are any).
+$chapters = 3 + ( $has_domains ? 1 : 0 );
+$chapter  = static fn( int $n ) => sprintf( '<p class="chapter-n" aria-hidden="true"><b>%02d</b> / %02d</p>', $n, $chapters );
+?>
 <section class="section section--who section--night drive-country" data-section="who" aria-labelledby="who-title">
 	<div class="drive-country__inner container">
-		<div class="who__text">
-			<h2 class="section__title" id="who-title"><?php echo log_route_shield( 3 ); ?><?php echo log_title( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ) ); ?></h2>
-			<div class="section__prose">
-				<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
-			</div>
-			<ul class="link-row">
-				<li><a href="<?php echo esc_url( home_url( '/about/#expertise' ) ); ?>">המומחיות שלנו</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">אודות</a></li>
-				<li><a href="<?php echo esc_url( $projects_url ); ?>">הפרויקטים</a></li>
-			</ul>
+		<div class="sheet-top">
+			<p class="sheet-n" aria-hidden="true">01</p>
+			<h2 class="section__title" id="who-title"><?php echo log_title( log_text( 'who_title', 'מתכננים. מחברים. מובילים.' ), true ); ?></h2>
 		</div>
-		<dl class="drive-figures">
-			<?php foreach ( [ 'projects' => 'פרויקטים', 'units' => 'יחידות דיור' ] as $key => $label ) : if ( empty( $stats[ $key ] ) ) { continue; } ?>
-				<div><dt><?php echo esc_html( $label ); ?></dt><dd data-count="<?php echo (int) $stats[ $key ]; ?>"><?php echo log_number( $stats[ $key ] ); ?></dd></div>
-			<?php endforeach; ?>
-		</dl>
+		<div class="sheet-band">
+			<span class="sheet-cross" aria-hidden="true"><i class="sheet-cross__h"></i><i class="sheet-cross__v"></i><i class="sheet-cross__dot"></i></span>
+			<div class="who__text">
+				<?php echo $chapter( 1 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<div class="section__prose">
+					<?php echo wpautop( esc_html( log_text( 'who_text', "לוג מנהלת ומקדמת תהליכי תכנון עירוני בכל קנה מידה, מהמתחם ועד תכניות ארציות.\n\nאנחנו עובדים עם רשויות, משרדי ממשלה ויזמים, ומחברים בין התכנון, מוסדות התכנון והשטח.\n\nלצד ניהול הפרויקטים, לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית." ) ) ); ?>
+				</div>
+				<ul class="link-row">
+					<li><a href="<?php echo esc_url( home_url( '/about/#expertise' ) ); ?>">המומחיות שלנו</a></li>
+					<li><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">אודות</a></li>
+					<li><a href="<?php echo esc_url( $projects_url ); ?>">הפרויקטים</a></li>
+				</ul>
+			</div>
+			<dl class="drive-figures">
+				<?php foreach ( [ 'projects' => 'פרויקטים', 'units' => 'יחידות דיור' ] as $key => $label ) : if ( empty( $stats[ $key ] ) ) { continue; } ?>
+					<div><dt><?php echo esc_html( $label ); ?></dt><dd data-count="<?php echo (int) $stats[ $key ]; ?>"><?php echo log_number( $stats[ $key ] ); ?></dd></div>
+				<?php endforeach; ?>
+			</dl>
+		</div>
 	</div>
 </section>
 
@@ -111,7 +135,8 @@ $drive_project = (int) log_field( 'drive_project' );
 <section class="section section--process drive-build" data-section="process" aria-labelledby="process-title"<?php echo $drive_project ? ' data-project="' . $drive_project . '"' : ''; ?>>
 	<div class="drive-build__inner container">
 		<div class="build-head">
-			<h2 class="section__title" id="process-title"><?php echo log_title( log_text( 'process_title', 'איך אנחנו עובדים' ) ); ?></h2>
+			<?php echo $chapter( 2 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<h2 class="section__title" id="process-title"><?php echo log_title( log_text( 'process_title', 'איך אנחנו עובדים' ), true ); ?></h2>
 			<p class="build-project" hidden></p>
 		</div>
 		<ol class="process">
@@ -133,18 +158,11 @@ $drive_project = (int) log_field( 'drive_project' );
 <div class="road" id="road">
 <div class="road__scene" aria-hidden="true"><div class="road__plane"></div></div>
 <?php
-// Practice areas: one card per domain with published projects, counted live.
-$domain_counts = [];
-foreach ( log_public_projects() as $p ) {
-	foreach ( wp_get_post_terms( $p->ID, 'log_domain', [ 'fields' => 'slugs' ] ) as $slug ) {
-		$domain_counts[ $slug ] = ( $domain_counts[ $slug ] ?? 0 ) + 1;
-	}
-}
-$domains = array_filter( log_ordered_terms( 'log_domain' ), static fn( $t ) => ! empty( $domain_counts[ $t->slug ] ) );
 if ( $domains ) : ?>
 	<section class="section section--domains gantries" data-section="domains" aria-labelledby="domains-title">
 		<div class="container gantries__inner">
-			<h2 class="section__title" id="domains-title"><?php echo log_route_shield( 1 ); ?><?php echo log_title( log_text( 'domains_title', 'תחומי פעילות' ) ); ?></h2>
+			<?php echo $chapter( 3 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<h2 class="section__title" id="domains-title"><?php echo log_title( log_text( 'domains_title', 'תחומי פעילות' ), true ); ?></h2>
 			<ul class="domains">
 				<?php foreach ( $domains as $d ) : ?>
 					<li class="domain" data-count="<?php echo (int) $domain_counts[ $d->slug ]; ?>">
@@ -177,10 +195,14 @@ $roles = log_control_roles();
 				<figure class="exit-world__place<?php echo $grey ? '' : ' exit-world__place--colour'; ?>" aria-hidden="true"><img src="<?php echo esc_url( $place ); ?>"<?php echo $small ? sprintf( ' srcset="%s 900w, %s 2200w" sizes="100vw"', esc_url( $small ), esc_url( $place ) ) : ''; ?> alt="" width="2200" height="1238" loading="lazy" decoding="async"></figure>
 			<?php endif; ?>
 			<div class="exit-world__body">
-				<h2 class="section__title" id="control-title"><?php echo log_route_shield( 2 ); ?><?php echo log_title( log_text( 'control_title', 'חברת הבקרה' ) ); ?></h2>
+				<div class="exit-world__lead">
+				<p class="sheet-n" aria-hidden="true"><?php printf( '%02d', $chapters ); ?></p>
+				<?php echo $chapter( $chapters ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<h2 class="section__title" id="control-title"><?php echo log_title( log_text( 'control_title', 'חברת הבקרה' ), true ); ?></h2>
 				<div class="exit-world__say">
 					<p class="section__lede"><?php echo esc_html( log_text( 'control_text', 'לוג משמשת חברת הבקרה של הרשות הממשלתית להתחדשות עירונית: מעקב וניתוח ארצי, התרת חסמים, וחיבור בין השטח לממשל.' ) ); ?></p>
 					<a class="btn btn--primary" href="<?php echo esc_url( home_url( '/control/' ) ); ?>">לעמוד חברת הבקרה<i class="arrow" aria-hidden="true"></i></a>
+				</div>
 				</div>
 				<?php if ( $roles ) : ?>
 					<ol class="exit-roles">
@@ -198,7 +220,7 @@ $roles = log_control_roles();
 <?php if ( log_has_clients() || log_show_empty() ) : ?>
 <section class="section section--clients" data-section="clients">
 	<div class="container">
-		<h2 class="section__title"><?php echo log_title( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
+		<h2 class="section__title"><?php echo log_title( log_text( 'clients_title', 'לקוחות ושותפים' ), true ); ?></h2>
 		<?php get_template_part( 'template-parts/clients' ); ?>
 	</div>
 </section>
