@@ -23,31 +23,64 @@ html.drive-on .hero { position: sticky; top: 0; }
 html.drive-on .drive-country { --drive-len: 320vh; height: var(--drive-len); padding: 0; z-index: 6; background: transparent; pointer-events: none; }
 html.drive-on .drive-country a { pointer-events: auto; }
 /*
- * The legend keeps to a narrow column on the start side, so the country has the screen. It reads in beats
- * (drive.js): the headline lights one sentence at a time, and each sentence brings its own paragraph, all of
- * them set in the same place. The figures stand side by side at the bottom end, where the map's own figures stood.
+ * The chapter is set like a chapter opener in the brand book, over the map instead of a photograph. One thin line
+ * crosses the window: the motto stands heavy on it, the chapter's number is drawn huge in outline behind it, rising
+ * from under the line, and a second line cuts through, the dot where they meet. The line is grey from the start side
+ * and turns orange at the crossing: under the orange stand LOG's figures, under the grey the text, one paragraph at
+ * a time (drive.js lights a sentence of the motto with each, and draws the lines, the number and the dot in).
  */
 html.drive-on .drive-country__inner {
-  position: sticky; top: 0; height: 100vh; height: 100svh; grid-template-columns: minmax(0, 31rem) minmax(0, 1fr); align-items: end; align-content: end;
-  padding-top: calc(var(--header-h) + 2rem); padding-bottom: clamp(28px, 7vh, 84px);
+  --g: clamp(2rem, 5vw, 5rem);                                         /* between the text and the figures */
+  --band-w: min(100vw - 2 * var(--gutter), var(--container));
+  --fig-w: calc((var(--band-w) - var(--g)) * .36);                     /* the figures' column, on the end side */
+  --cross: calc(var(--fig-w) + var(--g) / 2);                          /* the crossing, from the band's end edge */
+  position: sticky; top: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto;
+  height: 100vh; height: 100svh; padding-top: var(--header-h);
 }
-html.drive-on .drive-country .section__title { margin-bottom: .5em; text-shadow: 0 2px 30px color-mix(in srgb, var(--night-deep) 50%, transparent); }
-html.drive-on .drive-country .section__prose { display: grid; max-width: none; }
+/* Above the line: the motto on the start side, standing on the line; the number on the end side, cut by it. */
+html.drive-on .sheet-top { position: relative; display: grid; align-items: end; justify-items: start; overflow: hidden; padding-bottom: .55rem; }
+html.drive-on .sheet-n {
+  display: block; position: absolute; z-index: 0; left: -.03em; bottom: -.2em; margin: 0; direction: ltr; user-select: none; pointer-events: none;
+  font: var(--fw-bold) min(52vh, 34vw)/.8 var(--font-headline); letter-spacing: -.06em;
+  color: transparent; -webkit-text-stroke: var(--line-w) color-mix(in srgb, var(--night-ink) 38%, transparent);
+  will-change: transform, opacity; /* drive.js slides it on its own layer */
+}
+html.drive-on .drive-country .section__title {
+  position: relative; z-index: 1; max-width: 8ch; margin: 0; font-size: clamp(3.25rem, 6.6vw, 6rem); line-height: .88; letter-spacing: -.04em;
+  text-shadow: 0 2px 40px color-mix(in srgb, var(--night-deep) 60%, transparent);
+}
+html.drive-on .drive-country .section__title .period--dot { transform-origin: 50% 80%; }
+/* Under the line: the text on the start side, the figures on the end side. */
+html.drive-on .sheet-band { position: relative; grid-template-columns: minmax(0, 1fr) var(--fig-w); column-gap: var(--g); align-items: start; padding: 1.6rem 0 clamp(28px, 6vh, 64px); }
+html.drive-on .sheet-cross { display: block; position: absolute; inset: 0; pointer-events: none; }
+html.drive-on .sheet-cross__h {
+  --x: calc(50vw - var(--band-w) / 2 + var(--cross)); /* the crossing, from the window's left edge */
+  position: absolute; top: 0; inset-inline: calc(50% - 50vw); height: var(--line-w);
+  background: linear-gradient(to right, var(--works) calc(var(--x) - var(--switch-blend) / 2), var(--hair-strong) calc(var(--x) + var(--switch-blend) / 2));
+  transform-origin: 100% 50%;
+}
+html.drive-on .sheet-cross__v { position: absolute; left: var(--cross); top: -100vh; bottom: 0; width: var(--rule-w); background: var(--hair-strong); transform-origin: 50% 0; }
+html.drive-on .sheet-cross__dot {
+  position: absolute; left: var(--cross); top: 0; width: var(--dot); height: var(--dot); margin: calc(var(--dot) / -2 + var(--line-w) / 2) calc(var(--dot) / -2 + var(--rule-w) / 2);
+  border-radius: 50%; background: var(--works);
+}
+html.drive-on .drive-country .section__prose { display: grid; max-width: 34rem; font-size: var(--fs-lead); line-height: 1.55; }
 html.drive-on .drive-country .section__prose p { grid-area: 1 / 1; margin: 0; will-change: opacity, transform; }
-html.drive-on .drive-country .link-row { margin-top: 2rem; gap: .75rem 2.25rem; }
+html.drive-on .drive-country .link-row { margin-top: 1.6rem; gap: .75rem 2.25rem; }
 html.drive-on .drive-country .link-row a { font-size: var(--fs-base); }
-html.drive-on .drive-figures { display: flex; justify-content: flex-end; align-items: flex-end; gap: clamp(2rem, 4vw, 3.5rem); }
-html.drive-on .drive-figures > div { min-width: 8.5rem; }
-html.drive-on .drive-figures dd { text-shadow: 0 2px 24px color-mix(in srgb, var(--night-deep) 60%, transparent); }
-/* A scrim behind the column and along the bottom keeps the legend readable over the country; no panel.
-   It runs one more screen below the legend and thins out there, so when the chapter scrolls away the scrim
-   leaves as a fade and never as an edge across the map. */
+/* The figures stand under the orange of the line, which is their line: no rule of their own. */
+html.drive-on .drive-figures { display: flex; justify-content: flex-start; align-items: flex-start; gap: clamp(1.5rem, 3vw, 3rem); align-self: start; }
+html.drive-on .drive-figures > div { min-width: 0; padding-top: .2rem; border-top: 0; gap: .5rem; }
+html.drive-on .drive-figures dd { font-size: clamp(2.75rem, 1.4rem + 3vw, 4.25rem); text-shadow: 0 2px 24px color-mix(in srgb, var(--night-deep) 60%, transparent); }
+/* Night under the band and behind the motto keeps both readable over the country; no panel. It runs one more
+   screen below the legend and thins out there, so when the chapter scrolls away the scrim leaves as a fade and
+   never as an edge across the map. */
 html.drive-on .drive-country__inner::before {
   content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw) -100vh; pointer-events: none; opacity: var(--scrim, 0);
   background:
-    linear-gradient(270deg, color-mix(in srgb, var(--night-deep) 88%, transparent) 0%, color-mix(in srgb, var(--night-deep) 66%, transparent) 24%, transparent 50%),
-    linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 74%, transparent) 0%, transparent 34%) top / 100% 50% no-repeat,
-    linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 74%, transparent) 0%, transparent 70%) bottom / 100% 50% no-repeat;
+    radial-gradient(46% 62% at 100% 62%, color-mix(in srgb, var(--night-deep) 82%, transparent) 0%, color-mix(in srgb, var(--night-deep) 50%, transparent) 50%, transparent 100%) top / 100% 50% no-repeat,
+    linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, color-mix(in srgb, var(--night-deep) 84%, transparent) 30%, color-mix(in srgb, var(--night-deep) 30%, transparent) 46%, transparent 60%) top / 100% 50% no-repeat,
+    linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, transparent 70%) bottom / 100% 50% no-repeat;
   -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 90%); mask-image: linear-gradient(180deg, #000 50%, transparent 90%);
 }
 
@@ -61,20 +94,24 @@ html.drive-on .drive-country__inner::before {
 .hero.is-driving :is(.hero-lead, .hero-bar) { pointer-events: none; }
 
 @media (max-width: 900px) {
-  .drive-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-row: 1; align-self: start; }
+  .drive-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   html.drive-on .drive-country { --drive-len: 260vh; }
-  html.drive-on .drive-country__inner { grid-template-columns: minmax(0, 1fr); align-content: space-between; row-gap: 0; padding-top: calc(var(--header-h) + 1.25rem); padding-bottom: calc(58px + 1.25rem + env(safe-area-inset-bottom)); } /* clear of the lane bar */
-  html.drive-on .drive-country .section__title { font-size: var(--fs-h2); }
-  html.drive-on .drive-figures { display: grid; }
-  html.drive-on .drive-figures > div { min-width: 0; }
-  html.drive-on .drive-figures dd { font-size: var(--fs-h2); }
+  /* A narrow window: the same sheet in one column. The motto and the number above the line; under it the text,
+     then the figures side by side over a hair. The second line and its dot stay home, as in the book on a phone. */
+  html.drive-on .drive-country__inner { --fig-w: 38vw; }
+  html.drive-on .sheet-n { font-size: 50vw; left: -1vw; }
+  html.drive-on .drive-country .section__title { font-size: clamp(2.75rem, 12.5vw, 4rem); }
+  html.drive-on .sheet-band { grid-template-columns: minmax(0, 1fr); row-gap: 1.1rem; padding: 1.1rem 0 calc(58px + 1rem + env(safe-area-inset-bottom)); } /* clear of the lane bar */
+  html.drive-on .sheet-cross__h { --x: 38vw; }
+  html.drive-on .sheet-cross__v, html.drive-on .sheet-cross__dot { display: none; }
   html.drive-on .drive-country .section__prose { font-size: var(--fs-base); }
-  html.drive-on .drive-country .link-row { margin-top: 1.25rem; }
-  /* One paragraph at a time leaves the middle of the screen to the country: dark under the legend and behind the figures only. */
+  html.drive-on .drive-country .link-row { margin-top: 1rem; gap: .5rem 1.5rem; }
+  html.drive-on .drive-figures { display: grid; padding-top: .9rem; border-top: var(--rule-w) solid var(--hair); }
+  html.drive-on .drive-figures dd { font-size: var(--fs-h2); }
   html.drive-on .drive-country__inner::before {
     background:
-      linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, color-mix(in srgb, var(--night-deep) 80%, transparent) 26%, transparent 50%) top / 100% 50% no-repeat,
-      linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 78%, transparent) 0%, transparent 26%) top / 100% 50% no-repeat,
+      linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 94%, transparent) 0%, color-mix(in srgb, var(--night-deep) 88%, transparent) 40%, color-mix(in srgb, var(--night-deep) 40%, transparent) 56%, transparent 70%) top / 100% 50% no-repeat,
+      linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 60%, transparent) 0%, transparent 18%) top / 100% 50% no-repeat,
       linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 92%, transparent) 0%, transparent 70%) bottom / 100% 50% no-repeat;
   }
 }
@@ -96,8 +133,8 @@ html.drive-on .drive-build.is-live {
 }
 html.drive-on .drive-build.is-live a { pointer-events: auto; }
 html.drive-on .drive-build.is-live .drive-build__inner {
-  position: sticky; top: 0; height: 100vh; height: 100svh; grid-template-rows: auto 1fr auto; justify-items: start;
-  padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 3.5rem)); padding-bottom: clamp(28px, 7vh, 80px);
+  position: sticky; top: 0; height: 100vh; height: 100svh; grid-template-rows: auto 1fr auto auto; justify-items: start;
+  padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 3.5rem)); padding-bottom: clamp(24px, 5vh, 56px);
 }
 /* The scrim starts a screen above the chapter and thickens into it, the mirror of the one that leaves before it:
    the chapter arrives over the map without its top edge showing. */
@@ -121,13 +158,29 @@ html.drive-on .drive-build.is-live .section__title { max-width: 12ch; margin-bot
 html.drive-on .drive-build.is-live .process { display: grid; grid-template-columns: minmax(0, 1fr); align-self: end; width: min(100%, 31rem); margin: 0 0 1.5rem; }
 html.drive-on .drive-build.is-live .process::before { display: none; }
 html.drive-on .drive-build.is-live .process li { grid-area: 1 / 1; align-self: end; padding: 0; visibility: hidden; }
-html.drive-on .drive-build.is-live .process li .stage { margin-bottom: 1.1rem; }
+html.drive-on .drive-build.is-live .process li .stage { display: none; } /* the rail under the step carries the numbers */
 html.drive-on .drive-build.is-live .process li .stage .circ { --circ-n: 52; --ln-c: var(--works); background: none; box-shadow: none; color: var(--legend); }
 html.drive-on .drive-build.is-live .process li h3 { margin-bottom: .55rem; font-size: var(--fs-h3); line-height: var(--lh-heading); letter-spacing: var(--track-heading); }
 html.drive-on .drive-build.is-live .process li p { max-width: 34ch; font-size: var(--fs-lead); line-height: 1.5; }
 html.drive-on .drive-build.is-live .process li p.build-note { grid-column: 1 / -1; margin-top: 1rem; font: var(--fw-medium) var(--fs-small)/1.4 var(--font-display); color: var(--legend-muted); }
 html.drive-on .drive-build.is-live .process li p.build-note b { font-weight: var(--fw-bold); color: var(--legend); }
-html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; font-size: var(--fs-base); opacity: 0; }
+/*
+ * The rail: the four steps on one thin line along the bottom, as the book draws a timeline. A line leaves each
+ * number's circle for the next and the last runs out to the window's edge; it turns orange as far as the work has
+ * come, and the step on screen has its circle in orange. All four names stay in view, so a visitor sees the whole
+ * way while one step plays out above it (drive.js sets --f on each step).
+ */
+.build-rail { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; margin: 0; }
+.build-rail li { --f: 0; position: relative; display: grid; justify-items: start; gap: .7rem; padding-inline-end: 1.5rem; color: var(--legend-muted); transition: color .4s var(--ease-out); }
+.build-rail li::before, .build-rail li::after { content: ''; position: absolute; top: calc(18px - var(--line-w) / 2); inset-inline: calc(36px + .7rem) .7rem; height: var(--line-w); background: var(--hair-strong); }
+.build-rail li::after { background: var(--works); transform: scaleX(var(--f)); transform-origin: 100% 50%; }
+.build-rail li:dir(ltr)::after { transform-origin: 0 50%; }
+.build-rail li:last-child::before, .build-rail li:last-child::after { inset-inline-end: calc(-1 * max(var(--gutter), (100vw - var(--container)) / 2)); }
+.build-rail__n { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 var(--line-w) var(--hair-strong); font: var(--fw-light) var(--fs-base)/1 var(--font-figure); font-variant-numeric: tabular-nums; transition: box-shadow .4s var(--ease-out), color .4s var(--ease-out); }
+.build-rail__name { font: var(--type-legend); }
+.build-rail li.is-done, .build-rail li.is-now { color: var(--legend); }
+.build-rail li.is-done .build-rail__n, .build-rail li.is-now .build-rail__n { box-shadow: inset 0 0 0 var(--line-w) var(--works); }
+html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0 0 1.75rem; font-size: var(--fs-base); opacity: 0; }
 
 /* Drawn over the site: dimension lines, the area, the grid reference, the white sign and its leader. */
 .build-overlay { position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); overflow: visible; pointer-events: none; }
@@ -166,13 +219,33 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
       linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 80%, transparent) 0%, transparent 70%) top / 100% 50% no-repeat;
   }
   html.drive-on .drive-build.is-live .section__title { font-size: var(--fs-h3); }
-  html.drive-on .drive-build.is-live .process { margin-bottom: .5rem; }
-  html.drive-on .drive-build.is-live .process li .stage { margin-bottom: .6rem; }
-  html.drive-on .drive-build.is-live .process li .stage .circ { --circ-n: 40; }
-  html.drive-on .drive-build.is-live .process li .stage .circ__in { font-size: var(--fs-base); }
+  html.drive-on .drive-build.is-live .process { margin-bottom: 1rem; }
+  html.drive-on .drive-build.is-live .process li { display: block; } /* no number column: the rail has the numbers */
+  /* The rail on a phone: the four circles and their line, no names; the step's name is right above it. */
+  .build-rail li { padding-inline-end: 0; }
+  .build-rail li::before, .build-rail li::after { top: calc(15px - var(--line-w) / 2); inset-inline: calc(30px + .5rem) .5rem; }
+  .build-rail li:last-child::before, .build-rail li:last-child::after { inset-inline-end: -16px; }
+  .build-rail__n { width: 30px; height: 30px; font-size: var(--fs-small); }
+  .build-rail__name { display: none; }
   html.drive-on .drive-build.is-live .process li h3 { font-size: var(--fs-h4); }
   html.drive-on .drive-build.is-live .process li p { font-size: var(--fs-base); }
-  html.drive-on .drive-build.is-live .section__lede { display: none; }
+  /*
+ * The rail: the four steps on one thin line along the bottom, as the book draws a timeline. A line leaves each
+ * number's circle for the next and the last runs out to the window's edge; it turns orange as far as the work has
+ * come, and the step on screen has its circle in orange. All four names stay in view, so a visitor sees the whole
+ * way while one step plays out above it (drive.js sets --f on each step).
+ */
+.build-rail { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; margin: 0; }
+.build-rail li { --f: 0; position: relative; display: grid; justify-items: start; gap: .7rem; padding-inline-end: 1.5rem; color: var(--legend-muted); transition: color .4s var(--ease-out); }
+.build-rail li::before, .build-rail li::after { content: ''; position: absolute; top: calc(18px - var(--line-w) / 2); inset-inline: calc(36px + .7rem) .7rem; height: var(--line-w); background: var(--hair-strong); }
+.build-rail li::after { background: var(--works); transform: scaleX(var(--f)); transform-origin: 100% 50%; }
+.build-rail li:dir(ltr)::after { transform-origin: 0 50%; }
+.build-rail li:last-child::before, .build-rail li:last-child::after { inset-inline-end: calc(-1 * max(var(--gutter), (100vw - var(--container)) / 2)); }
+.build-rail__n { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 var(--line-w) var(--hair-strong); font: var(--fw-light) var(--fs-base)/1 var(--font-figure); font-variant-numeric: tabular-nums; transition: box-shadow .4s var(--ease-out), color .4s var(--ease-out); }
+.build-rail__name { font: var(--type-legend); }
+.build-rail li.is-done, .build-rail li.is-now { color: var(--legend); }
+.build-rail li.is-done .build-rail__n, .build-rail li.is-now .build-rail__n { box-shadow: inset 0 0 0 var(--line-w) var(--works); }
+html.drive-on .drive-build.is-live .section__lede { display: none; }
   .build-sign { width: min(290px, calc(100vw - 24px)); padding: .9rem 1rem 1rem; }
   .build-sign__title { font-size: var(--fs-title); }
   .build-sign__facts dd { font-size: var(--fs-title); }
@@ -328,6 +401,15 @@ html.road-on .exit-sign {
 .exit-sign__name { font: var(--fw-bold) var(--fs-h3)/1 var(--font-display); letter-spacing: var(--track-title); }
 .exit-sign__arrow { justify-self: end; width: 3rem; height: 2.1rem; background: var(--works); rotate: 135deg; -webkit-mask: var(--icon-arrow) left center / auto no-repeat; mask: var(--icon-arrow) left center / auto no-repeat; }
 html.road-on .exit-frame { position: absolute; z-index: 2; top: 0; left: 0; border: var(--line-w) solid var(--legend); pointer-events: none; opacity: 0; }
+/* The control company opens like a chapter in the book: its number in outline over the place, cut by the roles' line. */
+html.road-on .exit-world__lead { position: relative; overflow: hidden; padding-bottom: clamp(2.5rem, 7vh, 4.75rem); margin-inline-end: calc(-1 * max(var(--gutter), (100vw - var(--container)) / 2)); padding-inline-end: max(var(--gutter), (100vw - var(--container)) / 2); }
+html.road-on .exit-world__lead .exit-world__say { margin-bottom: 0; }
+html.road-on .exit-world .sheet-n {
+  display: block; position: absolute; z-index: 0; left: max(var(--gutter), (100vw - var(--container)) / 2 - 1vw); bottom: -.22em; margin: 0; direction: ltr; user-select: none; pointer-events: none;
+  font: var(--fw-bold) min(44vh, 30vw)/.8 var(--font-headline); letter-spacing: -.06em;
+  color: transparent; -webkit-text-stroke: var(--line-w) color-mix(in srgb, var(--night-ink) 34%, transparent);
+}
+html.road-on .exit-world__lead > :not(.sheet-n) { position: relative; z-index: 1; }
 /* The world behind the window: the place fills it, and settles from a little closer as the window opens (road.js). */
 html.road-on .exit-world { position: absolute; z-index: 1; inset: 0 calc(50% - 50vw); display: grid; clip-path: inset(50% 50% 50% 50%); background: var(--plate); }
 html.road-on .exit-world__place img { will-change: transform; }
@@ -350,5 +432,7 @@ html.road-on .exit-roles.is-in li > * { opacity: 1; translate: 0 0; }
   html.road-on .gantries .domain__count { grid-column: 1; grid-row: auto; }
   html.road-on .exit-sign { top: 40%; }
   html.road-on .exit-world__body { padding-bottom: calc(58px + 1.5rem + env(safe-area-inset-bottom)); }
+  html.road-on .exit-world .sheet-n { display: none; } /* no room for the number beside the legend */
+  html.road-on .exit-world__lead { padding-bottom: 1.75rem; }
   html.road-on .exit-roles p { display: none; } /* one screen holds the legend and the three names; the sentences are on the control page */
 }

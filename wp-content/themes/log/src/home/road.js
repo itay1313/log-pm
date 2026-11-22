@@ -200,6 +200,8 @@ function buildIndex(gantries, signs, onPick) {
     list.append(row);
     return go;
   });
+  const chapter = inner.querySelector(':scope > .chapter-n');
+  if (chapter) legend.append(chapter);
   if (title) legend.append(title);
   legend.append(list);
   inner.prepend(legend);

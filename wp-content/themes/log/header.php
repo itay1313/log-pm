@@ -38,19 +38,28 @@ $distances = log_nav_distances();
 	</div>
 </header>
 
+<?php
+// The menu is a night sheet set like the book's openers: a thin line under the top bar crosses a second line that
+// parts the destinations from the side column, the dot where they meet. The first is grey from the start side and
+// turns orange at the crossing. Behind the side column lies one of LOG's places at night, greyed under one even
+// layer (a place that carries text); without the photograph the column is plain night.
+$menu_place = log_bk_photo_url( 'night-city-s-g.jpg' ) ?: log_bk_photo_url( 'night-city-g.jpg' ) ?: log_bk_photo_url( 'night-city.jpg' );
+?>
 <dialog class="gantry" id="site-menu" aria-label="תפריט">
 	<div class="gantry__plate">
 		<div class="gantry__top">
 			<a class="site-header__logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="לוג ניהול פרויקטים – לעמוד הבית"><?php get_template_part( 'template-parts/logo', null, [ 'variant' => 'night', 'label' => '' ] ); ?></a>
 			<button class="gantry__close" type="button" autofocus><span>סגירה</span><i class="icon icon--close" aria-hidden="true"></i></button>
 		</div>
+		<span class="gantry__cross" aria-hidden="true"><i class="gantry__cross-h"></i><i class="gantry__cross-v"></i><i class="gantry__cross-dot"></i></span>
 
 		<nav class="gantry__nav" aria-label="ניווט ראשי">
 			<ul class="dest">
 				<?php foreach ( $nav as $i => [ $label, $url, $current ] ) : ?>
 					<li class="dest__item<?php echo $current ? ' is-current' : ''; ?>">
 						<a class="dest__row" href="<?php echo esc_url( $url ); ?>"<?php echo $current ? ' aria-current="page"' : ''; ?>>
-							<span class="dest__name"><span><?php echo log_route_shield( $i + 1 ); ?><?php echo esc_html( $label ); ?></span></span>
+							<span class="dest__n" aria-hidden="true"><?php printf( '%02d', $i + 1 ); ?></span>
+							<span class="dest__name"><span><?php echo esc_html( $label ); ?></span></span>
 							<span class="dest__dist"><?php echo esc_html( $distances[ $i ] ?? '' ); ?></span>
 							<i class="arrow" aria-hidden="true"></i>
 						</a>
@@ -60,6 +69,11 @@ $distances = log_nav_distances();
 		</nav>
 
 		<div class="gantry__side">
+			<?php
+			if ( $menu_place ) {
+				printf( '<img class="%s" src="%s" alt="" loading="lazy" decoding="async">', esc_attr( 'gantry__place' . ( str_contains( $menu_place, '-g.' ) ? '' : ' gantry__place--colour' ) ), esc_url( $menu_place ) );
+			}
+			?>
 			<?php get_template_part( 'template-parts/twin-nav', null, [ 'sign' => true ] ); ?>
 			<?php get_search_form(); ?>
 			<div class="gantry__contact">

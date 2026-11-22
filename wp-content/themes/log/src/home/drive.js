@@ -36,6 +36,7 @@ const AT = {
   ui: [0, 0.05],        // the map's tools fade
   rise: [0, 0.34],      // the camera climbs to the country while the legend scrolls in
   beacons: [0.3, 0.6],  // projects light up, the figures count with them
+  sheet: [0.13, 0.31],  // the sheet draws itself as it comes on screen: line, crossing, number, then the dot
   beats: [0.3, 1],      // the paragraphs take turns across this stretch, one beat each
 };
 const BEAT_IN = 0.045, BEAT_OUT = 0.035; // how long a paragraph takes to arrive and to leave, in chapter progress
@@ -59,6 +60,12 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 const span = ([a, b], p) => clamp01((p - a) / (b - a));
 const ease = (t) => t * t * (3 - 2 * t);
+/** 0 → 1 with a small overshoot before it settles: how the dot lands. */
+const back = (t) => { const c = 2.2, x = t - 1; return t <= 0 ? 0 : t >= 1 ? 1 : 1 + (c + 1) * x * x * x + c * x * x; };
+/** Write a style only when it changes: most frames of a scroll leave most of the page as it was. */
+const put = (el, prop, value) => { if (el && el[`_${prop}`] !== value) { el[`_${prop}`] = value; el.style[prop] = value; } };
+/** The same for a piece of text: replacing a text node lays its line out again, even with the same words. */
+const say = (el, text) => { if (el._text !== text) { el._text = text; el.textContent = text; } };
 const turn = (from, to) => { const d = to - from; return Math.atan2(Math.sin(d), Math.cos(d)); };
 const fmt = new Intl.NumberFormat('he-IL');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -98,7 +105,7 @@ export function initDrive(hero, scene, points, features) {
   // so a screen reader still has all of them.
   const paras = [...prose.querySelectorAll('p')];
   const beats = Math.max(1, paras.length);
-  const words = SplitText.create(title, { type: 'words' }).words.filter((w) => !w.closest('.shield'));
+  const words = SplitText.create(title, { type: 'words' }).words.filter((w) => !w.closest('.shield') && !w.closest('.period'));
   const sentences = [];
   for (const w of words) {
     const open = sentences.at(-1);
@@ -108,7 +115,12 @@ export function initDrive(hero, scene, points, features) {
   const paired = sentences.length === beats && beats > 1;
   const groups = paired ? sentences.map((x) => x.words) : [words];
   const beatAt = (i) => lerp(AT.beats[0], AT.beats[1], i / beats);
-  const dim = 0.3;
+  const dim = 0.34;
+  // The opener's pieces (front-page.php, drive.css).
+  const sheet = {
+    h: chapter.querySelector('.sheet-cross__h'), v: chapter.querySelector('.sheet-cross__v'), dot: chapter.querySelector('.sheet-cross__dot'),
+    n: chapter.querySelector('.sheet-n'), period: title.querySelector('.period--dot'),
+  };
 
   const build = buildChapter(drive.querySelector('.drive-build'), scene, features, hero);
 
@@ -159,20 +171,21 @@ export function initDrive(hero, scene, points, features) {
       const v = build && p2 > 0 ? build.view(countryView(1), p2) : countryView(p1);
       scene.setView(v);
       const [lng, lat] = toLngLat(v.tx, v.tz);
-      coordValue.textContent = itmLabel(lat, lng);
+      say(coordValue, itmLabel(lat, lng));
       const denom = scene.metresPerPixel() / 0.0002645833; // CSS px at 96 dpi
       const mag = 10 ** Math.floor(Math.log10(denom));
-      coordScale.textContent = `קנ״מ 1:${fmt.format(Math.round(denom / mag) * mag)}`;
+      say(coordScale, `קנ״מ 1:${fmt.format(Math.round(denom / mag) * mag)}`);
     }
     build?.render(p2, p1);
 
     const lit = span(AT.beacons, p1) * (1 - span([0.04, 0.14], p2));
     scene.lightBeacons(lit);
-    for (const { dd, n } of figures) dd.textContent = fmt.format(Math.round(n * span(AT.beacons, p1)));
-    if (figureList) figureList.style.opacity = span([AT.beacons[0] - 0.06, AT.beacons[0]], p1).toFixed(3); // no zeros waiting on screen
+    for (const { dd, n } of figures) say(dd, fmt.format(Math.round(n * span(AT.beacons, p1))));
+    put(figureList, 'opacity', span([AT.beacons[0], AT.beacons[0] + 0.05], p1).toFixed(3)); // they come in already counting: no zeros on screen
 
     // The scrim leaves with its chapter: by the time the legend has scrolled off, the next chapter's has taken over.
-    inner.style.setProperty('--scrim', (span([0.12, 0.34], p1) * (1 - span([0.02, 0.16], p2))).toFixed(3));
+    const scrim = (span([0.12, 0.34], p1) * (1 - span([0.02, 0.16], p2))).toFixed(3);
+    if (scrim !== inner._scrim) { inner._scrim = scrim; inner.style.setProperty('--scrim', scrim); }
     read(p1);
   }
 
@@ -182,14 +195,30 @@ export function initDrive(hero, scene, points, features) {
       const a = beatAt(i), b = beatAt(i + 1);
       const inn = ease(span([a, a + BEAT_IN], p));
       const out = i < beats - 1 ? ease(span([b - BEAT_OUT, b], p)) : 0;
-      el.style.opacity = (inn * (1 - out)).toFixed(3);
-      el.style.transform = `translateY(${((1 - inn) * 22 - out * 16).toFixed(1)}px)`;
+      put(el, 'opacity', (inn * (1 - out)).toFixed(3));
+      put(el, 'transform', `translateY(${((1 - inn) * 22 - out * 16).toFixed(1)}px)`);
     });
+    // The motto arrives with the sheet: each sentence comes up onto the line, a step after the one before, then
+    // waits dim until its beat lights it.
     groups.forEach((group, i) => {
       const a = beatAt(i);
-      const o = lerp(dim, 1, span([a, a + BEAT_IN], p)).toFixed(3);
-      for (const w of group) w.style.opacity = o;
+      const up = ease(span([AT.sheet[0] + i * 0.035, AT.sheet[0] + 0.1 + i * 0.035], p));
+      const o = (lerp(dim, 1, span([a, a + BEAT_IN], p)) * up).toFixed(3);
+      const y = `translateY(${((1 - up) * 0.55).toFixed(3)}em)`;
+      for (const w of group) { put(w, 'opacity', o); put(w, 'transform', y); }
     });
+    // The sheet draws itself the way the book's lines do: the line from the start side, the crossing line through
+    // it, the number up from under the line, and the dot last, landing with a small overshoot. Each piece is
+    // written on its own element, and only when its value changes: a custom property on the chapter would
+    // restyle everything inside it on every frame of the scroll.
+    const draw = ease(span(AT.sheet, p)).toFixed(3);
+    const land = back(span([AT.sheet[1] - 0.03, AT.sheet[1] + 0.07], p)).toFixed(3);
+    put(sheet.h, 'transform', `scaleX(${draw})`);
+    put(sheet.v, 'transform', `scaleY(${draw})`);
+    put(sheet.dot, 'scale', land);
+    put(sheet.period, 'scale', land);
+    put(sheet.n, 'opacity', draw);
+    put(sheet.n, 'translate', `0 ${((1 - draw + span([0.3, 1], p) * 0.25) * 14).toFixed(2)}%`); // then it keeps drifting, slowly
   }
 
   const track = (el, set) => ScrollTrigger.create({
@@ -232,6 +261,37 @@ function buildChapter(el, scene, features, hero) {
   note.innerHTML = '<b>המחשה:</b> הבניינים שעומדים היום בתחום התכנית, לא הבינוי שהיא מציעה.';
   steps[2]?.append(note);
   const lede = el.querySelector('.section__lede');
+
+  // The rail: all four steps on one line along the bottom, lit as far as the work has come. It repeats the steps'
+  // names for the eye, so it is hidden from assistive tech: the list above it is the content.
+  const rail = document.createElement('ol');
+  rail.className = 'build-rail';
+  rail.setAttribute('aria-hidden', 'true');
+  const stops = steps.map((li, i) => {
+    const stop = document.createElement('li');
+    const n = document.createElement('span');
+    n.className = 'build-rail__n';
+    n.textContent = String(i + 1);
+    const name = document.createElement('span');
+    name.className = 'build-rail__name';
+    name.textContent = li.querySelector('h3')?.textContent.trim() || '';
+    stop.append(n, name);
+    rail.append(stop);
+    return { stop, state: '' };
+  });
+  innerEl.append(rail);
+
+  // The title comes up onto the page word by word as the chapter arrives, and its orange period lands last.
+  const title = el.querySelector('.section__title');
+  if (title) {
+    const split = SplitText.create(title, { type: 'words' });
+    const dot = title.querySelector('.period--dot');
+    const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 45%', toggleActions: 'play none none reverse' } });
+    tl.from(split.words.filter((w) => !w.closest('.period')), { yPercent: 70, opacity: 0, duration: 1, stagger: 0.07, ease: 'expo.out' });
+    if (dot) tl.from(dot, { scale: 0, transformOrigin: '50% 80%', duration: 0.7, ease: 'back.out(3)' }, '-=0.55');
+    const more = [el.querySelector('.chapter-n'), projectLine].filter(Boolean);
+    tl.from(more, { opacity: 0, y: 12, duration: 0.8, stagger: 0.08, ease: 'expo.out' }, 0.15);
+  }
 
   // Dimension lines on the plan's own axes (its principal direction), set off from the site.
   const pts = site.rings.flat();
@@ -347,6 +407,14 @@ function buildChapter(el, scene, features, hero) {
       li.style.transform = `translate(${((1 - inn) * 48).toFixed(1)}px, ${(-out * 28).toFixed(1)}px)`;
     });
     if (lede) lede.style.opacity = span(BUILD.lede, q).toFixed(3);
+    // The rail: the line leaving each step turns orange across that step's stretch of the scroll.
+    stops.forEach((s, i) => {
+      const [a, b] = BUILD.steps[i];
+      s.stop.style.setProperty('--f', span([a, b], q).toFixed(3));
+      const state = q >= b ? 'is-done' : q >= a ? 'is-now' : '';
+      if (state !== s.state) { s.stop.className = state; s.state = state; }
+    });
+    rail.style.opacity = (span([0.1, 0.2], q)).toFixed(3);
     if (head) head.style.opacity = phone.matches ? (1 - span(BUILD.sign, q)).toFixed(3) : '';
 
     // Dimension lines stretch from their middles; they leave as the buildings rise.
@@ -378,7 +446,7 @@ function buildChapter(el, scene, features, hero) {
     if (anchor) {
       const W = box.w, H = innerHeight, sw = box.sw, sh = box.sh;
       const x = phone.matches ? (W - sw) / 2 : Math.max(16, Math.min(anchor.x - sw - 120, W * 0.06));
-      const y = phone.matches ? Math.max(84, H * 0.12) : Math.min(H - sh - 40, Math.max(110, anchor.y - sh * 0.75));
+      const y = phone.matches ? Math.max(84, H * 0.12) : Math.min(H - sh - 170, Math.max(110, anchor.y - sh * 0.75)); // clear of the rail
       sign.style.transform = `translate(${Math.round(x)}px, ${Math.round(y + (1 - s) * 16)}px)`;
       const ex = phone.matches ? x + sw / 2 : x + sw, ey = phone.matches ? y + sh : y + sh * 0.5;
       const lx = lerp(anchor.x, ex, ease(s)), ly = lerp(anchor.y, ey, ease(s));

@@ -155,7 +155,14 @@ function sections() {
     if (h.closest('.hero, .page-header, .drive-country, .drive-build')) continue; // the drive moves its own legends
     SplitText.create(h, {
       type: 'lines', mask: 'lines', autoSplit: true,
-      onSplit: (self) => gsap.from(self.lines, { yPercent: 112, duration: 1.05, stagger: 0.08, ease: 'power4.out', scrollTrigger: { trigger: h, start: 'top 88%', once: true } }),
+      onSplit: (self) => {
+        const tl = gsap.timeline({ scrollTrigger: { trigger: h, start: 'top 88%', once: true } });
+        tl.from(self.lines, { yPercent: 112, duration: 1.05, stagger: 0.08, ease: 'power4.out' });
+        // A headline that closes on the orange period: the dot lands after its words, with a small overshoot.
+        const dot = h.querySelector('.period--dot');
+        if (dot) tl.from(dot, { scale: 0, transformOrigin: '50% 80%', duration: 0.7, ease: 'back.out(3)', clearProps: 'transform' }, '-=0.45');
+        return tl;
+      },
     });
   }
 
@@ -222,12 +229,20 @@ function footer() {
 export function menuIn(menu) {
   const plate = menu.querySelector('.gantry__plate');
   const names = menu.querySelectorAll('.dest__name > span');
-  const rest = menu.querySelectorAll('.gantry__top > *, .dest__dist, .dest__row .arrow, .gantry__side > *');
-  gsap.killTweensOf([plate, names, rest]);
-  return gsap.timeline()
+  const rest = menu.querySelectorAll('.gantry__top > *, .dest__n, .dest__dist, .dest__row .arrow, .gantry__side > :not(.gantry__place)');
+  const place = menu.querySelector('.gantry__place');
+  gsap.killTweensOf([plate, names, rest, place]);
+  // The sheet opens, then draws itself the way the book's lines do: the line from the start side, the crossing
+  // line down through it, the dot last with a small overshoot. The place behind the side column settles from closer.
+  const tl = gsap.timeline()
     .fromTo(plate, { clipPath: 'inset(0% 0% 100% 0% round 20px)' }, { clipPath: 'inset(0% 0% 0% 0% round 20px)', duration: 0.8, ease: 'expo.inOut', clearProps: 'clipPath' })
+    .fromTo(plate, { '--mh': 0 }, { '--mh': 1, duration: 1.1, ease: 'power3.inOut' }, 0.3)
+    .fromTo(plate, { '--mv': 0 }, { '--mv': 1, duration: 0.9, ease: 'power3.out' }, 0.75)
+    .fromTo(plate, { '--md': 0 }, { '--md': 1, duration: 0.7, ease: 'back.out(3)' }, 1.05)
     .fromTo(names, { yPercent: 110 }, { yPercent: 0, duration: 1, stagger: 0.055, ease: 'power4.out' }, 0.32)
-    .fromTo(rest, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.025, ease: 'expo.out', clearProps: 'transform' }, 0.5);
+    .fromTo(rest, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.02, ease: 'expo.out', clearProps: 'transform' }, 0.5);
+  if (place) tl.fromTo(place, { scale: 1.14 }, { scale: 1, duration: 1.8, ease: 'expo.out', clearProps: 'transform' }, 0.2);
+  return tl;
 }
 
 export function menuOut(menu) {

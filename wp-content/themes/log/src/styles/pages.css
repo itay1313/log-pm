@@ -109,10 +109,17 @@ body.page-template-page-control {
 
 /* ------------------------------------------------------------------ home sections */
 
-.section--who .container { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); column-gap: clamp(2.5rem, 8vw, 9rem); align-items: center; }
+/* Who we are. Without the drive it is a plain night section: the motto, then the text beside the figures.
+   The opener's own pieces (the outlined number, the crossing lines) belong to the drive (drive.css). */
 .section--who .section__title { font-size: var(--fs-h1); max-width: 10ch; line-height: .92; }
 .section--who .section__prose { font-size: var(--fs-lead); line-height: 1.6; }
-@media (max-width: 900px) { .section--who .container { grid-template-columns: 1fr; row-gap: 3rem; } }
+.sheet-n, .sheet-cross { display: none; }
+.sheet-band { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); column-gap: clamp(2.5rem, 8vw, 9rem); align-items: center; }
+/* The chapter's place in the drive, as the book writes it over a chapter: the number in orange, of how many. */
+.chapter-n { display: block; margin: 0 0 .9rem; font: var(--fw-medium) var(--fs-small)/1 var(--font-display); letter-spacing: .04em; font-variant-numeric: tabular-nums; color: var(--slate); direction: ltr; text-align: right; }
+.chapter-n:dir(ltr) { text-align: left; }
+.chapter-n b { font-weight: var(--fw-bold); color: var(--works-deep); } /* a night world swaps it to the bright orange */
+@media (max-width: 900px) { .sheet-band { grid-template-columns: 1fr; row-gap: 3rem; } }
 
 /* Destination rows: practice areas, jobs. On hover the row steps forward and its arrow travels; no plate. */
 .domains, .jobs { margin-top: 2.5rem; border-top: var(--line-w) solid var(--ink); }
