@@ -111,7 +111,9 @@ html.drive-on .drive-build.is-live .drive-build__inner::before {
 }
 /* Night falls at the end of the chapter (drive.js sets --fall): the map dims to the night the road begins in. */
 html.drive-on .drive-build.is-live .drive-build__inner::after {
-  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); pointer-events: none; background: var(--night-deep); opacity: var(--fall, 0);
+  content: ''; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw) -24vh; pointer-events: none; background: var(--night-deep); opacity: var(--fall, 0);
+  /* The night hangs a little below the chapter and thins out there, so the road comes out of it without an edge. */
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 24vh), transparent); mask-image: linear-gradient(180deg, #000 calc(100% - 24vh), transparent);
 }
 html.drive-on .drive-build.is-live .section__title { max-width: 12ch; margin-bottom: .3em; font-size: var(--fs-h2); text-shadow: 0 2px 30px color-mix(in srgb, var(--night-deep) 50%, transparent); }
 
@@ -186,6 +188,16 @@ html.drive-on .drive-build.is-live .section__lede { max-width: 40ch; margin: 0; 
  */
 .road { position: relative; }
 .road__scene { display: none; }
+/*
+ * After the build chapter the road doesn't start below it but under it: it stands 40vh up, behind that chapter's
+ * night, so its horizon is at the chapter's bottom edge when the chapter lifts, and no screen of empty sky goes by
+ * between the two. It stays hidden until the night is whole (html.night-fallen, set by drive.js), so it never
+ * shows through the map.
+ */
+html.drive-on.road-on .drive:has(.drive-build.is-live) + .road { margin-top: -40vh; }
+/* The first sign waits until that chapter has left the top of the screen: a little more road before it (road.js). */
+html.drive-on.road-on .drive:has(.drive-build.is-live) + .road .gantries { --lead: .45; }
+html.drive-on.road-on:not(.night-fallen) .drive:has(.drive-build.is-live) + .road :is(.road__scene, .gantries) { visibility: hidden; }
 /* Gantries passing overhead project far past the screen, and 3D boxes count as page overflow: clip (sticky still works). */
 html.road-on .road { overflow: clip; }
 
@@ -194,31 +206,87 @@ html.road-on .road__scene {
   perspective: 800px; perspective-origin: 50% 40%;
   background: linear-gradient(180deg, var(--night-deep) 0%, var(--plate) 40%, color-mix(in srgb, var(--night-deep), var(--night)) 100%);
 }
-/* The asphalt, seen from the driver's seat. Element y is depth, so --travel moves the markings towards us. */
+/*
+ * The asphalt, seen from the driver's seat. Element y is depth. The markings are painted once; the drive slides the
+ * whole plane towards us along its own length (--travel, one period of the dashes at most, set by road.js), which
+ * the compositor does without repainting. Moving the dashes by background-position repainted a 1500 by 5200 sheet
+ * on every frame of the scroll and held the road to half its frame rate.
+ */
 html.road-on .road__plane {
+  --period: 230px; /* one dash and its gap: every lane repeats on it, so a slide of a whole period can't be seen */
   position: absolute; left: 50%; top: 40%; width: 1500px; height: 5200px; margin-left: -750px;
-  transform-origin: 50% 0; transform: translate3d(0, 380px, 420px) rotateX(-90deg);
+  transform-origin: 50% 0; transform: translate3d(0, 380px, 420px) rotateX(-90deg) translate3d(0, var(--travel, 0px), 0); will-change: transform;
   background:
-    linear-gradient(180deg, var(--works) 0 130px, transparent 130px) calc(50% - 0px) var(--travel, 0) / 12px 230px repeat-y,
-    linear-gradient(180deg, color-mix(in srgb, var(--night-ink) 45%, transparent) 0 90px, transparent 90px) 25% var(--travel, 0) / 8px 230px repeat-y,
-    linear-gradient(180deg, color-mix(in srgb, var(--night-ink) 45%, transparent) 0 90px, transparent 90px) 75% var(--travel, 0) / 8px 230px repeat-y,
+    linear-gradient(180deg, var(--works) 0 130px, transparent 130px) 50% 0 / 12px var(--period) repeat-y,
+    linear-gradient(180deg, color-mix(in srgb, var(--night-ink) 45%, transparent) 0 90px, transparent 90px) 25% 0 / 8px var(--period) repeat-y,
+    linear-gradient(180deg, color-mix(in srgb, var(--night-ink) 45%, transparent) 0 90px, transparent 90px) 75% 0 / 8px var(--period) repeat-y,
     linear-gradient(90deg, color-mix(in srgb, var(--night-ink) 60%, transparent) 0 10px, transparent 10px calc(100% - 10px), color-mix(in srgb, var(--night-ink) 60%, transparent) calc(100% - 10px)),
     color-mix(in srgb, var(--night), var(--night-2) 30%); /* asphalt: a hair above the night */
   -webkit-mask-image: linear-gradient(180deg, #000 0 55%, transparent 98%); mask-image: linear-gradient(180deg, #000 0 55%, transparent 98%);
 }
 
-/* Chapter 3: gantry signs over the road */
+/*
+ * Chapter 3: gantry signs over the road. --per is how much scroll one sign takes (in vh): road.js slows the drive
+ * under each sign and hurries between them, so most of that scroll is spent with a sign at reading size.
+ */
 html.road-on .gantries {
-  --ink: var(--legend); --slate: var(--legend-muted); --rule: var(--plate-line); --works-deep: var(--works);
-  position: relative; z-index: 1; height: calc(var(--n, 2) * 95vh + 100vh); margin-top: -100vh; margin-top: -100svh; padding: 0;
+  --ink: var(--legend); --slate: var(--legend-muted); --rule: var(--plate-line); --works-deep: var(--works); --per: 72;
+  position: relative; z-index: 1; height: calc((var(--n, 2) + var(--lead, 0)) * var(--per) * 1vh + 100vh); margin-top: -100vh; margin-top: -100svh; padding: 0;
   background: transparent; color: var(--legend); pointer-events: none;
 }
-html.road-on .gantries__inner { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 3.5rem)); }
-html.road-on .gantries .section__title { font-size: var(--fs-h2); }
+/* The legend, the title over the index of every area, stands in the bottom start corner, on the asphalt: the signs
+   pass overhead and never cross it. */
+html.road-on .gantries__inner {
+  position: sticky; top: 0; display: grid; align-content: end; justify-items: start; height: 100vh; height: 100svh;
+  padding-top: calc(var(--header-h) + 1rem); padding-bottom: clamp(28px, 6vh, 72px);
+}
+.gantries__legend { position: relative; z-index: 2; width: min(100%, 27rem); pointer-events: auto; }
+/* The night behind the legend: it runs out to the window's start and bottom edges and thins out towards the road
+   and upwards, so no lane dash crosses a row and nothing reads as a panel. */
+.gantries__legend::before {
+  content: ''; position: absolute; z-index: -1; inset-block: -6rem -50vh; inset-inline: -50vw -9rem; pointer-events: none;
+  background: color-mix(in srgb, var(--night-deep) 94%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 7rem), linear-gradient(90deg, transparent, #000 10rem); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(180deg, transparent, #000 7rem), linear-gradient(90deg, transparent, #000 10rem); mask-composite: intersect;
+}
+.gantries__legend:dir(ltr)::before {
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 7rem), linear-gradient(270deg, transparent, #000 10rem);
+  mask-image: linear-gradient(180deg, transparent, #000 7rem), linear-gradient(270deg, transparent, #000 10rem);
+}
+/* A narrow window has no room for the index beside the road: it takes the full width, and the road runs out into
+   the night before it reaches it. */
+@media (max-width: 1000px) {
+  .gantries__legend { width: 100%; }
+  .gantries__legend::before, .gantries__legend:dir(ltr)::before { inset-inline: -50vw; -webkit-mask-image: linear-gradient(180deg, transparent, #000 6rem); mask-image: linear-gradient(180deg, transparent, #000 6rem); }
+}
+html.road-on .gantries .section__title { margin-bottom: .55em; font-size: var(--fs-h3); line-height: var(--lh-heading); }
+.gantries__legend .shield { display: none; } /* the rows under the title carry the numbers here */
+
+/* The index: rows between hairs. The area overhead is white, its number orange, and the thin orange line runs under it. */
+.lanes { margin: 0; border-top: var(--rule-w) solid var(--hair); }
+.lanes__go {
+  position: relative; display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; align-items: baseline; column-gap: .6rem; width: 100%;
+  padding: .5rem 0 .45rem; border: 0; border-bottom: var(--rule-w) solid var(--hair); background: none; color: var(--legend-muted);
+  font: var(--type-legend); text-align: start; cursor: pointer; transition: color .3s var(--ease-out);
+}
+.lanes__go::after {
+  content: ''; position: absolute; inset-inline: 0; bottom: calc(-1 * var(--rule-w)); height: var(--line-w); background: var(--works);
+  transform: scaleX(0); transform-origin: 100% 50%; transition: transform .6s var(--ease-out);
+}
+.lanes__go:dir(ltr)::after { transform-origin: 0 50%; }
+.lanes__n, .lanes__count { font: var(--fw-light) var(--fs-base)/1 var(--font-figure); font-variant-numeric: tabular-nums; }
+.lanes__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lanes__go:hover, .lanes__go:focus-visible, .lanes__go[aria-current=true] { color: var(--legend); }
+.lanes__go[aria-current=true] .lanes__n { color: var(--works); }
+.lanes__go[aria-current=true]::after { transform: none; }
+.lanes__go:focus-visible { outline-offset: 2px; }
+
 /* The list is the 3D stage: same perspective and eye as the road scene, so the legs stand on the asphalt. */
-html.road-on .gantries .domains { position: absolute; inset: 0; margin: 0; border: 0; perspective: 800px; perspective-origin: 50% 40%; }
+html.road-on .gantries .domains { position: absolute; z-index: 1; inset: 0; margin: 0; border: 0; perspective: 800px; perspective-origin: 50% 40%; }
+/* A gantry spans more than the window: far off it is a whole frame on the road, and by the time its sign can be
+   read the posts have left the screen and only the beam crosses it, the way a gantry looks from under it. */
 html.road-on .gantries .domain {
-  --steel: color-mix(in srgb, var(--night-2), var(--night-line) 70%); --gantry-w: min(1300px, 130vw);
+  --steel: color-mix(in srgb, var(--night-2), var(--night-line) 70%); --gantry-w: 132vw;
   position: absolute; left: 50%; top: 40%; width: var(--gantry-w); height: 640px; margin-left: calc(var(--gantry-w) / -2);
   border: 0; transform: translate3d(0, -260px, -4000px); opacity: 0; will-change: transform, opacity;
   background:
@@ -228,7 +296,7 @@ html.road-on .gantries .domain {
 }
 /* The sign hangs from the beam on two rods, edged in the thin line, with the count where the distance goes. */
 html.road-on .gantries .domain__link {
-  position: absolute; top: 46px; left: 50%; width: min(780px, 92vw); translate: -50% 0; pointer-events: none;
+  position: absolute; top: 46px; left: 50%; width: min(860px, 88vw); translate: -50% 0; pointer-events: none;
   display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 2rem; row-gap: .6rem;
   padding: 2rem 2.4rem 1.9rem; background: var(--plate); color: var(--legend);
   box-shadow: inset 0 0 0 var(--line-w) var(--legend), 0 40px 80px -30px color-mix(in srgb, var(--night-deep) 80%, transparent);
@@ -244,7 +312,11 @@ html.road-on .gantries .domain__line { grid-column: 1; font-size: var(--fs-lead)
 html.road-on .gantries .domain__count { grid-column: 2; grid-row: 1 / span 2; align-self: end; font-size: var(--fs-title); color: var(--legend); }
 
 /* Chapter 4: the exit. The sign stands on the start shoulder; its face fades and the window it leaves opens over the screen. */
-html.road-on .exit { position: relative; z-index: 1; height: 340vh; padding: 0; background: transparent; overflow: visible; }
+/* It starts 55vh up, under the last of the gantries: the index has gone by then (road.js), and the exit sign comes
+   up the shoulder as the last gantry passes, with no stretch of empty road between them. Only the world it opens
+   takes the pointer, so nothing lies over the last sign's link. */
+html.road-on .exit { position: relative; z-index: 1; height: 340vh; margin-top: -55vh; padding: 0; background: transparent; overflow: visible; pointer-events: none; }
+html.road-on .exit-world { pointer-events: auto; }
 html.road-on .exit__inner { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; }
 html.road-on .exit-sign {
   position: absolute; z-index: 2; inset-inline-start: 0; top: 44%; display: grid; justify-items: start; gap: .5rem; width: min(360px, 78vw); margin: 0;
@@ -267,8 +339,14 @@ html.road-on .exit-roles.is-in li::before { transform: none; }
 html.road-on .exit-roles.is-in li > * { opacity: 1; translate: 0 0; }
 
 @media (max-width: 760px) {
+  html.road-on .gantries { --per: 64; }
+  html.road-on .gantries__inner { padding-bottom: calc(58px + 1rem + env(safe-area-inset-bottom)); } /* clear of the lane bar */
+  html.road-on .gantries .section__title { margin-bottom: .45em; font-size: var(--fs-h4); }
+  .lanes__go { padding-block: .4rem .35rem; font: var(--type-label); }
+  .lanes__n, .lanes__count { font-size: var(--fs-small); }
   html.road-on .gantries .domain { height: 600px; }
   html.road-on .gantries .domain__link { grid-template-columns: 1fr; padding: 1.4rem 1.5rem; }
+  html.road-on .gantries .domain__name { font-size: var(--fs-h3); line-height: var(--lh-heading); }
   html.road-on .gantries .domain__count { grid-column: 1; grid-row: auto; }
   html.road-on .exit-sign { top: 40%; }
   html.road-on .exit-world__body { padding-bottom: calc(58px + 1.5rem + env(safe-area-inset-bottom)); }
