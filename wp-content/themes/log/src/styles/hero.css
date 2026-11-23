@@ -6,6 +6,10 @@
  * the distance sign holds the live figures in the end corner; the map controls ride the end edge.
  */
 .hero { position: relative; display: grid; height: 100vh; height: 100svh; min-height: 660px; overflow: hidden; color: var(--legend); isolation: isolate; background: var(--plate); }
+/* A signed-in editor has WordPress's bar over the window and the page starts under it, so the first screen would run
+   past the fold by the bar's height. It starts at the window's top instead, behind the bar, where the drive pins it
+   anyway; what hangs from its top (the legend, the lists, the pins' clip) measures from the header's edge. */
+body.admin-bar .hero { margin-top: calc(-1 * var(--wp-admin--admin-bar--height, 0px)); }
 .hero-stage { position: absolute; inset: 0; touch-action: pan-y; cursor: grab; } /* one finger scrolls the page, two move the map */
 .hero-stage:active { cursor: grabbing; }
 .hero-stage canvas { display: block; width: 100%; height: 100%; outline: none; }
@@ -35,7 +39,7 @@
    screen fits above the fold: headline, lede, the destination bar and its filters, nothing hung over them. */
 .hero-lead {
   grid-area: 1 / 1; z-index: 5; align-self: start; width: min(100%, calc(var(--gutter) + 760px));
-  padding: calc(var(--header-h) + clamp(28px, 9vh, 112px)) var(--gutter) 0; pointer-events: none;
+  padding: calc(var(--header-edge) + clamp(28px, 9vh, 112px)) var(--gutter) 0; pointer-events: none;
 }
 .hero-lead :is(a, button, input, select, label, .hero-search, .hero-suggest) { pointer-events: auto; }
 .hero__title {
@@ -235,7 +239,7 @@
 
 /* Lists: "פריסה ארצית" and "תצוגת רשימה", a white sign over the map */
 .hero-drawer {
-  position: absolute; z-index: 7; inset-inline-end: calc(var(--gutter) + 64px); top: calc(var(--header-h) + 16px); bottom: clamp(18px, 4vh, 44px);
+  position: absolute; z-index: 7; inset-inline-end: calc(var(--gutter) + 64px); top: calc(var(--header-edge) + 16px); bottom: clamp(18px, 4vh, 44px);
   width: min(760px, calc(100% - 2 * var(--gutter) - 64px)); overflow: auto; padding: 8px 1.75rem 1.25rem;
   container-type: inline-size;
   background: var(--legend); color: var(--ink); box-shadow: 0 30px 60px -20px color-mix(in srgb, var(--night-deep) 65%, transparent);
@@ -270,7 +274,7 @@
 @media (max-width: 760px) {
   .hero { min-height: 600px; }
   .hero::after { background: linear-gradient(180deg, color-mix(in srgb, var(--night-deep) 86%, transparent) 0%, color-mix(in srgb, var(--night-deep) 45%, transparent) 38%, transparent 55%), linear-gradient(0deg, color-mix(in srgb, var(--night-deep) 85%, transparent) 0%, transparent 40%); }
-  .hero-lead { width: 100%; height: 100%; display: flex; flex-direction: column; padding: calc(var(--header-h) + 18px) 12px 12px; }
+  .hero-lead { width: 100%; height: 100%; display: flex; flex-direction: column; padding: calc(var(--header-edge) + 18px) 12px 12px; }
   .hero__title { font-size: var(--fs-h3); max-width: 10em; margin-bottom: .8rem; }
   .hero__title--short { font-size: var(--fs-h2); }
   .hero__lede { display: none; }
@@ -304,7 +308,7 @@
 }
 @media (max-height: 760px) and (min-width: 761px) {
   .hero__lede { display: none; }
-  .hero-lead { padding-top: calc(var(--header-h) + 4vh); }
+  .hero-lead { padding-top: calc(var(--header-edge) + 4vh); }
   .hero__title { font-size: var(--fs-h3); }
 }
 
