@@ -13,16 +13,9 @@ $project = log_project_from_param( wp_unslash( $_GET['project'] ?? '' ) );
 $privacy = get_privacy_policy_url();
 ?>
 <?php
-// Under the orange stretch: the two offices' phones, so a visitor who came to call doesn't have to look for them.
-$phones = array_filter( log_offices(), static fn( $o ) => ! empty( $o['phone'] ) );
 get_template_part( 'template-parts/opener', null, [
 	'class' => 'opener--compact',
 	'title' => log_title( log_text( 'hero_title', 'דברו איתנו' ), true ),
-	'side'  => $phones ? static function () use ( $phones ) {
-		foreach ( $phones as $o ) {
-			printf( '<p class="opener__ref">%s<a href="tel:%s" dir="ltr">%s</a></p>', esc_html( $o['name'] ?? '' ), esc_attr( preg_replace( '/[^0-9+]/', '', $o['phone'] ) ), esc_html( $o['phone'] ) );
-		}
-	} : null,
 ] );
 ?>
 

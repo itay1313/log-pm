@@ -38,6 +38,8 @@ body:not(.home) .section > .container > .section__title + * { margin-top: 0; }
   body:not(.home) .section--wide > .container > * { grid-column: 1 / -1; }
   body:not(.home) .section--wide > .container > .section__title { grid-column: 1; grid-row: 1; position: static; margin-bottom: clamp(1.75rem, 3.2vw, 3rem); }
   body:not(.home) .section--wide > .container > .section__lede { grid-column: 2; grid-row: 1; align-self: start; padding-top: .35rem; }
+  /* Up to three more projects: three columns, so the row closes at the container's edge. */
+  .section--more .grid--projects { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   /* Rows that hang from the section's line give up their own. */
   body:not(.home) .section:not(.section--wide) > .container > :is(.values, .roles, .expertise, .jobs, .domains) { border-top: 0; margin-top: 0; }
   body:not(.home) .section:not(.section--wide) > .container > :is(.values, .roles, .expertise) > :first-child,
@@ -224,6 +226,7 @@ body.page-template-page-control {
 .card--lead { grid-column: 1 / -1; }
 @media (max-width: 560px) {
   .grid--projects { gap: 0; border-top: var(--line-w) solid var(--ink); }
+  .filters + .grid--projects { border-top: 0; margin-top: -1rem; } /* the filters' own line already opens the list */
   .grid--projects .card { padding: 1rem 0; border-bottom: var(--rule-w) solid var(--rule); }
   .grid--projects .card__link { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); column-gap: 1rem; align-items: start; }
   .grid--projects .card__media { margin: 0; aspect-ratio: 1; }
