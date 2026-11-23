@@ -6,6 +6,9 @@
 }
 .site-header.is-solid { background-color: var(--plate); box-shadow: 0 var(--rule-w) 0 var(--hair); }
 body.admin-bar .site-header { top: var(--wp-admin--admin-bar--height, 0px); }
+/* On a phone (600px and under) WordPress lets its bar scroll away with the page. The header is fixed under it, so it
+   would hang 46px down with the page showing above it: the bar holds its place there too, as at every other width. */
+@media (max-width: 600px) { body.admin-bar #wpadminbar { position: fixed; } }
 /* Where the fixed header ends in the window: its height, plus WordPress's bar for a signed-in editor. Whatever holds
    its place under the header on a scrolling page (a sticky title, an index, a side column) measures from here.
    Anchors don't: WordPress already gives the page a scroll-padding of its bar's height. */
