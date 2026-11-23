@@ -206,7 +206,9 @@ body.page-template-page-control {
 .card__link:hover .card__media img { transform: scale(1.04); }
 .card__link:hover .card__media::after, .card__link:focus-visible .card__media::after { box-shadow: inset 0 0 0 var(--line-w) var(--works); }
 .card__placeholder, .card__placeholder.is-drawn { display: block; width: 100%; height: 100%; background: var(--plate); }
-.card__art { display: block; width: 100%; height: 100%; }
+/* The drawing is a few hundred vector shapes. On a layer of its own it is rastered once; without one it was drawn
+   again on every frame of its tile's reveal, and a slow machine scrolled the projects list at a third of the speed. */
+.card__art { display: block; width: 100%; height: 100%; will-change: transform; }
 .card__body { display: grid; gap: .35rem; }
 .card__meta { order: -1; display: flex; justify-content: space-between; gap: 1rem; font: var(--type-label); color: var(--slate); margin: 0; }
 .card__meta .grid-ref { font-variant-numeric: tabular-nums; }
