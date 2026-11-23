@@ -59,12 +59,12 @@ add_action( 'admin_init', function () {
 		'sanitize_callback' => function ( $v ) {
 			static $told = false; // WordPress may sanitize a new option twice
 			$v = trim( (string) $v );
-			if ( mb_strlen( $v ) >= 8 ) {
+			if ( mb_strlen( $v ) >= 4 ) { // short is allowed: the wait after wrong tries is what slows guessing
 				return $v;
 			}
 			if ( ! $told ) {
 				$told = true;
-				add_settings_error( 'log_gate_password', 'short', 'סיסמת האתר צריכה 8 תווים לפחות. הסיסמה הקודמת נשארה.' );
+				add_settings_error( 'log_gate_password', 'short', 'סיסמת האתר צריכה 4 תווים לפחות. הסיסמה הקודמת נשארה.' );
 			}
 			return log_gate_password();
 		},
