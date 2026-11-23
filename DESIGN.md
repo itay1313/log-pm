@@ -166,7 +166,7 @@ components:
 
 **The idea: we are the junction.** LOG connects planning, people and execution. The logo's O is a roundabout seen from above, cut into four quarters. Lines are roads: thin, one weight, running to the edge and crossing. One orange dot sits where something happens. A line that turns from grey to orange is a plan leaving the paper.
 
-**Two grounds.** Night (navy, asphalt at night) is for places: the home map, every page's title band, the menu, the control company, the footer. Paper is for people, figures and reading. Orange is spent once.
+**Two grounds.** Night (navy, asphalt at night) is for places: the home map, every page's opener, the menu, the control company, the footer. Paper is for people, figures and reading. Orange is spent once.
 
 The book's chapters, and where each lives on the site:
 
@@ -248,7 +248,11 @@ From chapter 03. Open with what is, not what isn't. Write at eye level, exact in
 
 ## Layout
 
-RTL throughout; "start" is the right edge, "forward" is left. Every text starts on the same right-hand line: the container is 1320px wide inside a fluid gutter of clamp(16px, 4vw, 56px). Sections breathe at clamp(56px, 7vw, 108px). The header is 84px (68px on phones) and hangs over a navy strip that the page's title band continues.
+RTL throughout; "start" is the right edge, "forward" is left. Every text starts on the same right-hand line: the container is 1320px wide inside a fluid gutter of clamp(16px, 4vw, 56px). Sections breathe at clamp(64px, 8vw, 120px). The header is 84px (68px on phones) and hangs over a navy strip that the page's opener continues.
+
+**Every inner page opens like a chapter of the book** (`template-parts/opener.php`, `src/styles/opener.css`), the same sheet as the home page's first chapter and the menu. One thin line crosses the window. The title stands heavy on it (72px at most); the page's number in the header order is drawn huge in outline behind it and cut by the line; a second line cuts straight through, the dot where they meet. The line is grey from the start side and orange from the crossing. Under the grey stands the text (a lede, tags, the page's actions); under the orange what the page counts: how many projects, items, open jobs or people, a project's grid reference, a job's number, the offices' phones. A place behind the sheet (a project's photograph, the control and careers films) is greyed under one even night layer; a picture of people hangs below the sheet into the paper, in colour. A project stands on its place at full window height. One item of a list, the search and a plain page get the same sheet, lower. 404 draws its own number where a page's number stands. On phones the crossing line and its dot are left out and the count moves under the text.
+
+**Below the opener a page is a run of sections, each hanging from one thin line.** On a wide screen (1000px and up) the section's title stands in the start column (4 of 12) and holds its place while the rows beside it pass; the content takes the other eight, so no half of a sheet is left empty. Rows that hang from the section's line give up their own top line. A section whose content needs the whole width (people, pictures, cards, a timeline) is `.section--wide`: the title and its lede share the first row. The home page's chapters are screens of their own and don't follow this.
 
 **The home page is the map**, full viewport. The headline sits on the sea at the start side with no panel behind it; a scrim darkens the start and bottom edges. Under it, on the first screen: the lede, the "לאן?" search as one thin line to write on with a thin arrow at its end, and three filters, each a caption over a value on its own thin line. The live figures stand at the bottom end, each under a thin line. Map controls are small night grounds along the end edge. The resting camera stands far enough back to show a dozen projects around the city, not three; on phones, where the headline sits above the map, it looks at the city itself. A pool of night in the end corner carries the figures over the lit city. A project's card opens on the map's side of its marker, and on a wide screen the list sheet stops short of the search, so neither lies over the legend.
 
@@ -260,7 +264,7 @@ RTL throughout; "start" is the right edge, "forward" is left. Every text starts 
 
 **The Lane Line.** The line system's switch line, down the start margin of every page: grey for the road ahead, orange for the road behind the reader. The switch follows the scroll through a short blend; under reduced motion the line stays grey.
 
-Below the map, content is rows, not grids of boxes: a thin ink line on top, grey hairs between. Figures are Light numbers, each under a thin line. Project tiles use an auto-fill grid (min 300px).
+Below the map, content is rows, not grids of boxes: a thin ink line on top, grey hairs between. Figures are Light numbers, each under a thin line. Project tiles use an auto-fill grid (min 300px); on a phone a project in a list is a row (a small square picture, then its name, place and stage), so a list reads as a list. Knowledge items are rows too, with or without a picture: what it is and when, the title and a line, the picture, the arrow. The featured one leads above them. Search results are grouped the way sections are: the group's name and its count in the start column, the rows beside it.
 
 Breakpoints: 1180px (the two worlds lose their second line), 900px (header collapses, the two worlds move to a fixed bottom bar), 760px (home: legend on top, tools at the bottom; steps go vertical), 700px and 560px (forms, team circles shrink to 148px, two across).
 
@@ -351,7 +355,9 @@ A project's stage is one thin line across four stages: solid orange behind, dash
 `template-parts/card-person.php`: the photo in a split circle (176px, 148px on phones), the name and the role under it. Without a photo the circle holds initials.
 
 ### Motion
-GSAP. Headlines rise out of line masks and the orange period lands last. Lines draw from the start side, crossing lines cut through after them, the dot lands with a small overshoot; circles close counter-clockwise, the way traffic turns in a roundabout (`src/lines/draw.js`). Pictures unroll from their top edge. Figures count once (`src/fx/count.js`). The lane line turns orange as far as the reader has come. The home page opens on a roundabout that becomes the logo's O (`src/home/roundabout.js`). Lenis smooths the wheel. Reduced motion turns all of it off and shows everything.
+GSAP. An opener draws itself: the line from the start side, the crossing line down through it, the dot with a small overshoot, the number up from under the line, the title rising on it; as the page scrolls on, the number sinks slowly back under the line. A section's line draws from the start side as the section arrives. Headlines rise out of line masks and the orange period lands last. Lines draw from the start side, crossing lines cut through after them, the dot lands with a small overshoot; circles close counter-clockwise, the way traffic turns in a roundabout (`src/lines/draw.js`). Pictures unroll from their top edge. Figures count once (`src/fx/count.js`). The lane line turns orange as far as the reader has come. The home page opens on a roundabout that becomes the logo's O (`src/home/roundabout.js`). Lenis smooths the wheel. Reduced motion turns all of it off and shows everything.
+
+What keeps it fast on a slow machine: transforms and opacity only; a piece held back from the first paint (`motion.css`) is released from its safety animation as soon as motion.js sets its opacity, because a finished animation that still fills keeps its element on a layer for the life of the page; a vector drawing that is revealed or moved (`.card__art`) sits on a layer of its own, so it is rastered once.
 
 ## Do's and Don'ts
 
@@ -376,5 +382,7 @@ GSAP. Headlines rise out of line masks and the orange period lands last. Lines d
 - **Don't** use a second icon family, emoji or glyph characters as icons.
 
 ## Open
-- `log_route_shield()` and `.shield` keep their old names: they print the page number. The home page's chapters no longer use them: they count themselves in order (`.chapter-n`).
+- `log_route_shield()` and `.shield` keep their old names: they print the page number in the menu and the footer. Page titles no longer carry it (the opener draws the number), and the home page's chapters count themselves in order (`.chapter-n`).
+- The contact opener shows the offices' phones under the orange stretch. The spec asks for "a title only" on that page; if LOG prefers it bare, drop the `side` in `page-contact.php`.
+- The about opener counts the team only from eight people up, so a half-entered team doesn't read as a small firm.
 - The about page's opening picture is a stand-in until LOG picks a team photo.

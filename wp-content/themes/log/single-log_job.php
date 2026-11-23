@@ -38,17 +38,29 @@ while ( have_posts() ) : the_post();
 	] );
 	?>
 	<article class="job" data-job="<?php echo (int) $jid; ?>">
-		<header class="page-header job__header">
-			<a class="back-link" href="<?php echo esc_url( $jobs_url ); ?>">לכל המשרות</a>
-			<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php the_title(); ?></h1>
-			<?php if ( $team ) : ?><p class="page-header__meta"><?php echo esc_html( $team ); ?></p><?php endif; ?>
-			<ul class="job__tags"><?php foreach ( array_filter( [ $loc, $scope ] ) as $tag ) : ?><li><?php echo esc_html( $tag ); ?></li><?php endforeach; ?></ul>
-			<?php echo log_sheet_label( log_field( 'job_number', $jid ) ? 'משרה ' . log_field( 'job_number', $jid ) : '' ); ?>
-			<div class="job__actions">
-				<?php if ( $open ) : ?><button type="button" class="btn btn--primary" data-apply>הגשת מועמדות</button><?php endif; ?>
-				<button type="button" class="btn btn--ghost" data-copy-link>העתקת קישור למשרה</button>
-			</div>
-		</header>
+		<?php
+		$number = (string) log_field( 'job_number', $jid );
+		get_template_part( 'template-parts/opener', null, [
+			'class'  => 'opener--compact job__header',
+			'title'  => esc_html( get_the_title() ),
+			'kicker' => static function () use ( $jobs_url ) {
+				?><a class="back-link" href="<?php echo esc_url( $jobs_url ); ?>">לכל המשרות</a><?php
+			},
+			'body'   => static function () use ( $team, $loc, $scope, $open ) {
+				?>
+				<?php if ( $team ) : ?><p class="opener__meta"><?php echo esc_html( $team ); ?></p><?php endif; ?>
+				<ul class="job__tags"><?php foreach ( array_filter( [ $loc, $scope ] ) as $tag ) : ?><li><?php echo esc_html( $tag ); ?></li><?php endforeach; ?></ul>
+				<div class="job__actions">
+					<?php if ( $open ) : ?><button type="button" class="btn btn--primary" data-apply>הגשת מועמדות</button><?php endif; ?>
+					<button type="button" class="btn btn--ghost" data-copy-link>העתקת קישור למשרה</button>
+				</div>
+				<?php
+			},
+			'side'   => $number !== '' ? static function () use ( $number ) {
+				printf( '<p class="opener__ref">מספר משרה<b>%s</b></p>', esc_html( $number ) );
+			} : null,
+		] );
+		?>
 
 		<?php if ( ! $open ) : ?>
 			<div class="container job__closed">

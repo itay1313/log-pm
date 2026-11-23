@@ -7,9 +7,14 @@
  */
 @media (prefers-reduced-motion: no-preference) {
   html.motion :is(.hero__title, .hero__lede, .hero-search, .hero-filters .filters__group, .hero-filter-toggle, .hero-dist, .hero-bar > *,
-    .page-header > *, .about-hero__copy > *, .careers-hero__copy > :not(.vbg), .control-hero__strip h1, .control-hero__strip p, .project__hero-copy > *) {
+    .opener__title, .opener__kicker, .opener__text > *, .opener__side > *, .opener__cross, .opener__n) {
     opacity: 0; animation: motion-safety .01s 2.4s forwards;
   }
+  /* Once motion.js has given a piece its own opacity, the safety animation lets go of it. Left in place it keeps
+     filling forwards for the life of the page, and the browser keeps every such piece on a layer of its own: on a
+     long page that cost a third of the frame rate, measured, even with the pieces far off screen. */
+  html.motion :is(.hero__title, .hero__lede, .hero-search, .hero-filters .filters__group, .hero-filter-toggle, .hero-dist, .hero-bar > *,
+    .opener__title, .opener__kicker, .opener__text > *, .opener__side > *, .opener__cross, .opener__n)[style*="opacity"] { animation: none; }
 }
 @keyframes motion-safety { to { opacity: 1; } }
 

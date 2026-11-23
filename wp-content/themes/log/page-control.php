@@ -35,8 +35,20 @@ $items = new WP_Query( [
 	'meta_query'     => [ [ 'key' => 'is_control', 'value' => '1' ] ],
 ] );
 ?>
-<section class="control-hero">
-	<figure class="control-hero__media">
+<section class="control-hero opener-hang">
+	<?php
+	get_template_part( 'template-parts/opener', null, [
+		'tag'   => 'div',
+		'title' => log_title( log_text( 'hero_title', 'חברת הבקרה' ), true ),
+		'media' => static function () {
+			get_template_part( 'template-parts/video-bg', null, [ 'name' => 'control-city' ] );
+		},
+		'body'  => static function () {
+			?><p class="opener__lede"><?php echo esc_html( log_text( 'hero_eyebrow', 'לוג היא חברת הבקרה של הרשות הממשלתית להתחדשות עירונית.' ) ); ?></p><?php
+		},
+	] );
+	?>
+	<figure class="opener-hang__media control-hero__media">
 		<?php
 		// The page's own picture; until it has one, LOG's aerial photograph; without either, a slot only editors see.
 		$own = has_post_thumbnail() ? '' : log_own_photo( 'aerial.jpg', 'כיכר, כבישים ושכונת מגורים במבט מהאוויר', 875 );
@@ -49,13 +61,6 @@ $items = new WP_Query( [
 		endif;
 		?>
 	</figure>
-	<div class="control-hero__strip">
-		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'control-city' ] ); ?>
-		<div class="container">
-			<h1 class="control-hero__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'hero_title', 'חברת הבקרה' ), true ); ?></h1>
-			<p class="control-hero__line"><?php echo esc_html( log_text( 'hero_eyebrow', 'לוג היא חברת הבקרה של הרשות הממשלתית להתחדשות עירונית.' ) ); ?></p>
-		</div>
-	</div>
 </section>
 
 <section class="section" data-section="what">
@@ -81,7 +86,7 @@ $items = new WP_Query( [
 	</div>
 </section>
 
-<section class="section section--method" data-section="method">
+<section class="section section--method section--wide" data-section="method">
 	<div class="container">
 		<h2 class="section__title"><?php echo log_title( log_text( 'method_title', 'שיטת העבודה' ) ); ?></h2>
 		<ol class="process">
@@ -93,7 +98,7 @@ $items = new WP_Query( [
 </section>
 
 <?php if ( $team && $team->have_posts() ) : ?>
-	<section class="section section--team" data-section="team">
+	<section class="section section--team section--wide" data-section="team">
 		<div class="container">
 			<h2 class="section__title"><?php echo log_title( log_text( 'team_title', 'הצוות' ) ); ?></h2>
 			<div class="people">
@@ -104,7 +109,7 @@ $items = new WP_Query( [
 <?php endif; ?>
 
 <?php if ( $numbers ) : ?>
-	<section class="section section--numbers" data-section="numbers">
+	<section class="section section--numbers section--wide" data-section="numbers">
 		<div class="container">
 			<h2 class="section__title"><?php echo log_title( log_text( 'numbers_title', 'במספרים' ) ); ?></h2>
 			<dl class="numbers">
@@ -117,7 +122,7 @@ $items = new WP_Query( [
 <?php endif; ?>
 
 <?php if ( $items->have_posts() ) : ?>
-	<section class="section section--items" data-section="items">
+	<section class="section section--items section--wide" data-section="items">
 		<div class="container">
 			<h2 class="section__title"><?php echo log_title( log_text( 'items_title', 'פריטים מקצועיים' ) ); ?></h2>
 			<div class="grid grid--knowledge">

@@ -30,8 +30,26 @@ if ( ! $galleries ) { // stock, until the page gets LOG's own pictures; one real
 	$galleries = [ 'ירושלים' => log_standins( 'jlm' ), 'תל אביב' => log_standins( 'tlv' ), 'אירועים ויום עבודה' => log_standins( 'life' ) ];
 }
 ?>
-<section class="about-hero">
-	<figure class="about-hero__media">
+<section class="about-hero opener-hang">
+	<?php
+	get_template_part( 'template-parts/opener', null, [
+		'tag'   => 'div',
+		'title' => log_title( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ), true ),
+		'body'  => static function () {
+			?><div class="opener__prose">
+				<?php if ( get_the_content() ) : the_content(); else : ?>
+					<p>הצוות של לוג רב-תחומי: אדריכלות, תכנון עיר ואזור, מדיניות ציבורית, הנדסה, גיאוגרפיה וחברה.</p>
+					<p>אנחנו עובדים משני משרדים, בירושלים ובתל אביב, ומלווים רשויות, משרדי ממשלה ויזמים בכל הארץ.</p>
+				<?php endif; ?>
+			</div><?php
+		},
+		// How many people the page counts, once the team is really entered: a handful would read as a small firm.
+		'side'  => $team->post_count >= 8 ? static function () use ( $team ) {
+			printf( '<p class="opener__figure"><b>%s</b><span>אנשים בצוות</span></p>', esc_html( number_format_i18n( $team->post_count ) ) );
+		} : null,
+	] );
+	?>
+	<figure class="opener-hang__media about-hero__media">
 		<?php
 		// The page's own picture; until it has one, LOG's team photograph; where that file isn't on the server, the stock one.
 		if ( has_post_thumbnail() ) :
@@ -41,15 +59,6 @@ if ( ! $galleries ) { // stock, until the page gets LOG's own pictures; one real
 		endif;
 		?>
 	</figure>
-	<div class="container about-hero__copy">
-		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'hero_title', 'התמונה המלאה מורכבת מהאנשים שלנו.' ), true ); ?></h1>
-		<div class="page-header__prose">
-			<?php if ( get_the_content() ) : the_content(); else : ?>
-				<p>הצוות של לוג רב-תחומי: אדריכלות, תכנון עיר ואזור, מדיניות ציבורית, הנדסה, גיאוגרפיה וחברה.</p>
-				<p>אנחנו עובדים משני משרדים, בירושלים ובתל אביב, ומלווים רשויות, משרדי ממשלה ויזמים בכל הארץ.</p>
-			<?php endif; ?>
-		</div>
-	</div>
 </section>
 
 <section class="section section--story" data-section="story">
@@ -96,7 +105,7 @@ if ( ! $galleries ) { // stock, until the page gets LOG's own pictures; one real
 </section>
 
 <?php if ( $team->have_posts() || log_show_empty() ) : ?>
-<section class="section section--team" id="team" data-section="team">
+<section class="section section--team section--wide" id="team" data-section="team">
 	<div class="container">
 		<h2 class="section__title"><?php echo log_title( log_text( 'team_title', 'הצוות' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'team_lede', 'האנשים שמחזיקים את הפרויקטים, מהנהלה ועד התפעול.' ) ); ?></p>
@@ -118,7 +127,7 @@ if ( ! $galleries ) { // stock, until the page gets LOG's own pictures; one real
 <?php endif; ?>
 
 <?php if ( $galleries || log_show_empty() ) : ?>
-<section class="section section--offices" data-section="offices">
+<section class="section section--offices section--wide" data-section="offices">
 	<div class="container">
 		<h2 class="section__title"><?php echo log_title( log_text( 'offices_title', 'המשרדים והחיים בחברה' ) ); ?></h2>
 		<p class="section__lede"><?php echo esc_html( log_text( 'offices_line', 'ירושלים ותל אביב, אירועים ויום עבודה רגיל.' ) ); ?></p>
@@ -141,7 +150,7 @@ if ( ! $galleries ) { // stock, until the page gets LOG's own pictures; one real
 <?php endif; ?>
 
 <?php if ( log_has_clients() || log_show_empty() ) : ?>
-<section class="section section--clients" data-section="clients">
+<section class="section section--clients section--wide" data-section="clients">
 	<div class="container">
 		<h2 class="section__title"><?php echo log_title( log_text( 'clients_title', 'לקוחות ושותפים' ) ); ?></h2>
 		<?php get_template_part( 'template-parts/clients' ); ?>
