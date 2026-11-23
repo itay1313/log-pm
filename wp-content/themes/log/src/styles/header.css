@@ -6,6 +6,11 @@
 }
 .site-header.is-solid { background-color: var(--plate); box-shadow: 0 var(--rule-w) 0 var(--hair); }
 body.admin-bar .site-header { top: var(--wp-admin--admin-bar--height, 0px); }
+/* Where the fixed header ends in the window: its height, plus WordPress's bar for a signed-in editor. Whatever holds
+   its place under the header on a scrolling page (a sticky title, an index, a side column) measures from here.
+   Anchors don't: WordPress already gives the page a scroll-padding of its bar's height. */
+body { --header-edge: var(--header-h); }
+body.admin-bar { --header-edge: calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)); }
 .site-header__inner { width: calc(100% - 2 * var(--gutter)); margin-inline: auto; min-height: var(--header-h); display: flex; align-items: center; gap: clamp(1rem, 2.4vw, 2.75rem); }
 .site-header__logo { text-decoration: none; color: inherit; display: inline-flex; }
 .site-header__tools { margin-inline-start: auto; display: flex; align-items: center; gap: clamp(1.25rem, 2.4vw, 2.5rem); }
