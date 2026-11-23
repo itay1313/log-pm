@@ -3,14 +3,15 @@
  * ArcGIS sync (spec v6 §18 "מקורות וסנכרון").
  *
  * Pulls LOG's layer `blue_lines_main` straight from its REST query endpoint (f=geojson), server-side,
- * once a week and on demand (Tools → ייבוא מ-ArcGIS → "סנכרון עכשיו"). Every feature goes through
+ * every night and on demand (Tools → ייבוא מ-ArcGIS → "סנכרון עכשיו"). Every feature goes through
  * the same importer as the manual upload (log_import_run in inc/import.php), so field mapping lives
  * in one place.
  *
  * - Credentials (API key, or ArcGIS username + password) live in the settings page, ArcGIS tab.
  *   They never reach the browser: the password fields render empty, and tokens stay in a transient.
  * - On failure nothing is written: the site keeps showing the last approved data, the error is logged
- *   and stored, and the admin gets an email.
+ *   and stored, and the admin gets an email. The nightly run retries by itself, so a layer that stays
+ *   down mails once a week, not every morning.
  * - A plan that disappears from the layer is "closed in the source": an in-progress plan becomes
  *   status 02 (הושלם) and stays on the site. Taking it off the site is a separate, explicit act.
  * - In the project edit screen, everything the last sync wrote is read-only and marked "מסונכרן מ-ArcGIS".
@@ -212,13 +213,23 @@ function log_arcgis_fetch( array $s ): array|WP_Error {
  * Run
  * ---------------------------------------------------------------------- */
 
-add_action( 'init', function () {
-	if ( ! wp_next_scheduled( 'log_arcgis_sync' ) ) {
-		// Sunday night, before the work week.
-		$first = ( new DateTimeImmutable( 'next sunday 03:00', wp_timezone() ) )->getTimestamp();
-		wp_schedule_event( $first, 'weekly', 'log_arcgis_sync' );
+/**
+ * Every night at 03:00, so an edit in ArcGIS is on the site the next morning.
+ * A site that still has the old weekly event is moved over to the nightly one.
+ */
+function log_arcgis_schedule(): void {
+	$event = wp_get_scheduled_event( 'log_arcgis_sync' );
+	if ( $event && $event->schedule === 'daily' ) {
+		return;
 	}
-} );
+	wp_clear_scheduled_hook( 'log_arcgis_sync' );
+	$first = new DateTimeImmutable( 'today 03:00', wp_timezone() );
+	if ( $first->getTimestamp() <= time() ) {
+		$first = $first->modify( '+1 day' );
+	}
+	wp_schedule_event( $first->getTimestamp(), 'daily', 'log_arcgis_sync' );
+}
+add_action( 'init', 'log_arcgis_schedule' );
 add_action( 'log_arcgis_sync', fn() => log_arcgis_sync( 'cron' ) );
 
 /**
@@ -228,7 +239,7 @@ add_action( 'log_arcgis_sync', fn() => log_arcgis_sync( 'cron' ) );
 function log_arcgis_sync( string $trigger = 'manual' ): array {
 	$s = log_arcgis_settings();
 	if ( $s['layer_url'] === '' ) {
-		// Not set up yet: nothing to alert about, the weekly run just waits.
+		// Not set up yet: nothing to alert about, the nightly run just waits.
 		return log_arcgis_store( [ 'trigger' => $trigger, 'ok' => false, 'skipped' => true, 'message' => 'לא הוגדרה כתובת שכבה (הגדרות לוג → ArcGIS).' ] );
 	}
 	if ( get_transient( 'log_arcgis_syncing' ) ) {
@@ -262,6 +273,7 @@ function log_arcgis_sync( string $trigger = 'manual' ): array {
 
 		$c = $result['counts'];
 		update_option( 'log_arcgis_last_success', time(), false );
+		delete_option( 'log_arcgis_last_alert' );
 		return log_arcgis_store( [
 			'trigger' => $trigger,
 			'ok'      => true,
@@ -331,7 +343,11 @@ function log_arcgis_close_missing( array $present ): array {
 function log_arcgis_fail( string $trigger, string $error ): array {
 	error_log( '[log-core] ArcGIS sync failed (' . $trigger . '): ' . $error );
 	$result = log_arcgis_store( [ 'trigger' => $trigger, 'ok' => false, 'error' => $error, 'message' => $error ] );
-	log_arcgis_alert( $result );
+	// A manual run always mails. The nightly one mails on the first failure, then once a week while it lasts.
+	$alerted = (int) get_option( 'log_arcgis_last_alert', 0 ) > time() - WEEK_IN_SECONDS + HOUR_IN_SECONDS;
+	if ( ( $trigger !== 'cron' || ! $alerted ) && log_arcgis_alert( $result ) ) {
+		update_option( 'log_arcgis_last_alert', time(), false );
+	}
 	return $result;
 }
 
@@ -341,22 +357,23 @@ function log_arcgis_alert( array $result ): bool {
 	$to   = is_email( $s['alert_email'] ) ? $s['alert_email'] : get_option( 'admin_email' );
 	$last = (int) get_option( 'log_arcgis_last_success', 0 );
 	$body = implode( "\n\n", [
-		'הסנכרון מ-ArcGIS נכשל ב-' . wp_date( 'j.n.Y H:i', $result['time'] ) . ( $result['trigger'] === 'cron' ? ' (ריצה שבועית).' : ' (הופעל ידנית).' ),
+		'הסנכרון מ-ArcGIS נכשל ב-' . wp_date( 'j.n.Y H:i', $result['time'] ) . ( $result['trigger'] === 'cron' ? ' (הריצה הלילית).' : ' (הופעל ידנית).' ),
 		'השגיאה: ' . $result['error'],
 		'האתר ממשיך להציג את הנתונים המאושרים האחרונים' . ( $last ? ', מהסנכרון המוצלח של ' . wp_date( 'j.n.Y H:i', $last ) : '' ) . '. שום דבר לא נמחק או נדרס.',
+		'הסנכרון מנסה שוב כל לילה. אם הכשל יימשך, ההתראה הבאה תישלח בעוד שבוע.',
 		'לבדיקה ולהרצה חוזרת: ' . admin_url( 'tools.php?page=log-arcgis-import' ),
 	] );
 	return wp_mail( $to, '[' . wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) . '] הסנכרון מ-ArcGIS נכשל', $body );
 }
 
-/** Keep the last result and a short history (last 12 runs) for the Tools page. */
+/** Keep the last result and a short history (last 30 runs, a month of nights) for the Tools page. */
 function log_arcgis_store( array $result ): array {
 	$result += [ 'time' => time() ];
 	update_option( 'log_arcgis_sync', $result, false );
 	$log = get_option( 'log_arcgis_sync_log', [] );
 	$log = is_array( $log ) ? $log : [];
 	array_unshift( $log, array_diff_key( $result, [ 'closed' => 1 ] ) + [ 'closed_count' => count( $result['closed'] ?? [] ) ] );
-	update_option( 'log_arcgis_sync_log', array_slice( $log, 0, 12 ), false );
+	update_option( 'log_arcgis_sync_log', array_slice( $log, 0, 30 ), false );
 	return $result;
 }
 
@@ -415,7 +432,7 @@ function log_arcgis_panel( ?array $posted ): void {
 	}
 
 	echo '<h2>סנכרון מהשכבה</h2>';
-	echo '<p>האתר מושך את <code>blue_lines_main</code> ישירות מ-ArcGIS פעם בשבוע, וכאן אפשר להריץ סנכרון בכל רגע. ';
+	echo '<p>האתר מושך את <code>blue_lines_main</code> ישירות מ-ArcGIS כל לילה, וכאן אפשר להריץ סנכרון בכל רגע. ';
 	echo 'הסנכרון מעדכן רק שדות שמגיעים מ-ArcGIS. אם הוא נכשל, האתר ממשיך להציג את הנתונים האחרונים ונשלחת התראה במייל.</p>';
 
 	echo '<table class="form-table" role="presentation"><tbody>';
@@ -424,14 +441,14 @@ function log_arcgis_panel( ?array $posted ): void {
 	echo '<tr><th scope="row">ריצה אחרונה</th><td>';
 	if ( is_array( $last ) ) {
 		$state = $last['ok'] ? 'הצליחה' : ( empty( $last['skipped'] ) ? 'נכשלה' : 'לא רצה' );
-		echo esc_html( $date( (int) $last['time'] ) . ' · ' . ( $last['trigger'] === 'cron' ? 'שבועית' : 'ידנית' ) . ' · ' . $state );
+		echo esc_html( $date( (int) $last['time'] ) . ' · ' . ( $last['trigger'] === 'cron' ? 'אוטומטית' : 'ידנית' ) . ' · ' . $state );
 		echo '<br><span class="description">' . esc_html( $last['message'] ) . '</span>';
 	} else {
 		echo '<em>עדיין לא רץ</em>';
 	}
 	echo '</td></tr>';
 	echo '<tr><th scope="row">סנכרון מוצלח אחרון</th><td>' . esc_html( $okTime ? $date( $okTime ) : '—' ) . '</td></tr>';
-	echo '<tr><th scope="row">הריצה השבועית הבאה</th><td>' . esc_html( $next ? $date( $next ) : 'לא מתוזמנת' ) . '</td></tr>';
+	echo '<tr><th scope="row">הריצה הלילית הבאה</th><td>' . esc_html( $next ? $date( $next ) : 'לא מתוזמנת' ) . '</td></tr>';
 	echo '</tbody></table>';
 
 	echo '<form method="post">';
@@ -443,7 +460,7 @@ function log_arcgis_panel( ?array $posted ): void {
 	if ( is_array( $log ) && count( $log ) > 1 ) {
 		echo '<details style="margin-top:1em"><summary>ריצות קודמות</summary><table class="widefat striped" style="margin-top:.5em"><tbody>';
 		foreach ( $log as $run ) {
-			echo '<tr><td style="width:9em">' . esc_html( $date( (int) $run['time'] ) ) . '</td><td style="width:5em">' . esc_html( $run['trigger'] === 'cron' ? 'שבועית' : 'ידנית' ) . '</td>';
+			echo '<tr><td style="width:9em">' . esc_html( $date( (int) $run['time'] ) ) . '</td><td style="width:5em">' . esc_html( $run['trigger'] === 'cron' ? 'אוטומטית' : 'ידנית' ) . '</td>';
 			echo '<td>' . esc_html( ( $run['ok'] ? '✓ ' : '✗ ' ) . $run['message'] ) . '</td></tr>';
 		}
 		echo '</tbody></table></details>';

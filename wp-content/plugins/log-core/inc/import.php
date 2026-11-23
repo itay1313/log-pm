@@ -569,7 +569,7 @@ function log_import_feature( array $feature, bool $dry ): array {
 	}
 
 	if ( $post_id ) {
-		// Only on a real rename, so a weekly sync doesn't bump every project's modified date.
+		// Only on a real rename, so the nightly sync doesn't bump every project's modified date.
 		// The slug never follows the title (spec v6 §18).
 		if ( get_post_field( 'post_title', $post_id ) !== $title ) {
 			wp_update_post( [ 'ID' => $post_id, 'post_title' => $title ] );
