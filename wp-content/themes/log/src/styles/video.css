@@ -45,21 +45,7 @@
 .site-footer > .vbg .vbg__toggle { inset-block: calc(var(--header-h) + 12px) auto; } /* clear of the fixed header when the footer reaches the top */
 .site-footer__inner { position: relative; z-index: 1; }
 
-/* Control company and careers: the opening band becomes a moving picture with the legend low on it */
-.control-hero__strip, .careers-hero__copy { position: relative; isolation: isolate; }
-.control-hero__strip:has(> .vbg), .careers-hero__copy:has(> .vbg) {
-  min-height: clamp(460px, 68vh, 780px); display: flex; flex-direction: column; justify-content: flex-end;
-}
-.control-hero__strip > .container, .careers-hero__copy > :not(.vbg) { position: relative; z-index: 1; }
-.control-hero__strip > .vbg, .careers-hero__copy > .vbg {
-  --vbg-scrim: linear-gradient(to top, color-mix(in srgb, var(--night) 82%, transparent) 0, color-mix(in srgb, var(--night) 38%, transparent) 55%, color-mix(in srgb, var(--night) 55%, transparent) 82%, var(--plate) 100%);
-}
-.careers-hero { overflow-x: clip; }
-/* Muted grey is too faint on footage: the line under the title goes white */
-.control-hero__strip:has(> .vbg) .control-hero__line, .careers-hero__copy:has(> .vbg) .page-header__lede { color: var(--legend); }
-
 @media (max-width: 700px) {
-  .control-hero__strip:has(> .vbg), .careers-hero__copy:has(> .vbg) { min-height: clamp(420px, 74svh, 640px); }
   .vbg__toggle { width: 40px; height: 40px; }
   /* Phones: "let's talk" and its arrow fill the width, so the pause button gets its own row above them */
   .site-footer:has(> .vbg) .site-footer__lead { padding-top: calc(var(--header-h) + 76px); }

@@ -32,27 +32,39 @@ $jobs = new WP_Query( [
 	'no_found_rows'  => true,
 ] );
 ?>
-<section class="careers-hero">
-	<figure class="careers-hero__media">
+<section class="careers-hero opener-hang">
+	<?php
+	get_template_part( 'template-parts/opener', null, [
+		'tag'   => 'div',
+		'title' => log_title( log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ), true ),
+		'media' => static function () {
+			get_template_part( 'template-parts/video-bg', null, [ 'name' => 'careers-build' ] );
+		},
+		'body'  => static function () {
+			?>
+			<p class="opener__lede"><?php echo esc_html( log_text( 'careers_lede', 'בלוג תעבדו לצד מיטב אנשי המקצוע, תקבלו אחריות אמיתית על תהליכים מהותיים ותהיו חלק מארגון שמאמין בצמיחה מקצועית ואישית.', 'option' ) ); ?></p>
+			<div class="cta-row">
+				<a class="btn btn--primary" href="#jobs">למשרות הפתוחות</a>
+				<a class="btn" href="#path">איך מתקבלים</a>
+			</div>
+			<?php
+		},
+		'side'  => $jobs->post_count ? static function () use ( $jobs ) {
+			printf( '<p class="opener__figure"><b>%s</b><span>%s</span></p>', esc_html( number_format_i18n( $jobs->post_count ) ), $jobs->post_count === 1 ? 'משרה פתוחה' : 'משרות פתוחות' );
+		} : null,
+	] );
+	?>
+	<figure class="opener-hang__media careers-hero__media">
 		<?php if ( is_array( $image ) && ! empty( $image['url'] ) ) : ?>
 			<img src="<?php echo esc_url( $image['sizes']['log-wide'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>" fetchpriority="high">
 		<?php else : // stock, until the settings page gets a picture; LOG's own team photograph opens the About page ?>
 			<?php echo log_team_standin(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		<?php endif; ?>
 	</figure>
-	<div class="container careers-hero__copy">
-		<?php get_template_part( 'template-parts/video-bg', null, [ 'name' => 'careers-build', 'bleed' => true ] ); ?>
-		<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'careers_title', 'בואו לעשות שינוי. בקריירה שלכם ובתכנון פני המדינה.', 'option' ), true ); ?></h1>
-		<p class="page-header__lede"><?php echo esc_html( log_text( 'careers_lede', 'בלוג תעבדו לצד מיטב אנשי המקצוע, תקבלו אחריות אמיתית על תהליכים מהותיים ותהיו חלק מארגון שמאמין בצמיחה מקצועית ואישית.', 'option' ) ); ?></p>
-		<div class="cta-row">
-			<a class="btn btn--primary" href="#jobs">למשרות הפתוחות</a>
-			<a class="btn" href="#path">איך מתקבלים</a>
-		</div>
-	</div>
 </section>
 
 <?php if ( ( is_array( $gallery ) && $gallery ) || $videos || log_show_empty() ) : ?>
-<section class="section" data-section="culture">
+<section class="section section--wide" data-section="culture">
 	<div class="container">
 		<h2 class="section__title"><?php echo log_title( log_text( 'careers_culture_title', 'איך זה נראה', 'option' ) ); ?></h2>
 		<?php if ( is_array( $gallery ) && $gallery ) : ?>
@@ -86,7 +98,7 @@ $jobs = new WP_Query( [
 	</div>
 </section>
 
-<section class="section" data-section="path" id="path">
+<section class="section section--wide" data-section="path" id="path">
 	<div class="container">
 		<h2 class="section__title"><?php echo log_title( log_text( 'careers_path_title', 'מסלול הגיוס', 'option' ) ); ?></h2>
 		<ol class="process">

@@ -3,6 +3,8 @@ import { illustration } from './hero/illustration.js';
 import { initConsent, track } from './consent.js';
 
 initConsent();
+// A project page that opens under the home map's wipe (hero/transition.js) tells the motion to wait for it.
+if (document.documentElement.classList.contains('is-wiping')) document.documentElement.dataset.wiped = '1';
 import('./motion.js').then((m) => m.initMotion()).catch(() => document.documentElement.classList.remove('js-motion'));
 
 // Measurement events that belong to a page load (spec v6 §21). Nothing personal is sent.
@@ -94,7 +96,7 @@ if (menu?.showModal && menuBtn) {
 // band to the footer. It stands for everyone; motion.js draws it with the scroll when motion is allowed.
 {
   const main = document.querySelector('.site-main');
-  const first = document.getElementById('drive') || document.getElementById('hero') || main?.querySelector('.page-header, .about-hero, .careers-hero, .control-hero, .project__hero');
+  const first = document.getElementById('drive') || document.getElementById('hero') || main?.querySelector('.opener-hang, .opener');
   if (main && main.offsetHeight > innerHeight * 1.5) {
     const line = document.createElement('div');
     line.className = 'lane-line';

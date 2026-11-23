@@ -33,27 +33,39 @@ while ( have_posts() ) : the_post();
 	] );
 	?>
 	<article class="project" data-project="<?php echo esc_attr( rawurldecode( get_post_field( 'post_name', $pid ) ) ); ?>">
-		<header class="project__hero">
-			<?php if ( $video = log_field( 'video', $pid ) ) : ?>
-				<video class="project__media" src="<?php echo esc_url( $video['url'] ); ?>" muted loop playsinline preload="metadata" poster="<?php echo esc_url( get_the_post_thumbnail_url( $pid, 'log-wide' ) ); ?>" aria-hidden="true"></video>
-				<button type="button" class="project__pause" aria-pressed="false">עצירת הסרטון</button>
-			<?php elseif ( has_post_thumbnail() ) : ?>
-				<?php the_post_thumbnail( 'log-wide', [ 'class' => 'project__media', 'fetchpriority' => 'high', 'sizes' => '100vw' ] ); ?>
-			<?php else : // no photo yet: main.js draws the same building illustration the hero card shows ?>
-				<div class="project__media project__art" data-id="<?php echo (int) $pid; ?>" data-domain="<?php echo esc_attr( (string) log_first_term_slug( $pid, 'log_domain' ) ); ?>" data-stage="<?php echo (int) ( $stage['completed'] ? 4 : $stage['number'] ); ?>" aria-hidden="true"></div>
-			<?php endif; ?>
-			<div class="project__hero-copy">
-				<a class="back-link back-link--light" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>" data-back data-back-home="חזרה למפה">חזרה לפרויקטים</a>
-				<h1 class="project__title"><?php echo log_route_shield(); ?><?php the_title(); ?></h1>
+		<?php
+		$grid = log_project_grid_ref( $pid );
+		get_template_part( 'template-parts/opener', null, [
+			'class'  => 'opener--tall project__hero',
+			'title'  => esc_html( get_the_title() ),
+			'media'  => static function () use ( $pid, $stage ) {
+				if ( $video = log_field( 'video', $pid ) ) : ?>
+					<video class="project__media" src="<?php echo esc_url( $video['url'] ); ?>" muted loop playsinline preload="metadata" poster="<?php echo esc_url( get_the_post_thumbnail_url( $pid, 'log-wide' ) ); ?>" aria-hidden="true"></video>
+					<button type="button" class="project__pause" aria-pressed="false">עצירת הסרטון</button>
+				<?php elseif ( has_post_thumbnail() ) :
+					the_post_thumbnail( 'log-wide', [ 'class' => 'project__media', 'fetchpriority' => 'high', 'sizes' => '100vw' ] );
+				else : // no photo yet: main.js draws the same building illustration the hero card shows ?>
+					<div class="project__media project__art" data-id="<?php echo (int) $pid; ?>" data-domain="<?php echo esc_attr( (string) log_first_term_slug( $pid, 'log_domain' ) ); ?>" data-stage="<?php echo (int) ( $stage['completed'] ? 4 : $stage['number'] ); ?>" aria-hidden="true"></div>
+				<?php endif;
+			},
+			'kicker' => static function () {
+				?><a class="back-link back-link--light" href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>" data-back data-back-home="חזרה למפה">חזרה לפרויקטים</a><?php
+			},
+			'body'   => static function () use ( $pid, $stage ) {
+				?>
 				<p class="project__meta"><?php echo log_project_meta_line( $pid ); ?></p>
 				<?php echo log_stage_row( $stage, 'project__stage' ); ?>
-				<?php if ( $grid = log_project_grid_ref( $pid ) ) : ?>
-					<p class="project__grid-ref">רשת ישראל<b><?php echo esc_html( $grid ); ?></b></p>
-				<?php elseif ( log_field( 'is_national', $pid ) ) : ?>
-					<p class="project__grid-ref">פריסה<b>ארצית</b></p>
-				<?php endif; ?>
-			</div>
-		</header>
+				<?php
+			},
+			'side'   => ( $grid || log_field( 'is_national', $pid ) ) ? static function () use ( $grid ) {
+				if ( $grid ) {
+					printf( '<p class="opener__ref">רשת ישראל<b class="grid-ref">%s</b></p>', esc_html( $grid ) );
+				} else {
+					echo '<p class="opener__ref">פריסה<b>ארצית</b></p>';
+				}
+			} : null,
+		] );
+		?>
 
 		<?php if ( $numbers ) : ?>
 			<div class="container">
@@ -147,7 +159,7 @@ while ( have_posts() ) : the_post();
 			$related->post_count = count( $related->posts );
 		}
 		if ( $related && $related->have_posts() ) : ?>
-			<section class="section section--more">
+			<section class="section section--more section--wide">
 				<div class="container">
 					<h2 class="section__title"><?php echo log_title( 'פרויקטים נוספים' ); ?></h2>
 					<div class="grid grid--projects">

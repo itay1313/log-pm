@@ -77,7 +77,7 @@ export function enter() {
   gsap.set(r, { x: cx - 150, y: cy - 150, transformOrigin: '50% 50%' });
   gsap.set(fill, { clipPath: `circle(${Math.hypot(cx, cy)}px at ${cx}px ${cy}px)` });
 
-  const intro = document.querySelectorAll('.project__hero-copy > *, .project__media, .project__facts');
+  const intro = document.querySelectorAll('.project__facts'); // the opener draws itself once the wipe clears (motion.js)
   gsap.timeline({ onComplete: () => o.remove() })
     .to(r, { rotation: 120, scale: 2.6, opacity: 0, duration: 1.2, ease: 'expo.in' }, 0.1)
     .to(fill, { clipPath: `circle(0px at ${cx}px ${cy}px)`, duration: 1.1, ease: 'expo.inOut' }, 0.35)

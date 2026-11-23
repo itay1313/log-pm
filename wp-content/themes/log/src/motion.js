@@ -30,7 +30,7 @@ export function initMotion() {
   rollLabels();
   pageCover();
   heroIntro();
-  titleBands();
+  openers();
   sections();
   laneLine();
   drawLines();
@@ -139,20 +139,38 @@ function heroIn(hero) {
 
 /* ---------------------------------------------------------------- inner pages */
 
-function titleBands() {
-  for (const band of document.querySelectorAll('.page-header, .about-hero__copy, .careers-hero__copy, .control-hero__strip, .project__hero-copy')) {
-    const title = band.querySelector('h1');
-    rise(title, { delay: 0.1 });
-    const rest = [...band.querySelectorAll(':scope > :not(h1, .vbg), :scope > .container > :not(h1)')].filter((el) => !el.contains(title)); // a background video stays put
-    gsap.set(rest, { opacity: 1 });
-    gsap.from(rest, { opacity: 0, y: 16, duration: 1, stagger: 0.08, ease: 'expo.out', delay: 0.45, clearProps: 'transform' });
+/**
+ * The page opener (template-parts/opener.php) draws itself the way the book's lines do: the line from the start
+ * side, the crossing line down through it, the dot last with a small overshoot. The page's number comes up from
+ * under the line, the title rises on it, and what stands under the line settles. As the page scrolls on, the number
+ * sinks slowly back under the line. Transforms and opacity only.
+ */
+function openers() {
+  // Arriving from the home map, a project's page opens under the wipe (hero/transition.js): wait for it to clear.
+  const wait = document.documentElement.dataset.wiped ? 1.15 : 0.1;
+  for (const op of document.querySelectorAll('.opener')) {
+    const q = (sel) => op.querySelector(sel);
+    const [h, v, dot, n, place] = ['.opener__h', '.opener__v', '.opener__dot', '.opener__n', '.opener__place > :is(img, video, .project__art)'].map(q);
+    const rest = op.querySelectorAll('.opener__kicker, .opener__text > *, .opener__side > *');
+    gsap.set([q('.opener__cross'), n, ...rest], { opacity: 1 });
+    const tl = gsap.timeline({ delay: wait });
+    tl.fromTo(h, { scaleX: 0 }, { scaleX: 1, duration: 1.25, ease: 'power3.inOut' }, 0);
+    if (v.offsetParent) {
+      tl.fromTo(v, { scaleY: 0 }, { scaleY: 1, duration: 0.95, ease: 'power3.out' }, 0.5)
+        .fromTo(dot, { scale: 0 }, { scale: 1, duration: 0.7, ease: 'back.out(3)' }, 0.85);
+    }
+    if (n) tl.fromTo(n, { yPercent: 55, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.7, ease: 'expo.out' }, 0.15);
+    tl.fromTo(rest, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1, stagger: 0.07, ease: 'expo.out', clearProps: 'transform' }, 0.55);
+    if (place) tl.fromTo(place, { scale: 1.07 }, { scale: 1, duration: 2.6, ease: 'expo.out', clearProps: 'transform' }, 0);
+    rise(q('.opener__title'), { delay: wait + 0.2 });
+    if (n) gsap.to(n, { y: () => n.offsetHeight * 0.22, ease: 'none', scrollTrigger: { trigger: op, start: 'top top', end: 'bottom top', scrub: true, invalidateOnRefresh: true } });
   }
 }
 
 function sections() {
   // Section legends
   for (const h of document.querySelectorAll('.site-main .section__title, .site-main .section h2:not(.section__title), .featured__title, .national__title')) {
-    if (h.closest('.hero, .page-header, .drive-country, .drive-build')) continue; // the drive moves its own legends
+    if (h.closest('.hero, .opener, .drive-country, .drive-build')) continue; // the drive moves its own legends
     SplitText.create(h, {
       type: 'lines', mask: 'lines', autoSplit: true,
       onSplit: (self) => {
@@ -166,12 +184,17 @@ function sections() {
     });
   }
 
+  // An inner page's section hangs from a thin line: it draws from the start side as the section arrives (pages.css).
+  if (!document.body.classList.contains('home')) {
+    ScrollTrigger.batch('.site-main .section', { start: 'top 88%', once: true, onEnter: (batch) => batch.forEach((el) => el.classList.add('is-in')) });
+  }
+
   // Rows of a legend arrive one after another, each with its rule.
-  const rows = '.domain, .jobs__item, .expertise li, .values__item, .roles__item, .process li, .search-results li, .knowledge-list li, .national__list li, .facts > div, .numbers > div, .project__numbers > div, .timeline li, .office, .partners li';
+  const rows = '.domain, .jobs__item, .expertise li, .values__item, .roles__item, .process li, .results li, .knowledge-list li, .national__list li, .facts > div, .numbers > div, .project__numbers > div, .timeline li, .office, .partners li';
   rowsIn(rows);
 
   // Pictures unroll from the top as they come near. People don't: their split circle draws itself (lines/draw.js).
-  const media = gsap.utils.toArray('.card__media, .news__media, .about-hero__media, .careers-hero__media, .control-hero__media, .offices__item, .minimap, .gallery__grid figure');
+  const media = gsap.utils.toArray('.card__media, .news__media, .opener-hang__media, .offices__item, .minimap, .gallery__grid figure');
   ScrollTrigger.batch(media, {
     start: 'top 92%', once: true,
     onEnter: (batch) => gsap.fromTo(batch, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, stagger: 0.08, ease: 'expo.out', clearProps: 'clipPath' }),

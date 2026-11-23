@@ -1,0 +1,118 @@
+/* ------------------------------------------------------------------ the page opener (template-parts/opener.php) */
+
+/*
+ * Every inner page opens the way the brand book opens a chapter, and the way the home page's first chapter and the
+ * menu do. One thin line crosses the window: the title stands heavy on it, the page's number is drawn huge in outline
+ * behind it and cut by the line, and a second line cuts straight through, the dot where they meet. The line is grey
+ * from the start side and turns orange at the crossing: under the grey stands the text, under the orange what the
+ * page counts. motion.js draws it in; these rules are the finished state.
+ */
+.opener {
+  --ink: var(--legend); --slate: var(--legend-muted); --rule: var(--plate-line); --works-deep: var(--works); --focus: var(--works);
+  --g: clamp(2rem, 5vw, 5rem);                                   /* between the text and the count */
+  --band-w: min(100vw - 2 * var(--gutter), var(--container));
+  --side-w: calc((var(--band-w) - var(--g)) * .3);               /* the count's column, on the end side */
+  --cross: calc(var(--side-w) + var(--g) / 2);                   /* the crossing, from the band's end edge */
+  position: relative; isolation: isolate; overflow: clip; display: grid; grid-template-rows: minmax(0, 1fr) auto;
+  min-height: clamp(460px, 66svh, 700px); background: var(--plate); color: var(--legend);
+}
+/* Above the line: the title on the start side, standing on the line; the number on the end side, cut by it. */
+.opener__top { position: relative; display: grid; align-content: end; justify-items: start; overflow: hidden; min-height: min(31svh, 21vw); padding-block: clamp(40px, 6vw, 88px) .6rem; pointer-events: none; }
+.opener__top > * { pointer-events: auto; }
+.opener__n {
+  position: absolute; z-index: 0; left: -.03em; bottom: -.2em; margin: 0; direction: ltr; user-select: none; pointer-events: none;
+  font: var(--fw-bold) min(48svh, 31vw)/.8 var(--font-headline); letter-spacing: -.06em;
+  color: transparent; -webkit-text-stroke: var(--line-w) color-mix(in srgb, var(--night-ink) 36%, transparent);
+}
+.opener__kicker { position: relative; z-index: 1; margin-bottom: 1.1rem; }
+.opener__kicker .back-link { margin: 0; }
+.opener__title { position: relative; z-index: 1; max-width: 13ch; margin: 0; font-size: var(--fs-h1); line-height: .9; letter-spacing: -.035em; }
+.opener__title .period--dot { transform-origin: 50% 80%; }
+
+/* Under the line: the text on the start side, the count on the end side. */
+.opener__band { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) var(--side-w); column-gap: var(--g); align-items: start; padding-block: 1.6rem clamp(36px, 5vw, 72px); }
+.opener__cross { position: absolute; inset: 0; pointer-events: none; }
+.opener__h {
+  --x: calc(50vw - var(--band-w) / 2 + var(--cross)); /* the crossing, from the window's left edge */
+  position: absolute; top: 0; inset-inline: calc(50% - 50vw); height: var(--line-w);
+  background: linear-gradient(to right, var(--works) calc(var(--x) - var(--switch-blend) / 2), var(--hair-strong) calc(var(--x) + var(--switch-blend) / 2));
+  transform-origin: 100% 50%;
+}
+.opener__v { position: absolute; left: var(--cross); top: -100vh; bottom: 0; width: var(--rule-w); background: var(--hair-strong); transform-origin: 50% 0; }
+.opener__dot {
+  position: absolute; left: var(--cross); top: 0; width: var(--dot); height: var(--dot); margin: calc(var(--dot) / -2 + var(--line-w) / 2) calc(var(--dot) / -2 + var(--rule-w) / 2);
+  border-radius: 50%; background: var(--works);
+}
+.opener__text { position: relative; display: grid; justify-items: start; gap: 1.1rem; max-width: 40rem; }
+.opener__text:empty { display: none; }
+.opener__text > * { margin: 0; }
+.opener__lede, .opener__prose { font-size: var(--fs-lead); line-height: 1.55; color: var(--legend-muted); }
+.opener__prose p { margin: 0 0 .8em; }
+.opener__prose p:last-child { margin: 0; }
+.opener__meta { font: var(--type-legend); color: var(--legend-muted); }
+.opener__text .cta-row, .opener__text .job__actions { margin-top: .5rem; }
+
+/* What the page counts: a Light figure over its label, or a reference (a label over a value). */
+.opener__side { position: relative; grid-column: 2; display: grid; gap: 1.1rem; align-content: start; justify-items: start; }
+.opener__figure { display: grid; margin: 0; }
+.opener__figure b { font: var(--fw-light) var(--fs-h1)/1 var(--font-figure); letter-spacing: var(--track-figure); font-variant-numeric: tabular-nums; }
+.opener__figure span { margin-top: .45rem; font: var(--type-label); color: var(--legend-muted); }
+.opener__ref { display: grid; justify-items: start; gap: .15rem; margin: 0; font: var(--type-label); color: var(--legend-muted); }
+.opener__ref b, .opener__ref a { font: var(--fw-medium) var(--fs-lead)/1.3 var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; text-decoration: none; }
+.opener__ref a:hover { color: var(--works); }
+
+/* A field on the sheet is the thin line closed around the place to write, in the night's own line and ink. */
+.opener .search-form { width: 100%; max-width: 34rem; }
+.opener .search-form input { background-color: transparent; color: var(--legend); border-color: var(--hair-strong); }
+.opener .search-form input::placeholder { color: var(--legend-muted); }
+.opener .search-form input:focus { border-color: var(--legend); }
+
+/* A place behind the sheet: greyed, under one even night layer (the book, chapter 09). */
+.opener__place { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--plate); }
+.opener__place > :is(img, video, .project__art) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.opener__place > :is(img, video) { filter: grayscale(.85) contrast(1.05); }
+.opener__place::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: color-mix(in srgb, var(--night) 62%, transparent); }
+/* A film brings its own layer (video.css): one even layer here too, and its stop button stands clear of the count. */
+.opener__place:has(> .vbg)::after { display: none; }
+.opener__place > .vbg { --vbg-scrim: linear-gradient(color-mix(in srgb, var(--night) 64%, transparent), color-mix(in srgb, var(--night) 64%, transparent)); }
+.opener__place > .vbg .vbg__toggle { inset-block: clamp(14px, 2vw, 24px) auto; }
+.opener--place .opener__n { -webkit-text-stroke-color: color-mix(in srgb, var(--night-ink) 44%, transparent); }
+.opener--place :is(.opener__lede, .opener__prose, .opener__meta) { color: var(--legend); }
+.opener--place .opener__title { text-shadow: 0 2px 40px color-mix(in srgb, var(--night-deep) 60%, transparent); }
+.opener--place { min-height: clamp(480px, 72svh, 780px); }
+
+/* A full window: a project stands on its place. */
+.opener--tall { min-height: max(600px, 100svh - var(--header-h)); }
+/* One item of a list, a search, a plain page: the same sheet, lower. */
+.opener--compact { min-height: 0; }
+.opener--compact .opener__top { min-height: 0; padding-top: clamp(48px, 7vw, 104px); }
+.opener--compact .opener__n { font-size: min(27svh, 19vw); }
+.opener--compact .opener__title { max-width: 18ch; }
+.opener--compact .opener__band { padding-bottom: clamp(28px, 4vw, 56px); }
+/* A name is not a headline: a long job or article title steps down a size and may run wider. */
+.opener__title--name { max-width: 20ch; font-size: var(--fs-h2); line-height: .96; letter-spacing: var(--track-headline); }
+
+@media (max-width: 900px) {
+  .opener { --side-w: 34vw; min-height: clamp(360px, 56svh, 540px); }
+  .opener--place { min-height: clamp(440px, 70svh, 640px); }
+  .opener--tall { min-height: max(540px, 100svh - var(--header-h)); }
+  .opener--compact { min-height: 0; }
+  .opener__top { min-height: min(40vw, 26svh); padding-top: 40px; }
+  .opener--compact .opener__top { min-height: 0; }
+  .opener__n { font-size: min(52vw, 36svh); left: -1vw; }
+  .opener--compact .opener__n { font-size: min(33vw, 22svh); }
+  .not-found .opener__n { font-size: min(30vw, 24svh); } /* three figures: they stand beside the title, not under it */
+  .opener__band { grid-template-columns: minmax(0, 1fr); row-gap: 1.6rem; padding-block: 1.2rem 2.25rem; }
+  .opener__side { grid-column: 1; }
+  .opener__h { --x: 34vw; }
+  .opener__v, .opener__dot { display: none; }
+  .opener__side { grid-auto-flow: column; justify-content: start; column-gap: 2.25rem; }
+}
+
+/* A picture of people hangs from the opener into the paper: natural colour, no layer (the book, chapter 09). */
+.opener-hang { background: linear-gradient(var(--plate) 0 calc(100% - clamp(80px, 10vw, 160px)), var(--paper) 0); }
+.opener-hang__media { position: relative; width: min(100% - 2 * var(--gutter), var(--container)); margin: 0 auto; }
+.opener-hang__media img { width: 100%; aspect-ratio: 21 / 8; object-fit: cover; }
+.opener-hang:not(:has(.opener-hang__media > *)) { background: none; }
+.opener-hang__media:not(:has(*)) { display: none; }
+@media (max-width: 700px) { .opener-hang__media img { aspect-ratio: 3 / 2; } }

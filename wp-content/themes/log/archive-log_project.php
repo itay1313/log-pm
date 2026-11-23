@@ -7,12 +7,16 @@
  */
 get_header();
 ?>
-<header class="page-header">
-	<h1 class="page-header__title"><?php echo log_route_shield(); ?><?php echo log_title( log_text( 'projects_title', 'הפרויקטים שלנו', 'option' ), true ); ?></h1>
-	<?php echo log_sheet_label( sprintf( '%s פרויקטים', number_format_i18n( count( log_public_projects() ) ) ) ); ?>
-	<div class="page-header__prose"><?php echo wpautop( esc_html( log_text( 'projects_lede', "לוג מנהלת ומקדמת תכניות בכל קנה מידה: התחדשות עירונית, תכניות מתאר ותכניות מפורטות, ברשויות בכל הארץ.\n\nבכל פרויקט אנחנו מחזיקים את התהליך מקצה לקצה: מהאיתור וההיתכנות, דרך מוסדות התכנון, ועד המעקב אחרי מה שקורה בשטח.", 'option' ) ) ); ?></div>
-</header>
 <?php
+get_template_part( 'template-parts/opener', null, [
+	'title' => log_title( log_text( 'projects_title', 'הפרויקטים שלנו', 'option' ), true ),
+	'body'  => static function () {
+		?><div class="opener__prose"><?php echo wpautop( esc_html( log_text( 'projects_lede', "לוג מנהלת ומקדמת תכניות בכל קנה מידה: התחדשות עירונית, תכניות מתאר ותכניות מפורטות, ברשויות בכל הארץ.\n\nבכל פרויקט אנחנו מחזיקים את התהליך מקצה לקצה: מהאיתור וההיתכנות, דרך מוסדות התכנון, ועד המעקב אחרי מה שקורה בשטח.", 'option' ) ) ); ?></div><?php
+	},
+	'side'  => static function () {
+		printf( '<p class="opener__figure"><b>%s</b><span>פרויקטים</span></p>', esc_html( number_format_i18n( count( log_public_projects() ) ) ) );
+	},
+] );
 // Featured first (stable), then newest first.
 $public = log_public_projects();
 usort( $public, static fn( $a, $b ) => ( (int) log_field( 'featured', $b->ID ) <=> (int) log_field( 'featured', $a->ID ) ) ?: strcmp( $b->post_date, $a->post_date ) ?: $a->ID <=> $b->ID );

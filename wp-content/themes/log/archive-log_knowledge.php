@@ -5,12 +5,16 @@
  * Filtering runs client-side (knowledge.js) on every published item; state in ?type=&q=&year=.
  */
 get_header();
-get_template_part( 'template-parts/page-header', null, [
-	'title' => log_text( 'knowledge_title', 'מרכז ידע', 'option' ),
-	'lede'  => log_text( 'knowledge_lede', 'מאמרים, ניירות עמדה, חדשות החברה ואזכורים בתקשורת.', 'option' ),
-] );
-
 $all = new WP_Query( [ 'post_type' => 'log_knowledge', 'posts_per_page' => -1, 'no_found_rows' => true ] );
+get_template_part( 'template-parts/opener', null, [
+	'title' => log_title( log_text( 'knowledge_title', 'מרכז ידע', 'option' ), true ),
+	'body'  => static function () {
+		?><p class="opener__lede"><?php echo esc_html( log_text( 'knowledge_lede', 'מאמרים, ניירות עמדה, חדשות החברה ואזכורים בתקשורת.', 'option' ) ); ?></p><?php
+	},
+	'side'  => $all->post_count ? static function () use ( $all ) {
+		printf( '<p class="opener__figure"><b>%s</b><span>%s</span></p>', esc_html( number_format_i18n( $all->post_count ) ), $all->post_count === 1 ? 'פריט' : 'פריטים' );
+	} : null,
+] );
 $featured = null;
 foreach ( $all->posts as $p ) {
 	if ( log_field( 'featured', $p->ID ) ) {
@@ -61,7 +65,7 @@ rsort( $years );
 <?php
 $posts_ig = log_instagram_items( 8 );
 if ( $posts_ig ) : ?>
-	<section class="section section--news" data-section="news">
+	<section class="section section--news section--wide" data-section="news">
 		<div class="container">
 			<h2 class="section__title"><?php echo log_title( log_text( 'news_title', 'מה חדש', 'option' ) ); ?></h2>
 			<ul class="news">

@@ -20,7 +20,7 @@ input, textarea { caret-color: var(--works); }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 /* The focus ring: deep orange holds 3.5:1 on paper and on navy; navy grounds get the bright orange. */
 :root { --focus: var(--works-deep); }
-:is(.site-header, .gantry, .hero, .drive, .road, .section--night, .section--control, .site-footer) { --focus: var(--works); }
+:is(.site-header, .gantry, .hero, .drive, .road, .opener, .section--night, .section--control, .site-footer) { --focus: var(--works); }
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: var(--paper); }
 ::-webkit-scrollbar-thumb { background: var(--slate); border: 3px solid var(--paper); border-radius: var(--r-control); }
@@ -69,7 +69,7 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
   transition: box-shadow .35s var(--ease-out), background-color .35s var(--ease-out), color .35s var(--ease-out);
 }
 .btn, .menu-toggle { border-radius: var(--r-control); }
-:is(.sheet--night, .section--control, .section--night, .site-footer, .gantry, .hero, .page-header, .about-hero, .careers-hero, .control-hero, .project__hero, body.page-template-page-control) .btn:not(.btn--primary, .btn--works, .btn--ghost, .btn--day) { --k-ground: transparent; --k-edge: var(--legend); }
+:is(.sheet--night, .section--control, .section--night, .site-footer, .gantry, .hero, .opener, body.page-template-page-control) .btn:not(.btn--primary, .btn--works, .btn--ghost, .btn--day) { --k-ground: transparent; --k-edge: var(--legend); }
 
 /*
  * The route number: a page's number in the header order, set at the start of its heading and its menu row the way

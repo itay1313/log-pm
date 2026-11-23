@@ -13,44 +13,53 @@ while ( have_posts() ) : the_post();
 	?>
 	<article class="knowledge-item">
 		<?php get_template_part( 'template-parts/page-header', null, [
-			'meta'    => esc_html( implode( ' · ', array_filter( [ $type?->name, $outlet, get_the_date() ] ) ) ),
-			'title'   => get_the_title(),
+			'meta'  => implode( ' · ', array_filter( [ $type?->name, $outlet, get_the_date() ] ) ),
+			'title' => get_the_title(),
+			'back'  => [ get_post_type_archive_link( 'log_knowledge' ), 'למרכז הידע' ],
 		] ); ?>
-		<p class="container"><a class="back-link" href="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>" data-back>למרכז הידע</a></p>
-		<?php if ( has_excerpt() ) : ?><p class="container knowledge-item__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
-		<?php if ( has_post_thumbnail() ) : ?><figure class="knowledge-item__media container"><?php the_post_thumbnail( 'log-wide' ); ?></figure><?php endif; ?>
-		<div class="container prose"><?php the_content(); ?></div>
-
-		<?php if ( $files = log_field( 'files', $kid ) ) : ?>
-			<div class="container">
-				<h2>להורדה</h2>
-				<ul class="downloads">
-					<?php foreach ( $files as $f ) : if ( empty( $f['file'] ) ) { continue; } ?>
-						<li><a href="<?php echo esc_url( $f['file']['url'] ); ?>" download><?php echo esc_html( $f['label'] ?: $f['file']['filename'] ); ?></a> <span><?php echo esc_html( size_format( $f['file']['filesize'] ?? 0 ) ); ?></span></li>
-					<?php endforeach; ?>
-				</ul>
+		<?php // The piece reads in one column from the start line; what it is, where it ran and what to take away stand beside it. ?>
+		<div class="container article__layout">
+			<div class="article__body">
+				<?php if ( has_excerpt() ) : ?><p class="knowledge-item__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></p><?php endif; ?>
+				<?php if ( has_post_thumbnail() ) : ?><figure class="knowledge-item__media"><?php the_post_thumbnail( 'log-wide' ); ?></figure><?php endif; ?>
+				<div class="prose"><?php the_content(); ?></div>
 			</div>
-		<?php endif; ?>
-
-		<div class="container">
-			<?php if ( $external ) : ?><a class="btn" href="<?php echo esc_url( $external ); ?>" target="_blank" rel="noopener">לכתבה המקורית</a><?php endif; ?>
-			<button type="button" class="btn btn--ghost" data-copy-link>העתקת קישור</button>
+			<aside class="article__side" aria-label="פרטי הפריט">
+				<dl class="facts">
+					<?php foreach ( array_filter( [ 'סוג' => $type?->name, 'פורסם ב' => $outlet, 'תאריך' => get_the_date() ] ) as $k => $v ) : ?>
+						<div><dt><?php echo esc_html( $k ); ?></dt><dd><?php echo esc_html( $v ); ?></dd></div>
+					<?php endforeach; ?>
+				</dl>
+				<?php if ( $files = log_field( 'files', $kid ) ) : ?>
+					<h2 class="article__side-title">להורדה</h2>
+					<ul class="downloads">
+						<?php foreach ( $files as $f ) : if ( empty( $f['file'] ) ) { continue; } ?>
+							<li><a href="<?php echo esc_url( $f['file']['url'] ); ?>" download><?php echo esc_html( $f['label'] ?: $f['file']['filename'] ); ?></a> <span><?php echo esc_html( size_format( $f['file']['filesize'] ?? 0 ) ); ?></span></li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
+				<div class="article__actions">
+					<?php if ( $external ) : ?><a class="btn" href="<?php echo esc_url( $external ); ?>" target="_blank" rel="noopener">לכתבה המקורית</a><?php endif; ?>
+					<button type="button" class="btn btn--ghost" data-copy-link>העתקת קישור</button>
+				</div>
+			</aside>
 		</div>
 
 		<?php
-		$more = $type ? new WP_Query( [
+		// Not `$more`: templates run in global scope, and the_post() overwrites WordPress's own global of that name.
+		$others = $type ? new WP_Query( [
 			'post_type'      => 'log_knowledge',
 			'posts_per_page' => 3,
 			'post__not_in'   => [ $kid ],
 			'no_found_rows'  => true,
 			'tax_query'      => [ [ 'taxonomy' => 'log_knowledge_type', 'terms' => $type->term_id ] ],
 		] ) : null;
-		if ( $more && $more->have_posts() ) : ?>
+		if ( $others && $others->have_posts() ) : ?>
 			<section class="section section--more">
 				<div class="container">
 					<h2 class="section__title"><?php echo log_title( 'פריטים נוספים' ); ?></h2>
 					<ul class="knowledge-list">
-						<?php while ( $more->have_posts() ) : $more->the_post(); ?>
+						<?php while ( $others->have_posts() ) : $others->the_post(); ?>
 							<li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a> <span class="meta"><?php echo esc_html( get_the_date() ); ?></span></li>
 						<?php endwhile; wp_reset_postdata(); ?>
 					</ul>
