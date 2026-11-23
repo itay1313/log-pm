@@ -85,7 +85,7 @@ html.drive-on .drive-country__inner::before {
 }
 
 /* The sheet margin while driving: grid reference and scale under the gantry, on the end side. */
-.drive-coord { position: absolute; z-index: 5; inset-inline-end: var(--gutter); top: calc(var(--header-h) + 1.25rem); margin: 0; display: grid; justify-items: end; gap: .1rem; font: var(--type-micro); color: var(--legend-muted); opacity: 0; pointer-events: none; text-shadow: 0 1px 10px color-mix(in srgb, var(--night-deep) 90%, transparent); }
+.drive-coord { position: absolute; z-index: 5; inset-inline-end: var(--gutter); top: calc(var(--header-edge) + 1.25rem); margin: 0; display: grid; justify-items: end; gap: .1rem; font: var(--type-micro); color: var(--legend-muted); opacity: 0; pointer-events: none; text-shadow: 0 1px 10px color-mix(in srgb, var(--night-deep) 90%, transparent); }
 .drive-coord b { font: var(--fw-bold) var(--fs-base) var(--font-display); color: var(--legend); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
 @media (max-width: 760px) { .drive-coord { display: none; } }
 

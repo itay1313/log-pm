@@ -158,7 +158,7 @@
 /* Markers: every project is the book's dot, filled and orange, with no ring around it; a soft night shadow keeps it
    clear of the lit city. A cluster is a count, so it is the thin full circle with its number. */
 .hero-pins { position: absolute; inset: 0; z-index: 3; pointer-events: none; transition: opacity .9s ease; }
-.hero-pins, .hero-labels { clip-path: inset(var(--header-h) 0 0); }
+.hero-pins, .hero-labels { clip-path: inset(var(--header-edge) 0 0); }
 .hero.is-intro .hero-pins, .hero.is-intro .hero-edges { opacity: 0; pointer-events: none; }
 .hero.is-intro .hero-pin { pointer-events: none; }
 .hero-pin { position: absolute; top: 0; left: 0; width: 26px; height: 26px; margin: -13px 0 0 -13px; padding: 0; border: 0; background: none; cursor: pointer; pointer-events: auto; }

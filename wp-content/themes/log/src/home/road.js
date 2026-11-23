@@ -71,7 +71,9 @@ export function initRoad(road) {
   // screen above it. The chapter is that much longer, and every sign that much later.
   let lead = 0, first = FIRST;
   function measure() {
-    const room = innerHeight * 0.4 - ((header?.offsetHeight || 84) + 14); // from the header's edge down to the eye line
+    // From the header's edge down to the eye line. The edge is where the header ends in the window, not its height:
+    // a signed-in editor has WordPress's bar above it.
+    const room = innerHeight * 0.4 - ((header?.getBoundingClientRect().bottom || 84) + 14);
     const scale = Math.max(0.5, Math.min(phone.matches ? READ.phone : READ.wide, room / SIGN_TOP));
     read = EYE - EYE / scale;
     lead = gantries ? parseFloat(getComputedStyle(gantries).getPropertyValue('--lead')) || 0 : 0;
