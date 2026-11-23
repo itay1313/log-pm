@@ -540,6 +540,24 @@ label.filters__group { display: grid; gap: .4rem; font: var(--type-label); color
 .prose h2 { font-size: var(--fs-h4); margin-top: 2em; }
 .prose ol li { list-style: decimal; margin-inline-start: 1.25em; }
 .prose blockquote { margin: 2.25rem 0; padding: 1.5rem 0 0; border-top: var(--line-w) solid var(--ink); font: var(--fw-bold) var(--fs-h4)/1.25 var(--font-headline); letter-spacing: var(--track-title); }
+.prose > :first-child { margin-top: 0; }
+.prose h2[id] { scroll-margin-top: calc(var(--header-h) + 1.75rem); }
+
+/*
+ * A plain page (page.php): the text stands in the content column, the way a section's rows do. The index of its
+ * parts holds its place in the start column while the text passes; under 1000px the page is short enough without it.
+ */
+.page-body { padding-block: clamp(3rem, 6vw, 5rem) clamp(4rem, 8vw, 7rem); }
+.page-index { display: none; }
+.page-index ol { margin: 0; border-top: var(--line-w) solid var(--ink); }
+.page-index a { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); align-items: baseline; padding-block: .7rem .65rem; border-bottom: var(--rule-w) solid var(--rule); font: var(--type-label); color: var(--slate); text-decoration: none; transition: color .3s var(--ease-out); }
+.page-index a:is(:hover, :focus-visible) { color: var(--ink); }
+.page-index span { font: var(--fw-light) var(--fs-small)/1 var(--font-figure); font-variant-numeric: tabular-nums; }
+@media (min-width: 1000px) {
+  .page-body { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .page-body > .prose { grid-column: 2; }
+  .page-index { display: block; grid-column: 1; grid-row: 1; max-width: 19rem; position: sticky; top: calc(var(--header-h) + 1.75rem); }
+}
 
 .news { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 1.5rem; margin-top: 2.25rem; }
 .news__link { display: grid; text-decoration: none; height: 100%; }
