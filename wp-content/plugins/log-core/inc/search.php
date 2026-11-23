@@ -1,7 +1,9 @@
 <?php
 /**
  * Site search (spec v6 §16): projects (name, city, authority), knowledge items (title, excerpt, body)
- * and open jobs (title, team). Public content only. Hebrew-aware: niqqud, geresh and quotes are ignored,
+ * and open jobs (title, team). Projects also match on their practice area, which the spec doesn't list:
+ * a visitor who types "התחדשות" means the urban-renewal projects, not only those with the word in their name.
+ * Public content only. Hebrew-aware: niqqud, geresh and quotes are ignored,
  * a leading ה is optional, and a word matches inside longer words.
  * WordPress's own search only looks at titles and bodies, so results are computed here.
  */
@@ -49,10 +51,10 @@ function log_search( string $query ): array {
 		}
 		$auth  = wp_get_post_terms( $p->ID, 'log_authority', [ 'fields' => 'names' ] );
 		$place = implode( ' · ', array_unique( array_filter( [ (string) log_field( 'city', $p->ID, '' ), $auth[0] ?? '' ] ) ) );
-		if ( ! log_search_matches( $p->post_title . ' ' . $place, $query ) ) {
+		$domain = wp_get_post_terms( $p->ID, 'log_domain', [ 'fields' => 'names' ] );
+		if ( ! log_search_matches( $p->post_title . ' ' . $place . ' ' . implode( ' ', $domain ), $query ) ) {
 			continue;
 		}
-		$domain = wp_get_post_terms( $p->ID, 'log_domain', [ 'fields' => 'names' ] );
 		$groups['projects']['items'][] = [
 			'type'  => 'פרויקט',
 			'title' => get_the_title( $p ),
