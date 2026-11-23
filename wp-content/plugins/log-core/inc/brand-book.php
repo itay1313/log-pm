@@ -2,7 +2,7 @@
 /**
  * The web brand book at /brand (template page-brand.php in the theme). It is a working document for LOG and
  * its suppliers, not part of the public site: password-protected, never indexed, never listed, never searched.
- * The coming-soon gate lets it through (coming-soon.php) so the client can open it before launch.
+ * The site's gate lets it through (site-gate.php): its own password is enough.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -41,7 +41,7 @@ add_action( 'template_redirect', function () {
 		header( 'X-Robots-Tag: noindex, nofollow' );
 		nocache_headers();
 	}
-}, -1 ); // before the coming-soon gate, which runs at 0
+}, -1 ); // before the site's gate, which runs at 0
 
 // Never listed: out of the WP sitemap even if the password is ever removed.
 add_filter( 'wp_sitemaps_posts_query_args', function ( array $args, string $post_type ): array {

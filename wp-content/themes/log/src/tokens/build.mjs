@@ -3,7 +3,7 @@
  * Token generator. Reads src/tokens/tokens.json (the one source) and writes:
  *   src/styles/tokens.gen.css  custom properties on :root, imported by tokens.css
  *   assets/brand/tokens.css    the same file, shipped (src/ isn't deployed) for pages that stand outside the
- *                              build: log-core's coming-soon gate inlines it
+ *                              build: log-core's gate page inlines it
  *   src/tokens/tokens.js       the same values for JS (the 3D map, MapLibre, drawings, the /brand book)
  *   DESIGN.md                  the `colors:` block of its frontmatter (the prose stays hand-written)
  *

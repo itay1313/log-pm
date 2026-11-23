@@ -1,16 +1,50 @@
 <?php
 /**
- * "Under construction" gate until launch.
+ * The site's gate until launch: the site is published, and one password opens it.
  *
- * Visitors who aren't logged in with editing rights get a single holding page (503 + Retry-After,
- * so search engines come back later instead of indexing it). wp-admin, login, REST, AJAX and cron
- * are untouched. Switch off in Settings → General → "האתר בבנייה" on launch day.
+ * A visitor without the password gets a single page with a field for it (401, never indexed). The right
+ * password leaves a cookie in that browser for 30 days and the whole site opens the way the public will see
+ * it: no account, no WordPress bar. Signed-in editors pass without it. The brand book keeps its own lock.
+ * wp-admin, the login page, AJAX and cron are untouched. The REST API answers editors, visitors who unlocked,
+ * and GitHub's deploy, which proves itself with its own token (deploy.php).
+ *
+ * Settings → General → "גישה לאתר": the password, and the switch that opens the site on launch day.
+ * The switch is still stored as `log_coming_soon`, the name it had when this was a holding page, so the live
+ * site stayed closed across the deploy that changed it.
  */
 
 defined( 'ABSPATH' ) || exit;
 
-function log_coming_soon_on(): bool {
+const LOG_GATE_COOKIE = 'log_gate';
+const LOG_GATE_DAYS   = 30;
+const LOG_GATE_TRIES  = 8;   // wrong passwords from one address before it has to wait
+const LOG_GATE_WAIT   = 600; // seconds
+
+function log_gate_on(): bool {
 	return (bool) get_option( 'log_coming_soon', '1' );
+}
+
+/**
+ * The password. Nobody types the first one: it is made here, at random, the first time the gate needs it,
+ * and an administrator reads or replaces it in Settings → General.
+ */
+function log_gate_password(): string {
+	$password = trim( (string) get_option( 'log_gate_password', '' ) );
+	if ( $password === '' ) {
+		$password = wp_generate_password( 14, false );
+		update_option( 'log_gate_password', $password, false );
+	}
+	return $password;
+}
+
+/** What the cookie holds: a keyed hash of the password, so replacing the password signs everyone out. */
+function log_gate_token( ?string $password = null ): string {
+	return hash_hmac( 'sha256', $password ?? log_gate_password(), wp_salt( 'auth' ) );
+}
+
+function log_gate_unlocked(): bool {
+	$cookie = (string) ( $_COOKIE[ LOG_GATE_COOKIE ] ?? '' );
+	return $cookie !== '' && hash_equals( log_gate_token(), $cookie );
 }
 
 add_action( 'admin_init', function () {
@@ -19,49 +53,117 @@ add_action( 'admin_init', function () {
 		'default'           => '1',
 		'sanitize_callback' => fn( $v ) => $v ? '1' : '0',
 	] );
-	add_settings_field( 'log_coming_soon', 'האתר בבנייה', function () {
+	register_setting( 'general', 'log_gate_password', [
+		'type'              => 'string',
+		'default'           => '',
+		'sanitize_callback' => function ( $v ) {
+			static $told = false; // WordPress may sanitize a new option twice
+			$v = trim( (string) $v );
+			if ( mb_strlen( $v ) >= 8 ) {
+				return $v;
+			}
+			if ( ! $told ) {
+				$told = true;
+				add_settings_error( 'log_gate_password', 'short', 'סיסמת האתר צריכה 8 תווים לפחות. הסיסמה הקודמת נשארה.' );
+			}
+			return log_gate_password();
+		},
+	] );
+	add_settings_field( 'log_coming_soon', 'גישה לאתר', function () {
 		printf(
-			'<label><input type="checkbox" name="log_coming_soon" value="1" %s> מבקרים שלא מחוברים רואים עמוד "האתר בבנייה"</label><p class="description">מחוברים עם הרשאת עריכה רואים את האתר המלא. להסיר את הסימון ביום ההשקה.</p>',
-			checked( log_coming_soon_on(), true, false )
+			'<fieldset><label><input type="checkbox" name="log_coming_soon" id="log_coming_soon" value="1" %s> האתר סגור בסיסמה</label>'
+			. '<p><label for="log_gate_password">הסיסמה</label><br><input type="text" class="regular-text code" dir="ltr" name="log_gate_password" id="log_gate_password" value="%s" autocomplete="off" spellcheck="false"></p>'
+			. '<p class="description">מי שמקליד אותה רואה את האתר המלא, בלי חשבון, ונשאר בפנים %d יום באותו דפדפן. החלפת הסיסמה מוציאה את כולם.<br>מחוברים עם הרשאת עריכה נכנסים בלעדיה. ביום ההשקה מסירים את הסימון, והאתר נפתח לכולם.</p></fieldset>',
+			checked( log_gate_on(), true, false ),
+			esc_attr( log_gate_password() ),
+			(int) LOG_GATE_DAYS
 		);
 	}, 'general' );
 } );
 
 // A reminder in the admin bar, so nobody forgets the public can't see the site.
 add_action( 'admin_bar_menu', function ( WP_Admin_Bar $bar ) {
-	if ( log_coming_soon_on() && current_user_can( 'manage_options' ) ) {
+	if ( log_gate_on() && current_user_can( 'manage_options' ) ) {
 		$bar->add_node( [
-			'id'    => 'log-coming-soon',
-			'title' => 'מצב בנייה פעיל',
+			'id'    => 'log-gate',
+			'title' => 'האתר סגור בסיסמה',
 			'href'  => admin_url( 'options-general.php#log_coming_soon' ),
 		] );
 	}
 }, 100 );
 
 add_action( 'template_redirect', function () {
-	$preview = isset( $_GET['coming-soon'] ); // editors can see what visitors get: /?coming-soon
-	if ( ! $preview && ( ! log_coming_soon_on() || current_user_can( 'edit_posts' ) ) ) {
+	if ( ! log_gate_on() ) {
 		return;
 	}
-	// The brand book has its own lock (a WP page password) and is never indexed: let the client reach it.
+	$preview = isset( $_GET['gate'] ); // editors can see what visitors get: /?gate
+	// The brand book has its own lock (a WP page password) and is never indexed: its password is enough.
 	if ( ! $preview && is_page( LOG_BRAND_BOOK_SLUG ) ) {
 		return;
 	}
-	status_header( 503 );
-	header( 'Retry-After: 86400' );
+	// While the gate stands nothing is indexed, and nothing is kept by a cache that could hand an opened
+	// page to the next visitor.
 	header( 'X-Robots-Tag: noindex, nofollow' );
 	nocache_headers();
-	log_coming_soon_page();
+	defined( 'DONOTCACHEPAGE' ) || define( 'DONOTCACHEPAGE', true );
+	if ( ! $preview && ( current_user_can( 'edit_posts' ) || log_gate_unlocked() ) ) {
+		return;
+	}
+
+	$error = '';
+	if ( 'POST' === ( $_SERVER['REQUEST_METHOD'] ?? '' ) && isset( $_POST['log_gate_password'] ) ) {
+		$key   = 'log_gate_tries_' . md5( (string) ( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+		$tries = (int) get_transient( $key );
+		$given = trim( (string) wp_unslash( $_POST['log_gate_password'] ) );
+		if ( $tries >= LOG_GATE_TRIES ) {
+			$error = 'wait';
+		} elseif ( hash_equals( log_gate_token(), log_gate_token( $given ) ) ) {
+			delete_transient( $key );
+			setcookie( LOG_GATE_COOKIE, log_gate_token(), [
+				'expires'  => time() + LOG_GATE_DAYS * DAY_IN_SECONDS,
+				'path'     => COOKIEPATH ?: '/',
+				'domain'   => (string) COOKIE_DOMAIN,
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			] );
+			wp_safe_redirect( remove_query_arg( 'gate' ), 303 ); // back to the page they asked for
+			exit;
+		} else {
+			set_transient( $key, $tries + 1, LOG_GATE_WAIT );
+			$error = 'wrong';
+		}
+	}
+	status_header( 401 );
+	log_gate_page( $error );
 	exit;
 }, 0 );
 
 /**
+ * The REST API holds the site's content too. While the gate stands it answers editors (this runs before
+ * WordPress drops a cookie login that came without a nonce, which is how the theme's own scripts call it),
+ * visitors who unlocked, and the deploy route.
+ */
+add_filter( 'rest_authentication_errors', function ( $result ) {
+	if ( is_wp_error( $result ) || ! log_gate_on() || current_user_can( 'edit_posts' ) || log_gate_unlocked() ) {
+		return $result;
+	}
+	$route = untrailingslashit( (string) ( $GLOBALS['wp']->query_vars['rest_route'] ?? '' ) );
+	if ( $route === '/log/v1/deploy' ) {
+		return $result;
+	}
+	return new WP_Error( 'log_gate', 'האתר סגור בסיסמה.', [ 'status' => 401 ] );
+}, 5 );
+
+/**
  * The page is one full-screen gantry sign, the same plate as the theme's menu: route number 00 and the
- * legend, then a lane marking that is painted as far as the works plate and stops there.
+ * legend, a lane marking that is painted as far as the works plate and stops there, and under it the field.
  * Self-contained (inline CSS, the theme's self-hosted fonts, no script), so it never depends on the build.
  * Its colours and fonts are the theme's tokens: assets/brand/tokens.css, written from src/tokens/tokens.json.
+ *
+ * @param string $error '' on arrival, 'wrong' after a wrong password, 'wait' after too many.
  */
-function log_coming_soon_page(): void {
+function log_gate_page( string $error = '' ): void {
 	$fonts  = get_template_directory_uri() . '/assets/fonts/';
 	$name   = get_bloginfo( 'name' );
 	$file   = get_template_directory() . '/assets/brand/tokens.css';
@@ -77,7 +179,7 @@ function log_coming_soon_page(): void {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b131b">
-<title><?php echo esc_html( $name ); ?> · בקרוב</title>
+<title><?php echo esc_html( $name ); ?> · כניסה</title>
 <link rel="preload" href="<?php echo esc_url( $fonts . 'ploni_tzar_bold.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: 'Ploni'; src: url('<?php echo esc_url( $fonts . 'ploni_regular.woff2' ); ?>') format('woff2'); font-weight: 400; font-display: swap; }
@@ -116,10 +218,10 @@ body {
 .title-end { white-space: nowrap; }
 .period { display: inline-block; color: var(--works); transform-origin: 50% 80%; }
 
-.legend { align-self: center; padding-block: clamp(2.5rem, 7vh, 5rem); }
+.legend { align-self: center; padding-block: clamp(2rem, 6vh, 4.5rem); }
 h1 {
   margin: 0; overflow: hidden; padding-top: .08em;
-  font: 700 clamp(3.75rem, 11vw, 11.5rem)/.92 var(--font-display); letter-spacing: -0.035em;
+  font: 700 clamp(3.25rem, 8.4vw, 8.5rem)/.92 var(--font-display); letter-spacing: -0.035em;
 }
 h1 > span { display: inline-block; }
 /* The route number, as the theme sets it (base.css .shield): 00 is home in the header order. An orange figure at the
@@ -138,7 +240,21 @@ h1 > span { display: inline-block; }
   background: var(--works); color: var(--plate); font: 700 1.25rem/1 var(--font-display);
   box-shadow: inset 0 0 0 4px var(--works), inset 0 0 0 6px var(--plate);
 }
-.lede { max-width: 40ch; margin: 0; color: var(--legend-muted); font-size: clamp(1.0625rem, 1.3vw, 1.3125rem); line-height: 1.5; text-wrap: pretty; }
+.lede { max-width: 34rem; margin: 0; color: var(--legend-muted); font-size: clamp(1.0625rem, 1.3vw, 1.3125rem); line-height: 1.5; text-wrap: balance; }
+
+/* The key: a field on the sheet is the thin line closed around the place to write, and beside it the way in. */
+.key { display: grid; justify-items: start; gap: .55rem; margin-top: clamp(1.5rem, 3.6vh, 2.25rem); }
+.key label { font: 500 1rem/1.2 var(--font-display); color: var(--legend-muted); }
+.key__row { display: flex; align-items: stretch; gap: .9rem; width: 100%; max-width: 34rem; }
+.key input {
+  flex: 1; min-width: 0; height: 3.75rem; padding: 0 1.1rem; border: 2px solid var(--plate-line); border-radius: 5px;
+  background: transparent; color: var(--legend); font: 400 1.125rem/1 var(--font-text); letter-spacing: .08em; direction: ltr; text-align: left;
+  transition: border-color .3s var(--ease-out);
+}
+.key input:hover { border-color: var(--legend-muted); }
+.key input:focus { border-color: var(--legend); outline: 0; }
+.key input[aria-invalid="true"] { border-color: var(--works); }
+.key__error { margin: .15rem 0 0; font: 500 1rem/1.4 var(--font-display); color: var(--works); }
 
 .foot {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem;
@@ -150,6 +266,10 @@ h1 > span { display: inline-block; }
   position: relative; display: inline-flex; align-items: center; gap: .75em; padding: 1.05em 1.6em; border-radius: 10px;
   color: var(--legend); text-decoration: none; font: 700 1.0625rem/1.2 var(--font-display);
 }
+button.go { flex: none; border: 0; background: none; cursor: pointer; padding-inline: 1.5em; }
+button.go::before { inset: 0; } /* beside a field the keyline stands on the field's own edge */
+.foot a { color: inherit; text-underline-offset: .3em; text-decoration-thickness: 1px; transition: color .3s var(--ease-out); }
+.foot a:hover, .foot a:focus-visible { color: var(--legend); }
 .go::before { content: ''; position: absolute; inset: 5px; border: 2px solid var(--legend); border-radius: 5px; transition: border-color .3s var(--ease-out); }
 .go:hover::before, .go:focus-visible::before { border-color: var(--works); }
 .arrow {
@@ -168,13 +288,18 @@ h1 > span { display: inline-block; }
   .sign { border-radius: 14px; padding: 24px 24px 22px; }
   .sign::before { inset: 7px; border-width: 2px; border-radius: 7px; }
   .logo { --logo-w: 6.5rem; }
-  .foot { flex-direction: column-reverse; align-items: stretch; }
+  .key__row { flex-direction: column; }
+  .key input { flex: none; }
+  button.go { min-height: 3.75rem; }
   .go { justify-content: space-between; }
+  .foot { flex-direction: column-reverse; align-items: start; }
 }
 
 /* Mounting, as the theme's GSAP does it: the sign unrolls, the legend rises, the lane is painted, the works plate drops in.
-   Nothing here runs or hides anything under reduced motion. */
+   Nothing here runs or hides anything under reduced motion, and nothing runs again when the page comes back
+   with a wrong password. */
 @media (prefers-reduced-motion: no-preference) {
+  .is-back * { animation: none !important; }
   .sign { animation: unroll .8s cubic-bezier(.87, 0, .13, 1) both; }
   .logo { animation: arrive .9s cubic-bezier(.19, 1, .22, 1) .4s both; }
   h1 > span { animation: rise 1.15s cubic-bezier(.165, .84, .44, 1) .45s both; }
@@ -182,7 +307,8 @@ h1 > span { display: inline-block; }
   .period { animation: land .7s cubic-bezier(.34, 1.8, .64, 1) 1.3s both; } /* the junction lands after its words */
   .works { animation: mount .8s cubic-bezier(.19, 1, .22, 1) 1.5s both; }
   .lede { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) .9s both; }
-  .foot { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) 1.05s both; }
+  .key { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) 1.05s both; }
+  .foot { animation: arrive 1s cubic-bezier(.19, 1, .22, 1) 1.2s both; }
 }
 @keyframes unroll { from { clip-path: inset(0 0 100% 0 round 20px); } to { clip-path: inset(0 0 0 0 round 20px); } }
 @keyframes rise { from { transform: translateY(112%); } }
@@ -192,7 +318,7 @@ h1 > span { display: inline-block; }
 @keyframes arrive { from { opacity: 0; transform: translateY(14px); } }
 </style>
 </head>
-<body>
+<body<?php echo $error ? ' class="is-back"' : ''; ?>>
 <main class="sign">
 	<?php
 	// The theme's wordmark. log_logo() returns '' if its SVG is missing; the name stands in then, and when another theme is active.
@@ -200,13 +326,23 @@ h1 > span { display: inline-block; }
 	echo $logo !== '' ? $logo : '<div class="logo logo--text">' . esc_html( $name ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in log_logo()
 	?>
 	<div class="legend">
-		<h1><span><span class="shield" aria-hidden="true">00</span>האתר <span class="title-end">בבנייה<span class="period">.</span></span></span></h1>
-		<div class="lane"><i aria-hidden="true"></i><p class="works">אתר חדש · בתכנון מתקדם</p></div>
-		<p class="lede">אנחנו מתכננים שכונות וערים, ועכשיו גם את הבית החדש שלנו ברשת. נחזור בקרוב עם מפת כל הפרויקטים.</p>
+		<h1><span><span class="shield" aria-hidden="true">00</span>כניסה <span class="title-end">למוזמנים<span class="period">.</span></span></span></h1>
+		<div class="lane"><i aria-hidden="true"></i><p class="works">לפני ההשקה</p></div>
+		<p class="lede">האתר החדש עוד לא נפתח לציבור. קיבלתם מאיתנו סיסמה? מכאן נכנסים.</p>
+		<form class="key" method="post">
+			<label for="log-gate-password">סיסמה</label>
+			<div class="key__row">
+				<input type="password" id="log-gate-password" name="log_gate_password" required autofocus autocomplete="current-password" autocapitalize="none" spellcheck="false"<?php echo $error ? ' aria-invalid="true" aria-describedby="log-gate-error"' : ''; ?>>
+				<button class="go" type="submit">כניסה<i class="arrow" aria-hidden="true"></i></button>
+			</div>
+			<?php if ( $error ) : ?>
+				<p class="key__error" id="log-gate-error" role="alert"><?php echo $error === 'wait' ? 'יותר מדי ניסיונות. חכו עשר דקות ונסו שוב.' : 'זו לא הסיסמה. בדקו אותיות גדולות וקטנות ונסו שוב.'; ?></p>
+			<?php endif; ?>
+		</form>
 	</div>
 	<footer class="foot">
 		<span>© <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php echo esc_html( $name ); ?></span>
-		<a class="go" href="https://www.instagram.com/log_projectmanagement/" rel="noopener">בינתיים, באינסטגרם<i class="arrow" aria-hidden="true"></i></a>
+		<a href="https://www.instagram.com/log_projectmanagement/" rel="noopener">בינתיים, באינסטגרם</a>
 	</footer>
 </main>
 </body>
