@@ -16,8 +16,9 @@
   position: relative; isolation: isolate; overflow: clip; display: grid; grid-template-rows: minmax(0, 1fr) auto;
   min-height: clamp(460px, 66svh, 700px); background: var(--plate); color: var(--legend);
 }
-/* Above the line: the title on the start side, standing on the line; the number on the end side, cut by it. */
-.opener__top { position: relative; display: grid; align-content: end; justify-items: start; overflow: hidden; min-height: min(31svh, 21vw); padding-block: clamp(40px, 6vw, 88px) .6rem; pointer-events: none; }
+/* Above the line: the title on the start side, standing on the line; the number on the end side, cut by it
+   (the clip cuts at the line only: the number's sides and top stay whole). */
+.opener__top { position: relative; display: grid; align-content: end; justify-items: start; clip-path: inset(-100vh -100vw 0 -100vw); min-height: min(31svh, 21vw); padding-block: clamp(40px, 6vw, 88px) .6rem; pointer-events: none; }
 .opener__top > * { pointer-events: auto; }
 .opener__n {
   position: absolute; z-index: 0; left: -.03em; bottom: -.2em; margin: 0; direction: ltr; user-select: none; pointer-events: none;
