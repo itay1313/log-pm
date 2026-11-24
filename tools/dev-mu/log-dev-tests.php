@@ -47,7 +47,17 @@ add_action( 'admin_menu', function () {
 					$approved++;
 				}
 				log_flush_map_cache();
-				echo '<pre id="arcgis-result">' . esc_html( wp_json_encode( [ 'summary' => array_diff_key( $res, [ 'rows' => 1 ] ), 'approved' => $approved ], JSON_UNESCAPED_UNICODE ) ) . '</pre>';
+				// Every pin the map gets has to sit inside the boundary drawn around it.
+				$pins    = 0;
+				$outside = [];
+				foreach ( log_build_map_geojson()['features'] as $f ) {
+					if ( ! $f['geometry'] || empty( $f['properties']['boundary'] ) ) { continue; }
+					$pins++;
+					if ( ! log_import_point_in_polygons( $f['geometry']['coordinates'], log_import_polygons( $f['properties']['boundary'] ) ) ) {
+						$outside[] = $f['properties']['title'];
+					}
+				}
+				echo '<pre id="arcgis-result">' . esc_html( wp_json_encode( [ 'summary' => array_diff_key( $res, [ 'rows' => 1 ] ), 'approved' => $approved, 'pins' => $pins, 'pins_outside_their_plan' => $outside ], JSON_UNESCAPED_UNICODE ) ) . '</pre>';
 			}
 		}
 		if ( isset( $_POST['migrate'] ) && check_admin_referer( 'log_dev' ) ) {
