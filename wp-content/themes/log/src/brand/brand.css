@@ -178,7 +178,7 @@ img, svg { display: block; max-width: 100%; }
 .bk-rows { display: grid; align-content: start; }
 .bk-rows li { display: grid; grid-template-columns: calc(64 * var(--q)) calc(330 * var(--q)) 1fr; align-items: center; column-gap: calc(8 * var(--q)); padding: calc(15 * var(--q)) 0; border-top: var(--hair) solid var(--rule); }
 .bk-rows li:last-child { border-bottom: var(--hair) solid var(--rule); }
-.bk-rows__n { font: var(--fw-light) calc(28 * var(--q))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--rule); }
+.bk-rows__n { font: var(--fw-light) calc(28 * var(--q))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--muted); } /* a number is text: the line grey (--rule) is 1.7:1 on paper */
 .bk-rows--tight li { grid-template-columns: calc(52 * var(--q)) 1fr; padding: calc(12 * var(--q)) 0; }
 .bk-rows--tight li p { grid-column: 2; }
 .bk-rows--tight li h3 { font-size: calc(18 * var(--q)); }
@@ -244,7 +244,7 @@ img, svg { display: block; max-width: 100%; }
 .bk-toc__list { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(7, auto); grid-auto-flow: column; column-gap: calc(80 * var(--u)); margin-top: calc(44 * var(--u)); }
 .bk-toc__list a { display: grid; grid-template-columns: calc(64 * var(--u)) 1fr auto; align-items: baseline; padding: calc(13 * var(--u)) 0; border-bottom: var(--hair) solid var(--rule); transition: color .3s var(--ease-out); }
 .bk-toc__list b { font: var(--fw-bold) calc(21 * var(--u))/1.2 var(--font-display); transition: translate .45s var(--ease-out); }
-.bk-toc__n { font: var(--fw-light) calc(26 * var(--u))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--rule); transition: color .3s var(--ease-out); }
+.bk-toc__n { font: var(--fw-light) calc(26 * var(--u))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--muted); transition: color .3s var(--ease-out); }
 .bk-toc__page { font: var(--fw-medium) var(--fs-cap)/1 var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; }
 .bk-toc__list a:hover b, .bk-toc__list a:focus-visible b { translate: calc(-8 * var(--u)) 0; }
 .bk-toc__list a:hover .bk-toc__n, .bk-toc__list a:focus-visible .bk-toc__n { color: var(--works-deep); }
@@ -396,9 +396,12 @@ img, svg { display: block; max-width: 100%; }
 .bk-contrast__table td:first-child { width: calc(110 * var(--u)); }
 .bk-contrast__chip { display: grid; place-items: center; width: calc(88 * var(--u)); height: calc(30 * var(--u)); font: var(--fw-bold) calc(17 * var(--u))/1 var(--font-headline); box-shadow: inset 0 0 0 var(--hair) color-mix(in srgb, var(--ink) 14%, transparent); }
 .bk-contrast__table tbody th { width: 24%; }
-.bk-contrast__ratio { width: 16%; font: var(--fw-light) calc(22 * var(--u))/1 var(--font-figure); font-variant-numeric: tabular-nums; direction: ltr; text-align: end; color: var(--ink); }
+/* The ratio is set left to right and stands at the end of its cell, beside the pair's name, so the verdict after it
+   keeps its distance. (.bk-table td aligns to the start, so this needs the table's name to win.) */
+.bk-contrast__table .bk-contrast__ratio { width: 16%; font: var(--fw-light) calc(22 * var(--u))/1 var(--font-figure); font-variant-numeric: tabular-nums; direction: ltr; text-align: end; color: var(--ink); }
 .bk-contrast__verdict { width: 12%; font-family: var(--font-display); font-weight: var(--fw-medium); color: var(--ink); }
-.bk-contrast__verdict.is-fail, .bk-contrast__verdict.is-fail ~ td, tr:has(.is-fail) .bk-contrast__ratio { color: var(--rule); }
+/* A pair that fails steps back to the secondary grey, which still passes on paper: the row that says "don't" has to be read. */
+.bk-contrast__verdict.is-fail, .bk-contrast__table tr:has(.is-fail) .bk-contrast__ratio { color: var(--muted); }
 [data-token-value], [data-size-range] { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
 
 /* ------------------------------------------------------------------ 06 type and the grid */
@@ -823,7 +826,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 
 /* ------------------------------------------------------------------ the route: one line down the whole book */
 
-.bk-route { position: fixed; z-index: 20; inset-block: 0; right: 6px; width: 44px; pointer-events: none; }
+.bk-route { position: fixed; z-index: 20; inset-block: var(--wp-admin--admin-bar--height, 0px) 0; right: 6px; width: 44px; pointer-events: none; } /* under WordPress's bar, for whoever is signed in */
 .bk-route svg { display: block; overflow: visible; }
 .bk-route path { fill: none; stroke-width: 2; }
 .bk-route__road, .bk-route__island { stroke: var(--logo-grey); }
@@ -866,6 +869,41 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 @media (prefers-reduced-motion: reduce) { .bk-route.is-tour a::after { animation: none; } .bk-route a span { transition-delay: 0s !important; } }
 @media (max-width: 1099px) { .bk-route { display: none; } }
 
+/* Under 1100px there is no room for the line, so the same stops fold into one round button at the bottom corner:
+   its ring turns orange as far as you have come, and a tap opens the list of chapters (main.js). */
+.bk-jump, .bk-menu:not([open]) { display: none; }
+@media screen and (max-width: 1099px) {
+  .bk-jump {
+    position: fixed; z-index: 20; inset-inline-start: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: block;
+    width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: var(--night-2); color: var(--night-ink); cursor: pointer;
+    -webkit-tap-highlight-color: transparent; transition: scale .3s var(--ease-out);
+  }
+  .bk-jump:active { scale: .94; }
+  .bk-jump svg { width: 100%; height: 100%; overflow: visible; fill: none; stroke-width: 2; }
+  .bk-jump__road { stroke: var(--night-line); }
+  .bk-jump__done { stroke: var(--works); stroke-dasharray: 100; stroke-dashoffset: 100; rotate: -90deg; transform-origin: center; }
+  .bk-jump__list { stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  .bk-loading .bk-jump { visibility: hidden; }
+  html:has(.bk-menu[open]) { overflow: hidden; }
+  .bk-menu {
+    position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0;
+    padding: 22px max(20px, calc((100vw - 760px) / 2)) calc(28px + env(safe-area-inset-bottom, 0px));
+    background: var(--night); color: var(--night-ink); overflow-y: auto; overscroll-behavior: contain;
+  }
+  .bk-menu::backdrop { background: var(--night); }
+  .bk-menu[open] { animation: bk-menu-in .35s var(--ease-out); }
+  .bk-menu__head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 2px solid var(--night-ink); }
+  .bk-menu__head p { font: var(--fw-bold) 34px/1 var(--font-headline); letter-spacing: -0.03em; }
+  .bk-menu__close { display: grid; place-items: center; width: 44px; height: 44px; margin-inline-end: -10px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+  .bk-menu__close svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  .bk-menu a { position: relative; display: grid; grid-template-columns: 46px 1fr; align-items: baseline; padding: 15px 0; padding-inline-end: 24px; border-bottom: 1px solid var(--night-line); font: var(--fw-bold) 21px/1.2 var(--font-headline); letter-spacing: -0.02em; outline-offset: -3px; }
+  .bk-menu a b { font: var(--fw-light) 21px/1 var(--font-figure); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: var(--night-muted); }
+  .bk-menu a[aria-current] b { color: var(--works); }
+  .bk-menu a[aria-current]::after { content: ''; position: absolute; inset-inline-end: 4px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--works); }
+}
+@keyframes bk-menu-in { from { opacity: 0; translate: 0 14px; } }
+@media (prefers-reduced-motion: reduce) { .bk-menu[open] { animation: none; } .bk-jump { transition: none; } }
+
 /* ------------------------------------------------------------------ phones: the sheet lets go of its height and reflows */
 
 @media screen and (max-width: 1099px) {
@@ -893,11 +931,11 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-again .circ { --circ-n: 68; --circ-u: 1px; }
   .bk-again .bk-again__arrow { width: 24px; height: 24px; }
   .bk-again__text b { font-size: 30px; }
-  .bk-get { inset-inline: var(--m); top: auto; bottom: 26px; }
+  .bk-get { inset-inline: var(--m); top: auto; bottom: 80px; } /* above the chapters button (.bk-jump), which sits in this corner */
   .bk-get ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .bk-get a { width: auto; }
   .bk-get a span { display: none; }
-  .bk-opener:has(.bk-get) .bk-opener__body { bottom: max(30svh, 262px); }
+  .bk-opener:has(.bk-get) .bk-opener__body { bottom: max(30svh, 316px); }
   /* On a phone the city is the foot of the cover: a band along the bottom with its middle under the middle of the
      screen, and the words stand above it on the photograph. */
   .bk-cover__city {
@@ -971,7 +1009,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-contrast__table td:first-child { grid-row: 1 / span 2; align-self: center; }
   .bk-contrast__chip { width: 60px; height: 38px; font-size: 15px; }
   .bk-contrast__table tbody th { grid-column: 2; grid-row: 1; font-size: 16px; }
-  .bk-contrast__ratio { grid-column: 3; grid-row: 1; font-size: 19px; text-align: start; white-space: nowrap; }
+  .bk-contrast__table .bk-contrast__ratio { grid-column: 3; grid-row: 1; font-size: 19px; text-align: start; white-space: nowrap; }
   .bk-contrast__table td:last-child { grid-column: 2; grid-row: 2; font-size: 14px; }
   .bk-contrast__table .bk-contrast__verdict { grid-column: 3; grid-row: 2; font-size: 13px; text-align: end; }
   /* The sizes are numbers that only mean something under their column: this one stays a table, and fits a phone. */
@@ -1015,6 +1053,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-page { --fs-title: 56px; --fs-lede: 19px; padding-top: 56px; }
   .bk-title--cover { font-size: 112px; }
   .bk-title--opener { font-size: 96px; }
+  .bk-get ul { grid-template-columns: repeat(6, minmax(0, 1fr)); } /* one row: two rows of this width stood over the chapter's name */
   .bk-toc__list, .bk-how__grid, .bk-tone__cols, .bk-minis--2, .bk-minis--3, .bk-wrong__grid, .bk-rules--2, .bk-photos__cols, .bk-lines__kinds { grid-template-columns: 1fr 1fr; column-gap: 24px; }
   .bk-toc__list { grid-auto-flow: row; }
   .bk-logo__versions, .bk-junction__words { grid-template-columns: repeat(3, 1fr); }

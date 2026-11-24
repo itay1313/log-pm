@@ -150,8 +150,33 @@ if (chapters.length) {
   const wide = matchMedia('(min-width: 1100px)'); // under it the line isn't shown
   let length = 0, done = null, dot = null, label = null, stops = [], current = -1, flash = 0, tops = [], shown = -1, queued = false;
 
+  // Under 1100px the same stops fold into one round button at the bottom corner and the list it opens: the ring
+  // turns orange as far as you have come, as the line does. The list is a dialog, so it holds the focus, closes
+  // with Escape and hands the focus back to the button.
+  const jump = document.createElement('button');
+  jump.type = 'button';
+  jump.className = 'bk-jump';
+  jump.setAttribute('aria-haspopup', 'dialog');
+  jump.setAttribute('aria-label', 'פרקי הספר');
+  jump.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><circle class="bk-jump__road" cx="24" cy="24" r="23"/><circle class="bk-jump__done" cx="24" cy="24" r="23" pathLength="100"/><path class="bk-jump__list" d="M17 18.5h14M17 24h14M22 29.5h9"/></svg>';
+  const menu = document.createElement('dialog');
+  menu.className = 'bk-menu';
+  menu.setAttribute('aria-label', 'פרקי הספר');
+  menu.innerHTML = '<div class="bk-menu__head"><p>מה בספר.</p><button type="button" class="bk-menu__close" aria-label="סגירת הרשימה"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div>'
+    + `<ol>${places.map((p) => `<li><a href="#${p.el.id}"><b>${p.n}</b><span>${p.name}</span></a></li>`).join('')}</ol>`;
+  document.body.append(jump, menu);
+  const ring = jump.querySelector('.bk-jump__done');
+  const rows = [...menu.querySelectorAll('a')];
+  jump.addEventListener('click', () => {
+    if (menu.showModal) menu.showModal(); else menu.setAttribute('open', ''); // an old browser still gets the list, without the focus trap
+    rows[Math.max(0, current)].focus();
+  });
+  // A row closes the list first; the click then travels on and the book drives there (the listener below).
+  menu.addEventListener('click', (e) => { if (e.target.closest('a, .bk-menu__close')) menu.close(); });
+  wide.addEventListener('change', () => { if (wide.matches && menu.open) menu.close(); });
+
   const build = () => {
-    const h = innerHeight;
+    const h = innerHeight - route.getBoundingClientRect().top; // the line starts under WordPress's bar when there is one
     tops = pages.map(top);
     const y = (i) => PAD + (tops[at[i]] / tops[tops.length - 1]) * (h - 2 * PAD);
     let d = `M${X} 0`;
@@ -175,19 +200,23 @@ if (chapters.length) {
 
   const update = () => {
     queued = false;
-    if (!done || !wide.matches) return;
+    if (!done) return;
     const max = document.documentElement.scrollHeight - innerHeight;
     const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
-    done.style.strokeDashoffset = String(length * (1 - p));
-    const here = done.getPointAtLength(length * p);
-    dot.setAttribute('cx', here.x.toFixed(1));
-    dot.setAttribute('cy', here.y.toFixed(1));
     // The current sheet is the last whose top has come past the middle of the window.
     let page = 0;
     const middle = scrollY + innerHeight / 2;
     for (let i = 0; i < tops.length && tops[i] <= middle; i++) page = i;
-    if (page !== shown) { shown = page; label.textContent = two(page + 1); }
-    label.style.translate = `0 ${here.y.toFixed(1)}px`;
+    if (wide.matches) {
+      done.style.strokeDashoffset = String(length * (1 - p));
+      const here = done.getPointAtLength(length * p);
+      dot.setAttribute('cx', here.x.toFixed(1));
+      dot.setAttribute('cy', here.y.toFixed(1));
+      if (page !== shown) { shown = page; label.textContent = two(page + 1); }
+      label.style.translate = `0 ${here.y.toFixed(1)}px`;
+    } else {
+      ring.style.strokeDashoffset = (100 * (1 - p)).toFixed(1);
+    }
     // And the current stop is the last one that sheet has passed.
     let stop = 0;
     at.forEach((index, i) => { if (index <= page) stop = i; });
@@ -196,8 +225,9 @@ if (chapters.length) {
     current = stop;
     clearTimeout(flash);
     stops.forEach((a, i) => { a.classList.toggle('is-current', i === stop); a.classList.remove('is-flash'); });
+    rows.forEach((a, i) => { if (i === stop) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
     // Driving into a stop, its roundabout says its name for a moment.
-    if (arriving) {
+    if (arriving && wide.matches) {
       stops[stop].classList.add('is-flash');
       flash = setTimeout(() => stops[stop]?.classList.remove('is-flash'), 1800);
     }
@@ -228,6 +258,17 @@ if (chapters.length) {
   addEventListener('resize', build, { passive: true });
   addEventListener('load', build);
   build();
+  // On a phone the sheets are as tall as their content, and a photograph that arrives late moves every sheet under it.
+  if ('ResizeObserver' in window) {
+    let tall = 0;
+    new ResizeObserver(([entry]) => {
+      const now = Math.round(entry.contentRect.height);
+      if (now === tall) return;
+      tall = now;
+      tops = pages.map(top);
+      if (!queued) { queued = true; requestAnimationFrame(update); }
+    }).observe(document.querySelector('.bk-book'));
+  }
 }
 
 // A link to a sheet (the route's roundabouts, the contents, the way back from the last sheet) drives there instead of jumping.
