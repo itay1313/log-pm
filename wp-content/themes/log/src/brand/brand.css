@@ -935,7 +935,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-get ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .bk-get a { width: auto; }
   .bk-get a span { display: none; }
-  .bk-opener:has(.bk-get) .bk-opener__body { bottom: max(30svh, 262px); }
+  .bk-opener:has(.bk-get) .bk-opener__body { bottom: max(30svh, 316px); }
   /* On a phone the city is the foot of the cover: a band along the bottom with its middle under the middle of the
      screen, and the words stand above it on the photograph. */
   .bk-cover__city {
