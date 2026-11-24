@@ -22,9 +22,9 @@ body.admin-bar { --header-edge: calc(var(--header-h) + var(--wp-admin--admin-bar
 .site-header__talk .arrow { width: 1.6em; height: .75em; color: var(--works); }
 
 /* Every page that doesn't open on a full-screen cover hangs its header over a navy strip, so the gantry
-   always reads light on navy; the page's own title band continues the strip. */
+   always reads light on navy; the page's own title band continues the strip. The strip is the header's height for a
+   signed-in editor too: WordPress already moves the whole page down by its bar, so adding the bar here counts it twice. */
 body:not(.has-cover) .site-main { padding-top: var(--header-h); background: linear-gradient(var(--plate) 0 var(--header-h), transparent 0); }
-body.admin-bar:not(.has-cover) .site-main { padding-top: calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)); background: linear-gradient(var(--plate) 0 calc(var(--header-h) + var(--wp-admin--admin-bar--height, 0px)), transparent 0); }
 
 /* The menu button: the thin line around the word and two lanes. Hover fills it white and the lanes pass each other. */
 .menu-toggle, .gantry__close {
