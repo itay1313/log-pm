@@ -178,7 +178,7 @@ img, svg { display: block; max-width: 100%; }
 .bk-rows { display: grid; align-content: start; }
 .bk-rows li { display: grid; grid-template-columns: calc(64 * var(--q)) calc(330 * var(--q)) 1fr; align-items: center; column-gap: calc(8 * var(--q)); padding: calc(15 * var(--q)) 0; border-top: var(--hair) solid var(--rule); }
 .bk-rows li:last-child { border-bottom: var(--hair) solid var(--rule); }
-.bk-rows__n { font: var(--fw-light) calc(28 * var(--q))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--rule); }
+.bk-rows__n { font: var(--fw-light) calc(28 * var(--q))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--muted); } /* a number is text: the line grey (--rule) is 1.7:1 on paper */
 .bk-rows--tight li { grid-template-columns: calc(52 * var(--q)) 1fr; padding: calc(12 * var(--q)) 0; }
 .bk-rows--tight li p { grid-column: 2; }
 .bk-rows--tight li h3 { font-size: calc(18 * var(--q)); }
@@ -244,7 +244,7 @@ img, svg { display: block; max-width: 100%; }
 .bk-toc__list { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(7, auto); grid-auto-flow: column; column-gap: calc(80 * var(--u)); margin-top: calc(44 * var(--u)); }
 .bk-toc__list a { display: grid; grid-template-columns: calc(64 * var(--u)) 1fr auto; align-items: baseline; padding: calc(13 * var(--u)) 0; border-bottom: var(--hair) solid var(--rule); transition: color .3s var(--ease-out); }
 .bk-toc__list b { font: var(--fw-bold) calc(21 * var(--u))/1.2 var(--font-display); transition: translate .45s var(--ease-out); }
-.bk-toc__n { font: var(--fw-light) calc(26 * var(--u))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--rule); transition: color .3s var(--ease-out); }
+.bk-toc__n { font: var(--fw-light) calc(26 * var(--u))/1 var(--font-figure); letter-spacing: -0.04em; color: var(--muted); transition: color .3s var(--ease-out); }
 .bk-toc__page { font: var(--fw-medium) var(--fs-cap)/1 var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; }
 .bk-toc__list a:hover b, .bk-toc__list a:focus-visible b { translate: calc(-8 * var(--u)) 0; }
 .bk-toc__list a:hover .bk-toc__n, .bk-toc__list a:focus-visible .bk-toc__n { color: var(--works-deep); }
@@ -396,9 +396,12 @@ img, svg { display: block; max-width: 100%; }
 .bk-contrast__table td:first-child { width: calc(110 * var(--u)); }
 .bk-contrast__chip { display: grid; place-items: center; width: calc(88 * var(--u)); height: calc(30 * var(--u)); font: var(--fw-bold) calc(17 * var(--u))/1 var(--font-headline); box-shadow: inset 0 0 0 var(--hair) color-mix(in srgb, var(--ink) 14%, transparent); }
 .bk-contrast__table tbody th { width: 24%; }
-.bk-contrast__ratio { width: 16%; font: var(--fw-light) calc(22 * var(--u))/1 var(--font-figure); font-variant-numeric: tabular-nums; direction: ltr; text-align: end; color: var(--ink); }
+/* The ratio is set left to right and stands at the end of its cell, beside the pair's name, so the verdict after it
+   keeps its distance. (.bk-table td aligns to the start, so this needs the table's name to win.) */
+.bk-contrast__table .bk-contrast__ratio { width: 16%; font: var(--fw-light) calc(22 * var(--u))/1 var(--font-figure); font-variant-numeric: tabular-nums; direction: ltr; text-align: end; color: var(--ink); }
 .bk-contrast__verdict { width: 12%; font-family: var(--font-display); font-weight: var(--fw-medium); color: var(--ink); }
-.bk-contrast__verdict.is-fail, .bk-contrast__verdict.is-fail ~ td, tr:has(.is-fail) .bk-contrast__ratio { color: var(--rule); }
+/* A pair that fails steps back to the secondary grey, which still passes on paper: the row that says "don't" has to be read. */
+.bk-contrast__verdict.is-fail, .bk-contrast__table tr:has(.is-fail) .bk-contrast__ratio { color: var(--muted); }
 [data-token-value], [data-size-range] { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
 
 /* ------------------------------------------------------------------ 06 type and the grid */
@@ -971,7 +974,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-contrast__table td:first-child { grid-row: 1 / span 2; align-self: center; }
   .bk-contrast__chip { width: 60px; height: 38px; font-size: 15px; }
   .bk-contrast__table tbody th { grid-column: 2; grid-row: 1; font-size: 16px; }
-  .bk-contrast__ratio { grid-column: 3; grid-row: 1; font-size: 19px; text-align: start; white-space: nowrap; }
+  .bk-contrast__table .bk-contrast__ratio { grid-column: 3; grid-row: 1; font-size: 19px; text-align: start; white-space: nowrap; }
   .bk-contrast__table td:last-child { grid-column: 2; grid-row: 2; font-size: 14px; }
   .bk-contrast__table .bk-contrast__verdict { grid-column: 3; grid-row: 2; font-size: 13px; text-align: end; }
   /* The sizes are numbers that only mean something under their column: this one stays a table, and fits a phone. */
