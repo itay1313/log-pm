@@ -260,6 +260,11 @@ function log_dev_arcgis_sync_test(): array {
 		'mail'            => $mail,
 	];
 
+	// 3b. Still down the next night: the failure is stored, but no second email inside the week.
+	$mail = [];
+	do_action( 'log_arcgis_sync' );
+	$out['3b_still_failing'] = $res( get_option( 'log_arcgis_sync' ) ) + [ 'mails' => count( $mail ) ];
+
 	// 4. A layer that suddenly returns 10 plans (a filtered view): refused, nothing closed.
 	$mock['mode']     = 'ok';
 	$mock['features'] = array_slice( $all['features'], 0, 10 );
@@ -267,7 +272,14 @@ function log_dev_arcgis_sync_test(): array {
 	$r = log_arcgis_sync( 'manual' );
 	$out['4_shrunk'] = $res( $r ) + [ 'mails' => count( $mail ), 'removed_now' => count( array_filter( array_keys( log_arcgis_known_projects() ), static fn( $id ) => get_post_meta( $id, 'arcgis_removed_at', true ) ) ) ];
 
-	// 5. Not configured: the weekly run waits quietly.
+	// 4b. A site still on the old weekly event moves to the nightly one, at 03:00 site time.
+	wp_clear_scheduled_hook( 'log_arcgis_sync' );
+	wp_schedule_event( time() + 3 * DAY_IN_SECONDS, 'weekly', 'log_arcgis_sync' );
+	log_arcgis_schedule();
+	$event = wp_get_scheduled_event( 'log_arcgis_sync' );
+	$out['4b_schedule'] = [ 'recurrence' => $event ? $event->schedule : null, 'next' => $event ? wp_date( 'j.n.Y H:i', $event->timestamp ) : null, 'within_a_day' => $event && $event->timestamp - time() <= DAY_IN_SECONDS ];
+
+	// 5. Not configured: the nightly run waits quietly.
 	log_set_field( 'arcgis_layer_url', '', 'option' );
 	$mail = [];
 	$r = log_arcgis_sync( 'cron' );
