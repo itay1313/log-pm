@@ -826,7 +826,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 
 /* ------------------------------------------------------------------ the route: one line down the whole book */
 
-.bk-route { position: fixed; z-index: 20; inset-block: 0; right: 6px; width: 44px; pointer-events: none; }
+.bk-route { position: fixed; z-index: 20; inset-block: var(--wp-admin--admin-bar--height, 0px) 0; right: 6px; width: 44px; pointer-events: none; } /* under WordPress's bar, for whoever is signed in */
 .bk-route svg { display: block; overflow: visible; }
 .bk-route path { fill: none; stroke-width: 2; }
 .bk-route__road, .bk-route__island { stroke: var(--logo-grey); }
@@ -868,6 +868,41 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
 .bk-route:has(a:hover, a:focus-visible, a.is-flash) .bk-route__page, .bk-route.is-near .bk-route__page, .bk-route.is-tour .bk-route__page { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .bk-route.is-tour a::after { animation: none; } .bk-route a span { transition-delay: 0s !important; } }
 @media (max-width: 1099px) { .bk-route { display: none; } }
+
+/* Under 1100px there is no room for the line, so the same stops fold into one round button at the bottom corner:
+   its ring turns orange as far as you have come, and a tap opens the list of chapters (main.js). */
+.bk-jump, .bk-menu:not([open]) { display: none; }
+@media screen and (max-width: 1099px) {
+  .bk-jump {
+    position: fixed; z-index: 20; inset-inline-start: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: block;
+    width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: var(--night-2); color: var(--night-ink); cursor: pointer;
+    -webkit-tap-highlight-color: transparent; transition: scale .3s var(--ease-out);
+  }
+  .bk-jump:active { scale: .94; }
+  .bk-jump svg { width: 100%; height: 100%; overflow: visible; fill: none; stroke-width: 2; }
+  .bk-jump__road { stroke: var(--night-line); }
+  .bk-jump__done { stroke: var(--works); stroke-dasharray: 100; stroke-dashoffset: 100; rotate: -90deg; transform-origin: center; }
+  .bk-jump__list { stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  .bk-loading .bk-jump { visibility: hidden; }
+  html:has(.bk-menu[open]) { overflow: hidden; }
+  .bk-menu {
+    position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0;
+    padding: 22px max(20px, calc((100vw - 760px) / 2)) calc(28px + env(safe-area-inset-bottom, 0px));
+    background: var(--night); color: var(--night-ink); overflow-y: auto; overscroll-behavior: contain;
+  }
+  .bk-menu::backdrop { background: var(--night); }
+  .bk-menu[open] { animation: bk-menu-in .35s var(--ease-out); }
+  .bk-menu__head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 2px solid var(--night-ink); }
+  .bk-menu__head p { font: var(--fw-bold) 34px/1 var(--font-headline); letter-spacing: -0.03em; }
+  .bk-menu__close { display: grid; place-items: center; width: 44px; height: 44px; margin-inline-end: -10px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+  .bk-menu__close svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  .bk-menu a { position: relative; display: grid; grid-template-columns: 46px 1fr; align-items: baseline; padding: 15px 0; padding-inline-end: 24px; border-bottom: 1px solid var(--night-line); font: var(--fw-bold) 21px/1.2 var(--font-headline); letter-spacing: -0.02em; outline-offset: -3px; }
+  .bk-menu a b { font: var(--fw-light) 21px/1 var(--font-figure); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: var(--night-muted); }
+  .bk-menu a[aria-current] b { color: var(--works); }
+  .bk-menu a[aria-current]::after { content: ''; position: absolute; inset-inline-end: 4px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--works); }
+}
+@keyframes bk-menu-in { from { opacity: 0; translate: 0 14px; } }
+@media (prefers-reduced-motion: reduce) { .bk-menu[open] { animation: none; } .bk-jump { transition: none; } }
 
 /* ------------------------------------------------------------------ phones: the sheet lets go of its height and reflows */
 
