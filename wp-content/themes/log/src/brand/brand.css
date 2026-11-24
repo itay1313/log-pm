@@ -931,7 +931,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-again .circ { --circ-n: 68; --circ-u: 1px; }
   .bk-again .bk-again__arrow { width: 24px; height: 24px; }
   .bk-again__text b { font-size: 30px; }
-  .bk-get { inset-inline: var(--m); top: auto; bottom: 26px; }
+  .bk-get { inset-inline: var(--m); top: auto; bottom: 80px; } /* above the chapters button (.bk-jump), which sits in this corner */
   .bk-get ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .bk-get a { width: auto; }
   .bk-get a span { display: none; }
@@ -1053,6 +1053,7 @@ p.m-quote { font: var(--fw-bold) calc(60 * var(--q))/1.1 var(--font-headline); l
   .bk-page { --fs-title: 56px; --fs-lede: 19px; padding-top: 56px; }
   .bk-title--cover { font-size: 112px; }
   .bk-title--opener { font-size: 96px; }
+  .bk-get ul { grid-template-columns: repeat(6, minmax(0, 1fr)); } /* one row: two rows of this width stood over the chapter's name */
   .bk-toc__list, .bk-how__grid, .bk-tone__cols, .bk-minis--2, .bk-minis--3, .bk-wrong__grid, .bk-rules--2, .bk-photos__cols, .bk-lines__kinds { grid-template-columns: 1fr 1fr; column-gap: 24px; }
   .bk-toc__list { grid-auto-flow: row; }
   .bk-logo__versions, .bk-junction__words { grid-template-columns: repeat(3, 1fr); }
