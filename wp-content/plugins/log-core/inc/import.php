@@ -8,7 +8,8 @@
  * - Match by ACF `arcgis_id` (= OBJECTID); fallback match on `plan_number` when OBJECTID is missing.
  * - New posts are drafts with approved=0. Re-imports touch only ArcGIS-sourced fields,
  *   never story/media/approved/full_page/featured, and never a city the editor already set.
- * - Geometry: centroid → lat/lng, Douglas-Peucker simplification → boundary, geodesic area → dunam.
+ * - Geometry: centroid → lat/lng (moved inside the plan when it falls outside), Douglas-Peucker
+ *   simplification → boundary, geodesic area → dunam.
  *   Shape__Area is ignored (Web Mercator inflates it ~1.4× at this latitude).
  */
 
@@ -234,6 +235,124 @@ function log_import_centroid( array $polygons ): ?array {
 	return [ round( $cy / $ca, 6 ), round( $cx / $ca, 6 ) ];
 }
 
+/** Even-odd ray casting over all rings, so a point in a hole counts as outside. $pt is [lng, lat]. */
+function log_import_point_in_rings( array $pt, array $rings ): bool {
+	$inside = false;
+	foreach ( $rings as $ring ) {
+		$n = count( $ring );
+		for ( $i = 0, $j = $n - 1; $i < $n; $j = $i++ ) {
+			[ $xi, $yi ] = $ring[ $i ];
+			[ $xj, $yj ] = $ring[ $j ];
+			if ( ( $yi > $pt[1] ) !== ( $yj > $pt[1] ) && $pt[0] < ( $xj - $xi ) * ( $pt[1] - $yi ) / ( $yj - $yi ) + $xi ) {
+				$inside = ! $inside;
+			}
+		}
+	}
+	return $inside;
+}
+
+function log_import_point_in_polygons( array $pt, array $polygons ): bool {
+	foreach ( $polygons as $rings ) {
+		if ( log_import_point_in_rings( $pt, $rings ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/** Distance from a point to the nearest edge, in degrees: positive inside the polygon, negative outside. */
+function log_import_edge_distance( array $pt, array $rings ): float {
+	$min = INF;
+	foreach ( $rings as $ring ) {
+		for ( $i = 0, $n = count( $ring ); $i < $n - 1; $i++ ) {
+			$min = min( $min, log_import_seg_dist2( $pt, $ring[ $i ], $ring[ $i + 1 ] ) );
+		}
+	}
+	return ( log_import_point_in_rings( $pt, $rings ) ? 1 : -1 ) * sqrt( $min );
+}
+
+/**
+ * The point deepest inside a polygon, farthest from every edge → [lng, lat].
+ * Grid search as in Mapbox's polylabel: split the bounding box into cells, keep refining only
+ * the cells that could still beat the best point found, stop at ≈1 m.
+ */
+function log_import_deepest_point( array $rings, float $precision = 0.00001 ): array {
+	// Longitude degrees are shorter than latitude degrees here; even them out so "deep" means metres.
+	$k     = cos( deg2rad( $rings[0][0][1] ) );
+	$rings = array_map(
+		static fn( array $ring ) => array_map( static fn( array $pt ) => [ $pt[0] * $k, $pt[1] ], $ring ),
+		$rings
+	);
+	$xs = array_column( $rings[0], 0 );
+	$ys = array_column( $rings[0], 1 );
+	[ $min_x, $max_x, $min_y, $max_y ] = [ min( $xs ), max( $xs ), min( $ys ), max( $ys ) ];
+	$size = min( $max_x - $min_x, $max_y - $min_y );
+	if ( $size <= 0 ) {
+		return [ $min_x / $k, $min_y ];
+	}
+
+	$cell = static function ( float $x, float $y, float $half ) use ( $rings ): array {
+		$d = log_import_edge_distance( [ $x, $y ], $rings );
+		return [ 'x' => $x, 'y' => $y, 'half' => $half, 'd' => $d, 'max' => $d + $half * M_SQRT2 ];
+	};
+	$queue = new SplPriorityQueue();
+	$half  = $size / 2;
+	for ( $x = $min_x; $x < $max_x; $x += $size ) {
+		for ( $y = $min_y; $y < $max_y; $y += $size ) {
+			$c = $cell( $x + $half, $y + $half, $half );
+			$queue->insert( $c, $c['max'] );
+		}
+	}
+	$best = $cell( ( $min_x + $max_x ) / 2, ( $min_y + $max_y ) / 2, 0 );
+
+	while ( ! $queue->isEmpty() ) {
+		$c = $queue->extract();
+		if ( $c['d'] > $best['d'] ) {
+			$best = $c;
+		}
+		if ( $c['max'] - $best['d'] <= $precision ) {
+			continue;
+		}
+		$half = $c['half'] / 2;
+		foreach ( [ [ -1, -1 ], [ 1, -1 ], [ -1, 1 ], [ 1, 1 ] ] as [ $sx, $sy ] ) {
+			$child = $cell( $c['x'] + $sx * $half, $c['y'] + $sy * $half, $half );
+			$queue->insert( $child, $child['max'] );
+		}
+	}
+	return [ $best['x'] / $k, $best['y'] ];
+}
+
+/**
+ * Where the plan's pin goes → [lat, lng].
+ * The centroid, as long as it lands inside the plan, both as ArcGIS has it and as the map draws it.
+ * A bent road or a plan in several parts can have its centroid outside, on someone else's land;
+ * then the pin moves to the deepest point of the largest part.
+ */
+function log_import_map_point( array $polygons, array $drawn ): ?array {
+	$centroid = log_import_centroid( $polygons );
+	if ( ! $centroid ) {
+		return null;
+	}
+	$pt = [ $centroid[1], $centroid[0] ];
+	if ( log_import_point_in_polygons( $pt, $polygons ) && log_import_point_in_polygons( $pt, $drawn ) ) {
+		return $centroid;
+	}
+	$largest = null;
+	$area    = 0.0;
+	foreach ( $drawn as $rings ) {
+		$a = abs( log_import_planar_area( $rings[0] ) );
+		if ( $a > $area ) {
+			$area    = $a;
+			$largest = $rings;
+		}
+	}
+	if ( ! $largest ) {
+		return $centroid;
+	}
+	[ $lng, $lat ] = log_import_deepest_point( $largest );
+	return [ round( $lat, 6 ), round( $lng, 6 ) ];
+}
+
 /**
  * Geodesic ring area in m² on a sphere (Chamberlain & Duquette, as in turf.js).
  * Sign follows ring orientation; callers take abs().
@@ -360,14 +479,15 @@ function log_import_geometry( ?array $geometry ): ?array {
 		}
 	}
 	$simplified = log_import_simplified_geometry( $polygons, LOG_IMPORT_TOLERANCE );
+	$drawn      = log_import_polygons( $simplified );
 	$kept       = 0;
-	foreach ( log_import_polygons( $simplified ) as $rings ) {
+	foreach ( $drawn as $rings ) {
 		foreach ( $rings as $ring ) {
 			$kept += count( $ring );
 		}
 	}
 	return [
-		'centroid'   => log_import_centroid( $polygons ),
+		'point'      => log_import_map_point( $polygons, $drawn ),
 		'area_m2'    => log_import_area_m2( $polygons ),
 		'boundary'   => wp_json_encode( $simplified, JSON_UNESCAPED_SLASHES ),
 		'points'     => $points,
@@ -537,8 +657,8 @@ function log_import_feature( array $feature, bool $dry ): array {
 	// Geometry.
 	$geo = log_import_geometry( $feature['geometry'] ?? null );
 	if ( $geo ) {
-		if ( $geo['centroid'] ) {
-			[ $fields['lat'], $fields['lng'] ] = $geo['centroid'];
+		if ( $geo['point'] ) {
+			[ $fields['lat'], $fields['lng'] ] = $geo['point'];
 		}
 		$fields['dunam']    = (int) round( $geo['area_m2'] / 1000 );
 		$fields['boundary'] = $geo['boundary'];
