@@ -9,14 +9,14 @@ related_targets: ["wp-content/themes/log/src/styles/main.css","wp-content/themes
 
 Scope: the whole public site, home first. Mode: Persuade on home, projects, control, about, careers; Read on knowledge items and project stories; Operate on search, forms and filters.
 Audience: five audiences at equal weight (PRODUCT.md). Action on home: find a project on the map (search, filters, open a project) or take one of the two lanes (project management, the control company).
-Constraints: binding Ploni / Ploni Tzar, orange #F7931D, navy 3D map opening, final logo pending (slot). Itay rejected the boxed cartouche over the map (2026-10-22): the map leads, controls sit on it as small plates. Tokens stay swappable for TwoPointFour.
+Constraints: binding Rubik / Assistant (Ploni until 25.11.2026), orange #F7931D, navy 3D map opening, final logo pending (slot). Itay rejected the boxed cartouche over the map (2026-10-22): the map leads, controls sit on it as small plates. Tokens stay swappable for TwoPointFour.
 Unresolved: logo file; real photography; texts file.
 
 ## Direction contract
 
 THESIS: The site is Israel's guide-sign system for planning work: every page answers where, how far and which way. It refuses the consultancy default (render, centred headline, three service cards) and any panel that hides the map.
 
-OWN-WORLD: Navy guide plates (#13212f) with a 2px white keyline inset 5px and 10px corners; retroreflective white legend; works-zone orange #F7931D for LOG's active work and every active state; road-paper day ground for reading pages. One authored guide-sign arrow. Route shields carry page and section numbers. Ploni Tzar legends, tabular distances.
+OWN-WORLD: Navy guide plates (#13212f) with a 2px white keyline inset 5px and 10px corners; retroreflective white legend; works-zone orange #F7931D for LOG's active work and every active state; road-paper day ground for reading pages. One authored guide-sign arrow. Route shields carry page and section numbers. Rubik legends, tabular distances.
 
 STORY: The visitor sees LOG's real projects standing on the map, reads how many and where, picks a destination or one of the two lanes, and every later page keeps saying where they are and which way is forward.
 

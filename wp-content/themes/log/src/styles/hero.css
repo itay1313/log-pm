@@ -283,7 +283,7 @@ body.admin-bar .hero { margin-top: calc(-1 * var(--wp-admin--admin-bar--height, 
   .hero-search__go { width: 52px; height: 46px; }
   .hero-search__go .arrow { width: 2.25rem; }
   .hero-suggest { top: auto; bottom: calc(100% + 8px); max-height: 50vh; }
-  .hero-filter-toggle { --k-ground: transparent; --k-edge: var(--hair-strong); display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; padding: 0 1.25rem; border: 0; border-radius: var(--r-control); font: var(--type-legend); cursor: pointer; }
+  .hero-filter-toggle { --k-ground: var(--night); --k-tint: 42%; --k-line: var(--legend); --k-edge: color-mix(in srgb, var(--night-ink) 30%, transparent); position: relative; display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; padding: 0 1.35rem; border: 0; font: var(--type-legend); cursor: pointer; }
   .hero-filter-toggle::after { content: ''; width: 12px; height: 8px; background: currentColor; -webkit-mask: var(--icon-caret) center / contain no-repeat; mask: var(--icon-caret) center / contain no-repeat; }
   .hero-filter-toggle__more { display: none; }
   .hero-filters { display: none; }

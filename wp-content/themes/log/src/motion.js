@@ -37,7 +37,7 @@ export function initMotion() {
   footer();
   // After React Bits, in GSAP (src/fx): the main calls lean to the pointer; the client strip answers the scroll.
   magnet('.btn--primary, .btn--works, .site-header__talk');
-  liquid('.btn, .menu-toggle, .gantry__close');
+  liquid('.btn, .menu-toggle, .gantry__close, .hero-filter-toggle');
   velocityStrip('.logo-run');
 }
 

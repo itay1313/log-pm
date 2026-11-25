@@ -10,7 +10,7 @@
  * the legend; --k-edge the thin edge. With no backdrop filter, or for a visitor who asked for less transparency,
  * the glass is simply solid.
  */
-.btn, .menu-toggle, .gantry__close {
+.btn, .menu-toggle, .gantry__close, .hero-filter-toggle {
   --k-tint: 84%;
   --k-rim: color-mix(in srgb, var(--night-ink) 50%, transparent);
   --k-edge: color-mix(in srgb, var(--night-ink) 16%, transparent);
@@ -25,17 +25,17 @@
     0 8px 20px -14px color-mix(in srgb, var(--night-deep) 55%, transparent);
   transition: background-color .45s var(--ease-out), color .35s var(--ease-out), box-shadow .45s var(--ease-out), scale .5s var(--ease-out);
 }
-.btn::before, .menu-toggle::before, .gantry__close::before {
+.btn::before, .menu-toggle::before, .gantry__close::before, .hero-filter-toggle::before {
   content: ''; position: absolute; z-index: -1; inset: 0; border-radius: inherit; pointer-events: none;
   background: radial-gradient(9rem circle at var(--lx, 50%) var(--ly, 0%), color-mix(in srgb, var(--night-ink) 42%, transparent), transparent 70%);
   opacity: 0; transition: opacity .45s var(--ease-out);
 }
-.btn:is(:hover, :focus-visible)::before, .menu-toggle:is(:hover, :focus-visible)::before, .gantry__close:is(:hover, :focus-visible)::before { opacity: 1; }
+.btn:is(:hover, :focus-visible)::before, .menu-toggle:is(:hover, :focus-visible)::before, .gantry__close:is(:hover, :focus-visible)::before, .hero-filter-toggle:is(:hover, :focus-visible)::before { opacity: 1; }
 .btn:active, .menu-toggle:active, .gantry__close:active { scale: .97; }
 /* On night grounds the everyday button is smoked glass with a white legend; a navy one would vanish there. */
 :is(.sheet--night, .section--control, .section--night, .site-footer, .gantry, .hero, .opener, body.page-template-page-control) .btn:not(.btn--primary, .btn--works, .btn--ghost, .btn--day) { --k-ground: var(--night); --k-tint: 42%; --k-edge: color-mix(in srgb, var(--night-ink) 30%, transparent); }
 @media (prefers-reduced-transparency: reduce) {
-  .btn, .menu-toggle, .gantry__close { --k-tint: 100%; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .btn, .menu-toggle, .gantry__close, .hero-filter-toggle { --k-tint: 100%; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
 /*

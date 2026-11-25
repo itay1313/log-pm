@@ -46,7 +46,7 @@ Two separate worlds under one name: project management at the authority and comp
 
 Binding (confirmed by Itay, 2026-10-21):
 
-- Fonts: Ploni (text) and Ploni Tzar (display), licensed, self-hosted in the theme.
+- Fonts: Rubik (headlines) and Assistant (everything else), the faces LOG approved in the v3 brand book; open-source (OFL), self-hosted in the theme.
 - LOG orange #F89E2D (from the brand book) as the brand color.
 - The dark navy 3D map as the home page opening (navy plate, orange buildings, white pins), with marseille.laphase5.com as the reference bar.
 - The final LOG logo (file still to be supplied; the theme currently uses a placeholder ring wordmark).
