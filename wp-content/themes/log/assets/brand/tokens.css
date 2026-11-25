@@ -38,25 +38,27 @@
   --hair-strong: rgba(242, 244, 241, .38);
   --hair-ink: rgba(21, 32, 43, .16); /* hairlines on paper */
   /* font */
-  --font-display: 'Ploni Tzar', 'Ploni', system-ui, sans-serif;
-  --font-text: 'Ploni', system-ui, sans-serif;
-  --font-headline: 'Ploni Tzar', 'Ploni', system-ui, sans-serif; /* headlines: Ploni Tzar Bold, two to four words, closed by a period */
-  --font-figure: 'Ploni', system-ui, sans-serif; /* big numbers, numbering and quotes: Ploni Light */
+  --font-display: 'Assistant', system-ui, sans-serif; /* subheads, labels, buttons: Assistant ExtraBold, Bold and SemiBold */
+  --font-text: 'Assistant', system-ui, sans-serif; /* reading: Assistant Regular */
+  --font-headline: 'Rubik', 'Assistant', system-ui, sans-serif; /* headlines: Rubik Black, two to four words, closed by a period */
+  --font-figure: 'Assistant', system-ui, sans-serif; /* big numbers and numbering: Assistant Light */
   /* size */
-  --fs-h1: clamp(2.75rem, 1.75rem + 3.4vw, 4.5rem); /* 44 → 72: page titles, the home headline, the big figures. 72 is the book's ceiling for a headline on the site */
-  --fs-h2: clamp(2.25rem, 1.5rem + 2.4vw, 3.5rem); /* 36 → 56: section titles. 56 is where the book's headline range starts */
+  --fs-h1: clamp(2.5rem, 1.6rem + 3vw, 4rem); /* 40 → 64: page titles, the home headline, the big figures. Rubik Black is wide and heavy: 64 carries what 72 did in a narrow face */
+  --fs-h2: clamp(2rem, 1.35rem + 2.1vw, 3.25rem); /* 32 → 52: section titles */
   --fs-h3: clamp(2rem, 1.5rem + 1.1vw, 2.5rem); /* 32 → 40: destination rows, lead cards, step titles */
   --fs-h4: clamp(1.5rem, 1.3rem + .5vw, 1.75rem); /* 24 → 28: card titles, steps, quotes. 28 is the book's subhead */
-  --fs-title: 1.5rem; /* 24: small titles in Ploni Tzar */
-  --fs-lead: 1.25rem; /* 20: ledes, prose, names in lists */
-  --fs-base: 1.125rem; /* 18: body, buttons, legends (the book's body size) */
-  --fs-small: .9375rem; /* 15: captions, meta */
-  --fs-micro: .875rem; /* 14: map labels, table heads. The book sets nothing smaller */
+  --fs-title: 1.5rem; /* 24: small titles in Assistant */
+  --fs-lead: 1.3125rem; /* 21: ledes, prose, names in lists */
+  --fs-base: 1.1875rem; /* 19: body, buttons, legends. Assistant sets small for its size: 19 reads as 18 did */
+  --fs-small: 1rem; /* 16: captions, meta */
+  --fs-micro: .9375rem; /* 15: map labels, table heads. Nothing is set smaller */
   /* weight */
   --fw-light: 300;
   --fw-regular: 400;
-  --fw-medium: 500;
+  --fw-medium: 600; /* labels and buttons: Assistant SemiBold (its 500 reads as regular) */
   --fw-bold: 700;
+  --fw-subhead: 800; /* subheads: Assistant ExtraBold */
+  --fw-headline: 900; /* headlines only: Rubik Black */
   /* leading */
   --lh-display: .92;
   --lh-heading: 1.02;
@@ -64,18 +66,18 @@
   --lh-text: 1.6;
   --lh-prose: 1.7;
   /* tracking */
-  --track-headline: -0.03em; /* heavy Ploni Tzar headlines */
-  --track-heading: -0.02em;
-  --track-figure: -0.045em; /* big light figures and quotes */
-  --track-title: -0.01em;
+  --track-headline: -0.01em; /* Rubik Black headlines: Rubik is spaced for text, a hair closer at display sizes */
+  --track-heading: -0.01em; /* Assistant ExtraBold subheads */
+  --track-figure: -0.02em; /* big figures in Assistant Light */
+  --track-title: 0;
   /* radius */
   --r-control: 8px; /* the one radius: buttons, fields, chips and tags. The book allows a rounded corner only in a thin line, so no pills; photographs and surfaces stay square */
   --r-frame: 26px; /* the frame around the home map while it opens */
   /* line */
   --frame: 12px; /* the home map's inset from the window */
-  --line-w: 2px; /* every line and circle in the language, one weight (the book: 2px on a 1280 sheet) */
+  --line-w: 1.5px; /* every line and circle in the language, one weight: thin, so it reads as drawn, not built */
   --rule-w: 1px; /* the grey hair between the rows of a list or a table, as the book draws it. Never in ink, never a frame */
-  --dot: 12px; /* the dot at a line's end or crossing: filled, no ring (the book: 10 to 14px) */
+  --dot: 10px; /* the dot at a line's end or crossing: filled, no ring */
   --dash: 8px; /* a dashed line: what doesn't exist yet */
   --dash-gap: 6px;
   --switch-blend: 40px; /* the short gradient where a switch line turns from grey to orange */

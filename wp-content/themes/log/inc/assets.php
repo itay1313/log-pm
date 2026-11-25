@@ -62,18 +62,16 @@ add_action( 'wp_enqueue_scripts', function () {
 } );
 
 /**
- * Preload the two faces the first screen sets: Ploni Tzar Bold (the headline, whose reveal waits for its font)
- * and Ploni Tzar Medium (buttons, labels). Without this the browser finds them only after the CSS arrives.
- * The brand book's cover sets Ploni Tzar Bold over Ploni Regular.
+ * Preload the Hebrew files of the two families every first screen sets: Rubik (the headline, whose reveal waits
+ * for its font) and Assistant (labels, buttons, text). Both are variable, so one file each covers every weight.
+ * Without this the browser finds them only after the CSS arrives.
  */
 add_action( 'wp_head', function () {
 	if ( defined( 'LOG_VITE_DEV' ) && LOG_VITE_DEV ) {
 		return;
 	}
 	$m = log_vite_manifest();
-	$fonts = log_is_brand_book()
-		? [ 'assets/fonts/ploni_tzar_bold.woff2', 'assets/fonts/ploni_regular.woff2' ]
-		: [ 'assets/fonts/ploni_tzar_bold.woff2', 'assets/fonts/ploni_tzar_medium.woff2' ];
+	$fonts = [ 'assets/fonts/rubik-hebrew.woff2', 'assets/fonts/assistant-hebrew.woff2' ];
 	foreach ( $fonts as $font ) {
 		if ( ! empty( $m[ $font ]['file'] ) ) {
 			printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( LOG_THEME_URI . '/assets/dist/' . $m[ $font ]['file'] ) );

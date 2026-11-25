@@ -41,15 +41,15 @@ html.drive-on .drive-country__inner {
 html.drive-on .sheet-top { position: relative; display: grid; align-items: end; justify-items: start; overflow: hidden; padding-bottom: .55rem; }
 html.drive-on .sheet-n {
   display: block; position: absolute; z-index: 0; left: -.03em; bottom: -.2em; margin: 0; direction: ltr; user-select: none; pointer-events: none;
-  font: var(--fw-bold) min(52vh, 34vw)/.8 var(--font-headline); letter-spacing: -.06em;
+  font: var(--fw-headline) min(52vh, 34vw)/.8 var(--font-headline); letter-spacing: -.02em;
   color: transparent; -webkit-text-stroke: var(--line-w) color-mix(in srgb, var(--night-ink) 38%, transparent);
   will-change: transform, opacity; /* drive.js slides it on its own layer */
 }
 html.drive-on .drive-country .section__title {
-  position: relative; z-index: 1; max-width: 8ch; margin: 0; font-size: clamp(3.25rem, 6.6vw, 6rem); line-height: .88; letter-spacing: -.04em;
+  position: relative; z-index: 1; max-width: 8ch; margin: 0; font-size: clamp(3.25rem, 6.6vw, 6rem); line-height: .88; letter-spacing: var(--track-headline);
   text-shadow: 0 2px 40px color-mix(in srgb, var(--night-deep) 60%, transparent);
 }
-html.drive-on .drive-country .section__title .period--dot { transform-origin: 50% 80%; }
+html.drive-on .drive-country .section__title .period--dot { transform-origin: 50% 50%; }
 /* Under the line: the text on the start side, the figures on the end side. */
 html.drive-on .sheet-band { position: relative; grid-template-columns: minmax(0, 1fr) var(--fig-w); column-gap: var(--g); align-items: start; padding: 1.6rem 0 clamp(28px, 6vh, 64px); }
 html.drive-on .sheet-cross { display: block; position: absolute; inset: 0; pointer-events: none; }
@@ -406,7 +406,7 @@ html.road-on .exit-world__lead { position: relative; overflow: hidden; padding-b
 html.road-on .exit-world__lead .exit-world__say { margin-bottom: 0; }
 html.road-on .exit-world .sheet-n {
   display: block; position: absolute; z-index: 0; left: max(var(--gutter), (100vw - var(--container)) / 2 - 1vw); bottom: -.22em; margin: 0; direction: ltr; user-select: none; pointer-events: none;
-  font: var(--fw-bold) min(44vh, 30vw)/.8 var(--font-headline); letter-spacing: -.06em;
+  font: var(--fw-headline) min(44vh, 30vw)/.8 var(--font-headline); letter-spacing: -.02em;
   color: transparent; -webkit-text-stroke: var(--line-w) color-mix(in srgb, var(--night-ink) 34%, transparent);
 }
 html.road-on .exit-world__lead > :not(.sheet-n) { position: relative; z-index: 1; }

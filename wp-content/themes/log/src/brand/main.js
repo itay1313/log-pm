@@ -445,7 +445,7 @@ function motion() {
     const items = [
       '.bk-rules > li', '.bk-rows > li', '.bk-how__grid > li', '.bk-toc__list > li', '.bk-junction__words > li', '.bk-vision__cols > div',
       '.bk-tone__cols > div > h3', '.bk-quote', '.bk-logo__versions > li', '.bk-wrong__grid > li', '.bk-anatomy__notes > div', '.bk-anatomy__language > *',
-      '.bk-colors__foot > div', '.bk-icons__grid > li', '.bk-table tr', '.bk-scale > li', '.bk-get__label', '.bk-get li', '.bk-again', '.bk-formats__row > li', '.bk-lines__kinds > li > :not(.ln)',
+      '.bk-colors__foot > div', '.bk-icons__grid > li', '.bk-table tr', '.bk-scale tbody tr', '.bk-get__label', '.bk-get li', '.bk-again', '.bk-formats__row > li', '.bk-lines__kinds > li > :not(.ln)',
       '.bk-circles__kinds > li > :not(.circ)', '.bk-minis > li > :not(.bk-mini)', '.bk-photos__cols h3', '.bk-scrims__places > ul:first-child > li > :not(.bk-scrims__case)',
       '.bk-scrims__person > p', '.bk-social__frames .bk-cap', '.bk-highlights__row > li', '.bk-banner h3', '.bk-banner__text', '.bk-fb__cols h3', '.bk-fb__cols h3 + p',
       '.bk-sign', '.bk-note', '.bk-grid__sheet > p', '.bk-timeline li > :not(.circ)',

@@ -38,27 +38,29 @@ export const hair = {
   hairInk: "rgba(21, 32, 43, .16)"
 };
 export const font = {
-  fontDisplay: "'Ploni Tzar', 'Ploni', system-ui, sans-serif",
-  fontText: "'Ploni', system-ui, sans-serif",
-  fontHeadline: "'Ploni Tzar', 'Ploni', system-ui, sans-serif",
-  fontFigure: "'Ploni', system-ui, sans-serif"
+  fontDisplay: "'Assistant', system-ui, sans-serif",
+  fontText: "'Assistant', system-ui, sans-serif",
+  fontHeadline: "'Rubik', 'Assistant', system-ui, sans-serif",
+  fontFigure: "'Assistant', system-ui, sans-serif"
 };
 export const size = {
-  fsH1: "clamp(2.75rem, 1.75rem + 3.4vw, 4.5rem)",
-  fsH2: "clamp(2.25rem, 1.5rem + 2.4vw, 3.5rem)",
+  fsH1: "clamp(2.5rem, 1.6rem + 3vw, 4rem)",
+  fsH2: "clamp(2rem, 1.35rem + 2.1vw, 3.25rem)",
   fsH3: "clamp(2rem, 1.5rem + 1.1vw, 2.5rem)",
   fsH4: "clamp(1.5rem, 1.3rem + .5vw, 1.75rem)",
   fsTitle: "1.5rem",
-  fsLead: "1.25rem",
-  fsBase: "1.125rem",
-  fsSmall: ".9375rem",
-  fsMicro: ".875rem"
+  fsLead: "1.3125rem",
+  fsBase: "1.1875rem",
+  fsSmall: "1rem",
+  fsMicro: ".9375rem"
 };
 export const weight = {
   fwLight: 300,
   fwRegular: 400,
-  fwMedium: 500,
-  fwBold: 700
+  fwMedium: 600,
+  fwBold: 700,
+  fwSubhead: 800,
+  fwHeadline: 900
 };
 export const leading = {
   lhDisplay: ".92",
@@ -68,10 +70,10 @@ export const leading = {
   lhProse: "1.7"
 };
 export const tracking = {
-  trackHeadline: "-0.03em",
-  trackHeading: "-0.02em",
-  trackFigure: "-0.045em",
-  trackTitle: "-0.01em"
+  trackHeadline: "-0.01em",
+  trackHeading: "-0.01em",
+  trackFigure: "-0.02em",
+  trackTitle: "0"
 };
 export const radius = {
   rControl: "8px",
@@ -79,9 +81,9 @@ export const radius = {
 };
 export const line = {
   frame: "12px",
-  lineW: "2px",
+  lineW: "1.5px",
   ruleW: "1px",
-  dot: "12px",
+  dot: "10px",
   dash: "8px",
   dashGap: "6px",
   switchBlend: "40px"

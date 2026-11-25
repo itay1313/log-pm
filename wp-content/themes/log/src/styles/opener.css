@@ -22,13 +22,13 @@
 .opener__top > * { pointer-events: auto; }
 .opener__n {
   position: absolute; z-index: 0; left: -.03em; bottom: -.2em; margin: 0; direction: ltr; user-select: none; pointer-events: none;
-  font: var(--fw-bold) min(48svh, 31vw)/.8 var(--font-headline); letter-spacing: -.06em;
+  font: var(--fw-headline) min(48svh, 31vw)/.8 var(--font-headline); letter-spacing: -.02em;
   color: transparent; -webkit-text-stroke: var(--line-w) color-mix(in srgb, var(--night-ink) 36%, transparent);
 }
 .opener__kicker { position: relative; z-index: 1; margin-bottom: 1.1rem; }
 .opener__kicker .back-link { margin: 0; }
-.opener__title { position: relative; z-index: 1; max-width: 13ch; margin: 0; font-size: var(--fs-h1); line-height: .9; letter-spacing: -.035em; }
-.opener__title .period--dot { transform-origin: 50% 80%; }
+.opener__title { position: relative; z-index: 1; max-width: 13ch; margin: 0; font-size: var(--fs-h1); line-height: .9; letter-spacing: var(--track-headline); }
+.opener__title .period--dot { transform-origin: 50% 50%; }
 
 /* Under the line: the text on the start side, the count on the end side. */
 .opener__band { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) var(--side-w); column-gap: var(--g); align-items: start; padding-block: 1.6rem clamp(36px, 5vw, 72px); }

@@ -27,12 +27,14 @@ input, textarea { caret-color: var(--works); }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink); }
 
 h1, h2, h3, h4 { font-family: var(--font-display); line-height: var(--lh-heading); margin: 0 0 .5em; letter-spacing: var(--track-heading); text-wrap: balance; }
-/* Headlines are heavy Ploni Tzar, short, closed by a period (log_title()). Big figures stay light: --font-figure. */
-h1, h2 { font-family: var(--font-headline); font-weight: var(--fw-bold); letter-spacing: var(--track-headline); }
+/* Headlines are Rubik Black, short, closed by a period (log_title()). Big figures stay light: --font-figure. */
+h1, h2 { font-family: var(--font-headline); font-weight: var(--fw-headline); letter-spacing: var(--track-headline); }
 /* The last word holds its period (no period alone on a line). The orange one is the page's junction: one per page,
    and the headline's rise ends with it landing (motion.js). */
 .title-end { white-space: nowrap; }
-.period--dot { display: inline-block; color: var(--works); }
+/* Round, like the book's: Rubik's period is a soft square. The period stays in the text, inside a small round box
+   that sits on the baseline (overflow: hidden puts an inline-block's baseline at its foot). */
+.period--dot { display: inline-block; width: .2em; height: .2em; margin-inline-start: .05em; overflow: hidden; border-radius: 50%; background: var(--works); color: transparent; line-height: 0; vertical-align: baseline; }
 h1 { font-size: var(--fs-h1); line-height: var(--lh-display); }
 h2 { font-size: var(--fs-h2); line-height: var(--lh-display); }
 h3 { font-size: var(--fs-title); font-weight: var(--fw-medium); letter-spacing: var(--track-title); line-height: var(--lh-title); }
@@ -101,7 +103,7 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 /* ------------------------------------------------------------------ buttons, links */
 
 /*
- * One button family: at least 52px tall, Ploni Tzar 500 at 18px, the same padding everywhere.
+ * One button family: at least 52px tall, Assistant SemiBold at the base size, the same padding everywhere.
  *   .btn            filled navy, white legend: the everyday button (outlined in white on night grounds)
  *   .btn--primary   the page's action, filled orange with an ink legend (ink on orange is 7:1; white on it is 2:1)
  *   .btn--works     the same orange action (the menu's "talk to us")

@@ -35,7 +35,7 @@ body.admin-bar .hero { margin-top: calc(-1 * var(--wp-admin--admin-bar--height, 
 @media (max-width: 760px) { .hero__loading { width: 100%; } }
 
 
-/* The legend on the sea: heavy Ploni Tzar at a reading size, the brand's ring turning inside the line. The whole first
+/* The legend on the sea: Rubik Black at a reading size, the brand's ring turning inside the line. The whole first
    screen fits above the fold: headline, lede, the destination bar and its filters, nothing hung over them. */
 .hero-lead {
   grid-area: 1 / 1; z-index: 5; align-self: start; width: min(100%, calc(var(--gutter) + 760px));
@@ -44,7 +44,7 @@ body.admin-bar .hero { margin-top: calc(-1 * var(--wp-admin--admin-bar--height, 
 .hero-lead :is(a, button, input, select, label, .hero-search, .hero-suggest) { pointer-events: auto; }
 .hero__title {
   /* The measure is in em, so the default headline breaks into the same three lines at every width. */
-  margin: 0 0 1.25rem; max-width: 9.6em; font: var(--fw-bold) var(--fs-h1)/1 var(--font-headline);
+  margin: 0 0 1.25rem; max-width: 9.6em; font: var(--fw-headline) var(--fs-h1)/1 var(--font-headline);
   letter-spacing: var(--track-headline); text-shadow: 0 2px 40px color-mix(in srgb, var(--night-deep) 55%, transparent);
 }
 /* A headline of two or three words ("ניהול פרויקטים") sets tighter; 72 is the ceiling for every headline on the site. */
