@@ -948,7 +948,7 @@ p.m-quote { font: var(--fw-headline) calc(60 * var(--q))/1.1 var(--font-headline
   .bk-title--opener { font-size: 64px; }
   .bk-opener .bk-cross { display: none; }
   .bk-cover__body { margin-top: 22svh; }
-  .bk-title--cover { font-size: 72px; }
+  .bk-title--cover { font-size: 56px; }
   .bk-cover .bk-cross, .bk-remember .bk-cross, .bk-end .bk-cross { display: none; }
   .bk-cover__version { position: static; margin-top: 24px; }
   .bk-end__logo { left: var(--m); top: auto; bottom: 64px; }
@@ -1017,7 +1017,9 @@ p.m-quote { font: var(--fw-headline) calc(60 * var(--q))/1.1 var(--font-headline
   .bk-scale__tag b { margin: 0; }
   .bk-page .bk-scale__sample { grid-column: 1 / -1; white-space: normal; }
   .bk-scale__spec { grid-column: 1 / -1; }
-  .bk-scale__spec b { text-align: start; }
+  .bk-scale__spec b { text-align: right; }
+  .bk-buttons__ground { min-height: 250px; padding: 28px 20px 72px; }
+  .bk-buttons__ground .bk-cap { inset-inline: 20px; bottom: 20px; }
   .bk-scale__n { font-size: 15px; }
   .bk-scale__n::before { content: attr(data-label) ' '; color: var(--muted); font: var(--fw-medium) 13px var(--font-display); }
   .bk-scale__row--h1 .bk-scale__sample { font-size: 44px; }
