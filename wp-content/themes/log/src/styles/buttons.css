@@ -1,0 +1,59 @@
+/*
+ * Buttons: one family, in liquid glass. Shared by the site (main.css) and the brand book (brand.css), so the book
+ * shows the button the site really has. The plate variables (--k-ground, --k-line, --k-edge) are declared with the
+ * other controls in base.css; the book declares its own.
+ */
+/*
+ * Buttons are liquid glass (LOG asked for it, 25.11.2026): a capsule of tinted glass that blurs whatever is behind
+ * it, a bright rim along its top edge, a soft light pooled at its foot, and under the pointer a highlight that
+ * follows it (motion.js, liquid()). --k-ground is the glass's tint and --k-tint how much of it there is; --k-line
+ * the legend; --k-edge the thin edge. With no backdrop filter, or for a visitor who asked for less transparency,
+ * the glass is simply solid.
+ */
+.btn, .menu-toggle, .gantry__close {
+  --k-tint: 84%;
+  --k-rim: color-mix(in srgb, var(--night-ink) 50%, transparent);
+  --k-edge: color-mix(in srgb, var(--night-ink) 16%, transparent);
+  isolation: isolate; overflow: hidden; border-radius: var(--r-button); color: var(--k-line);
+  background-color: color-mix(in srgb, var(--k-ground) var(--k-tint), transparent);
+  background-image: linear-gradient(to bottom, color-mix(in srgb, var(--night-ink) 14%, transparent), transparent 50%);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8); backdrop-filter: blur(16px) saturate(1.8);
+  box-shadow:
+    inset 0 1px 0 var(--k-rim),
+    inset 0 0 0 1px var(--k-edge),
+    inset 0 -12px 16px -15px color-mix(in srgb, var(--night-ink) 40%, transparent),
+    0 8px 20px -14px color-mix(in srgb, var(--night-deep) 55%, transparent);
+  transition: background-color .45s var(--ease-out), color .35s var(--ease-out), box-shadow .45s var(--ease-out), scale .5s var(--ease-out);
+}
+.btn::before, .menu-toggle::before, .gantry__close::before {
+  content: ''; position: absolute; z-index: -1; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(9rem circle at var(--lx, 50%) var(--ly, 0%), color-mix(in srgb, var(--night-ink) 42%, transparent), transparent 70%);
+  opacity: 0; transition: opacity .45s var(--ease-out);
+}
+.btn:is(:hover, :focus-visible)::before, .menu-toggle:is(:hover, :focus-visible)::before, .gantry__close:is(:hover, :focus-visible)::before { opacity: 1; }
+.btn:active, .menu-toggle:active, .gantry__close:active { scale: .97; }
+/* On night grounds the everyday button is smoked glass with a white legend; a navy one would vanish there. */
+:is(.sheet--night, .section--control, .section--night, .site-footer, .gantry, .hero, .opener, body.page-template-page-control) .btn:not(.btn--primary, .btn--works, .btn--ghost, .btn--day) { --k-ground: var(--night); --k-tint: 42%; --k-edge: color-mix(in srgb, var(--night-ink) 30%, transparent); }
+@media (prefers-reduced-transparency: reduce) {
+  .btn, .menu-toggle, .gantry__close { --k-tint: 100%; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/*
+ * One button family: at least 52px tall, Assistant SemiBold at the base size, the same padding everywhere.
+ *   .btn            navy glass, white legend: the everyday button (smoked glass on night grounds)
+ *   .btn--primary   the page's action, orange glass with an ink legend (ink on orange is 7:1; white on it is 2:1)
+ *   .btn--works     the same orange action (the menu's "talk to us")
+ *   .btn--ghost     clear glass with an ink legend, on paper
+ * Hover and focus turn the glass white with ink, and the clear one navy.
+ */
+.btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .7em;
+  min-height: 3.25rem; padding: .8em 1.65em; border: 0; text-decoration: none; cursor: pointer;
+  font: var(--fw-medium) var(--fs-base)/1.2 var(--font-display);
+}
+.btn .arrow { width: 1.15em; height: .8em; }
+.btn--primary, .btn--works { --k-ground: var(--works); --k-tint: 90%; --k-line: var(--sign-ink); --k-rim: color-mix(in srgb, var(--works-light) 90%, transparent); }
+.btn--ghost, .btn--day { --k-ground: var(--night-ink); --k-tint: 38%; --k-line: var(--ink); --k-edge: color-mix(in srgb, var(--ink) 22%, transparent); }
+.btn:is(:hover, :focus-visible) { --k-ground: var(--legend); --k-tint: 92%; --k-line: var(--sign-ink); }
+.btn--ghost:hover, .btn--day:hover, .btn--ghost:focus-visible, .btn--day:focus-visible { --k-ground: var(--plate); --k-tint: 88%; --k-line: var(--legend); --k-edge: transparent; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }

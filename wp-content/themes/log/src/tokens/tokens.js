@@ -77,6 +77,7 @@ export const tracking = {
 };
 export const radius = {
   rControl: "8px",
+  rButton: "999px",
   rFrame: "26px"
 };
 export const line = {

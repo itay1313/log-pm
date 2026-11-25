@@ -10,6 +10,7 @@
  * thin lines that run to the edge, and night (--night) for places or day (--paper) for people and reading.
  */
 @import '../styles/tokens.css';
+@import '../styles/buttons.css';
 @import '../styles/logo.css';
 @import '../styles/lines.css';
 @import '../styles/city.css';
@@ -222,6 +223,21 @@ img, svg { display: block; max-width: 100%; }
 .bk-get a:hover img, .bk-get a:focus-visible img { scale: 1.1; }
 .bk-get a:hover span, .bk-get a:focus-visible span { translate: 0 0; }
 
+/* The button, as the site has it (buttons.css), at sheet size, on a place at night and on paper. */
+.bk-buttons .btn { --k-ground: var(--plate); --k-line: var(--legend); position: relative; display: inline-flex; align-items: center; justify-content: center; min-height: calc(52 * var(--u)); padding: .8em 1.65em; font: var(--fw-medium) calc(19 * var(--u))/1.2 var(--font-display); }
+.bk-buttons .btn--primary { --k-ground: var(--works); --k-line: var(--sign-ink); }
+.bk-buttons .btn--ghost { --k-ground: var(--night-ink); --k-line: var(--ink); }
+.bk-buttons__stage { flex: 1; display: grid; grid-template-columns: 1fr 1fr; margin-top: calc(22 * var(--u)); min-height: 0; }
+.bk-buttons__ground { position: relative; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: calc(16 * var(--u)); padding: calc(28 * var(--u)); overflow: hidden; }
+.bk-buttons__ground--night { color: var(--night-ink); }
+.bk-buttons__ground--night .btn:not(.btn--primary) { --k-ground: var(--night); --k-tint: 42%; --k-line: var(--night-ink); --k-edge: color-mix(in srgb, var(--night-ink) 30%, transparent); }
+.bk-buttons__ground--day { background: var(--paper); }
+.bk-buttons__ground > .bk-photo { position: absolute; inset: 0; z-index: 0; }
+.bk-buttons__ground > .btn { z-index: 1; }
+.bk-buttons__ground .bk-cap { position: absolute; z-index: 1; inset-inline: calc(28 * var(--u)); bottom: calc(18 * var(--u)); text-align: center; }
+.bk-buttons__ground--night .bk-cap { color: var(--night-muted); }
+.bk-buttons .bk-rules { margin-top: calc(18 * var(--u)); }
+
 /* ------------------------------------------------------------------ cover, contents */
 
 .bk-cover { color: var(--night-ink); }
@@ -390,8 +406,8 @@ img, svg { display: block; max-width: 100%; }
 .bk-ratio__bar i { flex: var(--w); background: var(--c); transform-origin: 100% 50%; }
 .bk-ratio__names { margin-top: calc(6 * var(--u)); font-size: var(--fs-cap); color: var(--muted); }
 .bk-ratio__names span { flex: var(--w); white-space: nowrap; }
-.bk-nightfam p { color: var(--muted); font-size: var(--fs-cap); }
-.bk-nightfam__chips { margin-top: calc(10 * var(--u)); height: calc(18 * var(--u)); }
+.bk-nightfam__text { margin-top: calc(6 * var(--u)); color: var(--muted); font-size: var(--fs-cap); }
+.bk-nightfam__chips { height: calc(18 * var(--u)); }
 .bk-nightfam__chips i { flex: 1; background: var(--c); }
 
 .bk-contrast__table { margin-top: calc(22 * var(--u)); }
@@ -451,7 +467,7 @@ img, svg { display: block; max-width: 100%; }
 .bk-grid__sheet > .bk-grid__m--start { inset-inline-start: 2%; }
 .bk-grid__sheet > .bk-grid__m--end { inset-inline-end: 2%; }
 
-.bk-formats__row { display: flex; align-items: flex-end; justify-content: space-between; gap: calc(28 * var(--u)); margin-top: calc(26 * var(--u)); }
+.bk-formats__row { display: flex; align-items: flex-start; justify-content: space-between; gap: calc(28 * var(--u)); margin-top: calc(26 * var(--u)); }
 .bk-formats__row li { flex: none; }
 .bk-formats__row h3 { margin-block: calc(12 * var(--u)) calc(4 * var(--u)); font-size: calc(17 * var(--u)); }
 .bk-formats__row p { max-width: calc(250 * var(--u)); font-size: var(--fs-cap); }
@@ -709,7 +725,11 @@ p.m-quote { font: var(--fw-headline) calc(60 * var(--q))/1.1 var(--font-headline
 .bk-banner h3 { margin-top: calc(20 * var(--u)); }
 .bk-banner__text { max-width: calc(820 * var(--u)); color: var(--muted); }
 
-.bk-fb__cols { display: grid; grid-template-columns: auto 1fr; gap: calc(40 * var(--u)); margin-top: calc(26 * var(--u)); align-items: start; }
+/* Two specimens side by side: the frames share one row (the signature stretches to the cover's height), the
+   captions the next, so both read along the same lines. */
+.bk-fb__cols { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto 1fr; grid-auto-flow: column; column-gap: calc(40 * var(--u)); margin-top: calc(26 * var(--u)); align-items: start; }
+.bk-fb__cols > div { display: contents; }
+.bk-fb__cols .bk-sign { align-self: stretch; align-content: center; }
 .bk-fb__cols h3 { margin-block: calc(14 * var(--u)) calc(2 * var(--u)); }
 .bk-sign { display: grid; gap: calc(12 * var(--u)); padding: calc(26 * var(--u)) calc(26 * var(--u)) calc(22 * var(--u)); background: var(--paper-2); box-shadow: inset 0 0 0 var(--hair) var(--rule); font-size: calc(14 * var(--u)); }
 .bk-sign b { font: var(--fw-bold) calc(17 * var(--u))/1.2 var(--font-display); }
@@ -951,7 +971,7 @@ p.m-quote { font: var(--fw-headline) calc(60 * var(--q))/1.1 var(--font-headline
   .bk-folio { margin-top: 36px; }
   .bk-lede { max-width: none; }
   .bk-toc__list, .bk-how__grid, .bk-junction__words, .bk-vision__cols, .bk-tone__cols, .bk-logo__versions, .bk-wrong__grid,
-  .bk-colors__foot, .bk-grid__cols, .bk-model__cols, .bk-lines__kinds, .bk-photos__cols, .bk-scrims__cols,
+  .bk-buttons__stage, .bk-colors__foot, .bk-grid__cols, .bk-model__cols, .bk-lines__kinds, .bk-photos__cols, .bk-scrims__cols,
   .bk-icons__cols, .bk-data__cols, .bk-social__cols, .bk-fb__cols, .bk-anatomy__stage, .bk-rules--2, .bk-minis--2, .bk-minis--3 {
     display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; gap: 24px; margin-top: 28px;
   }

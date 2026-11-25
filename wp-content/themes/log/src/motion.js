@@ -37,7 +37,23 @@ export function initMotion() {
   footer();
   // After React Bits, in GSAP (src/fx): the main calls lean to the pointer; the client strip answers the scroll.
   magnet('.btn--primary, .btn--works, .site-header__talk');
+  liquid('.btn, .menu-toggle, .gantry__close');
   velocityStrip('.logo-run');
+}
+
+/**
+ * Liquid glass (base.css): the highlight inside a button follows the pointer. One listener for the page; it writes
+ * two custom properties on the button under the pointer and nothing else, so it costs no layout.
+ */
+function liquid(selector) {
+  if (!matchMedia('(pointer: fine)').matches) return;
+  addEventListener('pointermove', (e) => {
+    const el = e.target.closest?.(selector);
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--lx', `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`);
+    el.style.setProperty('--ly', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`);
+  }, { passive: true });
 }
 
 /**

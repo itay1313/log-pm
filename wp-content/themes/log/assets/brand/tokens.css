@@ -71,7 +71,8 @@
   --track-figure: -0.02em; /* big figures in Assistant Light */
   --track-title: 0;
   /* radius */
-  --r-control: 8px; /* the one radius: buttons, fields, chips and tags. The book allows a rounded corner only in a thin line, so no pills; photographs and surfaces stay square */
+  --r-control: 8px; /* fields, chips and tags. Photographs and surfaces stay square */
+  --r-button: 999px; /* buttons are capsules of liquid glass (LOG, 25.11.2026) */
   --r-frame: 26px; /* the frame around the home map while it opens */
   /* line */
   --frame: 12px; /* the home map's inset from the window */

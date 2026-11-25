@@ -56,8 +56,8 @@ $formats = [
 		</div>
 		<div class="bk-nightfam">
 			<h3>אספלט בלילה</h3>
-			<p>האספלט של לוג הוא נייבי: כביש בלילה. סביבו משפחה אחת של גוונים, למפה, לחברת הבקרה ולפוטר.</p>
 			<p class="bk-nightfam__chips" aria-hidden="true"><i style="--c: var(--night-deep)"></i><i style="--c: var(--night)"></i><i style="--c: var(--night-2)"></i><i style="--c: var(--night-line)"></i><i style="--c: var(--night-muted)"></i></p>
+			<p class="bk-nightfam__text">האספלט של לוג הוא נייבי: כביש בלילה. סביבו משפחה אחת של גוונים, למפה, לחברת הבקרה ולפוטר.</p>
 		</div>
 	</div>
 <?php log_bk_close(); ?>
@@ -162,9 +162,9 @@ $formats = [
 <?php log_bk_open( '06', 'תוכן, טבלה וציטוט', 'bk-templates' ); ?>
 	<?php log_bk_head( '06', 'תוכן, טבלה וציטוט', 'תבניות לשקף: אותו גריד, אותם קווים, אותו כתום אחד.' ); ?>
 	<ul class="bk-minis bk-minis--3">
-		<li><?php echo log_bk_mini( 'toc', 0.3, [ 'label' => 'שקף תוכן עניינים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>תוכן עניינים</h3><p>שורות שוות עם קו דק ביניהן. מספר דק באפור, שם הפרק מודגש, עמוד בקטן משמאל.</p></li>
-		<li><?php echo log_bk_mini( 'table', 0.3, [ 'label' => 'שקף טבלה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>טבלה</h3><p>קו כהה מתחת לכותרות, קו דק בין השורות. כתום משמש להדגשת ערך.</p></li>
-		<li><?php echo log_bk_mini( 'quote', 0.3, [ 'label' => 'שקף ציטוט' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>ציטוט</h3><p>השם על הצילום, מעל קו שנכנס מהקצה ונגמר בנקודה כתומה.</p></li>
+		<li><?php echo log_bk_mini( 'toc', 0.2875, [ 'label' => 'שקף תוכן עניינים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>תוכן עניינים</h3><p>שורות שוות עם קו דק ביניהן. מספר דק באפור, שם הפרק מודגש, עמוד בקטן משמאל.</p></li>
+		<li><?php echo log_bk_mini( 'table', 0.2875, [ 'label' => 'שקף טבלה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>טבלה</h3><p>קו כהה מתחת לכותרות, קו דק בין השורות. כתום משמש להדגשת ערך.</p></li>
+		<li><?php echo log_bk_mini( 'quote', 0.2875, [ 'label' => 'שקף ציטוט' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>ציטוט</h3><p>השם על הצילום, מעל קו שנכנס מהקצה ונגמר בנקודה כתומה.</p></li>
 	</ul>
 	<p class="bk-note">בתמונות: נתונים, שמות וציטוט לדוגמה בלבד.</p>
 <?php log_bk_close(); ?>

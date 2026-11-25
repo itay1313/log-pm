@@ -70,8 +70,7 @@ dd, .num, [data-count], .tnum { font-variant-numeric: tabular-nums; }
   box-shadow: inset 0 0 0 var(--line-w) var(--k-edge);
   transition: box-shadow .35s var(--ease-out), background-color .35s var(--ease-out), color .35s var(--ease-out);
 }
-.btn, .menu-toggle { border-radius: var(--r-control); }
-:is(.sheet--night, .section--control, .section--night, .site-footer, .gantry, .hero, .opener, body.page-template-page-control) .btn:not(.btn--primary, .btn--works, .btn--ghost, .btn--day) { --k-ground: transparent; --k-edge: var(--legend); }
+
 
 /*
  * The route number: a page's number in the header order, set at the start of its heading and its menu row the way
@@ -102,25 +101,7 @@ a:hover > .arrow:not(.arrow--lane), a:focus-visible > .arrow:not(.arrow--lane), 
 
 /* ------------------------------------------------------------------ buttons, links */
 
-/*
- * One button family: at least 52px tall, Assistant SemiBold at the base size, the same padding everywhere.
- *   .btn            filled navy, white legend: the everyday button (outlined in white on night grounds)
- *   .btn--primary   the page's action, filled orange with an ink legend (ink on orange is 7:1; white on it is 2:1)
- *   .btn--works     the same orange action (the menu's "talk to us")
- *   .btn--ghost     outlined in the thin line, ink legend, no ground
- * Hover and focus turn the filled buttons white with ink, and the outlined one navy.
- */
-.btn {
-  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .7em;
-  min-height: 3.25rem; padding: .8em 1.65em; border: 0; text-decoration: none; cursor: pointer;
-  font: var(--fw-medium) var(--fs-base)/1.2 var(--font-display);
-}
-.btn .arrow { width: 1.15em; height: .8em; }
-.btn--primary, .btn--works { --k-ground: var(--works); --k-line: var(--sign-ink); }
-.btn--ghost, .btn--day { --k-ground: transparent; --k-line: var(--ink); --k-edge: var(--ink); }
-.btn:is(:hover, :focus-visible) { --k-ground: var(--legend); --k-line: var(--sign-ink); --k-edge: var(--sign-ink); }
-.btn--ghost:hover, .btn--day:hover, .btn--ghost:focus-visible, .btn--day:focus-visible { --k-ground: var(--plate); --k-line: var(--legend); --k-edge: var(--plate); }
-.btn[disabled] { opacity: .5; cursor: not-allowed; }
+/* The buttons themselves (one family, liquid glass) are in buttons.css, which the brand book shares. */
 
 .link-more, .link-row a, .back-link {
   display: inline-flex; align-items: center; gap: .55em; font-family: var(--font-display); font-weight: var(--fw-medium);
