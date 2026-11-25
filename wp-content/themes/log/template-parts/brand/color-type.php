@@ -16,24 +16,17 @@ $pairs = [
 	[ 'paper', 'works', 'נייר על כתום', 'לא משתמשים: נייר על כתום לא נקרא' ],
 ];
 
-// The scale, as the site sets it (src/tokens/tokens.json):
-// [ tag, its job, sample, row, the face, size on a desktop, size on a phone ('' when it doesn't change), leading, tracking ('' for none) ].
+// The scale (src/tokens/tokens.json): one row per level, the sample at its size on the site, then where it is set and
+// at what size in each format. [ tag, job, sample, row, face, leading and tracking, site (desktop · phone), slide 1280, post 1080 ].
 $scale = [
-	[ 'H1', 'כותרת עמוד', 'אנחנו הצומת.', 'h1', 'Ploni Tzar Bold', '72', '44', '0.92', '-3%' ],
-	[ 'H2', 'כותרת פרק', 'מחברים. מובילים. מתכננים.', 'h2', 'Ploni Tzar Bold', '56', '36', '0.92', '-3%' ],
-	[ 'H3', 'כותרת משנה', 'הפרויקטים שלכם בשפה שמבינים.', 'h3', 'Ploni Tzar Bold', '40', '32', '1.02', '-2%' ],
-	[ 'H4', 'כותרת קטנה', 'תכנון עירוני בכל קנה מידה', 'h4', 'Ploni Tzar Bold', '28', '24', '1.02', '-2%' ],
-	[ 'גוף', 'טקסט רץ, באפור כהה', 'כותרת קצרה, ומשפט אחד שמסביר אותה.', 'body', 'Ploni Regular', '18', '', '1.6', '' ],
-	[ 'כיתוב', 'מקור והערה', 'מקור: דוח תנועת הגולשים באתר לוג.', 'cap', 'Ploni Regular', '14', '', '1.4', '' ],
-	[ 'מספר', 'נתון גדול ומספור', '01  99.4K', 'fig', 'Ploni Light', '72', '44', '1', '-4.5%' ],
-];
-
-$sizes = [
-	[ 'כותרת', '57', '72', '56 עד 72' ],
-	[ 'כותרת משנה', '30', '40', '28' ],
-	[ 'גוף', '18 עד 22', '30', '18' ],
-	[ 'כיתוב ומקור', '14', '24', '14' ],
-	[ 'תווית פרק', '17', '26', '15' ],
+	[ 'H1', 'כותרת עמוד', 'אנחנו הצומת.', 'h1', 'Rubik Black 900', 'שורה 0.92 · ריווח ‎-1%', '64 · 40', '57', '72' ],
+	[ 'H2', 'כותרת פרק', 'מחברים. מובילים.', 'h2', 'Rubik Black 900', 'שורה 0.92 · ריווח ‎-1%', '52 · 32', '', '' ],
+	[ 'H3', 'כותרת משנה', 'הפרויקטים שלכם בשפה שמבינים.', 'h3', 'Assistant ExtraBold 800', 'שורה 1.02 · ריווח ‎-1%', '40 · 32', '30', '40' ],
+	[ 'H4', 'כותרת קטנה', 'תכנון עירוני בכל קנה מידה', 'h4', 'Assistant ExtraBold 800', 'שורה 1.02 · ריווח ‎-1%', '28 · 24', '', '' ],
+	[ 'תווית', 'פרק, כפתור, טבלה', '06 · טיפוגרפיה וגריד', 'label', 'Assistant SemiBold 600', 'שורה 1.2', '16', '17', '26' ],
+	[ 'גוף', 'טקסט רץ, באפור כהה', 'כותרת קצרה, ומשפט אחד שמסביר אותה.', 'body', 'Assistant Regular 400', 'שורה 1.6', '19', '18 עד 22', '30' ],
+	[ 'כיתוב', 'מקור והערה', 'מקור: דוח תנועת הגולשים באתר לוג.', 'cap', 'Assistant Regular 400', 'שורה 1.4', '15', '14', '24' ],
+	[ 'מספר', 'נתון גדול ומספור', '01  99.4K', 'fig', 'Assistant Light 300', 'ריווח ‎-2%', '64 · 40', '', '' ],
 ];
 
 $formats = [
@@ -63,8 +56,8 @@ $formats = [
 		</div>
 		<div class="bk-nightfam">
 			<h3>אספלט בלילה</h3>
-			<p>האספלט של לוג הוא נייבי: כביש בלילה. סביבו משפחה אחת של גוונים, למפה, לחברת הבקרה ולפוטר.</p>
 			<p class="bk-nightfam__chips" aria-hidden="true"><i style="--c: var(--night-deep)"></i><i style="--c: var(--night)"></i><i style="--c: var(--night-2)"></i><i style="--c: var(--night-line)"></i><i style="--c: var(--night-muted)"></i></p>
+			<p class="bk-nightfam__text">האספלט של לוג הוא נייבי: כביש בלילה. סביבו משפחה אחת של גוונים, למפה, לחברת הבקרה ולפוטר.</p>
 		</div>
 	</div>
 <?php log_bk_close(); ?>
@@ -87,31 +80,25 @@ $formats = [
 	<p class="bk-note">החישוב לפי נוסחת הניגודיות של WCAG 2.1, מהצבעים שבעמוד הקודם.</p>
 <?php log_bk_close(); ?>
 
-<?php log_bk_open( '06', 'משפחה אחת', 'bk-type' ); ?>
-	<?php log_bk_head( '06', 'משפחה אחת', 'Ploni Tzar לכותרות, Ploni לכל השאר. ארבע רמות של כותרת, וכל אחת קטנה בבירור מזו שמעליה.' ); ?>
-	<div class="bk-type__cols">
-		<ol class="bk-scale">
-			<?php foreach ( $scale as [ $tag, $job, $sample, $row, $face, $size, $phone, $leading, $tracking ] ) : ?>
-				<li class="bk-scale__row bk-scale__row--<?php echo esc_attr( $row ); ?>">
-					<p class="bk-scale__tag"><b><?php echo esc_html( $tag ); ?></b><span><?php echo esc_html( $job ); ?></span></p>
-					<p class="bk-scale__sample"><?php echo esc_html( $sample ); ?></p>
-					<p class="bk-scale__spec"><b dir="ltr"><?php echo esc_html( $face ); ?></b><span><?php echo esc_html( $size ); ?><?php echo $phone !== '' ? ' · בטלפון ' . esc_html( $phone ) : ''; ?></span></p>
-					<p class="bk-scale__spec bk-scale__spec--set"><span>שורה <i dir="ltr"><?php echo esc_html( $leading ); ?></i></span><span><?php if ( $tracking !== '' ) : ?>ריווח <i dir="ltr"><?php echo esc_html( $tracking ); ?></i><?php endif; ?></span></p>
-				</li>
+<?php log_bk_open( '06', 'שתי משפחות', 'bk-type' ); ?>
+	<?php log_bk_head( '06', 'שתי משפחות', 'Rubik Black לכותרת, Assistant לכל השאר. כל רמה קטנה בבירור מזו שמעליה.' ); ?>
+	<?php // One table for the whole scale, so every level and every format read along the same lines. ?>
+	<table class="bk-scale">
+		<thead><tr><th scope="col">רמה</th><th scope="col">דוגמה, בגודל שלה באתר</th><th scope="col">משקל</th><th scope="col">אתר</th><th scope="col">שקף</th><th scope="col">פוסט</th></tr></thead>
+		<tbody>
+			<?php foreach ( $scale as [ $tag, $job, $sample, $row, $face, $set, $site, $slide, $post ] ) : ?>
+				<tr class="bk-scale__row bk-scale__row--<?php echo esc_attr( $row ); ?>">
+					<th scope="row" class="bk-scale__tag"><b><?php echo esc_html( $tag ); ?></b><span><?php echo esc_html( $job ); ?></span></th>
+					<td class="bk-scale__sample"><?php echo esc_html( $sample ); ?></td>
+					<td class="bk-scale__spec"><b dir="ltr"><?php echo esc_html( $face ); ?></b><span><?php echo esc_html( $set ); ?></span></td>
+					<td class="bk-scale__n" data-label="אתר"><?php echo esc_html( $site ); ?></td>
+					<td class="bk-scale__n" data-label="שקף"><?php echo esc_html( $slide !== '' ? $slide : '—' ); ?></td>
+					<td class="bk-scale__n" data-label="פוסט"><?php echo esc_html( $post !== '' ? $post : '—' ); ?></td>
+				</tr>
 			<?php endforeach; ?>
-		</ol>
-		<div class="bk-type__side">
-			<table class="bk-table bk-type__sizes">
-				<thead><tr><th scope="col">רמה</th><th scope="col">שקף 1280</th><th scope="col">פוסט 1080</th><th scope="col">אתר</th></tr></thead>
-				<tbody>
-					<?php foreach ( $sizes as [ $level, $slide, $post, $site ] ) : ?>
-						<tr><th scope="row"><?php echo esc_html( $level ); ?></th><td><?php echo esc_html( $slide ); ?></td><td><?php echo esc_html( $post ); ?></td><td><?php echo esc_html( $site ); ?></td></tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-			<?php log_bk_rules( [ 'הדגשה בכתום רק על מילה או ביטוי אחד, לא על פסקה.', 'אין מקף לפני מספר בעברית ("ב־2027"). מנסחים מחדש.', 'מספרים בטבלאות ובצירים בספרות ברוחב קבוע.' ] ); ?>
-		</div>
-	</div>
+		</tbody>
+	</table>
+	<p class="bk-note">הדגשה בכתום רק על מילה אחת, לא על פסקה. בלי מקף לפני מספר בעברית. מספרים בטבלאות ובצירים בספרות ברוחב קבוע.</p>
 <?php log_bk_close(); ?>
 
 <?php log_bk_open( '06', 'כולם מתחילים באותה נקודה', 'bk-grid' ); ?>
@@ -175,9 +162,9 @@ $formats = [
 <?php log_bk_open( '06', 'תוכן, טבלה וציטוט', 'bk-templates' ); ?>
 	<?php log_bk_head( '06', 'תוכן, טבלה וציטוט', 'תבניות לשקף: אותו גריד, אותם קווים, אותו כתום אחד.' ); ?>
 	<ul class="bk-minis bk-minis--3">
-		<li><?php echo log_bk_mini( 'toc', 0.3, [ 'label' => 'שקף תוכן עניינים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>תוכן עניינים</h3><p>שורות שוות עם קו דק ביניהן. מספר דק באפור, שם הפרק מודגש, עמוד בקטן משמאל.</p></li>
-		<li><?php echo log_bk_mini( 'table', 0.3, [ 'label' => 'שקף טבלה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>טבלה</h3><p>קו כהה מתחת לכותרות, קו דק בין השורות. כתום משמש להדגשת ערך.</p></li>
-		<li><?php echo log_bk_mini( 'quote', 0.3, [ 'label' => 'שקף ציטוט' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>ציטוט</h3><p>השם על הצילום, מעל קו שנכנס מהקצה ונגמר בנקודה כתומה.</p></li>
+		<li><?php echo log_bk_mini( 'toc', 0.2875, [ 'label' => 'שקף תוכן עניינים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>תוכן עניינים</h3><p>שורות שוות עם קו דק ביניהן. מספר דק באפור, שם הפרק מודגש, עמוד בקטן משמאל.</p></li>
+		<li><?php echo log_bk_mini( 'table', 0.2875, [ 'label' => 'שקף טבלה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>טבלה</h3><p>קו כהה מתחת לכותרות, קו דק בין השורות. כתום משמש להדגשת ערך.</p></li>
+		<li><?php echo log_bk_mini( 'quote', 0.2875, [ 'label' => 'שקף ציטוט' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3>ציטוט</h3><p>השם על הצילום, מעל קו שנכנס מהקצה ונגמר בנקודה כתומה.</p></li>
 	</ul>
 	<p class="bk-note">בתמונות: נתונים, שמות וציטוט לדוגמה בלבד.</p>
 <?php log_bk_close(); ?>

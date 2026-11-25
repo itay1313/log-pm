@@ -83,7 +83,7 @@
 
 /*
  * A circle's size is a plain number of pixels (--circ-n) times a unit (--circ-u, inherited: 1px, or the book's sheet pixel),
- * so its stroke can be set in the SVG's own units and still come out at the line's weight: 2px on any size.
+ * so its stroke can be set in the SVG's own units and still come out at the line's weight: 1.5px on any size.
  * (non-scaling-stroke would do the same, but it breaks dashes and the drawing.)
  */
 .circ {
@@ -100,7 +100,7 @@
 .circ :is(circle, path):not(.circ__mask) {
   fill: none;
   stroke: var(--ln-c, var(--works));
-  stroke-width: calc(200 / var(--circ-n)); /* 2px in a 100-unit box */
+  stroke-width: calc(150 / var(--circ-n)); /* 1.5px in a 100-unit box: the thin line */
 }
 .circ--dashed { --ln-c: var(--rule); color: var(--slate); }
 .circ--dashed circle:not(.circ__mask) { stroke-dasharray: calc(800 / var(--circ-n)) calc(600 / var(--circ-n)); } /* 8px, 6px */
@@ -108,7 +108,7 @@
 .circ__off { --ln-c: var(--logo-grey); }
 .circ--halves { --ln-c: var(--ink); }
 
-/* The middle: a counted number in Ploni Light, or a person's picture inset from the ring. */
+/* The middle: a counted number in Assistant Light, or a person's picture inset from the ring. */
 .circ__in {
   position: relative;
   font: var(--fw-light) calc(var(--circ-n) * var(--circ-u, 1px) * .4)/1 var(--font-figure);

@@ -43,10 +43,10 @@ $when = [
 	</ul>
 	<?php
 	log_bk_rules( [
-		[ 'עובי', '2 פיקסלים בקנבס 1280, בערך 1.5 נקודות במצגת, 3 פיקסלים בפוסט 1080.' ],
+		[ 'עובי', 'דק: 1.25 פיקסלים בשקף 1280, 1.5 באתר, 2 בפוסט 1080. אותו עובי לכל הקווים בעמוד.' ],
 		[ 'לא עבה', 'מסגרת נבנית מקווים דקים חוצים. חריג: פינה מעוגלת אחת, סביב צילום או כותרת, באותו קו דק.' ],
 		[ 'עד הקצה', 'קו מבני ממשיך עד שולי השקף, לא נעצר באמצע.' ],
-		[ 'נקודה', '10 עד 14 פיקסלים, מלאה, בכתום או בלבן. בלי טבעת סביבה.' ],
+		[ 'נקודה', '10 פיקסלים, עגולה ומלאה, בכתום או בלבן. בלי טבעת סביבה.' ],
 		[ 'החלפת צבע', 'פעם אחת בקו, ורק כשיש לה משמעות.' ],
 		[ 'צבעים', 'אספלט, אפור, כתום. לבן על צילום כהה.' ],
 	], 4, 'bk-rules--2' );
@@ -88,4 +88,30 @@ $when = [
 			<?php endforeach; ?>
 		</tbody>
 	</table>
+<?php log_bk_close(); ?>
+
+<?php log_bk_open( '07', 'כפתור מזכוכית', 'bk-buttons' ); ?>
+	<?php log_bk_head( '07', 'כפתור מזכוכית', 'קפסולה שקופה שמטשטשת את מה שמאחוריה. אלה הכפתורים של האתר עצמו, באותו קוד.' ); ?>
+	<?php // The site's own buttons (src/styles/buttons.css), on the two grounds they meet: a place at night, and paper. ?>
+	<div class="bk-buttons__stage" aria-hidden="true">
+		<div class="bk-buttons__ground bk-buttons__ground--night">
+			<?php echo log_bk_photo( 'aerial-night.jpg', '', 'bk-photo--bleed', 'mid' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<span class="btn btn--primary">בואו נדבר</span>
+			<span class="btn">לכל הפרויקטים</span>
+			<p class="bk-cap">על צילום ועל לילה: כתום לפעולה, וזכוכית כהה לכל השאר.</p>
+		</div>
+		<div class="bk-buttons__ground bk-buttons__ground--day">
+			<span class="btn btn--primary">לקריירה בלוג</span>
+			<span class="btn">שליחה</span>
+			<span class="btn btn--ghost">לכל הפרויקטים</span>
+			<p class="bk-cap">על נייר: כתום לפעולה, כהה לטופס, שקוף למעבר.</p>
+		</div>
+	</div>
+	<?php
+	log_bk_rules( [
+		[ 'צורה', 'קפסולה, גובה 52 לפחות, טקסט Assistant SemiBold.' ],
+		[ 'זכוכית', 'מטשטשת את הרקע, קו אור דק בקצה העליון ואור רך בתחתית.' ],
+		[ 'מגע', 'בריחוף הזכוכית מתבהרת והאור הולך אחרי העכבר. בלחיצה היא נלחצת פנימה.' ],
+	], 0, 'bk-rules--3' );
+	?>
 <?php log_bk_close(); ?>

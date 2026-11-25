@@ -46,7 +46,7 @@ $wrong = [
 			<div><dt><?php echo log_line( 'dot', [ 'draw' => '' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>הצבע מתחלף באמצע.</dt><dd>אפור הופך לכתום בתוך אותה צורה. מכאן הקו שמחליף צבע.</dd></div>
 		</dl>
 		<div class="bk-anatomy__language">
-			<p class="bk-cap">בשפה, בעובי של 2 פיקסלים:</p>
+			<p class="bk-cap">בשפה, בעובי של הקו הדק:</p>
 			<?php echo log_circle( 'split' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<?php echo log_line( 'switch', [ 'at' => 45 ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		</div>

@@ -169,7 +169,7 @@ function log_gate_page( string $error = '' ): void {
 	$file   = get_template_directory() . '/assets/brand/tokens.css';
 	$tokens = is_readable( $file ) ? str_replace( '</', '', (string) file_get_contents( $file ) ) : '';
 	if ( $tokens === '' ) { // another theme is active: the few values this page needs
-		$tokens = ':root { --night: #13212f; --night-line: #3a4e62; --night-deep: #0b131b; --night-ink: #f2f4f1; --night-muted: #a3b3bf; --works: #f89e2d; --logo-orange-deep: #f67b1c; --sign-ink: #15202b; --font-display: \'Ploni Tzar\', \'Ploni\', system-ui, sans-serif; --font-text: \'Ploni\', system-ui, sans-serif; --ease-out: cubic-bezier(.16, 1, .3, 1); }';
+		$tokens = ':root { --night: #13212f; --night-line: #3a4e62; --night-deep: #0b131b; --night-ink: #f2f4f1; --night-muted: #a3b3bf; --works: #f89e2d; --logo-orange-deep: #f67b1c; --sign-ink: #15202b; --font-display: \'Assistant\', system-ui, sans-serif; --font-headline: \'Rubik\', \'Assistant\', system-ui, sans-serif; --font-text: \'Assistant\', system-ui, sans-serif; --ease-out: cubic-bezier(.16, 1, .3, 1); }';
 	}
 	?>
 <!doctype html>
@@ -180,11 +180,13 @@ function log_gate_page( string $error = '' ): void {
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b131b">
 <title><?php echo esc_html( $name ); ?> · כניסה</title>
-<link rel="preload" href="<?php echo esc_url( $fonts . 'ploni_tzar_bold.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="<?php echo esc_url( $fonts . 'rubik-hebrew.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="<?php echo esc_url( $fonts . 'assistant-hebrew.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 <style>
-@font-face { font-family: 'Ploni'; src: url('<?php echo esc_url( $fonts . 'ploni_regular.woff2' ); ?>') format('woff2'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'Ploni Tzar'; src: url('<?php echo esc_url( $fonts . 'ploni_tzar_medium.woff2' ); ?>') format('woff2'); font-weight: 500; font-display: swap; }
-@font-face { font-family: 'Ploni Tzar'; src: url('<?php echo esc_url( $fonts . 'ploni_tzar_bold.woff2' ); ?>') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Rubik'; src: url('<?php echo esc_url( $fonts . 'rubik-hebrew.woff2' ); ?>') format('woff2'); font-weight: 300 900; font-display: swap; unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Rubik'; src: url('<?php echo esc_url( $fonts . 'rubik-latin.woff2' ); ?>') format('woff2'); font-weight: 300 900; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: 'Assistant'; src: url('<?php echo esc_url( $fonts . 'assistant-hebrew.woff2' ); ?>') format('woff2'); font-weight: 200 800; font-display: swap; unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Assistant'; src: url('<?php echo esc_url( $fonts . 'assistant-latin.woff2' ); ?>') format('woff2'); font-weight: 200 800; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
 <?php echo $tokens; // the theme's own generated file ?>
 
 :root {
@@ -221,14 +223,14 @@ body {
 .legend { align-self: center; padding-block: clamp(2rem, 6vh, 4.5rem); }
 h1 {
   margin: 0; overflow: hidden; padding-top: .08em;
-  font: 700 clamp(3.25rem, 8.4vw, 8.5rem)/.92 var(--font-display); letter-spacing: -0.035em;
+  font: 900 clamp(3rem, 7.6vw, 7.5rem)/.94 var(--font-headline); letter-spacing: -0.01em;
 }
 h1 > span { display: inline-block; }
 /* The route number, as the theme sets it (base.css .shield): 00 is home in the header order. An orange figure at the
    top of the headline's start, the way the brand book numbers a chapter, with no plate around it. */
 .shield {
   display: inline-block; vertical-align: top; margin: .3em 0 0; margin-inline-end: .55em;
-  font: 500 max(.8125rem, .19em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
+  font: 600 max(.8125rem, .19em)/1 var(--font-display); letter-spacing: 0; font-variant-numeric: tabular-nums;
   color: var(--works);
 }
 
@@ -244,7 +246,7 @@ h1 > span { display: inline-block; }
 
 /* The key: a field on the sheet is the thin line closed around the place to write, and beside it the way in. */
 .key { display: grid; justify-items: start; gap: .55rem; margin-top: clamp(1.5rem, 3.6vh, 2.25rem); }
-.key label { font: 500 1rem/1.2 var(--font-display); color: var(--legend-muted); }
+.key label { font: 600 1rem/1.2 var(--font-display); color: var(--legend-muted); }
 .key__row { display: flex; align-items: stretch; gap: .9rem; width: 100%; max-width: 34rem; }
 .key input {
   flex: 1; min-width: 0; height: 3.75rem; padding: 0 1.1rem; border: 2px solid var(--plate-line); border-radius: 5px;
@@ -254,12 +256,12 @@ h1 > span { display: inline-block; }
 .key input:hover { border-color: var(--legend-muted); }
 .key input:focus { border-color: var(--legend); outline: 0; }
 .key input[aria-invalid="true"] { border-color: var(--works); }
-.key__error { margin: .15rem 0 0; font: 500 1rem/1.4 var(--font-display); color: var(--works); }
+.key__error { margin: .15rem 0 0; font: 600 1rem/1.4 var(--font-display); color: var(--works); }
 
 .foot {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem;
   padding-top: clamp(1.1rem, 2.6vh, 1.6rem); border-top: 2px solid var(--plate-line);
-  font: 500 .9375rem var(--font-display); color: var(--legend-muted); font-variant-numeric: tabular-nums;
+  font: 600 .9375rem var(--font-display); color: var(--legend-muted); font-variant-numeric: tabular-nums;
 }
 /* The way forward is a sign you can press: navy plate, white keyline that turns orange, the arrow steps forward. */
 .go {

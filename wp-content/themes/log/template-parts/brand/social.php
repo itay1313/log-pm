@@ -84,23 +84,23 @@ $glyph = [
 <?php log_bk_open( '13', 'שער ופתיחה', 'bk-examples' ); ?>
 	<?php log_bk_head( '13', 'שער ופתיחה', 'השקפים שפותחים מצגת, סיכום פעילות או פרק. אותו מבנה בכל פעם: תווית, כותרת ומשפט משנה צמודים לקו.' ); ?>
 	<ul class="bk-minis bk-minis--3 bk-minis--tight">
-		<li><?php echo log_bk_mini( 'cover', 0.3, [ 'kicker' => 'השפה העיצובית של לוג', 'label' => 'שקף שער' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>01</i> שער</h3></li>
-		<li><?php echo log_bk_mini( 'title', 0.3, [ 'label' => 'שקף סיכום פעילות' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>02</i> סיכום פעילות</h3></li>
-		<li><?php echo log_bk_mini( 'opener', 0.3, [ 'photo' => 'aerial.jpg', 'kicker' => 'פרק 01', 'label' => 'שקף פתיחת פרק על צילום אוויר' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>03</i> פתיחת פרק: צילום אוויר</h3></li>
-		<li><?php echo log_bk_mini( 'opener', 0.3, [ 'photo' => 'team.jpg', 'kicker' => 'פרק 03', 'title' => 'הפנים של לוג', 'sub' => 'מי עושה את העבודה.', 'label' => 'שקף פתיחת פרק אנשים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>04</i> פתיחת פרק: אנשים</h3></li>
-		<li><?php echo log_bk_mini( 'opener', 0.3, [ 'photo' => 'night-city.jpg', 'kicker' => 'פרק 04', 'title' => 'מספרים בקו ישר', 'sub' => 'נתונים שמראים את התמונה המלאה.', 'label' => 'שקף פתיחת פרק מספרים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>05</i> פתיחת פרק: מספרים</h3></li>
-		<li><?php echo log_bk_mini( 'list', 0.3, [ 'label' => 'שקף סגירה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>06</i> סגירה: מה הלאה</h3></li>
+		<li><?php echo log_bk_mini( 'cover', 0.2875, [ 'kicker' => 'השפה העיצובית של לוג', 'label' => 'שקף שער' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>01</i> שער</h3></li>
+		<li><?php echo log_bk_mini( 'title', 0.2875, [ 'label' => 'שקף סיכום פעילות' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>02</i> סיכום פעילות</h3></li>
+		<li><?php echo log_bk_mini( 'opener', 0.2875, [ 'photo' => 'aerial.jpg', 'kicker' => 'פרק 01', 'label' => 'שקף פתיחת פרק על צילום אוויר' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>03</i> פתיחת פרק: צילום אוויר</h3></li>
+		<li><?php echo log_bk_mini( 'opener', 0.2875, [ 'photo' => 'team.jpg', 'kicker' => 'פרק 03', 'title' => 'הפנים של לוג', 'sub' => 'מי עושה את העבודה.', 'label' => 'שקף פתיחת פרק אנשים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>04</i> פתיחת פרק: אנשים</h3></li>
+		<li><?php echo log_bk_mini( 'opener', 0.2875, [ 'photo' => 'night-city.jpg', 'kicker' => 'פרק 04', 'title' => 'מספרים בקו ישר', 'sub' => 'נתונים שמראים את התמונה המלאה.', 'label' => 'שקף פתיחת פרק מספרים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>05</i> פתיחת פרק: מספרים</h3></li>
+		<li><?php echo log_bk_mini( 'list', 0.2875, [ 'label' => 'שקף סגירה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>06</i> סגירה: מה הלאה</h3></li>
 	</ul>
 <?php log_bk_close(); ?>
 
 <?php log_bk_open( '13', 'אנשים, נתונים וציר זמן', 'bk-examples' ); ?>
 	<?php log_bk_head( '13', 'אנשים, נתונים וציר זמן', 'צילום בצבע על רקע נייר, עיגול מפוצל סביב אדם. כתום על מה שנוכחי, אפור לכל השאר.' ); ?>
 	<ul class="bk-minis bk-minis--3 bk-minis--tight">
-		<li><?php echo log_bk_mini( 'person', 0.3, [ 'label' => 'שקף אדם ושלוש מילים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>07</i> אדם ושלוש מילים</h3></li>
-		<li><?php echo log_bk_mini( 'team', 0.3, [ 'label' => 'שקף הצוות' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>08</i> הצוות</h3></li>
-		<li><?php echo log_bk_mini( 'quote', 0.3, [ 'photo' => 'person-7.jpg', 'label' => 'שקף ציטוט' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>09</i> ציטוט</h3></li>
-		<li><?php echo log_bk_mini( 'chart', 0.3, [ 'label' => 'שקף גרף' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>10</i> גרף</h3></li>
-		<li><?php echo log_bk_mini( 'timeline', 0.3, [ 'label' => 'שקף ציר זמן' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>11</i> ציר זמן</h3></li>
-		<li><?php echo log_bk_mini( 'table', 0.3, [ 'label' => 'שקף טבלה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>12</i> טבלה</h3></li>
+		<li><?php echo log_bk_mini( 'person', 0.2875, [ 'label' => 'שקף אדם ושלוש מילים' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>07</i> אדם ושלוש מילים</h3></li>
+		<li><?php echo log_bk_mini( 'team', 0.2875, [ 'label' => 'שקף הצוות' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>08</i> הצוות</h3></li>
+		<li><?php echo log_bk_mini( 'quote', 0.2875, [ 'photo' => 'person-7.jpg', 'label' => 'שקף ציטוט' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>09</i> ציטוט</h3></li>
+		<li><?php echo log_bk_mini( 'chart', 0.2875, [ 'label' => 'שקף גרף' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>10</i> גרף</h3></li>
+		<li><?php echo log_bk_mini( 'timeline', 0.2875, [ 'label' => 'שקף ציר זמן' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>11</i> ציר זמן</h3></li>
+		<li><?php echo log_bk_mini( 'table', 0.2875, [ 'label' => 'שקף טבלה' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><h3><i>12</i> טבלה</h3></li>
 	</ul>
 <?php log_bk_close(); ?>

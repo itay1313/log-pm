@@ -26,11 +26,12 @@
   --day-rule: var(--rule);
 
   /* Type roles: use these with `font:` so a role is one line, everywhere. */
-  /* The book's three weights, no more: heavy headlines, regular text, light figures. */
-  --type-h1: var(--fw-bold) var(--fs-h1)/var(--lh-display) var(--font-headline);
-  --type-h2: var(--fw-bold) var(--fs-h2)/var(--lh-display) var(--font-headline);
-  --type-h3: var(--fw-bold) var(--fs-h3)/var(--lh-heading) var(--font-headline);
-  --type-h4: var(--fw-bold) var(--fs-h4)/var(--lh-heading) var(--font-headline);
+  /* The book's voices (v3): Rubik Black for the headline only, Assistant ExtraBold for subheads, Assistant for
+     reading and labels, Assistant Light for figures. */
+  --type-h1: var(--fw-headline) var(--fs-h1)/var(--lh-display) var(--font-headline);
+  --type-h2: var(--fw-headline) var(--fs-h2)/var(--lh-display) var(--font-headline);
+  --type-h3: var(--fw-subhead) var(--fs-h3)/var(--lh-heading) var(--font-display);
+  --type-h4: var(--fw-subhead) var(--fs-h4)/var(--lh-heading) var(--font-display);
   --type-title: var(--fw-medium) var(--fs-title)/var(--lh-title) var(--font-display);
   --type-name: var(--fw-medium) var(--fs-lead) var(--font-display);
   --type-legend: var(--fw-medium) var(--fs-base) var(--font-display);
@@ -56,12 +57,10 @@
   --grain-strength: .09;
 }
 
-/* Fonts: Ploni (text) + Ploni Tzar (display), licensed webfonts, self-hosted. */
-@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
-@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
-@font-face { font-family: 'Ploni'; src: url('../../assets/fonts/ploni_demibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
-@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
-@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
-@font-face { font-family: 'Ploni Tzar'; src: url('../../assets/fonts/ploni_tzar_bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+/* Fonts: the brand book's two families, back as LOG approved them (v3): Rubik for headlines, Assistant for
+   everything else. Both are variable (one file covers every weight), open-source (OFL, assets/fonts/OFL.txt) and
+   self-hosted, split into a Hebrew and a Latin file so a page fetches only the script it sets. */
+@font-face { font-family: 'Rubik'; src: url('../../assets/fonts/rubik-hebrew.woff2') format('woff2'); font-weight: 300 900; font-display: swap; unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Rubik'; src: url('../../assets/fonts/rubik-latin.woff2') format('woff2'); font-weight: 300 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Assistant'; src: url('../../assets/fonts/assistant-hebrew.woff2') format('woff2'); font-weight: 200 800; font-display: swap; unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Assistant'; src: url('../../assets/fonts/assistant-latin.woff2') format('woff2'); font-weight: 200 800; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }

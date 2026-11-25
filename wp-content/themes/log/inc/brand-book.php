@@ -93,7 +93,7 @@ function log_bk_backgrounds(): array {
 		'horizon' => [ 'קו רקיע', [ 'seed' => 11, 'cols' => 26, 'rows' => 9, 'scale' => 0.82, 'theta' => 31, 'cx' => 0.5, 'cy' => 0.9, 'fade' => [ 120, 420 ] ] ],
 		'centre'  => [ 'מרכז העיר', [ 'seed' => 3, 'cols' => 10, 'rows' => 9, 'scale' => 1.7, 'theta' => 42, 'cx' => 0.5, 'cy' => 0.62, 'density' => 1 ] ],
 		'far'     => [ 'מבט מרחוק', [ 'seed' => 17, 'cols' => 30, 'rows' => 24, 'scale' => 0.54, 'theta' => 28, 'cx' => 0.5, 'cy' => 0.5 ] ],
-		'plan'    => [ 'תכנית', [ 'seed' => 23, 'cols' => 20, 'rows' => 16, 'scale' => 0.92, 'theta' => 38, 'cx' => 0.5, 'cy' => 0.5, 'dims' => false, 'area' => false, 'plan' => [ [ 7, 6 ], [ 12, 6 ], [ 12, 8 ], [ 13, 8 ], [ 13, 10 ], [ 9, 10 ], [ 9, 9 ], [ 7, 9 ] ], 'pins' => [ [ 5, 5 ], [ 15, 11.5 ] ] ] ],
+		'plan'    => [ 'תכנית', [ 'seed' => 23, 'cols' => 20, 'rows' => 16, 'scale' => 0.92, 'theta' => 38, 'cx' => 0.5, 'cy' => 0.5, 'dims' => false, 'area' => false, 'ghosts' => true, 'plan' => [ [ 7, 6 ], [ 12, 6 ], [ 12, 8 ], [ 13, 8 ], [ 13, 10 ], [ 9, 10 ], [ 9, 9 ], [ 7, 9 ] ], 'pins' => [ [ 5, 5 ], [ 15, 11.5 ] ] ] ],
 	];
 }
 
@@ -139,13 +139,23 @@ function log_bk_close( bool $folio = true ): void {
 	echo '</section>';
 }
 
+/**
+ * A headline's text with its orange stop, the last word and the stop held together so the dot never starts a line
+ * of its own. $html is escaped already.
+ */
+function log_bk_dotted( string $html ): string {
+	$at = strrpos( $html, ' ' );
+	$end = $at === false ? $html : substr( $html, $at + 1 );
+	return ( $at === false ? '' : substr( $html, 0, $at + 1 ) ) . '<span class="bk-end">' . $end . '<span class="bk-dot">.</span></span>';
+}
+
 /** A headline. $text comes without its full stop: the stop is added as the page's orange dot. */
 function log_bk_title( string $text, string $tag = 'h2', string $class = '' ): void {
 	printf(
-		'<%1$s class="bk-title %2$s">%3$s<span class="bk-dot">.</span></%1$s>',
+		'<%1$s class="bk-title %2$s">%3$s</%1$s>',
 		tag_escape( $tag ),
 		esc_attr( $class ),
-		wp_kses( $text, [ 'br' => [] ] )
+		log_bk_dotted( wp_kses( $text, [ 'br' => [] ] ) ) // phpcs:ignore WordPress.Security.EscapeOutput -- escaped above
 	);
 }
 
@@ -303,7 +313,7 @@ function log_bk_mini( string $type, float $scale = 0.3, array $a = [] ): string 
 		$a['photo'] = $small( $a['photo'] );
 	}
 	$cross = static fn( int $x, int $y ) => sprintf( '<span class="bk-cross" style="--x:%d;--y:%d" aria-hidden="true"><i class="bk-cross__v"></i><i class="bk-cross__h"></i><i class="bk-cross__dot"></i></span>', $x, $y );
-	$title = static fn( string $t, string $class = '' ) => '<p class="m-title ' . $class . '">' . esc_html( $t ) . '<span class="bk-dot">.</span></p>';
+	$title = static fn( string $t, string $class = '' ) => '<p class="m-title ' . $class . '">' . log_bk_dotted( esc_html( $t ) ) . '</p>';
 	$mark  = '<span class="m-mark">' . log_logo( [ 'variant' => 'color' ] ) . '</span>';
 	$name  = '<p class="m-name"><b>שם פרטי ומשפחה</b><span>תפקיד בלוג</span><i class="ln ln--dot" aria-hidden="true"><i class="ln__dot"></i></i></p>';
 	$three = '<ol class="m-three"><li><i>01</i><b>מחברים.</b></li><li><i>02</i><b>מובילים.</b></li><li><i>03</i><b>מתכננים.</b></li></ol>';

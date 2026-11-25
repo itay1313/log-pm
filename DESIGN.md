@@ -35,75 +35,76 @@ colors:
   map-tree-lit: "#557466"
 typography:
   headline:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.75rem, 1.75rem + 3.4vw, 4.5rem)"
-    fontWeight: 700
+    fontFamily: "'Rubik', 'Assistant', system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 1.6rem + 3vw, 4rem)"
+    fontWeight: 900
     lineHeight: 0.92
-    letterSpacing: "-0.03em"
+    letterSpacing: "-0.01em"
   section:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.25rem, 1.5rem + 2.4vw, 3.5rem)"
-    fontWeight: 700
+    fontFamily: "'Rubik', 'Assistant', system-ui, sans-serif"
+    fontSize: "clamp(2rem, 1.35rem + 2.1vw, 3.25rem)"
+    fontWeight: 900
     lineHeight: 0.92
-    letterSpacing: "-0.03em"
+    letterSpacing: "-0.01em"
   row:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
+    fontFamily: "'Assistant', system-ui, sans-serif"
     fontSize: "clamp(2rem, 1.5rem + 1.1vw, 2.5rem)"
-    fontWeight: 700
+    fontWeight: 800
     lineHeight: 1.02
-    letterSpacing: "-0.02em"
+    letterSpacing: "-0.01em"
   subhead:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
+    fontFamily: "'Assistant', system-ui, sans-serif"
     fontSize: "clamp(1.5rem, 1.3rem + .5vw, 1.75rem)"
-    fontWeight: 700
+    fontWeight: 800
     lineHeight: 1.02
-    letterSpacing: "-0.02em"
+    letterSpacing: "-0.01em"
   figure:
-    fontFamily: "'Ploni', system-ui, sans-serif"
-    fontSize: "clamp(2.75rem, 1.75rem + 3.4vw, 4.5rem)"
+    fontFamily: "'Assistant', system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 1.6rem + 3vw, 4rem)"
     fontWeight: 300
     lineHeight: 1
-    letterSpacing: "-0.045em"
+    letterSpacing: "-0.02em"
     fontFeature: "tnum"
   title:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
+    fontFamily: "'Assistant', system-ui, sans-serif"
     fontSize: "1.5rem"
-    fontWeight: 500
+    fontWeight: 600
     lineHeight: 1.15
-    letterSpacing: "-0.01em"
+    letterSpacing: "0"
   legend:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "1.125rem"
-    fontWeight: 500
+    fontFamily: "'Assistant', system-ui, sans-serif"
+    fontSize: "1.1875rem"
+    fontWeight: 600
     lineHeight: 1.2
   body:
-    fontFamily: "'Ploni', system-ui, sans-serif"
-    fontSize: "1.125rem"
+    fontFamily: "'Assistant', system-ui, sans-serif"
+    fontSize: "1.1875rem"
     fontWeight: 400
     lineHeight: 1.6
   prose:
-    fontFamily: "'Ploni', system-ui, sans-serif"
-    fontSize: "1.25rem"
+    fontFamily: "'Assistant', system-ui, sans-serif"
+    fontSize: "1.3125rem"
     fontWeight: 400
     lineHeight: 1.7
   label:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "0.9375rem"
-    fontWeight: 500
+    fontFamily: "'Assistant', system-ui, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 600
     lineHeight: 1.4
   caption:
-    fontFamily: "'Ploni Tzar', 'Ploni', system-ui, sans-serif"
-    fontSize: "0.875rem"
-    fontWeight: 500
+    fontFamily: "'Assistant', system-ui, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 600
     lineHeight: 1.3
 rounded:
   control: "8px"
+  button: "999px"
   surface: "0"
   map-frame: "26px"
 spacing:
-  line: "2px"
+  line: "1.5px"
   rule: "1px"
-  dot: "12px"
+  dot: "10px"
   gutter: "clamp(16px, 4vw, 56px)"
   section: "clamp(56px, 7vw, 108px)"
   header: "84px"
@@ -114,19 +115,19 @@ components:
     backgroundColor: "{colors.night}"
     textColor: "{colors.night-ink}"
     typography: "{typography.legend}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.button}"
     padding: "0.8em 1.65em"
   button-primary:
     backgroundColor: "{colors.works}"
     textColor: "{colors.sign-ink}"
     typography: "{typography.legend}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.button}"
     padding: "0.8em 1.65em"
   button-ghost:
     backgroundColor: "transparent"
     textColor: "{colors.ink}"
     typography: "{typography.legend}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.button}"
     padding: "0.8em 1.65em"
   field:
     backgroundColor: "{colors.paper-2}"
@@ -217,26 +218,29 @@ The night family is `night-*`; the older `plate-*` and `legend-*` names are alia
 
 ## Typography
 
-**One family.** Ploni Tzar for headlines and labels, Ploni for everything else. Both are licensed and self-hosted.
+**Two families, as LOG approved them in the brand book (v3).** Rubik for the headline, Assistant for everything else. Both are open-source (OFL) variable fonts, self-hosted in `assets/fonts/`, a Hebrew and a Latin file each. Ploni, used from 18.11 to 25.11.2026, is gone: LOG asked to return to the book's faces.
 
-Three weights, no more: a heavy headline, regular text, light figures.
-- **Ploni Tzar Bold 700** (`--font-headline`): headlines only. Two to four words, closed by a period.
-- **Ploni Tzar Medium 500** (`--font-display`): subheads and labels: buttons, captions, counts, the page number.
-- **Ploni Regular 400** (`--font-text`): reading.
-- **Ploni Light 300** (`--font-figure`): big numbers and numbering. Not sentences.
+Five voices, each with one job:
+- **Rubik Black 900** (`--font-headline`, `--fw-headline`): headlines only. Two to four words, closed by the orange period, which is drawn round (Rubik's own period is a soft square).
+- **Assistant ExtraBold 800** (`--font-display`, `--fw-subhead`): subheads, h3 and h4, quotes.
+- **Assistant SemiBold 600** (`--font-display`, `--fw-medium`): labels: buttons, captions, counts, the page number. Assistant's 500 reads as regular, so labels never use it.
+- **Assistant Regular 400** (`--font-text`): reading.
+- **Assistant Light 300** (`--font-figure`): big numbers and numbering. Not sentences.
+
+Rubik is wide and heavy where the narrow face before it was not: headlines top out at 64 and keep their tracking near zero (`--track-headline` -0.01em). Assistant sets small for its size: body text is 19px.
 
 ### Hierarchy
-One scale, in `tokens.json`: sizes `--fs-*`, weights `--fw-*`, leading `--lh-*`, tracking `--track-*`, and `--type-*` roles in tokens.css to use with `font:`. No stylesheet sets a size outside it. The book gives the site's sizes: headline 56 to 72, subhead 28, body 18, caption 14, chapter label 15. Sizes below run from a 375px phone to a 1440px screen.
+One scale, in `tokens.json`: sizes `--fs-*`, weights `--fw-*`, leading `--lh-*`, tracking `--track-*`, and `--type-*` roles in tokens.css to use with `font:`. No stylesheet sets a size outside it. The book's type sheet (chapter 06) lists every level with its size on the site, a slide and a post. Sizes below run from a 375px phone to a 1440px screen.
 
-- **h1** `--fs-h1` (44 → 72px): page titles, the home headline, the footer's "בואו נדבר". Big figures use the size in Ploni Light.
-- **h2** `--fs-h2` (36 → 56px): section titles.
+- **h1** `--fs-h1` (40 → 64px): page titles, the home headline, the footer's "בואו נדבר". Big figures use the size in Assistant Light.
+- **h2** `--fs-h2` (32 → 52px): section titles.
 - **h3** `--fs-h3` (32 → 40px): destination rows, lead cards, the build steps on the map.
 - **h4** `--fs-h4` (24 → 28px): card titles, steps, values, quotes.
-- **Title** `--fs-title` 24px, Ploni Tzar 500.
-- **Lead** `--fs-lead` 20px: ledes and prose.
-- **Base** `--fs-base` 18px: body and every label on a control.
-- **Small** `--fs-small` 15px: captions, meta, field labels.
-- **Micro** `--fs-micro` 14px: map labels, table heads. Nothing is smaller, apart from MapLibre's attribution.
+- **Title** `--fs-title` 24px, Assistant SemiBold.
+- **Lead** `--fs-lead` 21px: ledes and prose.
+- **Base** `--fs-base` 19px: body and every label on a control.
+- **Small** `--fs-small` 16px: captions, meta, field labels.
+- **Micro** `--fs-micro` 15px: map labels, table heads. Nothing is smaller, apart from MapLibre's attribution.
 
 ### Named Rules
 **The Period Rule.** A headline ends in a period, set by `log_title()`; one that ends in ? or ! keeps it. Names (a project, a job, a person) are not headlines and take none. The page's main headline closes on the orange period: that is the page's dot. On the home page every chapter is a screen of its own, as a sheet is in the book, so each chapter's headline closes on the orange period too. The last word and its period are tied (`.title-end`), so a period never wraps alone.
@@ -270,7 +274,7 @@ Breakpoints: 1180px (the two worlds lose their second line), 900px (header colla
 
 ## Shapes
 
-**One radius.** `--r-control` (8px) for what you press or type in: buttons, fields, chips, tags. The book allows a rounded corner only in a thin line, so nothing is a pill. Photographs, cards, sheets, dialogs and the projects map are square. The home map's frame (`--r-frame`) is the one exception: it is a sheet laid on the table that opens to the full window as the drive begins.
+**Two radii.** `--r-control` (8px) for what you type in and for chips and tags; `--r-button` (a capsule) for buttons, which are liquid glass (below). Photographs, cards, sheets, dialogs and the projects map are square. The home map's frame (`--r-frame`) is the one exception: it is a sheet laid on the table that opens to the full window as the drive begins.
 
 **Filled or outlined, never both.** A control is a ground with no line around it (navy, orange, white), or the thin line with no ground. A filled plate with a keyline inside it is the old language.
 
@@ -278,19 +282,19 @@ Breakpoints: 1180px (the two worlds lose their second line), 900px (header colla
 
 ### The Line System
 
-The book's thin line (chapter 07; `inc/lines.php`, `src/styles/lines.css`). Every line and circle has one weight, `--line-w` (2px), runs to the edge, and cuts square: lines cross, they never round off. Each kind marks one thing, and a line nobody can name the meaning of doesn't go on the page.
+The book's thin line (chapter 07; `inc/lines.php`, `src/styles/lines.css`). Every line and circle has one weight, `--line-w` (1.5px; 1.25 units on a book sheet): thin, so it reads as drawn, not built. It runs to the edge, and cuts square: lines cross, they never round off. Each kind marks one thing, and a line nobody can name the meaning of doesn't go on the page.
 
 - **Solid** (`log_line()`): what exists or was approved. Page structure, axes, a finished stage.
 - **Dashed** (`log_line( 'dashed' )`): only what doesn't exist yet, or a reference line such as an average. Never decoration, never on a photo, never around a person.
 - **Switch** (`log_line( 'switch', [ 'at' => 40 ] )`): grey until the point where LOG comes in, orange from there. Once per line, and only when it means something.
-- **Dot** (`log_line( 'dot' )`, `log_dot()`): the line ends in a filled orange dot, `--dot` 12px, no ring. One orange dot on a page; the headline's orange period is it. A second dot belongs only where two lines cross on a new screen (the footer), and on a map or a chart, where every dot is data.
+- **Dot** (`log_line( 'dot' )`, `log_dot()`): the line ends in a filled orange dot, `--dot` 10px, no ring. One orange dot on a page; the headline's orange period is it. A second dot belongs only where two lines cross on a new screen (the footer), and on a map or a chart, where every dot is data.
 - **Cross** (`log_line( 'cross' )`): a second line cuts straight through, the dot on the crossing.
 
 **The hair.** Between the rows of a list or a table the book draws a 1px grey rule (`--rule-w`, in `rule` or `hair`). It is never ink and never a frame. Everything else is `--line-w`.
 
 A circle is a line that closes (`log_circle()`), at the same weight however big it gets:
 
-- **Full:** a counted number in Ploni Light. Steps, map clusters, edge counters.
+- **Full:** a counted number in Assistant Light. Steps, map clusters, edge counters.
 - **Dashed:** what is planned and hasn't happened. Never around a person.
 - **Split:** a person: four quarters cut where the logo's O is cut, orange and grey in turn. Team cards.
 - **Halves:** a person in black only.
@@ -315,11 +319,11 @@ The small interface marks are drawn the same way, as masks in tokens.css: the ar
 ## Components
 
 ### Buttons
-One family: at least 52px tall, Ploni Tzar 500 at 18px, 0.8em by 1.65em padding.
-- **Everyday (`.btn`):** filled navy, white label. On a night ground it is outlined in white instead.
-- **Primary (`.btn--primary`, `.btn--works`):** filled orange, ink label. One per context.
-- **Ghost (`.btn--ghost`):** outlined in the thin line, ink label.
-- **Hover / focus:** filled buttons turn white with ink; the outlined one turns navy. Arrows step forward.
+Liquid glass (LOG asked for it, 25.11.2026; `src/styles/buttons.css`, shared with the brand book's chapter 07). One family: a capsule at least 52px tall, Assistant SemiBold at the base size, 0.8em by 1.65em padding. The glass blurs what is behind it (`backdrop-filter`), carries a thin bright rim on its top edge and a soft light at its foot, and under the pointer a highlight follows it (`motion.js`, `liquid()`). With no backdrop filter, or `prefers-reduced-transparency`, it is solid.
+- **Everyday (`.btn`):** navy glass, white label. On a night ground, smoked glass.
+- **Primary (`.btn--primary`, `.btn--works`):** orange glass, ink label. One per context.
+- **Ghost (`.btn--ghost`):** clear glass, ink label, on paper.
+- **Hover / focus:** the glass turns white with ink; the clear one turns navy. It presses in when clicked. Arrows step forward.
 - **Focus ring:** 3px outline, 3px offset, `--focus`. It is an accessibility mark, not a line of the language.
 
 ### The search and its filters (home)
@@ -374,7 +378,7 @@ What keeps it fast on a slow machine: transforms and opacity only; a piece held 
 - **Don't** recolour, stretch or redraw the logo, or use it as a graphic element, a frame or a background. The one exception is the home headline, where the logo's O turns between the words (`log_ring_glyph()`): the page opens on the roundabout that becomes that O, so it belongs to the opening. Itay's decision, 19.11.2026.
 - **Don't** put more than one orange dot on a page, apart from a map or a chart.
 - **Don't** run a line over a face.
-- **Don't** draw thick lines or filled frames. A rounded corner only in a thin line.
+- **Don't** draw thick lines or filled frames. A rounded corner only in a thin line, and on the glass buttons.
 - **Don't** let text leave its frame.
 - **Don't** put a ring around a dot.
 - **Don't** stop a line in the middle of the page without a reason.

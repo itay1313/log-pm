@@ -21,7 +21,9 @@ defined( 'ABSPATH' ) || exit;
  *   scale     Sheet pixels per metre. theta: the turn of the grid, in degrees. tilt: how flat the ground lies (0 to 1).
  *   cx, cy    Where the city's middle sits in the drawing, as fractions of w and h.
  *   density   0 to 1: how built the blocks are. The edges thin out by themselves.
- *   plan      A plan's corners on the street grid, [[col,row], ...]: nothing is built inside it.
+ *   plan      A plan's corners on the street grid, [[col,row], ...]. What stands inside it today is cleared.
+ *   ghosts    true: inside the plan, the proposed buildings stand as a massing study, the way the site's project
+ *             cards draw a plan not yet built: see-through orange volumes with a floor line on every storey.
  *   dims      Dimension lines along the plan's two near sides. area: its size, written on it.
  *   pins      Projects: [col,row] is one dot, [col,row,n] is n projects at one place.
  *   fade      [from, to] in sheet pixels from the top: the roads come out of the ground between the two, so words can stand above.
@@ -33,7 +35,7 @@ function log_city( array $o = [] ): string {
 	$o += [
 		'w' => 1280, 'h' => 720, 'seed' => 7, 'cols' => 12, 'rows' => 9, 'block' => 84, 'street' => 18,
 		'scale' => 0.62, 'theta' => 34, 'tilt' => 0.56, 'cx' => 0.5, 'cy' => 0.55, 'density' => 0.9,
-		'plan' => [], 'dims' => true, 'area' => true, 'pins' => [], 'fade' => [], 'label' => '', 'class' => '',
+		'plan' => [], 'ghosts' => false, 'dims' => true, 'area' => true, 'pins' => [], 'fade' => [], 'label' => '', 'class' => '',
 	];
 	static $uid = 0;
 	$uid++;
@@ -102,7 +104,8 @@ function log_city( array $o = [] ): string {
 			for ( $i = 0; $i < 9; $i++ ) {
 				$dice[] = [ $rnd(), $rnd(), $rnd(), $rnd(), $rnd(), $rnd() ];
 			}
-			if ( $plan && $inside( $c + 0.5, $r + 0.5 ) ) {
+			$ghost = $plan && $inside( $c + 0.5, $r + 0.5 );
+			if ( $ghost && ! $o['ghosts'] ) {
 				continue;
 			}
 			// The city thins out towards its edges, the way a town does.
@@ -113,11 +116,12 @@ function log_city( array $o = [] ): string {
 			for ( $i = 0; $i < $lots[0]; $i++ ) {
 				for ( $j = 0; $j < $lots[1]; $j++ ) {
 					$d = $dice[ $i * 3 + $j ];
-					if ( $d[0] > $fill ) {
+					if ( ! $ghost && $d[0] > $fill ) {
 						continue;
 					}
-					$tower  = $d[1] > 0.93 && $e < 0.7;
-					$floors = $tower ? 11 + (int) ( $d[2] * 13 ) : 2 + (int) ( $d[2] * $d[2] * 6 );
+					// A plan builds denser and higher than the town around it: every lot, and a third of them towers.
+					$tower  = $ghost ? $d[1] > 0.66 : $d[1] > 0.93 && $e < 0.7;
+					$floors = $tower ? 11 + (int) ( $d[2] * 13 ) : ( $ghost ? 4 + (int) ( $d[2] * 5 ) : 2 + (int) ( $d[2] * $d[2] * 6 ) );
 					$gap    = 3 + $d[3] * 4;
 					$w      = ( $lw - 2 * $gap ) * ( $tower ? 0.62 : 0.72 + $d[4] * 0.28 );
 					$dp     = ( $ld - 2 * $gap ) * ( $tower ? 0.62 : 0.72 + $d[5] * 0.28 );
@@ -126,7 +130,7 @@ function log_city( array $o = [] ): string {
 					}
 					$x0      = $c * $pitch + $i * $lw + $gap + ( $lw - 2 * $gap - $w ) * $d[4];
 					$y0      = $r * $pitch + $j * $ld + $gap + ( $ld - 2 * $gap - $dp ) * $d[5];
-					$built[] = [ $x0, $y0, $x0 + $w, $y0 + $dp, $floors * $floor, $floors, $e ];
+					$built[] = [ $x0, $y0, $x0 + $w, $y0 + $dp, $floors * $floor, $floors, $e, $ghost ];
 				}
 			}
 		}
@@ -135,21 +139,22 @@ function log_city( array $o = [] ): string {
 	usort( $built, static fn( $p, $q ) => ( ( $p[0] + $p[2] ) * $sa + ( $p[1] + $p[3] ) * $ca ) <=> ( ( $q[0] + $q[2] ) * $sa + ( $q[1] + $q[3] ) * $ca ) );
 
 	$houses = '';
-	foreach ( $built as [ $x0, $y0, $x1, $y1, $h, $floors, $e ] ) {
+	foreach ( $built as [ $x0, $y0, $x1, $y1, $h, $floors, $e, $ghost ] ) {
 		// Seen from the near side: the left corner, the corner facing us, the right one, and the one behind.
 		[ $l, $f, $rt ]         = [ $pt( $x0, $y1 ), $pt( $x1, $y1 ), $pt( $x1, $y0 ) ];
 		[ $lt, $ft, $rtt, $bt ] = [ $pt( $x0, $y1, $h ), $pt( $x1, $y1, $h ), $pt( $x1, $y0, $h ), $pt( $x0, $y0, $h ) ];
 		$walls = 'M' . $xy( $l ) . 'L' . $xy( $f ) . 'L' . $xy( $rt ) . 'L' . $xy( $rtt ) . 'L' . $xy( $ft ) . 'L' . $xy( $lt ) . 'ZM' . $xy( $f ) . 'L' . $xy( $ft );
 		$roof  = 'M' . $xy( $lt ) . 'L' . $xy( $ft ) . 'L' . $xy( $rtt ) . 'L' . $xy( $bt ) . 'Z';
 		$lines = '';
-		if ( $floors >= 9 ) { // only a tower shows its storeys; on a house they would close up into a fill
-			for ( $z = $floor * 2; $z < $h - 1; $z += $floor * 2 ) {
+		// A tower shows its storeys (on a house they would close up into a fill); a proposed building shows every one.
+		if ( $floors >= 9 || $ghost ) {
+			for ( $z = $floor * ( $ghost ? 1 : 2 ); $z < $h - 1; $z += $floor * ( $ghost ? 1 : 2 ) ) {
 				$lines .= 'M' . $xy( $pt( $x0, $y1, $z ) ) . 'L' . $xy( $pt( $x1, $y1, $z ) ) . 'L' . $xy( $pt( $x1, $y0, $z ) );
 			}
 		}
 		$houses .= sprintf(
 			'<g class="b%s"><path class="w" d="%s"/><path class="r" d="%s"/>%s</g>',
-			$e > 0.78 ? ' b--far' : ( $e > 0.5 ? ' b--mid' : '' ),
+			$ghost ? ' b--ghost' : ( $e > 0.78 ? ' b--far' : ( $e > 0.5 ? ' b--mid' : '' ) ),
 			$walls,
 			$roof,
 			$lines ? '<path class="f" d="' . $lines . '"/>' : ''
