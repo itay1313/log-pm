@@ -29,10 +29,16 @@
 /* A house the scroll is moving (fx/city.js, cityPulse) takes the full line for as long as it moves. */
 .cty .b.is-lit { --cty-line: var(--works); }
 
+/* A building the plan proposes: a massing study, the way the site's project cards draw a plan not yet built.
+   See-through orange, its edges in the line, a floor line on every storey (src/hero/illustration.js, ghostPart). */
+.cty .b--ghost .w { fill: var(--works); fill-opacity: .14; stroke: var(--works); }
+.cty .b--ghost .r { fill: var(--works-light); fill-opacity: .26; stroke: var(--works-light); }
+.cty .b--ghost .f { stroke: var(--works); stroke-width: .6; opacity: .45; }
+
 /* A plan: the orange plate with its own streets showing through, under a dashed boundary (what isn't built yet). */
-.cty__plate { fill: var(--works); fill-opacity: .55; }
+.cty__plate { fill: var(--works); fill-opacity: .16; }
 .cty__streets, .cty__rounds { fill: none; stroke: var(--night-ink); stroke-opacity: .34; stroke-width: 1; }
-.cty__bound { fill: none; stroke: var(--works); stroke-width: 3; stroke-dasharray: 15 12; }
+.cty__bound { fill: none; stroke: var(--works); stroke-width: 1.5; stroke-dasharray: 9 7; }
 
 /* Its dimensions: a thin light line with square ends, the length in metres beside it. */
 .cty__dim-line, .cty__dim-ticks { fill: none; stroke: var(--night-ink); stroke-opacity: .82; stroke-width: 1; }
@@ -42,7 +48,7 @@
 .cty__area .cty__area-cap { font: var(--fw-medium) 12px/1 var(--font-display); letter-spacing: 0; fill-opacity: .8; }
 
 /* A project is the dot. Several at one place: a dark disc with their number. */
-.cty__pin circle { fill: var(--works); stroke: var(--night); stroke-width: 3; }
+.cty__pin circle { fill: var(--works); stroke: var(--night); stroke-width: 2; }
 .cty__pin .cty__pin-ring { fill: none; stroke: var(--night-ink); stroke-opacity: .4; stroke-width: 1; }
 .cty__pin--many circle { fill: var(--night); stroke: var(--night-ink); stroke-width: 1; }
 .cty__pin text { fill: var(--night-ink); font-size: 14px; font-weight: var(--fw-bold); text-anchor: middle; font-variant-numeric: tabular-nums; }

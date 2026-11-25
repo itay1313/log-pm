@@ -9,7 +9,7 @@ $chapters = log_bk_chapters();
 <section class="bk-page bk-page--night bk-cover" id="start" data-chapter="" aria-label="שער">
 	<?php echo log_bk_photo( 'aerial-night.jpg', '', 'bk-photo--bleed', 'dark' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 	<?php // The plan over the place: the city in lines stands up out of the photograph, and answers the scroll (src/fx/city.js). ?>
-	<?php echo log_city( [ 'seed' => 5, 'cols' => 16, 'rows' => 11, 'scale' => 0.76, 'theta' => 35, 'cx' => 0.25, 'cy' => 0.78, 'class' => 'bk-cover__city' ] ); // phpcs:ignore WordPress.Security.EscapeOutput -- built in log_city() ?>
+	<?php echo log_city( [ 'seed' => 5, 'cols' => 16, 'rows' => 11, 'scale' => 0.76, 'theta' => 35, 'cx' => 0.25, 'cy' => 0.78, 'plan' => [ [ 6, 4 ], [ 9, 4 ], [ 9, 6 ], [ 10, 6 ], [ 10, 8 ], [ 6, 8 ] ], 'ghosts' => true, 'dims' => false, 'area' => false, 'class' => 'bk-cover__city' ] ); // phpcs:ignore WordPress.Security.EscapeOutput -- built in log_city() ?>
 	<span class="bk-cross" style="--x: 139; --y: 603" aria-hidden="true"><i class="bk-cross__v"></i><i class="bk-cross__h"></i><i class="bk-cross__dot"></i></span>
 	<div class="bk-cover__logo"><?php echo log_logo( [ 'variant' => 'night', 'tagline' => true, 'label' => 'לוג' ] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 	<div class="bk-cover__body">
