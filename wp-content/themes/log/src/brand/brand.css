@@ -248,9 +248,10 @@ img, svg { display: block; max-width: 100%; }
   background: linear-gradient(to right, var(--night) 12%, color-mix(in srgb, var(--night) 70%, transparent) 46%, transparent 64%);
   -webkit-mask-image: linear-gradient(104deg, #000 34%, transparent 63%); mask-image: linear-gradient(104deg, #000 34%, transparent 63%);
 }
-/* The book's name is built like the houses beside it: dark walls going back, and the thin orange line on the far edge. */
+/* The book's name stands up with a shallow shadow of itself, in the night: Rubik Black is heavy enough that a deep or
+   coloured extrusion turns into a slab. The orange stays the dot's alone. */
 .bk-cover .fx-depth__layers span { color: var(--night-deep); }
-.bk-cover .fx-depth__layers span:first-child { color: var(--works); }
+.bk-cover .fx-depth__layers span { transform: translateZ(calc(var(--i) * var(--grow) * -1.1 * var(--q))); }
 .bk-cover__body, .bk-cover__logo, .bk-cover__version { z-index: 1; }
 .bk-cover__body { position: relative; }
 .bk-cover__logo { position: absolute; top: calc(52 * var(--u)); inset-inline-start: var(--m); }
