@@ -237,8 +237,8 @@ function log_offices(): array {
  * @return array<int, array{0:string, 1:string, 2:bool}>
  */
 function log_nav_items(): array {
-	$page = static fn( string $slug ) => ( $p = get_page_by_path( $slug ) ) ? get_permalink( $p ) : home_url( "/$slug/" );
-	return [
+	$page  = static fn( string $slug ) => ( $p = get_page_by_path( $slug ) ) ? get_permalink( $p ) : home_url( "/$slug/" );
+	$items = [
 		[ 'פרויקטים', get_post_type_archive_link( 'log_project' ), is_post_type_archive( 'log_project' ) || is_singular( 'log_project' ) ],
 		[ 'חברת הבקרה', $page( 'control' ), is_page( 'control' ) ],
 		[ 'אודות', $page( 'about' ), is_page( 'about' ) ],
@@ -246,6 +246,20 @@ function log_nav_items(): array {
 		[ 'קריירה', get_post_type_archive_link( 'log_job' ), is_post_type_archive( 'log_job' ) || is_singular( 'log_job' ) ],
 		[ 'צור קשר', $page( 'contact' ), is_page( 'contact' ) ],
 	];
+	return log_nav_open( $items );
+}
+
+/** Whether the knowledge centre has anything to show. While it's empty visitors don't get a road to it; editors still do. */
+function log_knowledge_open(): bool {
+	return (int) ( wp_count_posts( 'log_knowledge' )->publish ?? 0 ) > 0 || log_show_empty();
+}
+
+/** Drops the knowledge centre's row (4th) from a nav-ordered list while it's closed, and renumbers what's left. */
+function log_nav_open( array $rows ): array {
+	if ( ! log_knowledge_open() ) {
+		unset( $rows[3] );
+	}
+	return array_values( $rows );
 }
 
 /**
@@ -263,14 +277,14 @@ function log_nav_distances(): array {
 	$jobs   = count( get_posts( [ 'post_type' => 'log_job', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => 'is_open', 'meta_value' => '1', 'no_found_rows' => true ] ) );
 	$items  = (int) ( wp_count_posts( 'log_knowledge' )->publish ?? 0 );
 	$phone  = log_offices()[0]['phone'] ?? '';
-	return $out = [
+	return $out = log_nav_open( [
 		$plural( count( log_public_projects() ), 'פרויקט אחד', '%s פרויקטים' ),
 		'הבקרה הלאומית בהתחדשות עירונית',
 		'האנשים, הערכים, המשרדים',
 		$items ? $plural( $items, 'פריט אחד', '%s פריטים' ) : 'מאמרים, ניירות עמדה, חדשות',
 		$jobs ? $plural( $jobs, 'משרה פתוחה אחת', '%s משרות פתוחות' ) : 'אין משרות פתוחות כרגע',
 		$phone ?: 'תל אביב · ירושלים',
-	];
+	] );
 }
 
 /** Whether any client logo is approved for the site (the clients block hides for visitors when none is). */

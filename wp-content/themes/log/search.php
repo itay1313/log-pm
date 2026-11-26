@@ -48,7 +48,7 @@ get_template_part( 'template-parts/opener', null, [
 			<p><?php echo esc_html( log_text( 'search_empty', 'לא מצאנו תוצאות. אפשר לנסות מילה אחרת, או להתחיל מכאן:', 'option' ) ); ?></p>
 			<ul class="link-row">
 				<li><a href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>">הפרויקטים</a></li>
-				<li><a href="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>">מרכז הידע</a></li>
+				<?php if ( log_knowledge_open() ) : ?><li><a href="<?php echo esc_url( get_post_type_archive_link( 'log_knowledge' ) ); ?>">מרכז הידע</a></li><?php endif; ?>
 				<li><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">צור קשר</a></li>
 			</ul>
 		</div>

@@ -57,8 +57,17 @@ rsort( $years );
 		</div>
 		<p class="projects-more"><button type="button" class="btn" id="knowledge-more" hidden>טעינת עוד</button></p>
 		<p class="placeholder" id="knowledge-empty" hidden>לא נמצאו פריטים. <button type="button" class="filters__clear">ניקוי סינון</button></p>
+	<?php elseif ( log_show_empty() ) : // An editor sees what goes here and where to start; visitors don't get a menu link here until there is. ?>
+		<p class="placeholder">מרכז הידע עוד ריק, ולכן מוסתר מהתפריט למבקרים. הוא יופיע שם מעצמו עם הפריט הראשון שיפורסם. <a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=log_knowledge' ) ); ?>">להוספת פריט</a></p>
 	<?php else : ?>
-		<p class="placeholder">עדיין אין פריטי ידע.</p>
+		<div class="search-empty">
+			<p>המאמרים והחדשות הראשונים יעלו לכאן בקרוב. בינתיים אפשר להתחיל מכאן:</p>
+			<ul class="link-row">
+				<li><a href="<?php echo esc_url( get_post_type_archive_link( 'log_project' ) ); ?>">הפרויקטים</a></li>
+				<li><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">אודות</a></li>
+				<li><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">צור קשר</a></li>
+			</ul>
+		</div>
 	<?php endif; ?>
 </div>
 
