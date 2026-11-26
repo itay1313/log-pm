@@ -794,8 +794,7 @@ p.m-quote { font: var(--fw-headline) calc(60 * var(--q))/1.1 var(--font-headline
 .bk-lock__form label { display: grid; gap: 6px; flex: 1; font: var(--type-label); color: var(--night-ink); }
 .bk-lock__form input[type="password"] { min-height: 48px; padding: 8px 0; border: 0; border-bottom: 1px solid var(--night-muted); background: transparent; color: var(--night-ink); font: inherit; font-size: 18px; }
 .bk-lock__form input[type="password"]:focus { outline: none; border-bottom-color: var(--works); }
-.bk-lock__form input[type="submit"] { min-height: 48px; padding: 0 24px; border: 0; border-radius: var(--r-control); background: var(--night-ink); color: var(--sign-ink); font: var(--type-legend); cursor: pointer; }
-.bk-lock__form input[type="submit"]:hover { background: var(--works); }
+.bk-lock__form input[type="submit"] { min-height: 48px; } /* the site's orange glass button (buttons.css) */
 
 /* ------------------------------------------------------------------ the opening: what the first load looks like */
 

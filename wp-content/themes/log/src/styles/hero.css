@@ -292,7 +292,7 @@ body.admin-bar .hero { margin-top: calc(-1 * var(--wp-admin--admin-bar--height, 
     max-height: 70vh; overflow: auto; padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom)); background: var(--plate);
     box-shadow: 0 -24px 48px color-mix(in srgb, var(--night-deep) 55%, transparent);
   }
-  .hero.filters-open .hero-filters__done { display: block; margin-top: .5rem; padding: 1rem; border: 0; border-radius: var(--r-control); background: var(--works); color: var(--plate); font: var(--type-legend); cursor: pointer; }
+  .hero.filters-open .hero-filters__done { display: flex; width: 100%; margin-top: .5rem; }
   .hero.filters-open .hero-filters .filters__group { padding: .7rem 0; }
   .hero-dist { position: static; min-width: 0; padding: 0 .35rem .2rem; }
   .hero__stats { gap: 1.25rem; }

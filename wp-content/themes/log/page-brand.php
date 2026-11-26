@@ -42,7 +42,7 @@ the_post();
 					<input type="hidden" name="redirect_to" value="<?php echo esc_url( get_permalink() ); ?>">
 					<p>
 						<label for="bk-pass">סיסמה<input name="post_password" id="bk-pass" type="password" autocomplete="current-password" spellcheck="false" required></label>
-						<input type="submit" name="Submit" value="פתיחת הספר">
+						<input type="submit" name="Submit" value="פתיחת הספר" class="btn btn--primary">
 					</p>
 				</form>
 			</div>

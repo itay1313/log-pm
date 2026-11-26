@@ -179,7 +179,8 @@ body:not(.has-cover) .site-main { padding-top: var(--header-h); background: line
 .gantry__side .search-form input:focus { box-shadow: none; }
 .gantry__side .search-form input::placeholder { color: var(--legend-muted); opacity: 1; }
 .gantry__side .search-form input::-webkit-search-cancel-button { filter: invert(1); }
-.gantry__side .search-form button { min-height: 2.75rem; padding: 0 0 0 .25rem; border-radius: 0; background: none; box-shadow: none; color: var(--legend); transition: color .3s var(--ease-out); }
+.gantry__side .search-form button { min-height: 2.75rem; padding: 0 0 0 .25rem; border-radius: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; color: var(--legend); transition: color .3s var(--ease-out); }
+.gantry__side .search-form button::before { display: none; } /* in the menu the search is a word on the line, not glass */
 .gantry__side .search-form button:hover, .gantry__side .search-form button:focus-visible { background: none; box-shadow: none; color: var(--works); }
 .gantry__contact { display: grid; gap: .5rem; margin-top: auto; font: var(--type-legend); }
 .gantry__contact p { margin: 0; color: var(--legend-muted); }
