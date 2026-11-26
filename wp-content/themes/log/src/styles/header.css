@@ -199,6 +199,8 @@ body:not(.has-cover) .site-main { padding-top: var(--header-h); background: line
   .dest__row { grid-template-columns: 2.5rem minmax(0, 1fr) auto; row-gap: .1rem; padding-block: .4rem; }
   .dest__n { font-size: var(--fs-lead); }
   .dest__dist { grid-column: 2; grid-row: 2; text-align: start; font-size: var(--fs-small); }
+  /* Too narrow to share a line with the description: "you are here" stands on its own line above it. */
+  .dest__item.is-current .dest__dist::before { display: block; width: fit-content; margin-block-end: .15rem; }
   .dest__row .arrow { grid-row: 1 / span 2; grid-column: 3; }
   .gantry__side { margin-inline: calc(-1 * var(--pad-x)); padding: 1.75rem var(--pad-x) 28px; gap: 1.25rem; }
   .gantry__place { inset-inline: 0; width: 100%; }
