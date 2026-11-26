@@ -375,8 +375,19 @@ label.filters__group { display: grid; gap: .4rem; font: var(--type-label); color
 .minimap--national { display: grid; place-items: center; aspect-ratio: auto; padding: 2rem; background: var(--plate); font: var(--type-name); color: var(--legend-muted); }
 .minimap .maplibregl-canvas { cursor: pointer; }
 .minimap .maplibregl-ctrl-attrib { display: none; }
-.minimap__cta { position: absolute; inset-inline-start: 10px; bottom: 10px; z-index: 2; display: inline-flex; align-items: center; gap: .5em; font: var(--type-legend); color: var(--plate); background: var(--works); border-radius: var(--r-control); padding: .6em .95em; }
-.minimap:hover .minimap__cta, .minimap:focus-visible .minimap__cta { background: var(--legend); }
+/* The label on the small map is the orange glass of the button family (buttons.css), at the size of a legend. */
+.minimap__cta {
+  position: absolute; inset-inline-start: 10px; bottom: 10px; z-index: 2; display: inline-flex; align-items: center; gap: .5em;
+  padding: .6em 1.1em; border-radius: var(--r-button); font: var(--type-legend); font-weight: var(--fw-medium); color: var(--sign-ink);
+  background-color: color-mix(in srgb, var(--works) 90%, transparent);
+  background-image: linear-gradient(to bottom, color-mix(in srgb, var(--night-ink) 14%, transparent), transparent 50%);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8); backdrop-filter: blur(16px) saturate(1.8);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--works-light) 90%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--night-ink) 16%, transparent),
+    inset 0 -12px 16px -15px color-mix(in srgb, var(--night-ink) 40%, transparent);
+  transition: background-color .45s var(--ease-out);
+}
+.minimap:hover .minimap__cta, .minimap:focus-visible .minimap__cta { background-color: color-mix(in srgb, var(--legend) 92%, transparent); }
+@media (prefers-reduced-transparency: reduce) { .minimap__cta { background-color: var(--works); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 .project__facts .btn { margin-top: .75rem; width: 100%; }
 
 /* Lightbox */
