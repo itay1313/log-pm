@@ -29,6 +29,16 @@
 .opener__kicker .back-link { margin: 0; }
 .opener__title { position: relative; z-index: 1; max-width: 13ch; margin: 0; font-size: var(--fs-h1); line-height: .9; letter-spacing: var(--track-headline); }
 .opener__title .period--dot { transform-origin: 50% 50%; }
+/* Rubik is wide, so on a phone the title reaches the number behind it. The number's outline stops short of the
+   letters: a halo in the sheet's own navy knocks it out around them, so it passes behind the title, never through.
+   (Offset shadows rather than a stroke with paint-order, which Firefox ignores on HTML text.) A place opener has a
+   picture behind it, where a navy halo would show; it keeps its soft shadow. */
+.opener:not(.opener--place) .opener__title {
+  --halo: var(--plate);
+  text-shadow: .06em 0 var(--halo), -.06em 0 var(--halo), 0 .06em var(--halo), 0 -.06em var(--halo),
+    .042em .042em var(--halo), -.042em .042em var(--halo), .042em -.042em var(--halo), -.042em -.042em var(--halo);
+}
+.opener:not(.opener--place) .opener__title .period--dot { text-shadow: none; box-shadow: 0 0 0 .06em var(--plate); }
 
 /* Under the line: the text on the start side, the count on the end side. */
 .opener__band { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) var(--side-w); column-gap: var(--g); align-items: start; padding-block: 1.6rem clamp(36px, 5vw, 72px); }
