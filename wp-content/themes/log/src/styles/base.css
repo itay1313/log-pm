@@ -160,12 +160,7 @@ select { appearance: none; cursor: pointer; padding-left: 2.6rem !important; }
 
 .search-form { display: flex; gap: .5rem; max-width: 680px; }
 .search-form input { height: 3.25rem; padding-block: 0; }
-/* The search button is a primary button: same size, ink on orange. */
-.search-form button {
-  flex: none; min-height: 3.25rem; padding: 0 1.65em; border: 0; border-radius: var(--r-control);
-  font: var(--fw-medium) var(--fs-base)/1 var(--font-display); background: var(--works); color: var(--sign-ink); cursor: pointer;
-  transition: background-color .35s var(--ease-out), box-shadow .35s var(--ease-out);
-}
-.search-form button:hover, .search-form button:focus-visible { background: var(--legend); box-shadow: inset 0 0 0 var(--line-w) var(--sign-ink); }
+/* The search button is the page's action (.btn--primary, buttons.css): orange glass, as tall as the field. */
+.search-form .btn { flex: none; padding-block: 0; }
 
 .filters select, .filters__search input, .search-form input { border-radius: var(--r-control); padding-inline: 1.35em; }

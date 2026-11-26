@@ -63,7 +63,7 @@ echo log_roundabout( 'home' ); // phpcs:ignore WordPress.Security.EscapeOutput -
 			<button type="button" class="hero-filter-toggle plate" aria-expanded="false" aria-controls="hero-filters">סינון<span class="hero-filter-toggle__more"> לפי תחום, שלב ורשות</span></button>
 			<div class="hero-filters" id="hero-filters">
 				<?php get_template_part( 'template-parts/filter-selects' ); ?>
-				<button type="button" class="hero-filters__done">הצגת התוצאות</button>
+				<button type="button" class="btn btn--primary hero-filters__done">הצגת התוצאות</button>
 			</div>
 			<div class="hero-dist">
 				<dl class="hero__stats" aria-live="polite">
