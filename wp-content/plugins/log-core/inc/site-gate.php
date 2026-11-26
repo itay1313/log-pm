@@ -169,7 +169,7 @@ function log_gate_page( string $error = '' ): void {
 	$file   = get_template_directory() . '/assets/brand/tokens.css';
 	$tokens = is_readable( $file ) ? str_replace( '</', '', (string) file_get_contents( $file ) ) : '';
 	if ( $tokens === '' ) { // another theme is active: the few values this page needs
-		$tokens = ':root { --night: #13212f; --night-line: #3a4e62; --night-deep: #0b131b; --night-ink: #f2f4f1; --night-muted: #a3b3bf; --works: #f89e2d; --logo-orange-deep: #f67b1c; --sign-ink: #15202b; --font-display: \'Assistant\', system-ui, sans-serif; --font-headline: \'Rubik\', \'Assistant\', system-ui, sans-serif; --font-text: \'Assistant\', system-ui, sans-serif; --ease-out: cubic-bezier(.16, 1, .3, 1); }';
+		$tokens = ':root { --night: #13212f; --night-line: #3a4e62; --night-deep: #0b131b; --night-ink: #f2f4f1; --night-muted: #a3b3bf; --works: #f89e2d; --logo-orange-deep: #f67b1c; --sign-ink: #15202b; --works-light: #fbc48a; --line-w: 1.5px; --rule-w: 1px; --r-control: 8px; --r-button: 999px; --font-display: \'Assistant\', system-ui, sans-serif; --font-headline: \'Rubik\', \'Assistant\', system-ui, sans-serif; --font-text: \'Assistant\', system-ui, sans-serif; --ease-out: cubic-bezier(.16, 1, .3, 1); }';
 	}
 	?>
 <!doctype html>
@@ -205,20 +205,22 @@ body {
 ::selection { background: var(--works); color: var(--plate); }
 :focus-visible { outline: 3px solid var(--works); outline-offset: 3px; }
 
-/* The gantry: navy ground, white keyline inset 10px, 20px corners (the theme's .gantry__plate).
-   The keyline is a bordered layer rather than the theme's two inset shadows: on this dark ground the shadows
-   leave a white fringe on the outer corner. */
+/* The gantry: navy ground, a thin white keyline inset 10px, 20px corners (the theme's .gantry__plate).
+   The keyline is a bordered layer rather than an inset shadow: on this dark ground a shadow leaves a white
+   fringe on the outer corner. It is the language's one line weight, --line-w. */
 .sign {
   position: relative; display: grid; grid-template-rows: auto 1fr auto; border-radius: 20px; background: var(--plate);
   padding: clamp(30px, 3.6vw, 52px) clamp(34px, 5vw, 84px) clamp(30px, 3.2vw, 46px);
 }
-.sign::before { content: ''; position: absolute; inset: 10px; border: 3px solid var(--legend); border-radius: 10px; pointer-events: none; }
+.sign::before { content: ''; position: absolute; inset: 10px; border: var(--line-w) solid color-mix(in srgb, var(--legend) 70%, transparent); border-radius: 10px; pointer-events: none; }
 /* The logo: the theme's log_logo(), white and orange on night (the same hooks as the theme's header.css). */
 .logo { --logo-w: 8.5rem; --logo-a: var(--legend); --logo-b: var(--works); --logo-b-deep: var(--logo-orange-deep); justify-self: start; display: inline-grid; width: var(--logo-w); color: var(--logo-a); }
 .logo__mark { display: block; width: 100%; height: auto; }
 .logo--text { width: auto; font: 700 1.5rem/1 var(--font-display); letter-spacing: -0.02em; }
 .title-end { white-space: nowrap; }
-.period { display: inline-block; color: var(--works); transform-origin: 50% 80%; }
+.period { display: inline-block; color: var(--works); transform-origin: 50% 50%; }
+/* The full stop is drawn round, as on the site (base.css .period--dot): Rubik's own is a soft square. */
+h1 .period { width: .2em; height: .2em; margin-inline-start: .05em; overflow: hidden; border-radius: 50%; background: var(--works); color: transparent; line-height: 0; vertical-align: baseline; }
 
 .legend { align-self: center; padding-block: clamp(2rem, 6vh, 4.5rem); }
 h1 {
@@ -236,11 +238,12 @@ h1 > span { display: inline-block; }
 
 /* The lane marking is painted forward from the legend and stops at the works plate. Whole dashes only (round). */
 .lane { display: flex; align-items: center; gap: clamp(14px, 1.6vw, 24px); margin-block: clamp(1.6rem, 4.2vh, 2.75rem) clamp(1.4rem, 3.4vh, 2.25rem); }
-.lane i { flex: 1; height: 4px; background: linear-gradient(to left, var(--works) 30px, transparent 0) right / 54px 100% round; }
+.lane i { flex: 1; height: var(--line-w); background: linear-gradient(to left, var(--works) 22px, transparent 0) right / 40px 100% round; }
 .works {
-  flex: none; margin: 0; padding: .8rem 1.2rem .75rem; border-radius: 10px; white-space: nowrap;
-  background: var(--works); color: var(--plate); font: 700 1.25rem/1 var(--font-display);
-  box-shadow: inset 0 0 0 4px var(--works), inset 0 0 0 6px var(--plate);
+  flex: none; margin: 0; padding: .7rem 1.25rem .68rem; border-radius: var(--r-button); white-space: nowrap;
+  color: var(--sign-ink); font: 600 1.125rem/1 var(--font-display);
+  background: color-mix(in srgb, var(--works) 90%, transparent) linear-gradient(to bottom, color-mix(in srgb, var(--night-ink) 22%, transparent), transparent 55%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--works-light) 90%, transparent), inset 0 -10px 14px -13px color-mix(in srgb, var(--night-ink) 55%, transparent);
 }
 .lede { max-width: 34rem; margin: 0; color: var(--legend-muted); font-size: clamp(1.0625rem, 1.3vw, 1.3125rem); line-height: 1.5; text-wrap: balance; }
 
@@ -249,7 +252,7 @@ h1 > span { display: inline-block; }
 .key label { font: 600 1rem/1.2 var(--font-display); color: var(--legend-muted); }
 .key__row { display: flex; align-items: stretch; gap: .9rem; width: 100%; max-width: 34rem; }
 .key input {
-  flex: 1; min-width: 0; height: 3.75rem; padding: 0 1.1rem; border: 2px solid var(--plate-line); border-radius: 5px;
+  flex: 1; min-width: 0; height: 3.5rem; padding: 0 1.1rem; border: var(--line-w) solid var(--plate-line); border-radius: var(--r-control);
   background: transparent; color: var(--legend); font: 400 1.125rem/1 var(--font-text); letter-spacing: .08em; direction: ltr; text-align: left;
   transition: border-color .3s var(--ease-out);
 }
@@ -260,20 +263,23 @@ h1 > span { display: inline-block; }
 
 .foot {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem;
-  padding-top: clamp(1.1rem, 2.6vh, 1.6rem); border-top: 2px solid var(--plate-line);
+  padding-top: clamp(1.1rem, 2.6vh, 1.6rem); border-top: var(--rule-w) solid var(--plate-line);
   font: 600 .9375rem var(--font-display); color: var(--legend-muted); font-variant-numeric: tabular-nums;
 }
-/* The way forward is a sign you can press: navy plate, white keyline that turns orange, the arrow steps forward. */
+/* The way in is the site's button (buttons.css): a capsule of smoked glass with a bright rim on top and light at its
+   foot. Hover turns it white with an ink legend and the arrow steps forward. No script here, so no pointer highlight. */
 .go {
-  position: relative; display: inline-flex; align-items: center; gap: .75em; padding: 1.05em 1.6em; border-radius: 10px;
-  color: var(--legend); text-decoration: none; font: 700 1.0625rem/1.2 var(--font-display);
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .7em; padding: 0 1.65em; border: 0; border-radius: var(--r-button);
+  color: var(--legend); text-decoration: none; font: 600 1.0625rem/1.2 var(--font-display); cursor: pointer;
+  background: color-mix(in srgb, var(--night-ink) 10%, transparent) linear-gradient(to bottom, color-mix(in srgb, var(--night-ink) 14%, transparent), transparent 50%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--night-ink) 50%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--night-ink) 30%, transparent), inset 0 -12px 16px -15px color-mix(in srgb, var(--night-ink) 40%, transparent);
+  transition: background-color .45s var(--ease-out), color .35s var(--ease-out), scale .5s var(--ease-out);
 }
-button.go { flex: none; border: 0; background: none; cursor: pointer; padding-inline: 1.5em; }
-button.go::before { inset: 0; } /* beside a field the keyline stands on the field's own edge */
+button.go { flex: none; }
+.go:hover, .go:focus-visible { background-color: color-mix(in srgb, var(--legend) 92%, transparent); color: var(--sign-ink); }
+.go:active { scale: .97; }
 .foot a { color: inherit; text-underline-offset: .3em; text-decoration-thickness: 1px; transition: color .3s var(--ease-out); }
 .foot a:hover, .foot a:focus-visible { color: var(--legend); }
-.go::before { content: ''; position: absolute; inset: 5px; border: 2px solid var(--legend); border-radius: 5px; transition: border-color .3s var(--ease-out); }
-.go:hover::before, .go:focus-visible::before { border-color: var(--works); }
 .arrow {
   display: inline-block; flex: none; width: 1.3em; height: .9em; background: currentColor;
   -webkit-mask: var(--icon-arrow) center / contain no-repeat; mask: var(--icon-arrow) center / contain no-repeat;
@@ -282,17 +288,17 @@ button.go::before { inset: 0; } /* beside a field the keyline stands on the fiel
 .go:hover .arrow, .go:focus-visible .arrow { translate: -6px 0; }
 
 @media (max-width: 760px) {
-  .lane i { height: 3px; background-size: 34px 100%; background-image: linear-gradient(to left, var(--works) 18px, transparent 0); }
-  .works { font-size: 1.0625rem; padding: .7rem 1rem .65rem; }
+  .lane i { background-size: 30px 100%; background-image: linear-gradient(to left, var(--works) 16px, transparent 0); }
+  .works { font-size: 1rem; padding: .62rem 1.05rem .6rem; }
 }
 @media (max-width: 560px) {
   body { padding: 6px; }
   .sign { border-radius: 14px; padding: 24px 24px 22px; }
-  .sign::before { inset: 7px; border-width: 2px; border-radius: 7px; }
+  .sign::before { inset: 7px; border-radius: 7px; }
   .logo { --logo-w: 6.5rem; }
   .key__row { flex-direction: column; }
   .key input { flex: none; }
-  button.go { min-height: 3.75rem; }
+  button.go { min-height: 3.5rem; }
   .go { justify-content: space-between; }
   .foot { flex-direction: column-reverse; align-items: start; }
 }
@@ -315,7 +321,7 @@ button.go::before { inset: 0; } /* beside a field the keyline stands on the fiel
 @keyframes unroll { from { clip-path: inset(0 0 100% 0 round 20px); } to { clip-path: inset(0 0 0 0 round 20px); } }
 @keyframes rise { from { transform: translateY(112%); } }
 @keyframes paint { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } } /* forward is left: paint from the start edge */
-@keyframes mount { from { clip-path: inset(0 0 100% 0 round 10px); } to { clip-path: inset(0 0 0 0 round 10px); } }
+@keyframes mount { from { clip-path: inset(0 0 100% 0 round 999px); } to { clip-path: inset(0 0 0 0 round 999px); } }
 @keyframes land { from { transform: scale(0); } }
 @keyframes arrive { from { opacity: 0; transform: translateY(14px); } }
 </style>
